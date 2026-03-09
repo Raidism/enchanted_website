@@ -43,6 +43,11 @@ let currentVisitPage = 1;
 const isAdmin = currentUser.role === "admin";
 const isMainAdmin = String(currentUser.username || "").trim().toLowerCase() === "admin";
 const profileKey = String(currentUser.username || "").trim().toLowerCase();
+const WELCOME_NAMES = {
+  admin: "Adham",
+  "ln-obidat": "Leen Obeidat",
+  ahmadph: "Ahmed Pharaon",
+};
 
 const ADMIN_PROFILE_PRESETS = {
   admin: {
@@ -52,20 +57,34 @@ const ADMIN_PROFILE_PRESETS = {
   },
   "ln-obidat": {
     photo: "assets/under secretary general.png",
-    caption: "Welcome back, Nina (USG).",
-    alt: "Nina profile",
+    caption: "Welcome back, Leen Obeidat (USG).",
+    alt: "Leen profile",
+  },
+  ahmadph: {
+    photo: "assets/secretary general.png",
+    caption: "Welcome back, Ahmed Pharaon (SG).",
+    alt: "Ahmed profile",
   },
 };
 
 if (isAdmin) {
-  welcomeText.textContent = "Welcome admin";
+  welcomeText.textContent = `Welcome ${WELCOME_NAMES[profileKey] || currentUser.username}`;
 } else {
   welcomeText.textContent = `Welcome ${currentUser.username}`;
 }
 
+const showLogoutTransition = () => {
+  const overlay = document.createElement("div");
+  overlay.className = "logout-overlay";
+  overlay.innerHTML = '<div class="logout-card">Securing session...</div>';
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add("is-visible"));
+};
+
 logoutBtn.addEventListener("click", () => {
   logoutBtn.classList.add("is-loading");
   logoutBtn.disabled = true;
+  showLogoutTransition();
 
   setTimeout(() => {
     window.ImperiumAuth.logout();
@@ -226,8 +245,8 @@ const renderAnalytics = () => {
   rows.forEach((item) => {
     const row = document.createElement("tr");
 
-    const rawIp = isUnknownValue(item.ip) ? "Private / hidden" : String(item.ip);
-    const rawCountry = isUnknownValue(item.country) ? "Location unavailable" : String(item.country);
+    const rawIp = String(item.ip || "Unknown");
+    const rawCountry = String(item.country || "Unknown");
     const ipValue = isAdmin ? rawIp : maskValue(rawIp);
     const countryValue = isAdmin
       ? `${item.flag || "🌐"} ${rawCountry}`

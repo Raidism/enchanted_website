@@ -16,8 +16,19 @@ const COOKIE_CONSENT_KEY = "imperium_cookie_consent";
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 10 * 60 * 1000;
 const DEFAULT_LOGIN_BUTTON_TEXT = "login";
-const SPECIAL_WELCOME_USERNAME = "ln-obidat";
 const MAIN_ADMIN_USERNAME = "admin";
+const SPECIAL_WELCOME_USERS = {
+  "ln-obidat": {
+    photo: "assets/under secretary general.png",
+    title: "Welcome, Leen Obeidat",
+    message: "USG access granted. Loading your dashboard...",
+  },
+  ahmadph: {
+    photo: "assets/secretary general.png",
+    title: "Welcome, Ahmed Pharaon",
+    message: "SG access granted. Loading your dashboard...",
+  },
+};
 let nuhUhModeStarted = false;
 let nuhUhIntervalId = null;
 
@@ -282,18 +293,15 @@ const redirectAfterLogin = (user) => {
   if (username === MAIN_ADMIN_USERNAME) {
     showSpecialWelcomeAndRedirect({
       photo: "assets/adham pic.jpg",
-      title: "Welcome back, Solomon",
+      title: "Welcome, Adham",
       message: "Main admin access granted. Loading your dashboard...",
     });
     return;
   }
 
-  if (username === SPECIAL_WELCOME_USERNAME) {
-    showSpecialWelcomeAndRedirect({
-      photo: "assets/under secretary general.png",
-      title: "Welcome, Nina",
-      message: "USG access granted. Loading your dashboard...",
-    });
+  const specialConfig = SPECIAL_WELCOME_USERS[username];
+  if (specialConfig) {
+    showSpecialWelcomeAndRedirect(specialConfig);
     return;
   }
 

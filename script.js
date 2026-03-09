@@ -86,12 +86,9 @@ const setTheme = (theme, withAnimation = false) => {
 };
 
 const storedTheme = localStorage.getItem(themeStorageKey);
-const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
 const initialTheme = storedTheme === "light" || storedTheme === "dark"
   ? storedTheme
-  : prefersLight
-    ? "light"
-    : "dark";
+  : "dark";
 
 setTheme(initialTheme);
 
