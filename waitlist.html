@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Early Access | Imperium MUN</title>
+  <meta name="description" content="Imperium MUN early access waitlist dashboard." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+  <header class="dash-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html">IMPERIUM MUN</a>
+      <div class="header-actions">
+        <a href="dashboard.html">Analytics</a>
+        <a href="#early-access">Early Access</a>
+        <a href="applications.html">Applications</a>
+        <button id="logoutBtn" type="button">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dash-main">
+    <p id="welcomeText" class="welcome-banner">Welcome</p>
+
+    <section id="early-access" class="section">
+      <h1>Early Access Submissions</h1>
+      <p id="accessNotice" class="sub">Manage and review pre-launch entries.</p>
+
+      <div class="stats-grid">
+        <article class="stat-card">
+          <h3>Total Entries</h3>
+          <p id="waitlistTotal">0</p>
+        </article>
+        <article class="stat-card">
+          <h3>Delegate Interest</h3>
+          <p id="delegateCount">0</p>
+        </article>
+        <article class="stat-card">
+          <h3>Team Roles Interest</h3>
+          <p id="teamRoleCount">0</p>
+        </article>
+      </div>
+
+      <div class="table-card">
+        <h2>Recent Early Access Entries</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Joined</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>School</th>
+                <th>Interest</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="waitlistTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="tracker.js"></script>
+  <script src="auth.js"></script>
+  <script src="waitlist.js"></script>
+</body>
+</html>
