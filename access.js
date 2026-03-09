@@ -17,6 +17,7 @@ const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 10 * 60 * 1000;
 const DEFAULT_LOGIN_BUTTON_TEXT = "login";
 const SPECIAL_WELCOME_USERNAME = "ln-obidat";
+const MAIN_ADMIN_USERNAME = "admin";
 let nuhUhModeStarted = false;
 let nuhUhIntervalId = null;
 
@@ -27,9 +28,21 @@ if (currentUser) {
 
 const readCookieConsent = () => String(localStorage.getItem(COOKIE_CONSENT_KEY) || "").trim().toLowerCase();
 
+const saveCookieConsent = (value) => {
+  try {
+    localStorage.setItem(COOKIE_CONSENT_KEY, value);
+  } catch {
+    // If storage is blocked, we still close the banner for this page view.
+  }
+};
+
 const hideCookieBanner = () => {
   if (cookieBanner) {
-    cookieBanner.hidden = true;
+    cookieBanner.classList.add("is-closing");
+    setTimeout(() => {
+      cookieBanner.hidden = true;
+      cookieBanner.classList.remove("is-closing");
+    }, 180);
   }
 };
 
@@ -44,14 +57,22 @@ const showCookieBannerIfNeeded = () => {
 
 if (cookieAcceptBtn) {
   cookieAcceptBtn.addEventListener("click", () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
+    cookieAcceptBtn.disabled = true;
+    if (cookieRejectBtn) {
+      cookieRejectBtn.disabled = true;
+    }
+    saveCookieConsent("accepted");
     hideCookieBanner();
   });
 }
 
 if (cookieRejectBtn) {
   cookieRejectBtn.addEventListener("click", () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, "rejected");
+    cookieRejectBtn.disabled = true;
+    if (cookieAcceptBtn) {
+      cookieAcceptBtn.disabled = true;
+    }
+    saveCookieConsent("rejected");
     hideCookieBanner();
   });
 }
@@ -231,17 +252,17 @@ const setCapsIndicator = (isOn) => {
   }
 };
 
-const showSpecialWelcomeAndRedirect = () => {
+const showSpecialWelcomeAndRedirect = (config) => {
   const overlay = document.createElement("div");
   overlay.className = "special-welcome-overlay";
   overlay.innerHTML = `
     <div class="special-welcome-card">
       <div class="special-photo-wrap" aria-hidden="true">
-        <img src="assets/under secretary general.png" alt="" class="special-photo" loading="eager" decoding="async" />
+        <img src="${config.photo}" alt="" class="special-photo" loading="eager" decoding="async" />
         <img src="assets/Secretariat frame.png" alt="" class="special-frame" loading="eager" decoding="async" />
       </div>
-      <h2>Welcome, Nina</h2>
-      <p>USG access granted. Loading your dashboard...</p>
+      <h2>${config.title}</h2>
+      <p>${config.message}</p>
     </div>
   `;
 
@@ -258,8 +279,21 @@ const showSpecialWelcomeAndRedirect = () => {
 
 const redirectAfterLogin = (user) => {
   const username = String(user && user.username ? user.username : "").trim().toLowerCase();
+  if (username === MAIN_ADMIN_USERNAME) {
+    showSpecialWelcomeAndRedirect({
+      photo: "assets/adham pic.jpg",
+      title: "Welcome back, Solomon",
+      message: "Main admin access granted. Loading your dashboard...",
+    });
+    return;
+  }
+
   if (username === SPECIAL_WELCOME_USERNAME) {
-    showSpecialWelcomeAndRedirect();
+    showSpecialWelcomeAndRedirect({
+      photo: "assets/under secretary general.png",
+      title: "Welcome, Nina",
+      message: "USG access granted. Loading your dashboard...",
+    });
     return;
   }
 
