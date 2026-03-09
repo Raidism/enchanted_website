@@ -122,6 +122,59 @@ body::after {
   filter: drop-shadow(0 6px 14px rgba(213, 180, 101, 0.2));
 }
 
+.user-spotlight {
+  margin: 0 auto 1.1rem;
+  width: min(560px, 96%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: linear-gradient(160deg, rgba(16, 24, 19, 0.92), rgba(21, 32, 25, 0.9));
+  padding: 0.7rem 0.85rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.user-spotlight-photo-wrap {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  display: grid;
+  place-items: center;
+}
+
+.user-spotlight-photo {
+  width: 58%;
+  height: 72%;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(213, 180, 101, 0.3);
+  z-index: 1;
+}
+
+.user-spotlight-frame {
+  position: absolute;
+  width: 108%;
+  height: 108%;
+  object-fit: contain;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.user-spotlight-name {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  font-weight: 800;
+  color: #f0daa0;
+  letter-spacing: 0.02em;
+}
+
+.user-spotlight-role {
+  margin: 0.2rem 0 0;
+  color: #cfddd2;
+  font-weight: 600;
+}
+
 .header-actions {
   display: flex;
   align-items: center;

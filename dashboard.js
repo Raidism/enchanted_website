@@ -34,6 +34,9 @@ const userAccessList = document.getElementById("userAccessList");
 const userAccessCard = userAccessList ? userAccessList.closest(".table-card") : null;
 const adminProfilePhoto = document.getElementById("adminProfilePhoto");
 const adminProfileCaption = document.getElementById("adminProfileCaption");
+const userSpotlightPhoto = document.getElementById("userSpotlightPhoto");
+const userSpotlightName = document.getElementById("userSpotlightName");
+const userSpotlightRole = document.getElementById("userSpotlightRole");
 let isAddUserHandlerBound = false;
 let isSiteSettingsHandlerBound = false;
 let isUserAccessHandlerBound = false;
@@ -67,6 +70,34 @@ const ADMIN_PROFILE_PRESETS = {
     caption: "Welcome back, Ahmed Pharaon (SG).",
     alt: "Ahmed profile",
   },
+  toleenkmedia: {
+    photo: "assets/head of media.png",
+    caption: "Welcome back, Toleen Kurdi (Head of Media).",
+    alt: "Toleen profile",
+  },
+};
+
+const USER_SPOTLIGHT_PRESETS = {
+  admin: {
+    name: "Adham Hamdan",
+    role: "Secretary General",
+    photo: "assets/adham pic.jpg",
+  },
+  "ln-obidat": {
+    name: "Leen Obeidat",
+    role: "Under Secretary General",
+    photo: "assets/under secretary general.png",
+  },
+  ahmadph: {
+    name: "Ahmed Pharaon",
+    role: "Secretary General",
+    photo: "assets/secretary general.png",
+  },
+  toleenkmedia: {
+    name: "Toleen Kurdi",
+    role: "Head of Media",
+    photo: "assets/head of media.png",
+  },
 };
 
 if (isAdmin) {
@@ -74,6 +105,25 @@ if (isAdmin) {
 } else {
   welcomeText.textContent = `Welcome ${currentUser.username}`;
 }
+
+const renderUserSpotlight = () => {
+  if (!userSpotlightPhoto || !userSpotlightName || !userSpotlightRole) {
+    return;
+  }
+
+  const preset = USER_SPOTLIGHT_PRESETS[profileKey] || {
+    name: currentUser.username,
+    role: isAdmin ? "Admin" : "Member",
+    photo: "assets/imperium mun logo.jpg",
+  };
+
+  userSpotlightPhoto.src = preset.photo;
+  userSpotlightPhoto.alt = `${preset.name} profile photo`;
+  userSpotlightName.textContent = preset.name;
+  userSpotlightRole.textContent = preset.role;
+};
+
+renderUserSpotlight();
 
 const showLogoutTransition = () => {
   const overlay = document.createElement("div");

@@ -15,6 +15,7 @@
   <meta name="twitter:title" content="Analytics Portal | Imperium MUN" />
   <meta name="twitter:description" content="Website analytics portal for Imperium MUN." />
   <meta name="twitter:image" content="assets/imperium mun logo.jpg" />
+  <link rel="icon" type="image/jpeg" href="assets/imperium mun logo.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -35,6 +36,17 @@
 
   <main class="dash-main">
     <p id="welcomeText" class="welcome-banner">Welcome</p>
+
+    <section class="user-spotlight" aria-label="Logged in profile">
+      <div class="user-spotlight-photo-wrap" aria-hidden="true">
+        <img id="userSpotlightPhoto" src="assets/imperium mun logo.jpg" alt="" class="user-spotlight-photo" loading="lazy" decoding="async" />
+        <img src="assets/Secretariat frame.png" alt="" class="user-spotlight-frame" loading="lazy" decoding="async" />
+      </div>
+      <div class="user-spotlight-copy">
+        <p id="userSpotlightName" class="user-spotlight-name">Imperium Team</p>
+        <p id="userSpotlightRole" class="user-spotlight-role">Signed in</p>
+      </div>
+    </section>
 
     <section id="analytics" class="section">
       <h1>Website Analytics</h1>
