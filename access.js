@@ -6,9 +6,13 @@ const loginBtn = document.getElementById("loginBtn");
 const capsLockIndicator = document.getElementById("capsLockIndicator");
 const adhamBurstTarget = document.getElementById("adhamBurstTarget");
 const adhamFireLayer = document.getElementById("adhamFireLayer");
+const cookieBanner = document.getElementById("cookieBanner");
+const cookieAcceptBtn = document.getElementById("cookieAcceptBtn");
+const cookieRejectBtn = document.getElementById("cookieRejectBtn");
 
 const FAILED_ATTEMPTS_KEY = "imperium_failed_attempts";
 const LOCKOUT_UNTIL_KEY = "imperium_lockout_until";
+const COOKIE_CONSENT_KEY = "imperium_cookie_consent";
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 10 * 60 * 1000;
 const DEFAULT_LOGIN_BUTTON_TEXT = "login";
@@ -19,6 +23,39 @@ const currentUser = window.ImperiumAuth.getCurrentUser();
 if (currentUser) {
   window.location.href = "dashboard.html";
 }
+
+const readCookieConsent = () => String(localStorage.getItem(COOKIE_CONSENT_KEY) || "").trim().toLowerCase();
+
+const hideCookieBanner = () => {
+  if (cookieBanner) {
+    cookieBanner.hidden = true;
+  }
+};
+
+const showCookieBannerIfNeeded = () => {
+  if (!cookieBanner) {
+    return;
+  }
+
+  const consent = readCookieConsent();
+  cookieBanner.hidden = consent === "accepted" || consent === "rejected";
+};
+
+if (cookieAcceptBtn) {
+  cookieAcceptBtn.addEventListener("click", () => {
+    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
+    hideCookieBanner();
+  });
+}
+
+if (cookieRejectBtn) {
+  cookieRejectBtn.addEventListener("click", () => {
+    localStorage.setItem(COOKIE_CONSENT_KEY, "rejected");
+    hideCookieBanner();
+  });
+}
+
+showCookieBannerIfNeeded();
 
 const getFailedAttempts = () => Number(localStorage.getItem(FAILED_ATTEMPTS_KEY) || 0);
 const setFailedAttempts = (count) => localStorage.setItem(FAILED_ATTEMPTS_KEY, String(Math.max(0, count)));

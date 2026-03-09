@@ -2,6 +2,7 @@ const { getStore } = require("@netlify/blobs");
 
 const STORE_NAME = "imperium_waitlist";
 const ENTRIES_KEY = "entries";
+const DELETED_ENTRIES_KEY = "deleted_entries";
 const VALID_STATUSES = new Set(["pending", "green", "red", "saved"]);
 
 const BLOBS_SITE_ID = String(
@@ -83,10 +84,25 @@ const ensureEntryShape = (entry) => {
   };
 };
 
+const ensureDeletedEntryShape = (entry) => {
+  const base = ensureEntryShape(entry || {});
+  return {
+    ...base,
+    deletedAt: String(entry && entry.deletedAt ? entry.deletedAt : new Date().toISOString()),
+    deletedBy: String(entry && entry.deletedBy ? entry.deletedBy : ""),
+  };
+};
+
 const readEntries = async () => {
   const store = getWaitlistStore();
   const rows = await store.get(ENTRIES_KEY, { type: "json" });
   return Array.isArray(rows) ? rows.map(ensureEntryShape) : [];
+};
+
+const readDeletedEntries = async () => {
+  const store = getWaitlistStore();
+  const rows = await store.get(DELETED_ENTRIES_KEY, { type: "json" });
+  return Array.isArray(rows) ? rows.map(ensureDeletedEntryShape) : [];
 };
 
 const writeEntries = async (entries) => {
@@ -94,11 +110,17 @@ const writeEntries = async (entries) => {
   await store.setJSON(ENTRIES_KEY, entries.slice(0, 3000));
 };
 
+const writeDeletedEntries = async (entries) => {
+  const store = getWaitlistStore();
+  await store.setJSON(DELETED_ENTRIES_KEY, entries.slice(0, 500));
+};
+
 exports.handler = async (event) => {
   try {
     if (event.httpMethod === "GET") {
       const entries = await readEntries();
-      return json(200, { success: true, entries });
+      const deletedEntries = await readDeletedEntries();
+      return json(200, { success: true, entries, deletedEntries });
     }
 
     if (event.httpMethod !== "POST") {
@@ -109,6 +131,7 @@ exports.handler = async (event) => {
     const action = String(payload.action || "create").trim();
 
     const entries = await readEntries();
+    const deletedEntries = await readDeletedEntries();
 
     if (action === "updateStatus") {
       const id = String(payload.id || "").trim();
@@ -137,17 +160,62 @@ exports.handler = async (event) => {
 
     if (action === "delete") {
       const id = String(payload.id || "").trim();
+      const reviewedBy = String(payload.reviewedBy || "").trim();
       if (!id) {
         return json(400, { success: false, message: "Entry id is required." });
       }
 
+      const removed = entries.find((entry) => entry.id === id);
       const filtered = entries.filter((entry) => entry.id !== id);
-      if (filtered.length === entries.length) {
+      if (!removed || filtered.length === entries.length) {
         return json(404, { success: false, message: "Entry not found." });
       }
 
+      deletedEntries.unshift({
+        ...removed,
+        deletedAt: new Date().toISOString(),
+        deletedBy: reviewedBy,
+      });
+
       await writeEntries(filtered);
-      return json(200, { success: true, message: "Entry deleted.", entries: filtered });
+      await writeDeletedEntries(deletedEntries);
+      return json(200, {
+        success: true,
+        message: "Entry deleted.",
+        entries: filtered,
+        deletedEntries,
+      });
+    }
+
+    if (action === "restore") {
+      const id = String(payload.id || "").trim();
+      const reviewedBy = String(payload.reviewedBy || "").trim();
+      if (!id) {
+        return json(400, { success: false, message: "Deleted entry id is required." });
+      }
+
+      const deletedIndex = deletedEntries.findIndex((entry) => entry.id === id);
+      if (deletedIndex === -1) {
+        return json(404, { success: false, message: "Deleted entry not found." });
+      }
+
+      const [restored] = deletedEntries.splice(deletedIndex, 1);
+      const restoredEntry = {
+        ...ensureEntryShape(restored),
+        reviewedAt: new Date().toISOString(),
+        reviewedBy,
+      };
+
+      entries.unshift(restoredEntry);
+
+      await writeEntries(entries);
+      await writeDeletedEntries(deletedEntries);
+      return json(200, {
+        success: true,
+        message: "Entry restored.",
+        entries,
+        deletedEntries,
+      });
     }
 
     if (action !== "create") {
@@ -186,7 +254,7 @@ exports.handler = async (event) => {
     });
 
     await writeEntries(entries);
-    return json(200, { success: true, message: "Saved.", entries });
+    return json(200, { success: true, message: "Saved.", entries, deletedEntries });
   } catch (error) {
     return json(500, {
       success: false,

@@ -4,6 +4,7 @@
   const ACTIVE_USERS_KEY = "imperium_active_users";
   const LOGIN_HISTORY_KEY = "imperium_login_history";
   const SITE_SETTINGS_KEY = "imperium_site_settings";
+  const SESSION_DURATION_MS = 24 * 60 * 60 * 1000;
 
   const defaultAdminUser = { username: "admin", password: "Soliman123@", role: "admin" };
   const defaultMemberUser = { username: "everyone", password: "123", role: "member" };
@@ -36,6 +37,38 @@
   };
 
   const normalizeUsername = (value) => String(value || "").trim().toLowerCase();
+
+  const getSessionExpiryIso = (session) => {
+    if (!session || typeof session !== "object") {
+      return "";
+    }
+
+    const explicit = String(session.expiresAt || "").trim();
+    if (explicit) {
+      return explicit;
+    }
+
+    const loginAt = new Date(String(session.loginAt || ""));
+    if (Number.isNaN(loginAt.getTime())) {
+      return "";
+    }
+
+    return new Date(loginAt.getTime() + SESSION_DURATION_MS).toISOString();
+  };
+
+  const isExpiredSession = (session) => {
+    const expiryIso = getSessionExpiryIso(session);
+    if (!expiryIso) {
+      return false;
+    }
+
+    const expiryDate = new Date(expiryIso);
+    if (Number.isNaN(expiryDate.getTime())) {
+      return false;
+    }
+
+    return Date.now() >= expiryDate.getTime();
+  };
 
   const init = () => {
     const users = readJson(USERS_KEY, null);
@@ -99,7 +132,34 @@
 
   const getCurrentUser = () => {
     init();
-    return readJson(CURRENT_USER_KEY, null);
+    const session = readJson(CURRENT_USER_KEY, null);
+    if (!session || typeof session !== "object") {
+      return null;
+    }
+
+    if (isExpiredSession(session)) {
+      const activeUsers = getActiveUsers();
+      const username = String(session.username || "").trim();
+      if (username && activeUsers[username]) {
+        delete activeUsers[username];
+        setActiveUsers(activeUsers);
+      }
+      localStorage.removeItem(CURRENT_USER_KEY);
+      return null;
+    }
+
+    // Backfill expiry for old sessions so timeout behavior is consistent.
+    const expiryIso = getSessionExpiryIso(session);
+    if (expiryIso && !session.expiresAt) {
+      const next = {
+        ...session,
+        expiresAt: expiryIso,
+      };
+      writeJson(CURRENT_USER_KEY, next);
+      return next;
+    }
+
+    return session;
   };
 
   const setCurrentUser = (user) => {
@@ -168,6 +228,7 @@
       username: matched.username,
       role: matched.role || "member",
       loginAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + SESSION_DURATION_MS).toISOString(),
     };
 
     setCurrentUser(current);
@@ -182,7 +243,7 @@
   };
 
   const logout = () => {
-    const current = getCurrentUser();
+    const current = readJson(CURRENT_USER_KEY, null);
     if (current) {
       const activeUsers = getActiveUsers();
       delete activeUsers[current.username];

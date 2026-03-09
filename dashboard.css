@@ -430,6 +430,73 @@ td {
   transform: translateY(-1px);
 }
 
+.action-emoji-btn.is-busy {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.action-emoji-btn.is-busy::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  border: 2px solid rgba(213, 180, 101, 0.35);
+  border-top-color: #f0daa0;
+  animation: spinLoader 0.65s linear infinite;
+}
+
+tbody tr.row-enter {
+  animation: rowEnter 0.34s ease-out;
+}
+
+tbody tr.row-working {
+  background: rgba(213, 180, 101, 0.08);
+}
+
+tbody tr.row-updated {
+  animation: rowUpdated 0.55s ease-out;
+}
+
+tbody tr.row-leave {
+  animation: rowLeave 0.22s ease-in forwards;
+}
+
+@keyframes rowEnter {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rowUpdated {
+  0% {
+    background: rgba(77, 139, 99, 0.28);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+@keyframes rowLeave {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
 .stack-form {
   margin-top: 0.75rem;
   display: grid;

@@ -396,6 +396,69 @@ h1 {
   pointer-events: none;
 }
 
+.cookie-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  width: min(780px, 94vw);
+  border: 1px solid rgba(213, 180, 101, 0.35);
+  border-radius: 12px;
+  background: rgba(8, 13, 10, 0.94);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.75rem 0.85rem;
+  z-index: 40;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+  animation: cookieSlideUp 0.25s ease-out;
+}
+
+.cookie-banner p {
+  margin: 0;
+  color: #d2dfd4;
+  font-size: 0.9rem;
+}
+
+.cookie-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.cookie-btn {
+  border: none;
+  border-radius: 8px;
+  height: 2rem;
+  padding: 0 0.72rem;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: #111;
+  background: linear-gradient(180deg, #f0daa0, #d5b465);
+}
+
+.cookie-btn.ghost {
+  border: 1px solid rgba(77, 139, 99, 0.55);
+  color: #dae7dc;
+  background: rgba(14, 20, 16, 0.85);
+}
+
+@keyframes cookieSlideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
 @keyframes spinLoader {
   from {
     transform: translate(-50%, -50%) rotate(0deg);
@@ -431,6 +494,15 @@ h1 {
 
   .access-card {
     padding: 1rem 0.9rem;
+  }
+
+  .cookie-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cookie-actions {
+    justify-content: flex-end;
   }
 }
 

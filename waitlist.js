@@ -20,8 +20,10 @@ const waitlistTotal = document.getElementById("waitlistTotal");
 const delegateCount = document.getElementById("delegateCount");
 const teamRoleCount = document.getElementById("teamRoleCount");
 const waitlistTableBody = document.getElementById("waitlistTableBody");
+const deletedWaitlistBody = document.getElementById("deletedWaitlistBody");
 
 const WAITLIST_KEY = "imperium_waitlist";
+const WAITLIST_DELETED_KEY = "imperium_waitlist_deleted";
 const WAITLIST_API_URL = "/.netlify/functions/waitlist";
 const STATUS_LABELS = {
   pending: "Pending ⏳",
@@ -31,6 +33,8 @@ const STATUS_LABELS = {
 };
 
 const isAdmin = currentUser.role === "admin";
+let previousRenderedIds = new Set();
+let activeAction = null;
 welcomeText.textContent = isAdmin ? "Welcome admin" : `Welcome ${currentUser.username}`;
 if (!isAdmin && accessNotice) {
   accessNotice.textContent = "Protected view: personal details are masked for member accounts.";
@@ -64,6 +68,24 @@ const writeWaitlistLocal = (rows) => {
   localStorage.setItem(WAITLIST_KEY, JSON.stringify(rows.slice(0, 3000)));
 };
 
+const readDeletedLocal = () => {
+  try {
+    const raw = localStorage.getItem(WAITLIST_DELETED_KEY);
+    if (!raw) {
+      return [];
+    }
+
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+const writeDeletedLocal = (rows) => {
+  localStorage.setItem(WAITLIST_DELETED_KEY, JSON.stringify(rows.slice(0, 500)));
+};
+
 const fetchWaitlistRemote = async () => {
   const response = await fetch(WAITLIST_API_URL, { method: "GET", cache: "no-store" });
   if (!response.ok) {
@@ -75,7 +97,10 @@ const fetchWaitlistRemote = async () => {
     throw new Error("Invalid waitlist payload.");
   }
 
-  return payload.entries;
+  return {
+    entries: payload.entries,
+    deletedEntries: Array.isArray(payload.deletedEntries) ? payload.deletedEntries : [],
+  };
 };
 
 const updateWaitlistRemote = async ({ action, id, status }) => {
@@ -98,16 +123,23 @@ const updateWaitlistRemote = async ({ action, id, status }) => {
     throw new Error(message);
   }
 
-  return Array.isArray(payload.entries) ? payload.entries : [];
+  return {
+    entries: Array.isArray(payload.entries) ? payload.entries : [],
+    deletedEntries: Array.isArray(payload.deletedEntries) ? payload.deletedEntries : [],
+  };
 };
 
 const getWaitlistRows = async () => {
   try {
-    const remoteRows = await fetchWaitlistRemote();
-    writeWaitlistLocal(remoteRows);
-    return remoteRows;
+    const remotePayload = await fetchWaitlistRemote();
+    writeWaitlistLocal(remotePayload.entries);
+    writeDeletedLocal(remotePayload.deletedEntries);
+    return remotePayload;
   } catch {
-    return readWaitlistLocal();
+    return {
+      entries: readWaitlistLocal(),
+      deletedEntries: readDeletedLocal(),
+    };
   }
 };
 
@@ -125,6 +157,46 @@ const updateLocalStatus = (rows, id, nextStatus) => rows.map((entry) => {
 });
 
 const deleteLocalEntry = (rows, id) => rows.filter((entry) => String(entry.id || "") !== id);
+
+const moveToDeletedLocal = (entries, deletedEntries, id) => {
+  const removed = entries.find((entry) => String(entry.id || "") === id);
+  const nextEntries = deleteLocalEntry(entries, id);
+  if (!removed) {
+    return {
+      entries: nextEntries,
+      deletedEntries,
+    };
+  }
+
+  return {
+    entries: nextEntries,
+    deletedEntries: [{
+      ...removed,
+      deletedAt: new Date().toISOString(),
+      deletedBy: currentUser.username,
+    }, ...deletedEntries],
+  };
+};
+
+const restoreLocalEntry = (entries, deletedEntries, id) => {
+  const restored = deletedEntries.find((entry) => String(entry.id || "") === id);
+  const nextDeleted = deletedEntries.filter((entry) => String(entry.id || "") !== id);
+  if (!restored) {
+    return {
+      entries,
+      deletedEntries: nextDeleted,
+    };
+  }
+
+  return {
+    entries: [{
+      ...restored,
+      reviewedAt: new Date().toISOString(),
+      reviewedBy: currentUser.username,
+    }, ...entries],
+    deletedEntries: nextDeleted,
+  };
+};
 
 const formatDateTime = (iso) => {
   const date = new Date(iso);
@@ -157,8 +229,13 @@ const formatRole = (value) => {
 };
 
 const renderWaitlist = async () => {
-  const rows = await getWaitlistRows();
+  const payload = await getWaitlistRows();
+  const rows = Array.isArray(payload.entries) ? payload.entries : [];
+  const deletedRows = Array.isArray(payload.deletedEntries) ? payload.deletedEntries : [];
   const sorted = [...rows].sort((a, b) => String(b.addedAt || "").localeCompare(String(a.addedAt || "")));
+  const deletedSorted = [...deletedRows]
+    .sort((a, b) => String(b.deletedAt || "").localeCompare(String(a.deletedAt || "")))
+    .slice(0, 40);
 
   waitlistTotal.textContent = String(sorted.length);
   delegateCount.textContent = String(sorted.filter((entry) => String(entry.role || "") === "delegate").length);
@@ -179,6 +256,7 @@ const renderWaitlist = async () => {
 
   sorted.slice(0, 200).forEach((entry) => {
     const row = document.createElement("tr");
+    row.setAttribute("data-entry-id", String(entry.id || ""));
 
     const name = isAdmin ? (entry.name || "Unknown") : maskValue(entry.name);
     const email = isAdmin ? (entry.email || "Unknown") : maskValue(entry.email);
@@ -203,7 +281,56 @@ const renderWaitlist = async () => {
       </td>
     `;
 
+    if (!previousRenderedIds.has(String(entry.id || ""))) {
+      row.classList.add("row-enter");
+    }
+
+    if (activeAction && activeAction.id === String(entry.id || "")) {
+      if (activeAction.action === "delete") {
+        row.classList.add("row-leave");
+      } else {
+        row.classList.add("row-updated");
+      }
+    }
+
     waitlistTableBody.appendChild(row);
+  });
+
+  previousRenderedIds = new Set(sorted.map((entry) => String(entry.id || "")));
+  activeAction = null;
+
+  if (!deletedWaitlistBody) {
+    return;
+  }
+
+  deletedWaitlistBody.innerHTML = "";
+  if (deletedSorted.length === 0) {
+    const emptyDeletedRow = document.createElement("tr");
+    emptyDeletedRow.innerHTML = '<td colspan="6">No deleted entries.</td>';
+    deletedWaitlistBody.appendChild(emptyDeletedRow);
+    return;
+  }
+
+  deletedSorted.forEach((entry) => {
+    const row = document.createElement("tr");
+    row.setAttribute("data-deleted-id", String(entry.id || ""));
+
+    const name = isAdmin ? (entry.name || "Unknown") : maskValue(entry.name);
+    const email = isAdmin ? (entry.email || "Unknown") : maskValue(entry.email);
+    const school = isAdmin ? (entry.school || "Unknown") : maskValue(entry.school);
+
+    row.innerHTML = `
+      <td>${formatDateTime(entry.deletedAt)}</td>
+      <td>${name}</td>
+      <td>${email}</td>
+      <td>${school}</td>
+      <td>${formatRole(entry.role)}</td>
+      <td>
+        <button class="action-emoji-btn" type="button" data-action="restore" data-id="${entry.id}" title="Restore Entry">↩️</button>
+      </td>
+    `;
+
+    deletedWaitlistBody.appendChild(row);
   });
 };
 
@@ -219,37 +346,103 @@ waitlistTableBody.addEventListener("click", async (event) => {
     return;
   }
 
+  const row = target.closest("tr");
+  if (row) {
+    row.classList.add("row-working");
+  }
+
   target.disabled = true;
+  target.classList.add("is-busy");
 
   try {
     if (action === "delete") {
-      const remoteRows = await updateWaitlistRemote({ action: "delete", id });
-      writeWaitlistLocal(remoteRows);
+      activeAction = { id, action };
+      if (row) {
+        row.classList.add("row-leave");
+      }
+      await new Promise((resolve) => setTimeout(resolve, 220));
+
+      const remotePayload = await updateWaitlistRemote({ action: "delete", id });
+      writeWaitlistLocal(remotePayload.entries);
+      writeDeletedLocal(remotePayload.deletedEntries);
       await renderWaitlist();
       return;
     }
 
-    const remoteRows = await updateWaitlistRemote({ action: "updateStatus", id, status: action });
-    writeWaitlistLocal(remoteRows);
+    const remotePayload = await updateWaitlistRemote({ action: "updateStatus", id, status: action });
+    activeAction = { id, action };
+    writeWaitlistLocal(remotePayload.entries);
+    writeDeletedLocal(remotePayload.deletedEntries);
     await renderWaitlist();
   } catch {
     // Fallback to local-only state when remote API is unavailable.
     const rows = readWaitlistLocal();
-    const nextRows = action === "delete"
-      ? deleteLocalEntry(rows, id)
-      : updateLocalStatus(rows, id, action);
+    const deletedRows = readDeletedLocal();
 
+    if (action === "delete") {
+      activeAction = { id, action };
+      const nextLocal = moveToDeletedLocal(rows, deletedRows, id);
+      writeWaitlistLocal(nextLocal.entries);
+      writeDeletedLocal(nextLocal.deletedEntries);
+      await renderWaitlist();
+      return;
+    }
+
+    const nextRows = updateLocalStatus(rows, id, action);
+    activeAction = { id, action };
     writeWaitlistLocal(nextRows);
+    writeDeletedLocal(deletedRows);
     await renderWaitlist();
   } finally {
     target.disabled = false;
+    target.classList.remove("is-busy");
+    if (row) {
+      row.classList.remove("row-working");
+    }
   }
 });
+
+if (deletedWaitlistBody) {
+  deletedWaitlistBody.addEventListener("click", async (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    const action = String(target.getAttribute("data-action") || "").trim();
+    const id = String(target.getAttribute("data-id") || "").trim();
+    if (action !== "restore" || !id) {
+      return;
+    }
+
+    target.disabled = true;
+    target.classList.add("is-busy");
+
+    try {
+      const remotePayload = await updateWaitlistRemote({ action: "restore", id });
+      activeAction = { id, action: "restore" };
+      writeWaitlistLocal(remotePayload.entries);
+      writeDeletedLocal(remotePayload.deletedEntries);
+      await renderWaitlist();
+    } catch {
+      const rows = readWaitlistLocal();
+      const deletedRows = readDeletedLocal();
+      const nextLocal = restoreLocalEntry(rows, deletedRows, id);
+      activeAction = { id, action: "restore" };
+      writeWaitlistLocal(nextLocal.entries);
+      writeDeletedLocal(nextLocal.deletedEntries);
+      await renderWaitlist();
+    } finally {
+      target.disabled = false;
+      target.classList.remove("is-busy");
+    }
+  });
+}
 
 renderWaitlist();
 setInterval(renderWaitlist, 7000);
 window.addEventListener("storage", (event) => {
-  if (event.key === WAITLIST_KEY) {
+  if (event.key === WAITLIST_KEY || event.key === WAITLIST_DELETED_KEY) {
     renderWaitlist();
   }
 });
