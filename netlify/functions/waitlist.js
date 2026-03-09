@@ -4,6 +4,20 @@ const STORE_NAME = "imperium_waitlist";
 const ENTRIES_KEY = "entries";
 const VALID_STATUSES = new Set(["pending", "green", "red", "saved"]);
 
+const BLOBS_SITE_ID = String(
+  process.env.NETLIFY_SITE_ID
+    || process.env.SITE_ID
+    || process.env.BLOBS_SITE_ID
+    || ""
+).trim();
+
+const BLOBS_TOKEN = String(
+  process.env.NETLIFY_AUTH_TOKEN
+    || process.env.NETLIFY_API_TOKEN
+    || process.env.BLOBS_TOKEN
+    || ""
+).trim();
+
 const json = (statusCode, payload) => ({
   statusCode,
   headers: {
@@ -15,6 +29,32 @@ const json = (statusCode, payload) => ({
 
 const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
 const newId = () => `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+
+const getWaitlistStore = () => {
+  if (!BLOBS_SITE_ID || !BLOBS_TOKEN) {
+    const siteIdPresent = Boolean(BLOBS_SITE_ID);
+    const tokenPresent = Boolean(BLOBS_TOKEN);
+    throw new Error(
+      `Missing Netlify Blobs credentials (BLOBS_SITE_ID present: ${siteIdPresent}, BLOBS_TOKEN present: ${tokenPresent}). Add both env vars in Netlify and redeploy.`
+    );
+  }
+
+  try {
+    return getStore(STORE_NAME, {
+      siteID: BLOBS_SITE_ID,
+      token: BLOBS_TOKEN,
+    });
+  } catch (error) {
+    const message = String(error && error.message ? error.message : error);
+    if (message.toLowerCase().includes("not been configured to use netlify blobs")) {
+      throw new Error(
+        "Netlify Blobs is not configured. Add BLOBS_SITE_ID and BLOBS_TOKEN (or NETLIFY_SITE_ID and NETLIFY_AUTH_TOKEN) in Netlify environment variables."
+      );
+    }
+
+    throw error;
+  }
+};
 
 const ensureEntryShape = (entry) => {
   const status = VALID_STATUSES.has(String(entry.status || "").trim())
@@ -35,13 +75,13 @@ const ensureEntryShape = (entry) => {
 };
 
 const readEntries = async () => {
-  const store = getStore(STORE_NAME);
+  const store = getWaitlistStore();
   const rows = await store.get(ENTRIES_KEY, { type: "json" });
   return Array.isArray(rows) ? rows.map(ensureEntryShape) : [];
 };
 
 const writeEntries = async (entries) => {
-  const store = getStore(STORE_NAME);
+  const store = getWaitlistStore();
   await store.setJSON(ENTRIES_KEY, entries.slice(0, 3000));
 };
 
