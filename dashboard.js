@@ -48,7 +48,7 @@ const isAdmin = currentUser.role === "admin";
 const isMainAdmin = String(currentUser.username || "").trim().toLowerCase() === "admin";
 const profileKey = String(currentUser.username || "").trim().toLowerCase();
 const WELCOME_NAMES = {
-  admin: "Adham",
+  admin: "Adham Mohamed",
   "ln-obidat": "Leen Obeidat",
   ahmadph: "Ahmed Pharaon",
   toleenkmedia: "Toleen Kurdi",
@@ -57,7 +57,7 @@ const WELCOME_NAMES = {
 const ADMIN_PROFILE_PRESETS = {
   admin: {
     photo: "assets/adham pic.jpg",
-    caption: "Tough IT guy: Adham.",
+    caption: "Welcome back, Adham Mohamed (Head of IT).",
     alt: "Adham profile",
   },
   "ln-obidat": {
@@ -79,8 +79,8 @@ const ADMIN_PROFILE_PRESETS = {
 
 const USER_SPOTLIGHT_PRESETS = {
   admin: {
-    name: "Adham Hamdan",
-    role: "Secretary General",
+    name: "Adham Mohamed",
+    role: "Head of IT",
     photo: "assets/adham pic.jpg",
   },
   "ln-obidat": {
