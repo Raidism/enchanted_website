@@ -31,6 +31,9 @@ const launchDateInput = document.getElementById("launchDateInput");
 const announcementInput = document.getElementById("announcementInput");
 const siteSettingsMessage = document.getElementById("siteSettingsMessage");
 const userAccessList = document.getElementById("userAccessList");
+const userAccessCard = userAccessList ? userAccessList.closest(".table-card") : null;
+const adminProfilePhoto = document.getElementById("adminProfilePhoto");
+const adminProfileCaption = document.getElementById("adminProfileCaption");
 let isAddUserHandlerBound = false;
 let isSiteSettingsHandlerBound = false;
 let isUserAccessHandlerBound = false;
@@ -38,6 +41,21 @@ const VISITS_PER_PAGE = 10;
 const PAGE_WINDOW = 9;
 let currentVisitPage = 1;
 const isAdmin = currentUser.role === "admin";
+const isMainAdmin = String(currentUser.username || "").trim().toLowerCase() === "admin";
+const profileKey = String(currentUser.username || "").trim().toLowerCase();
+
+const ADMIN_PROFILE_PRESETS = {
+  admin: {
+    photo: "assets/adham pic.jpg",
+    caption: "Tough IT guy: Adham.",
+    alt: "Adham profile",
+  },
+  "ln-obidat": {
+    photo: "assets/under secretary general.png",
+    caption: "Welcome back, Nina (USG).",
+    alt: "Nina profile",
+  },
+};
 
 if (isAdmin) {
   welcomeText.textContent = "Welcome admin";
@@ -74,6 +92,37 @@ const formatDateTime = (iso) => {
     return "Unknown";
   }
   return date.toLocaleString();
+};
+
+const isUnknownValue = (value) => {
+  const text = String(value || "").trim().toLowerCase();
+  return !text || text === "unknown" || text === "--";
+};
+
+const deviceEmoji = (device) => {
+  const text = String(device || "").toLowerCase();
+  return text.includes("mobile") ? "📱" : "💻";
+};
+
+const pageLabel = (path) => {
+  const raw = String(path || "").trim();
+  return raw || "index.html";
+};
+
+const renderAdminProfile = () => {
+  if (!adminProfilePhoto || !adminProfileCaption) {
+    return;
+  }
+
+  const preset = ADMIN_PROFILE_PRESETS[profileKey] || {
+    photo: "assets/imperium mun logo.jpg",
+    caption: `Welcome ${currentUser.username}.`,
+    alt: `${currentUser.username} profile`,
+  };
+
+  adminProfilePhoto.src = preset.photo;
+  adminProfilePhoto.alt = preset.alt;
+  adminProfileCaption.textContent = preset.caption;
 };
 
 const createPageButton = ({ label, page, disabled = false, isActive = false }) => {
@@ -151,8 +200,8 @@ const renderVisitsPagination = (totalRows, totalPages) => {
 
 const renderAnalytics = () => {
   const logs = readViewLogs();
-  const ipSet = new Set(logs.map((item) => item.ip));
-  const countrySet = new Set(logs.map((item) => item.country));
+  const ipSet = new Set(logs.map((item) => item.ip).filter((value) => !isUnknownValue(value)));
+  const countrySet = new Set(logs.map((item) => item.country).filter((value) => !isUnknownValue(value)));
 
   totalViews.textContent = String(logs.length);
   uniqueIps.textContent = String(ipSet.size);
@@ -177,12 +226,14 @@ const renderAnalytics = () => {
   rows.forEach((item) => {
     const row = document.createElement("tr");
 
-    const ipValue = isAdmin ? (item.ip || "Unknown") : maskValue(item.ip);
+    const rawIp = isUnknownValue(item.ip) ? "Private / hidden" : String(item.ip);
+    const rawCountry = isUnknownValue(item.country) ? "Location unavailable" : String(item.country);
+    const ipValue = isAdmin ? rawIp : maskValue(rawIp);
     const countryValue = isAdmin
-      ? `${item.flag || "🏳️"} ${item.country || "Unknown"}`
-      : maskValue(item.country);
-    const deviceValue = isAdmin ? (item.device || "Unknown") : maskValue(item.device);
-    const pageValue = isAdmin ? (item.path || "Unknown") : maskValue(item.path);
+      ? `${item.flag || "🌐"} ${rawCountry}`
+      : maskValue(rawCountry);
+    const deviceValue = isAdmin ? `${deviceEmoji(item.device)} ${String(item.device || "Unknown")}` : maskValue(item.device);
+    const pageValue = isAdmin ? `📄 ${pageLabel(item.path)}` : maskValue(item.path);
 
     row.innerHTML = `
       <td>${formatDateTime(item.timestamp)}</td>
@@ -216,6 +267,7 @@ const renderAdminPanel = () => {
   }
 
   adminPanel.hidden = false;
+  renderAdminProfile();
 
   const activeUsers = window.ImperiumAuth.getActiveUsers();
   const entries = Object.values(activeUsers);
@@ -281,6 +333,15 @@ const renderAdminPanel = () => {
   }
 
   if (userAccessList) {
+    if (userAccessCard) {
+      userAccessCard.hidden = !isMainAdmin;
+    }
+
+    if (!isMainAdmin) {
+      userAccessList.innerHTML = "";
+      return;
+    }
+
     const users = window.ImperiumAuth.getUsers();
     userAccessList.innerHTML = "";
 

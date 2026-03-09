@@ -448,6 +448,102 @@ h1 {
   background: rgba(14, 20, 16, 0.85);
 }
 
+.special-welcome-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 8, 6, 0.8);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  z-index: 90;
+  animation: welcomeFadeIn 0.25s ease-out;
+}
+
+.special-welcome-overlay.is-exiting {
+  animation: welcomeFadeOut 0.3s ease-in forwards;
+}
+
+.special-welcome-card {
+  width: min(430px, 90vw);
+  border: 1px solid rgba(213, 180, 101, 0.45);
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(10, 17, 13, 0.96), rgba(15, 25, 19, 0.92));
+  padding: 1rem 1rem 1.15rem;
+  text-align: center;
+  box-shadow: 0 26px 44px rgba(0, 0, 0, 0.45);
+  transform: translateY(8px) scale(0.97);
+  animation: welcomeCardIn 0.36s cubic-bezier(0.22, 0.9, 0.3, 1) forwards;
+}
+
+.special-photo-wrap {
+  position: relative;
+  width: min(175px, 44vw);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto 0.5rem;
+  display: grid;
+  place-items: center;
+}
+
+.special-photo {
+  width: 58%;
+  height: 72%;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(213, 180, 101, 0.3);
+  z-index: 1;
+}
+
+.special-frame {
+  position: absolute;
+  width: 108%;
+  height: 108%;
+  object-fit: contain;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.special-welcome-card h2 {
+  margin: 0.1rem 0 0.2rem;
+  font-family: "Cinzel", serif;
+  color: #f0daa0;
+}
+
+.special-welcome-card p {
+  margin: 0;
+  color: #d0dfd4;
+  font-weight: 600;
+}
+
+@keyframes welcomeFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes welcomeFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes welcomeCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes cookieSlideUp {
   from {
     opacity: 0;

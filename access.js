@@ -16,6 +16,7 @@ const COOKIE_CONSENT_KEY = "imperium_cookie_consent";
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 10 * 60 * 1000;
 const DEFAULT_LOGIN_BUTTON_TEXT = "login";
+const SPECIAL_WELCOME_USERNAME = "ln-obidat";
 let nuhUhModeStarted = false;
 let nuhUhIntervalId = null;
 
@@ -230,6 +231,43 @@ const setCapsIndicator = (isOn) => {
   }
 };
 
+const showSpecialWelcomeAndRedirect = () => {
+  const overlay = document.createElement("div");
+  overlay.className = "special-welcome-overlay";
+  overlay.innerHTML = `
+    <div class="special-welcome-card">
+      <div class="special-photo-wrap" aria-hidden="true">
+        <img src="assets/under secretary general.png" alt="" class="special-photo" loading="eager" decoding="async" />
+        <img src="assets/Secretariat frame.png" alt="" class="special-frame" loading="eager" decoding="async" />
+      </div>
+      <h2>Welcome, Nina</h2>
+      <p>USG access granted. Loading your dashboard...</p>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  setTimeout(() => {
+    overlay.classList.add("is-exiting");
+  }, 1200);
+
+  setTimeout(() => {
+    window.location.href = "dashboard.html";
+  }, 1550);
+};
+
+const redirectAfterLogin = (user) => {
+  const username = String(user && user.username ? user.username : "").trim().toLowerCase();
+  if (username === SPECIAL_WELCOME_USERNAME) {
+    showSpecialWelcomeAndRedirect();
+    return;
+  }
+
+  setTimeout(() => {
+    window.location.href = "dashboard.html";
+  }, 500);
+};
+
 if (holdToViewBtn && passwordInput) {
   holdToViewBtn.addEventListener("mousedown", showPassword);
   holdToViewBtn.addEventListener("touchstart", showPassword, { passive: true });
@@ -271,9 +309,7 @@ loginForm.addEventListener("submit", (event) => {
       loginMessage.classList.add("success");
       loginMessage.textContent = "dont be dum next time. Access granted. Redirecting...";
 
-      setTimeout(() => {
-        window.location.href = "dashboard.html";
-      }, 700);
+      redirectAfterLogin(lockoutBypass.user);
       return;
     }
 
@@ -322,8 +358,6 @@ loginForm.addEventListener("submit", (event) => {
     loginMessage.classList.add("success");
     loginMessage.textContent = "Access granted. Redirecting...";
 
-    setTimeout(() => {
-      window.location.href = "dashboard.html";
-    }, 500);
+    redirectAfterLogin(result.user);
   }, 900);
 });

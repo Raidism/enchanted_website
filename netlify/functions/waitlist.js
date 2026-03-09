@@ -155,7 +155,7 @@ exports.handler = async (event) => {
       };
 
       await writeEntries(entries);
-      return json(200, { success: true, message: "Status updated.", entries });
+      return json(200, { success: true, message: "Status updated.", entries, deletedEntries });
     }
 
     if (action === "delete") {

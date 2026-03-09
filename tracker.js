@@ -38,6 +38,10 @@
         return null;
       }
 
+      if (parsed.geo && String(parsed.geo.ip || "").trim().toLowerCase() === "unknown") {
+        return null;
+      }
+
       return parsed.geo || null;
     } catch {
       return null;
@@ -45,10 +49,50 @@
   };
 
   const writeGeoCache = (geo) => {
+    if (!geo || String(geo.ip || "").toLowerCase() === "unknown") {
+      return;
+    }
+
     localStorage.setItem(GEO_CACHE_KEY, JSON.stringify({
       savedAt: Date.now(),
       geo,
     }));
+  };
+
+  const flagFromCode = (code) => {
+    const normalized = String(code || "").trim().toUpperCase();
+    if (!/^[A-Z]{2}$/.test(normalized)) {
+      return "🌐";
+    }
+
+    return String.fromCodePoint(...[...normalized].map((char) => 127397 + char.charCodeAt(0)));
+  };
+
+  const normalizeGeo = ({ ip, country, countryCode }) => {
+    const safeIp = String(ip || "").trim() || "Unknown";
+    const safeCountry = String(country || "").trim() || "Unknown";
+    const safeCode = String(countryCode || "").trim().toUpperCase() || "--";
+
+    return {
+      ip: safeIp,
+      country: safeCountry,
+      countryCode: safeCode,
+      flag: flagFromCode(safeCode),
+    };
+  };
+
+  const fetchJsonWithTimeout = async (url, timeoutMs) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      if (!response.ok) {
+        throw new Error(`Geo lookup failed (${response.status})`);
+      }
+      return response.json();
+    } finally {
+      clearTimeout(timeout);
+    }
   };
 
   const detectDevice = () => {
@@ -71,31 +115,44 @@
     }
 
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 3500);
-      const response = await fetch("https://ipapi.co/json/", { signal: controller.signal });
-      clearTimeout(timeout);
+      const providers = [
+        async () => {
+          const data = await fetchJsonWithTimeout("https://ipapi.co/json/", 3000);
+          return normalizeGeo({
+            ip: data.ip,
+            country: data.country_name,
+            countryCode: data.country_code,
+          });
+        },
+        async () => {
+          const data = await fetchJsonWithTimeout("https://ipwho.is/", 3000);
+          return normalizeGeo({
+            ip: data.ip,
+            country: data.country,
+            countryCode: data.country_code,
+          });
+        },
+      ];
 
-      if (!response.ok) {
-        throw new Error("Geo lookup failed");
+      for (const provider of providers) {
+        try {
+          const geo = await provider();
+          if (String(geo.ip || "").toLowerCase() !== "unknown") {
+            writeGeoCache(geo);
+            return geo;
+          }
+        } catch {
+          // Try next provider.
+        }
       }
 
-      const data = await response.json();
-      const geo = {
-        ip: data.ip || "Unknown",
-        country: data.country_name || "Unknown",
-        countryCode: data.country_code || "--",
-        flag: data.country_code ? String.fromCodePoint(...[...data.country_code.toUpperCase()].map((c) => 127397 + c.charCodeAt(0))) : "🏳️",
-      };
-
-      writeGeoCache(geo);
-      return geo;
+      throw new Error("All geo providers failed");
     } catch {
       return {
         ip: "Unknown",
         country: "Unknown",
         countryCode: "--",
-        flag: "🏳️",
+        flag: "🌐",
       };
     }
   };

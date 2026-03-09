@@ -8,9 +8,11 @@
 
   const defaultAdminUser = { username: "admin", password: "Soliman123@", role: "admin" };
   const defaultMemberUser = { username: "everyone", password: "123", role: "member" };
+  const defaultUsgAdminUser = { username: "ln-obidat", password: "3004", role: "admin" };
   const defaultUsers = [
     defaultAdminUser,
     defaultMemberUser,
+    defaultUsgAdminUser,
   ];
 
   const defaultSiteSettings = {
@@ -37,6 +39,7 @@
   };
 
   const normalizeUsername = (value) => String(value || "").trim().toLowerCase();
+  const isMainAdminUser = (user) => normalizeUsername(user && user.username) === "admin";
 
   const getSessionExpiryIso = (session) => {
     if (!session || typeof session !== "object") {
@@ -78,6 +81,7 @@
       const existingUsers = [...users];
       const adminIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === "admin");
       const everyoneIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === "everyone");
+      const usgIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultUsgAdminUser.username));
 
       if (adminIndex === -1) {
         existingUsers.push(defaultAdminUser);
@@ -98,6 +102,17 @@
           username: "everyone",
           password: defaultMemberUser.password,
           role: "member",
+        };
+      }
+
+      if (usgIndex === -1) {
+        existingUsers.push(defaultUsgAdminUser);
+      } else {
+        existingUsers[usgIndex] = {
+          ...existingUsers[usgIndex],
+          username: defaultUsgAdminUser.username,
+          password: defaultUsgAdminUser.password,
+          role: "admin",
         };
       }
 
@@ -318,8 +333,8 @@
   };
 
   const setUserDisabled = (creator, usernameInput, disabledInput) => {
-    if (!creator || creator.role !== "admin") {
-      return { success: false, message: "Only admin can change user access." };
+    if (!creator || creator.role !== "admin" || !isMainAdminUser(creator)) {
+      return { success: false, message: "Only the main admin account can change user access." };
     }
 
     const targetUsername = String(usernameInput || "").trim();

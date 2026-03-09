@@ -37,7 +37,7 @@ let previousRenderedIds = new Set();
 let activeAction = null;
 welcomeText.textContent = isAdmin ? "Welcome admin" : `Welcome ${currentUser.username}`;
 if (!isAdmin && accessNotice) {
-  accessNotice.textContent = "Protected view: personal details are masked for member accounts.";
+  accessNotice.textContent = "Protected view: personal details are masked and actions are read-only for member accounts.";
 }
 
 logoutBtn.addEventListener("click", () => {
@@ -272,12 +272,14 @@ const renderWaitlist = async () => {
       <td>${formatRole(entry.role)}</td>
       <td><span class="status-pill ${statusKey}">${STATUS_LABELS[statusKey] || STATUS_LABELS.pending}</span></td>
       <td>
-        <div class="entry-actions">
+        ${isAdmin
+    ? `<div class="entry-actions">
           <button class="action-emoji-btn" type="button" data-action="green" data-id="${entry.id}" title="Green Light">✅</button>
           <button class="action-emoji-btn" type="button" data-action="red" data-id="${entry.id}" title="Red Light">❌</button>
           <button class="action-emoji-btn" type="button" data-action="saved" data-id="${entry.id}" title="Save Application">⭐</button>
           <button class="action-emoji-btn" type="button" data-action="delete" data-id="${entry.id}" title="Delete Application">🗑️</button>
-        </div>
+        </div>`
+    : `<span class="sub">View only</span>`}
       </td>
     `;
 
@@ -335,6 +337,10 @@ const renderWaitlist = async () => {
 };
 
 waitlistTableBody.addEventListener("click", async (event) => {
+  if (!isAdmin) {
+    return;
+  }
+
   const target = event.target;
   if (!(target instanceof HTMLButtonElement)) {
     return;
@@ -404,6 +410,10 @@ waitlistTableBody.addEventListener("click", async (event) => {
 
 if (deletedWaitlistBody) {
   deletedWaitlistBody.addEventListener("click", async (event) => {
+    if (!isAdmin) {
+      return;
+    }
+
     const target = event.target;
     if (!(target instanceof HTMLButtonElement)) {
       return;
