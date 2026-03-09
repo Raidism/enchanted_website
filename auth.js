@@ -10,11 +10,13 @@
   const defaultMemberUser = { username: "everyone", password: "123", role: "member" };
   const defaultUsgAdminUser = { username: "ln-obidat", password: "3004", role: "admin" };
   const defaultSgAdminUser = { username: "AhmadPh", password: "Ahmadggg", role: "admin" };
+  const defaultMediaMemberUser = { username: "Toleenkmedia", password: "Totakordi10", role: "member" };
   const defaultUsers = [
     defaultAdminUser,
     defaultMemberUser,
     defaultUsgAdminUser,
     defaultSgAdminUser,
+    defaultMediaMemberUser,
   ];
 
   const defaultSiteSettings = {
@@ -85,6 +87,7 @@
       const everyoneIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === "everyone");
       const usgIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultUsgAdminUser.username));
       const sgIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultSgAdminUser.username));
+      const mediaIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultMediaMemberUser.username));
 
       if (adminIndex === -1) {
         existingUsers.push(defaultAdminUser);
@@ -127,6 +130,17 @@
           username: defaultSgAdminUser.username,
           password: defaultSgAdminUser.password,
           role: "admin",
+        };
+      }
+
+      if (mediaIndex === -1) {
+        existingUsers.push(defaultMediaMemberUser);
+      } else {
+        existingUsers[mediaIndex] = {
+          ...existingUsers[mediaIndex],
+          username: defaultMediaMemberUser.username,
+          password: defaultMediaMemberUser.password,
+          role: "member",
         };
       }
 

@@ -28,6 +28,11 @@ const SPECIAL_WELCOME_USERS = {
     title: "Welcome, Ahmed Pharaon",
     message: "SG access granted. Loading your dashboard...",
   },
+  toleenkmedia: {
+    photo: "assets/head of media.png",
+    title: "Welcome, Toleen Kurdi",
+    message: "Media access granted. Loading your dashboard...",
+  },
 };
 let nuhUhModeStarted = false;
 let nuhUhIntervalId = null;

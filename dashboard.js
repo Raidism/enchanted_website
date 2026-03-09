@@ -48,6 +48,7 @@ const WELCOME_NAMES = {
   admin: "Adham",
   "ln-obidat": "Leen Obeidat",
   ahmadph: "Ahmed Pharaon",
+  toleenkmedia: "Toleen Kurdi",
 };
 
 const ADMIN_PROFILE_PRESETS = {
