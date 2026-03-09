@@ -40,10 +40,19 @@ const getWaitlistStore = () => {
   }
 
   try {
-    return getStore(STORE_NAME, {
-      siteID: BLOBS_SITE_ID,
-      token: BLOBS_TOKEN,
-    });
+    // Support both SDK signatures across @netlify/blobs versions.
+    try {
+      return getStore({
+        name: STORE_NAME,
+        siteID: BLOBS_SITE_ID,
+        token: BLOBS_TOKEN,
+      });
+    } catch {
+      return getStore(STORE_NAME, {
+        siteID: BLOBS_SITE_ID,
+        token: BLOBS_TOKEN,
+      });
+    }
   } catch (error) {
     const message = String(error && error.message ? error.message : error);
     if (message.toLowerCase().includes("not been configured to use netlify blobs")) {
