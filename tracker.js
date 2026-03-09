@@ -1,5 +1,6 @@
 (function () {
   const VIEW_LOGS_KEY = "imperium_view_logs";
+  const ANALYTICS_API_URL = "/.netlify/functions/analytics";
   const GEO_CACHE_KEY = "imperium_geo_cache";
   const GEO_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
   const LAST_VIEW_KEY = "imperium_last_view";
@@ -176,9 +177,7 @@
     }
 
     const geo = await fetchGeo();
-    const logs = readLogs();
-
-    logs.unshift({
+    const entry = {
       timestamp: new Date().toISOString(),
       path,
       ip: geo.ip,
@@ -187,9 +186,30 @@
       flag: geo.flag,
       device: detectDevice(),
       userAgent: navigator.userAgent,
-    });
+    };
 
-    writeLogs(logs);
+    try {
+      const response = await fetch(ANALYTICS_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "track",
+          entry,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Remote analytics unavailable");
+      }
+    } catch {
+      // Keep local fallback so analytics still work when function is unavailable.
+      const logs = readLogs();
+      logs.unshift(entry);
+      writeLogs(logs);
+    }
+
     localStorage.setItem(LAST_VIEW_KEY, JSON.stringify({ path, timestamp: Date.now() }));
   };
 

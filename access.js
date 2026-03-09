@@ -50,10 +50,14 @@ const saveCookieConsent = (value) => {
 const hideCookieBanner = () => {
   if (cookieBanner) {
     cookieBanner.classList.add("is-closing");
+    cookieBanner.style.pointerEvents = "none";
+    cookieBanner.style.opacity = "0";
+    cookieBanner.setAttribute("aria-hidden", "true");
     setTimeout(() => {
       cookieBanner.hidden = true;
+      cookieBanner.style.display = "none";
       cookieBanner.classList.remove("is-closing");
-    }, 180);
+    }, 120);
   }
 };
 
@@ -64,6 +68,12 @@ const showCookieBannerIfNeeded = () => {
 
   const consent = readCookieConsent();
   cookieBanner.hidden = consent === "accepted" || consent === "rejected";
+  if (!cookieBanner.hidden) {
+    cookieBanner.style.display = "flex";
+    cookieBanner.style.pointerEvents = "auto";
+    cookieBanner.style.opacity = "1";
+    cookieBanner.removeAttribute("aria-hidden");
+  }
 };
 
 if (cookieAcceptBtn) {

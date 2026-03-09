@@ -39,6 +39,7 @@ let isSiteSettingsHandlerBound = false;
 let isUserAccessHandlerBound = false;
 const VISITS_PER_PAGE = 10;
 const PAGE_WINDOW = 9;
+const ANALYTICS_API_URL = "/.netlify/functions/analytics";
 let currentVisitPage = 1;
 const isAdmin = currentUser.role === "admin";
 const isMainAdmin = String(currentUser.username || "").trim().toLowerCase() === "admin";
@@ -102,6 +103,34 @@ const readViewLogs = () => {
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
+  }
+};
+
+const writeViewLogsLocal = (logs) => {
+  localStorage.setItem("imperium_view_logs", JSON.stringify((Array.isArray(logs) ? logs : []).slice(0, 2000)));
+};
+
+const fetchViewLogsRemote = async () => {
+  const response = await fetch(ANALYTICS_API_URL, { method: "GET", cache: "no-store" });
+  if (!response.ok) {
+    throw new Error("Failed to load remote analytics.");
+  }
+
+  const payload = await response.json();
+  if (!payload || !Array.isArray(payload.logs)) {
+    throw new Error("Invalid analytics payload.");
+  }
+
+  return payload.logs;
+};
+
+const getAnalyticsLogs = async () => {
+  try {
+    const remoteLogs = await fetchViewLogsRemote();
+    writeViewLogsLocal(remoteLogs);
+    return remoteLogs;
+  } catch {
+    return readViewLogs();
   }
 };
 
@@ -217,8 +246,8 @@ const renderVisitsPagination = (totalRows, totalPages) => {
   );
 };
 
-const renderAnalytics = () => {
-  const logs = readViewLogs();
+const renderAnalytics = async () => {
+  const logs = await getAnalyticsLogs();
   const ipSet = new Set(logs.map((item) => item.ip).filter((value) => !isUnknownValue(value)));
   const countrySet = new Set(logs.map((item) => item.country).filter((value) => !isUnknownValue(value)));
 
@@ -405,7 +434,7 @@ const renderAdminPanel = () => {
   }
 };
 
-renderAnalytics();
+  renderAnalytics();
 renderAdminPanel();
 
 let analyticsIntervalId = null;
