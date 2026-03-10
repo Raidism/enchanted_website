@@ -12,6 +12,11 @@ const fallbackSiteSettings = {
   maintenanceMessage: "Imperium MUN is temporarily under maintenance. Please check back soon.",
   launchDate: "2026-03-28T00:00:00+03:00",
   announcement: "",
+  applicationsOpen: false,
+  conferenceDate: "2026-05-15T09:00:00+03:00",
+  locationText: "Riyadh, Saudi Arabia",
+  conferenceDescription: "Imperium MUN is a student-led conference focused on collaboration, critical thinking, and impactful debate.",
+  countdownEnabled: true,
 };
 
 const getSiteSettings = () => {
@@ -34,6 +39,63 @@ const siteAnnouncement = document.getElementById("siteAnnouncement");
 if (siteAnnouncement && siteSettings.announcement) {
   siteAnnouncement.hidden = false;
   siteAnnouncement.textContent = siteSettings.announcement;
+}
+
+const conferenceDescription = document.getElementById("conferenceDescription");
+if (conferenceDescription && siteSettings.conferenceDescription) {
+  conferenceDescription.textContent = siteSettings.conferenceDescription;
+}
+
+const conferenceLocation = document.getElementById("conferenceLocation");
+if (conferenceLocation && siteSettings.locationText) {
+  conferenceLocation.textContent = `Location: ${siteSettings.locationText}`;
+}
+
+const launchHeading = document.getElementById("launchHeading");
+const launchHint = document.getElementById("launchHint");
+if (siteSettings.applicationsOpen && launchHeading) {
+  launchHeading.textContent = "Applications Are Live";
+}
+if (launchHint) {
+  const conferenceDate = new Date(String(siteSettings.conferenceDate || ""));
+  const conferenceDateText = Number.isNaN(conferenceDate.getTime())
+    ? ""
+    : ` Conference date: ${conferenceDate.toLocaleDateString()}.`;
+  launchHint.textContent = siteSettings.applicationsOpen
+    ? `Applications are currently open.${conferenceDateText}`
+    : `Launch target can be adjusted anytime by the organizing team.${conferenceDateText}`;
+}
+
+const SECRETARIAT_KEY = "imperium_secretariat";
+const readSecretariat = () => {
+  try {
+    const raw = localStorage.getItem(SECRETARIAT_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+const teamGrid = document.getElementById("teamGrid");
+const secretariatRows = readSecretariat();
+if (teamGrid && secretariatRows.length) {
+  teamGrid.innerHTML = "";
+  secretariatRows.forEach((member) => {
+    const card = document.createElement("article");
+    card.className = "team-card reveal pop-card";
+    card.innerHTML = `
+      <div class="team-photo-wrap">
+        <img src="${String(member.photo || "assets/imperium mun logo.jpg").replace(/"/g, "&quot;")}" alt="${String(member.name || "Secretariat member").replace(/"/g, "&quot;")}" class="team-photo" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/imperium mun logo.jpg';" />
+        <img src="assets/Secretariat frame.png" alt="" class="team-photo-frame" loading="lazy" decoding="async" aria-hidden="true" />
+      </div>
+      <h3>${String(member.name || "Unknown").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</h3>
+      <p class="muted">${String(member.title || "Role").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+      <p class="team-intro">${String(member.description || "").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+    `;
+    teamGrid.appendChild(card);
+  });
 }
 
 if (siteSettings.maintenanceMode) {
@@ -610,6 +672,22 @@ const updateCountdown = () => {
     return;
   }
 
+  if (siteSettings.applicationsOpen) {
+    countDays.textContent = "00";
+    countHours.textContent = "00";
+    countMinutes.textContent = "00";
+    countSeconds.textContent = "00";
+    return;
+  }
+
+  const countdownWrap = document.getElementById("countdown");
+  if (countdownWrap) {
+    countdownWrap.hidden = siteSettings.countdownEnabled === false;
+    if (siteSettings.countdownEnabled === false) {
+      return;
+    }
+  }
+
   const now = Date.now();
   const delta = Math.max(0, launchDate.getTime() - now);
 
@@ -705,6 +783,12 @@ refreshWaitlistCount();
 if (waitlistForm && waitlistMessage) {
   waitlistForm.addEventListener("submit", (event) => {
     event.preventDefault();
+
+    if (siteSettings.applicationsOpen) {
+      waitlistMessage.classList.remove("success");
+      waitlistMessage.textContent = "Applications are open now. Please use the applications page.";
+      return;
+    }
 
     const saveEntry = async () => {
       const formData = new FormData(waitlistForm);

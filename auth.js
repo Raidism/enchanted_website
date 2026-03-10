@@ -25,6 +25,11 @@
     maintenanceMessage: "Imperium MUN is temporarily under maintenance. Please check back soon.",
     launchDate: "2026-03-28T00:00:00+03:00",
     announcement: "",
+    applicationsOpen: false,
+    conferenceDate: "2026-05-15T09:00:00+03:00",
+    locationText: "Riyadh, Saudi Arabia",
+    conferenceDescription: "Imperium MUN is a student-led conference focused on collaboration, critical thinking, and impactful debate.",
+    countdownEnabled: true,
   };
 
   const readJson = (key, fallback) => {
@@ -384,6 +389,21 @@
 
     next.launchDate = String(next.launchDate || defaultSiteSettings.launchDate).trim();
     next.announcement = String(next.announcement || "").trim();
+    next.applicationsOpen = Boolean(next.applicationsOpen);
+    next.conferenceDate = String(next.conferenceDate || defaultSiteSettings.conferenceDate).trim();
+    next.locationText = String(next.locationText || defaultSiteSettings.locationText).trim();
+    next.conferenceDescription = String(
+      next.conferenceDescription || defaultSiteSettings.conferenceDescription
+    ).trim();
+    next.countdownEnabled = Boolean(next.countdownEnabled);
+
+    if (!next.locationText) {
+      next.locationText = defaultSiteSettings.locationText;
+    }
+
+    if (!next.conferenceDescription) {
+      next.conferenceDescription = defaultSiteSettings.conferenceDescription;
+    }
 
     writeJson(SITE_SETTINGS_KEY, next);
     return { success: true, message: "Site settings updated.", settings: next };

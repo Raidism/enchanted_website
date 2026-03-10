@@ -81,6 +81,8 @@ const ensureEntryShape = (entry) => {
     status,
     reviewedAt: entry.reviewedAt ? String(entry.reviewedAt) : "",
     reviewedBy: entry.reviewedBy ? String(entry.reviewedBy) : "",
+    notified: Boolean(entry.notified),
+    notifiedAt: entry.notifiedAt ? String(entry.notifiedAt) : "",
   };
 };
 
@@ -156,6 +158,46 @@ exports.handler = async (event) => {
 
       await writeEntries(entries);
       return json(200, { success: true, message: "Status updated.", entries, deletedEntries });
+    }
+
+    if (action === "setNotified") {
+      const id = String(payload.id || "").trim();
+      const notified = Boolean(payload.notified);
+      const reviewedBy = String(payload.reviewedBy || "").trim();
+      if (!id) {
+        return json(400, { success: false, message: "Entry id is required." });
+      }
+
+      const index = entries.findIndex((entry) => entry.id === id);
+      if (index === -1) {
+        return json(404, { success: false, message: "Entry not found." });
+      }
+
+      entries[index] = {
+        ...entries[index],
+        notified,
+        notifiedAt: notified ? new Date().toISOString() : "",
+        reviewedAt: new Date().toISOString(),
+        reviewedBy,
+      };
+
+      await writeEntries(entries);
+      return json(200, { success: true, message: "Notification status updated.", entries, deletedEntries });
+    }
+
+    if (action === "notifyAll") {
+      const reviewedBy = String(payload.reviewedBy || "").trim();
+      const now = new Date().toISOString();
+      const nextEntries = entries.map((entry) => ({
+        ...entry,
+        notified: true,
+        notifiedAt: now,
+        reviewedAt: now,
+        reviewedBy,
+      }));
+
+      await writeEntries(nextEntries);
+      return json(200, { success: true, message: "All entries marked as notified.", entries: nextEntries, deletedEntries });
     }
 
     if (action === "delete") {
@@ -251,6 +293,8 @@ exports.handler = async (event) => {
       status: "pending",
       reviewedAt: "",
       reviewedBy: "",
+      notified: false,
+      notifiedAt: "",
     });
 
     await writeEntries(entries);
