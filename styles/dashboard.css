@@ -33,6 +33,7 @@ body {
     radial-gradient(circle at 88% 8%, rgba(213, 180, 101, 0.15), transparent 36%),
     var(--bg);
   position: relative;
+  overflow-x: hidden;
 }
 
 body::before,
@@ -622,6 +623,7 @@ h2 {
   flex-wrap: wrap;
   gap: 0.4rem;
   align-items: center;
+  overflow-x: auto;
 }
 
 .page-btn {
@@ -1081,9 +1083,16 @@ tbody tr.row-leave {
   }
 
   .header-actions {
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.55rem;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+  }
+
+  .header-actions a,
+  .header-actions button {
+    flex: 0 0 auto;
   }
 
   .stats-grid,
@@ -1095,8 +1104,37 @@ tbody tr.row-leave {
 
 @media (max-width: 560px) {
   .dash-main {
-    width: min(1160px, 96vw);
-    padding-top: 1rem;
+    width: min(1160px, 97vw);
+    padding-top: 0.85rem;
+    padding-bottom: 2.2rem;
+  }
+
+  .header-inner {
+    padding: 0.75rem 0;
+    gap: 0.65rem;
+  }
+
+  .brand {
+    font-size: 0.95rem;
+  }
+
+  .dash-welcome-hero {
+    margin-bottom: 1rem;
+    padding: 1rem 0.9rem;
+    border-radius: 14px;
+  }
+
+  .dwh-welcome-line {
+    font-size: clamp(1.2rem, 6vw, 1.55rem);
+  }
+
+  .dwh-role {
+    margin-bottom: 0.7rem;
+    font-size: 0.8rem;
+  }
+
+  .dwh-brief-line {
+    font-size: 0.8rem;
   }
 
   .header-actions a,
@@ -1105,14 +1143,63 @@ tbody tr.row-leave {
     padding: 0.38rem 0.6rem;
   }
 
+  .section {
+    margin-bottom: 1.3rem;
+  }
+
+  .sub {
+    font-size: 0.85rem;
+    margin-bottom: 0.95rem;
+  }
+
+  .stat-card,
+  .table-card,
+  .app-card {
+    padding: 1rem 0.85rem;
+    border-radius: 14px;
+  }
+
+  .stat-card p {
+    font-size: 1.5rem;
+    margin-top: 0.45rem;
+  }
+
   table {
-    min-width: 520px;
+    min-width: 500px;
   }
 
   th,
   td {
     font-size: 0.82rem;
     padding: 0.45rem 0.3rem;
+  }
+
+  .lock-glass-inner {
+    max-width: 90%;
+    padding: 0.85rem 0.7rem;
+  }
+
+  .pagination {
+    flex-wrap: nowrap;
+    padding-bottom: 0.2rem;
+  }
+
+  .page-btn {
+    min-width: 1.9rem;
+    height: 1.9rem;
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .header-actions a,
+  .header-actions button {
+    font-size: 0.79rem;
+    padding: 0.34rem 0.54rem;
+  }
+
+  table {
+    min-width: 460px;
   }
 }
 
@@ -1186,6 +1273,34 @@ tbody tr.row-leave {
 .simple-list li:hover {
   background: rgba(77, 139, 99, 0.15);
   border-color: rgba(77, 139, 99, 0.38);
+}
+
+.simple-list-numbered {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
+
+.simple-list-numbered li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.9rem;
+}
+
+.history-main {
+  color: #e1efe6;
+  font-weight: 600;
+}
+
+.history-main small {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.history-meta {
+  color: var(--muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 /* ── Improved IT notes list ──────────────────────────────── */

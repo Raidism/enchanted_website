@@ -19,12 +19,17 @@ const BLOBS_TOKEN = String(
     || ""
 ).trim();
 
+const baseHeaders = {
+  "Content-Type": "application/json",
+  "Cache-Control": "no-store",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 const json = (statusCode, payload) => ({
   statusCode,
-  headers: {
-    "Content-Type": "application/json",
-    "Cache-Control": "no-store",
-  },
+  headers: baseHeaders,
   body: JSON.stringify(payload),
 });
 
@@ -119,6 +124,14 @@ const writeDeletedEntries = async (entries) => {
 
 exports.handler = async (event) => {
   try {
+    if (event.httpMethod === "OPTIONS") {
+      return {
+        statusCode: 204,
+        headers: baseHeaders,
+        body: "",
+      };
+    }
+
     if (event.httpMethod === "GET") {
       const entries = await readEntries();
       const deletedEntries = await readDeletedEntries();
@@ -129,7 +142,17 @@ exports.handler = async (event) => {
       return json(405, { success: false, message: "Method not allowed." });
     }
 
-    const payload = JSON.parse(event.body || "{}");
+    if (String(event.body || "").length > 18_000) {
+      return json(413, { success: false, message: "Payload too large." });
+    }
+
+    let payload = {};
+    try {
+      payload = JSON.parse(event.body || "{}");
+    } catch {
+      return json(400, { success: false, message: "Invalid JSON payload." });
+    }
+
     const action = String(payload.action || "create").trim();
 
     const entries = await readEntries();

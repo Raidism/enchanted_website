@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="contact-adham.css" />
+  <link rel="stylesheet" href="styles/contact-adham.css" />
 </head>
 <body>
   <header class="contact-header">
@@ -26,9 +26,10 @@
       <p class="contact-subtitle">If you want a professionally built website for your MUN, reach out directly and let us craft it beautifully for your organization.</p>
 
       <div class="contact-card" id="contactCard">
-        <div class="contact-photo-wrap" aria-hidden="true">
+        <div id="adhamBurstTarget" class="contact-photo-wrap" role="button" tabindex="0" aria-label="Activate fire ring effect">
           <img src="assets/adham pic.jpg" alt="Adham" class="contact-photo" loading="eager" decoding="async" />
           <img src="assets/Secretariat frame.png" alt="" class="contact-frame" loading="eager" decoding="async" />
+          <div id="adhamFireLayer" class="contact-fire-layer" aria-hidden="true"></div>
         </div>
 
         <div class="contact-lines">
@@ -57,6 +58,6 @@
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="contact-adham.js"></script>
+  <script src="scripts/contact-adham.js"></script>
 </body>
 </html>

@@ -4,7 +4,8 @@ if (yearSpan) {
 }
 
 const WAITLIST_KEY = "imperium_waitlist";
-const WAITLIST_API_URL = "/.netlify/functions/waitlist";
+const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+const WAITLIST_API_URL = `${API_BASE}/waitlist`;
 const newWaitlistId = () => `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const fallbackSiteSettings = {
@@ -57,10 +58,7 @@ if (siteSettings.applicationsOpen && launchHeading) {
   launchHeading.textContent = "Applications Are Live";
 }
 if (launchHint) {
-  const conferenceDate = new Date(String(siteSettings.conferenceDate || ""));
-  const conferenceDateText = Number.isNaN(conferenceDate.getTime())
-    ? ""
-    : ` Conference date: ${conferenceDate.toLocaleDateString()}.`;
+  const conferenceDateText = " Conference date redacted.";
   launchHint.textContent = siteSettings.applicationsOpen
     ? `Applications are currently open.${conferenceDateText}`
     : `Launch target can be adjusted anytime by the organizing team.${conferenceDateText}`;
@@ -613,7 +611,11 @@ if (creditLine) {
   let creditHits = 0;
   let creditTimer = null;
 
-  creditLine.addEventListener("click", () => {
+  creditLine.addEventListener("click", (event) => {
+    if (event.target && event.target.closest(".credit-link")) {
+      return;
+    }
+
     creditHits += 1;
 
     if (creditTimer) {
@@ -782,73 +784,145 @@ const refreshWaitlistCount = async () => {
 refreshWaitlistCount();
 
 const playWaitlistLaunchAnimation = (nameText) => new Promise((resolve) => {
+  if (typeof gsap === "undefined") {
+    resolve();
+    return;
+  }
+
   const overlay = document.createElement("div");
   overlay.className = "waitlist-launch-overlay";
   overlay.innerHTML = `
     <div class="waitlist-launch-scene">
       <div class="waitlist-launch-label">EARLY ACCESS RESERVED FOR ${String(nameText || "YOU").toUpperCase()}</div>
-      <div class="waitlist-rocket">🚀</div>
+      <div class="waitlist-ship">
+        <div class="waitlist-rocket">🚀</div>
+      </div>
       <div class="waitlist-flame"></div>
     </div>
   `;
   document.body.appendChild(overlay);
 
   const scene = overlay.querySelector(".waitlist-launch-scene");
+  const ship = overlay.querySelector(".waitlist-ship");
   const rocket = overlay.querySelector(".waitlist-rocket");
   const flame = overlay.querySelector(".waitlist-flame");
+  let smokeActive = false;
+  let flameTween = null;
 
-  const spawnSmoke = () => {
-    if (!scene) return;
-    const puff = document.createElement("span");
-    puff.className = "waitlist-smoke";
-    puff.style.left = `${48 + (Math.random() * 14 - 7)}%`;
-    scene.appendChild(puff);
-
-    if (typeof gsap !== "undefined") {
-      gsap.fromTo(
-        puff,
-        { y: 0, scale: 0.42, opacity: 0.72 },
-        {
-          y: 84 + Math.random() * 40,
-          x: (Math.random() - 0.5) * 28,
-          scale: 2 + Math.random() * 1.2,
-          opacity: 0,
-          duration: 0.9,
-          ease: "power1.out",
-          onComplete: () => puff.remove(),
-        }
-      );
-    } else {
-      setTimeout(() => puff.remove(), 900);
+  const getNozzlePoint = () => {
+    if (!scene || !rocket) {
+      return { x: 0, y: 0, shipRotation: 0 };
     }
+    const sceneRect = scene.getBoundingClientRect();
+    const rocketRect = rocket.getBoundingClientRect();
+    const shipRotation = Number(gsap.getProperty(ship, "rotation")) || 0;
+    return {
+      x: (rocketRect.left - sceneRect.left) + rocketRect.width * 0.2,
+      y: (rocketRect.top - sceneRect.top) + rocketRect.height * 0.62,
+      shipRotation,
+    };
   };
 
-  if (typeof gsap === "undefined") {
-    overlay.style.opacity = "1";
-    setTimeout(() => {
-      overlay.remove();
-      resolve();
-    }, 1050);
-    return;
-  }
+  const updateExhaustAnchor = () => {
+    if (!flame) {
+      return;
+    }
+    const nozzle = getNozzlePoint();
+    gsap.set(flame, {
+      x: nozzle.x,
+      y: nozzle.y,
+      xPercent: -100,
+      yPercent: -50,
+      rotation: nozzle.shipRotation,
+      transformOrigin: "100% 50%",
+    });
+  };
+
+  const spawnSmoke = () => {
+    if (!scene || !rocket || !ship) {
+      return;
+    }
+
+    const nozzle = getNozzlePoint();
+    const angle = (nozzle.shipRotation * Math.PI) / 180;
+    const backX = -Math.cos(angle);
+    const backY = -Math.sin(angle);
+    const perpX = -backY;
+    const perpY = backX;
+
+    const puff = document.createElement("span");
+    puff.className = "waitlist-smoke";
+    puff.style.left = `${nozzle.x}px`;
+    puff.style.top = `${nozzle.y}px`;
+    scene.appendChild(puff);
+
+    const trailDistance = 30 + Math.random() * 56;
+    const sidewaysJitter = (Math.random() - 0.5) * 20;
+    gsap.fromTo(
+      puff,
+      { x: 0, y: 0, scale: 0.34, opacity: 0.78 },
+      {
+        x: backX * trailDistance + perpX * sidewaysJitter,
+        y: backY * trailDistance + perpY * sidewaysJitter,
+        scale: 1.55 + Math.random() * 0.85,
+        opacity: 0,
+        duration: 0.72,
+        ease: "power2.out",
+        onComplete: () => puff.remove(),
+      }
+    );
+  };
+
+  const emitSmoke = () => {
+    if (!smokeActive) {
+      return;
+    }
+    spawnSmoke();
+    gsap.delayedCall(0.05 + Math.random() * 0.05, emitSmoke);
+  };
+
+  const sceneWidth = scene ? scene.clientWidth : 520;
+  const sceneHeight = scene ? scene.clientHeight : 420;
+  const travelX = Math.max(190, sceneWidth * 0.46);
+  const travelY = -Math.max(230, sceneHeight * 0.64);
 
   const tl = gsap.timeline({
     onComplete: () => {
+      smokeActive = false;
+      if (flameTween) {
+        flameTween.kill();
+      }
       overlay.remove();
       resolve();
     },
   });
 
+  updateExhaustAnchor();
+
   tl.to(overlay, { opacity: 1, duration: 0.2, ease: "power1.out" })
-    .fromTo(rocket, { y: 8, scale: 0.92 }, { y: 0, scale: 1, duration: 0.24, ease: "back.out(1.8)" }, "<")
-    .to(flame, { scaleY: 1.28, transformOrigin: "50% 0%", duration: 0.18, yoyo: true, repeat: 2, ease: "power1.inOut" }, "<")
+    .fromTo(ship, { x: -36, y: 18, rotate: -8, scale: 0.9, opacity: 0 }, { x: 0, y: 0, rotate: -2, scale: 1, opacity: 1, duration: 0.34, ease: "back.out(1.4)" }, "<")
+    .to(flame, { opacity: 1, duration: 0.1, ease: "power1.out" }, "<")
     .add(() => {
-      for (let i = 0; i < 9; i += 1) {
-        setTimeout(spawnSmoke, i * 40);
+      smokeActive = true;
+      flameTween = gsap.to(flame, {
+        scaleX: 1.32,
+        scaleY: 0.84,
+        duration: 0.1,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut",
+        transformOrigin: "100% 50%",
+      });
+      emitSmoke();
+    }, "<")
+    .to(ship, { x: travelX, y: travelY, rotate: 7, scale: 1.06, duration: 0.84, ease: "power3.in", onUpdate: updateExhaustAnchor }, ">")
+    .add(() => {
+      smokeActive = false;
+      if (flameTween) {
+        flameTween.kill();
       }
     }, "<")
-    .to(rocket, { y: -230, scale: 1.08, duration: 0.75, ease: "power3.in" }, ">")
-    .to(flame, { y: -224, opacity: 0, duration: 0.62, ease: "power2.in" }, "<")
+    .to(flame, { scaleY: 0.2, opacity: 0, duration: 0.2, ease: "power1.in" }, "<")
     .to(overlay, { opacity: 0, duration: 0.28, ease: "power2.out" }, "-=0.16");
 });
 
@@ -946,6 +1020,68 @@ if (waitlistForm && waitlistMessage) {
 
 const shareBtn = document.getElementById("shareBtn");
 const shareMessage = document.getElementById("shareMessage");
+const contactEmailLink = document.querySelector("#contact .email-link");
+const contactCopyMessage = document.getElementById("contactCopyMessage");
+
+if (contactEmailLink) {
+  let contactCopyTimer = null;
+
+  const setContactCopyMessage = (text, isSuccess = true) => {
+    if (!contactCopyMessage) {
+      return;
+    }
+
+    contactCopyMessage.textContent = text;
+    contactCopyMessage.classList.toggle("contact-copy-message--error", !isSuccess);
+
+    if (contactCopyTimer) {
+      clearTimeout(contactCopyTimer);
+    }
+
+    contactCopyTimer = setTimeout(() => {
+      contactCopyMessage.textContent = "";
+      contactCopyMessage.classList.remove("contact-copy-message--error");
+    }, 1800);
+  };
+
+  const copyContactEmail = async (emailAddress) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(emailAddress);
+      return;
+    }
+
+    const helper = document.createElement("textarea");
+    helper.value = emailAddress;
+    helper.setAttribute("readonly", "");
+    helper.style.position = "fixed";
+    helper.style.opacity = "0";
+    helper.style.left = "-9999px";
+    document.body.appendChild(helper);
+    helper.select();
+    const copied = document.execCommand("copy");
+    helper.remove();
+
+    if (!copied) {
+      throw new Error("Copy command failed");
+    }
+  };
+
+  contactEmailLink.addEventListener("click", async (event) => {
+    event.preventDefault();
+    const emailAddress = (contactEmailLink.textContent || "").trim();
+
+    if (!emailAddress) {
+      return;
+    }
+
+    try {
+      await copyContactEmail(emailAddress);
+      setContactCopyMessage("Email copied.");
+    } catch {
+      setContactCopyMessage("Could not copy automatically.", false);
+    }
+  });
+}
 
 if (shareBtn && shareMessage) {
   shareBtn.addEventListener("click", async () => {
@@ -970,354 +1106,7 @@ if (shareBtn && shareMessage) {
   });
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  GSAP PREMIUM ANIMATIONS — Apple / Stripe Style
-// ═══════════════════════════════════════════════════════════════
-(function initGSAPAnimations() {
-  if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") {
-    // Fallback: reveal all items immediately so nothing stays hidden.
-    document.querySelectorAll(".reveal").forEach((el) => el.classList.add("show"));
-    return;
-  }
-
-  if (prefersReducedMotion) {
-    document.querySelectorAll(".reveal").forEach((el) => el.classList.add("show"));
-    return;
-  }
-
-  gsap.registerPlugin(ScrollTrigger);
-  document.body.classList.add("gsap-enhanced");
-
-  // ── Scroll Progress Bar ────────────────────────────────────────
-  const scrollProgressEl = document.getElementById("scrollProgress");
-  if (scrollProgressEl) {
-    ScrollTrigger.create({
-      start: "top top",
-      end: "bottom bottom",
-      onUpdate: (self) => {
-        scrollProgressEl.style.width = `${self.progress * 100}%`;
-      },
-    });
-  }
-
-  // ── Header scroll state ────────────────────────────────────────
-  const siteHeader = document.querySelector(".site-header");
-  if (siteHeader) {
-    ScrollTrigger.create({
-      start: "60px top",
-      onEnter: () => siteHeader.classList.add("scrolled"),
-      onLeaveBack: () => siteHeader.classList.remove("scrolled"),
-    });
-  }
-
-  // ── Make section containers instantly visible ──────────────────
-  // GSAP animates children individually — the wrappers should not stay hidden.
-  document.querySelectorAll(".section.reveal, .reveal:not(.pop-card)").forEach((el) => {
-    el.style.transition = "none";
-    el.style.opacity = "1";
-    el.style.transform = "none";
-    el.classList.add("show");
-    // Re-enable transitions on next frame.
-    requestAnimationFrame(() => { el.style.transition = ""; });
-  });
-
-  // ── Hero entrance timeline ─────────────────────────────────────
-  if (!isTouchDevice) {
-    const heroLogoEl   = document.querySelector(".hero-logo-card");
-    const eyebrowEl    = document.querySelector(".eyebrow");
-    const heroH1El     = document.querySelector(".hero-content h1");
-    const heroTextEl   = document.querySelector(".hero-text");
-    const announcementEl = document.getElementById("siteAnnouncement");
-    const heroBadgesEl = document.querySelector(".hero-badges");
-    const heroCtaRowEl = document.querySelector(".hero-cta-row");
-
-    const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-    if (heroLogoEl)   heroTl.from(heroLogoEl,   { opacity: 0, scale: 0.85, y: 44, duration: 1.15, ease: "power4.out" }, 0);
-    if (eyebrowEl)    heroTl.from(eyebrowEl,    { opacity: 0, y: 24, letterSpacing: "0.18em", duration: 0.78 }, 0.3);
-    if (heroH1El)     heroTl.from(heroH1El,     { opacity: 0, y: 34, duration: 0.88 }, 0.46);
-    if (heroTextEl)   heroTl.from(heroTextEl,   { opacity: 0, y: 22, duration: 0.76 }, 0.62);
-    if (announcementEl && !announcementEl.hidden)
-                      heroTl.from(announcementEl, { opacity: 0, y: 18, duration: 0.62 }, 0.68);
-    if (heroBadgesEl) heroTl.from(Array.from(heroBadgesEl.children), { opacity: 0, y: 20, stagger: 0.1, duration: 0.56 }, 0.8);
-    if (heroCtaRowEl) heroTl.from(Array.from(heroCtaRowEl.children), { opacity: 0, y: 22, stagger: 0.13, duration: 0.64 }, 0.94);
-  }
-
-  // ── Set hidden state for pop-cards (GSAP reveals them) ─────────
-  if (!isTouchDevice) {
-    document.querySelectorAll(".pop-card.reveal").forEach((el) => {
-      el.style.transition = "none";
-      gsap.set(el, { opacity: 0, y: 42, scale: 0.92 });
-    });
-  }
-
-  // ── ScrollTrigger.batch: staggered card grids ──────────────────
-  if (!isTouchDevice) {
-    const batchSelectors = [
-      ".value-card.reveal.pop-card",
-      ".team-card.reveal.pop-card",
-      ".stat-card.reveal.pop-card",
-      ".launch-card.reveal.pop-card",
-      ".faq-card.reveal.pop-card",
-    ];
-
-    batchSelectors.forEach((sel) => {
-      const els = document.querySelectorAll(sel);
-      if (!els.length) return;
-
-      ScrollTrigger.batch(els, {
-        start: "top 86%",
-        once: true,
-        interval: 0.06,
-        batchMax: 6,
-        onEnter: (batch) => {
-          gsap.to(batch, {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            stagger: 0.1,
-            duration: 0.78,
-            ease: "expo.out",
-            onComplete() {
-              // Hand off cleanly to CSS — add .show, then wipe all inline GSAP styles
-              this.targets().forEach((t) => {
-                t.classList.add("show");
-                gsap.set(t, { clearProps: "all" });
-              });
-            },
-          });
-        },
-      });
-    });
-
-    // Roadmap card + share panel (single items)
-    [".roadmap-card.reveal.pop-card", ".share-panel.reveal.pop-card"].forEach((sel) => {
-      const el = document.querySelector(sel);
-      if (!el) return;
-      gsap.to(el, {
-        scrollTrigger: { trigger: el, start: "top 84%", once: true },
-        opacity: 1, y: 0, scale: 1, duration: 0.88, ease: "expo.out",
-        onComplete() {
-          el.classList.add("show");
-          gsap.set(el, { clearProps: "all" });
-        },
-      });
-    });
-  }
-
-  // ── Roadmap items — slide from left ───────────────────────────
-  const roadItems = document.querySelectorAll(".road-item");
-  if (roadItems.length) {
-    gsap.from(roadItems, {
-      scrollTrigger: { trigger: ".roadmap-card", start: "top 80%", once: true },
-      opacity: 0, x: -28, stagger: 0.12, duration: 0.7, ease: "power2.out",
-    });
-  }
-
-  // ── Countdown numbers — bounce in ─────────────────────────────
-  const countItemEls = document.querySelectorAll(".count-item");
-  if (countItemEls.length) {
-    gsap.from(countItemEls, {
-      scrollTrigger: { trigger: ".countdown", start: "top 88%", once: true },
-      opacity: 0, y: 28, scale: 0.88, stagger: 0.1, duration: 0.78,
-      ease: "expo.out",
-    });
-  }
-
-  // ── Section h2 headings — slide up ────────────────────────────
-  document.querySelectorAll(".section h2").forEach((h2) => {
-    gsap.from(h2, {
-      scrollTrigger: { trigger: h2, start: "top 88%", once: true },
-      opacity: 0, y: 32, duration: 0.88, ease: "power3.out",
-    });
-  });
-
-  // ── Section intro paragraphs ───────────────────────────────────
-  document.querySelectorAll(".section > p, .section > .container > p").forEach((p) => {
-    gsap.from(p, {
-      scrollTrigger: { trigger: p, start: "top 90%", once: true },
-      opacity: 0, y: 20, duration: 0.72, ease: "power2.out",
-    });
-  });
-
-  // ── Parallax: hero logo card ───────────────────────────────────
-  const heroLogoParallax = document.querySelector(".hero-logo-card");
-  if (heroLogoParallax && !isTouchDevice) {
-    gsap.to(heroLogoParallax, {
-      yPercent: -22,
-      ease: "none",
-      scrollTrigger: {
-        trigger: ".hero",
-        start: "top top",
-        end: "bottom top",
-        scrub: 1.8,
-      },
-    });
-  }
-
-  // ── Parallax: background watermark ────────────────────────────
-  const bgWatermark = document.querySelector(".bg-alt-logo img");
-  if (bgWatermark && !isTouchDevice) {
-    gsap.to(bgWatermark, {
-      yPercent: 14,
-      ease: "none",
-      scrollTrigger: {
-        start: "top top",
-        end: "bottom top",
-        scrub: 2.5,
-      },
-    });
-  }
-
-  // ── 3D Tilt: cards on mousemove ────────────────────────────────
-  if (!isTouchDevice) {
-    document.querySelectorAll(".team-card, .stat-card, .launch-card, .value-card").forEach((card) => {
-      card.addEventListener("mousemove", (e) => {
-        const rect = card.getBoundingClientRect();
-        const px = (e.clientX - rect.left) / rect.width - 0.5;
-        const py = (e.clientY - rect.top) / rect.height - 0.5;
-        gsap.to(card, {
-          rotateY: px * 9,
-          rotateX: -py * 7,
-          y: -7,
-          transformPerspective: 860,
-          duration: 0.4,
-          ease: "power2.out",
-          overwrite: "auto",
-        });
-      });
-      card.addEventListener("mouseleave", () => {
-        gsap.to(card, {
-          rotateY: 0,
-          rotateX: 0,
-          y: 0,
-          duration: 0.65,
-          ease: "elastic.out(1, 0.55)",
-          overwrite: "auto",
-        });
-      });
-    });
-  }
-
-  // ── Magnetic: CTA buttons ──────────────────────────────────────
-  if (!isTouchDevice) {
-    document.querySelectorAll(".cta, .share-btn, .waitlist-form button").forEach((btn) => {
-      btn.addEventListener("mousemove", (e) => {
-        const rect = btn.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width / 2) * 0.12;
-        const y = (e.clientY - rect.top - rect.height / 2) * 0.12;
-        gsap.to(btn, { x, y, duration: 0.52, ease: "power2.out", overwrite: "auto" });
-      });
-      btn.addEventListener("mouseleave", () => {
-        gsap.to(btn, { x: 0, y: 0, duration: 0.8, ease: "power3.out", overwrite: "auto" });
-      });
-    });
-  }
-
-  // ── Active nav section highlight ───────────────────────────────
-  const navAnchors = Array.from(document.querySelectorAll(".nav-links a[href^='#']"));
-  const navSections = navAnchors.map((a) => {
-    const id = (a.getAttribute("href") || "").slice(1);
-    return document.getElementById(id);
-  }).filter(Boolean);
-
-  navSections.forEach((section, i) => {
-    ScrollTrigger.create({
-      trigger: section,
-      start: "top center",
-      end: "bottom center",
-      onEnter: () => {
-        navAnchors.forEach((a) => a.classList.remove("active-section"));
-        if (navAnchors[i]) navAnchors[i].classList.add("active-section");
-      },
-      onEnterBack: () => {
-        navAnchors.forEach((a) => a.classList.remove("active-section"));
-        if (navAnchors[i]) navAnchors[i].classList.add("active-section");
-      },
-    });
-  });
-
-  // ── Page transition: smooth fade-in on arrive + fade-out on leave ──
-  // Fade in when the page loads (handles back-navigation too)
-  gsap.set(document.body, { opacity: 0 });
-  gsap.to(document.body, { opacity: 1, duration: 0.45, ease: "power2.out", delay: 0.05, clearProps: "opacity" });
-
-  document.querySelectorAll("a[href]").forEach((link) => {
-    const href = link.getAttribute("href") || "";
-    if (
-      href.startsWith("#") ||
-      href.startsWith("http") ||
-      href.startsWith("//") ||
-      href.startsWith("mailto") ||
-      href.startsWith("tel") ||
-      href === ""
-    ) return;
-
-    link.addEventListener("click", (e) => {
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      e.preventDefault();
-      // Kill all ScrollTrigger scroll-listeners and any in-flight tweens so
-      // they don't fight the fade and cause stutter
-      ScrollTrigger.getAll().forEach((st) => st.disable(false));
-      gsap.killTweensOf(document.body);
-      gsap.to(document.body, {
-        opacity: 0,
-        duration: 0.35,
-        ease: "power2.inOut",
-        overwrite: true,
-        onComplete: () => { window.location.href = href; },
-      });
-    });
-  });
-
-  // ── Refresh ScrollTrigger after fonts load ─────────────────────
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => ScrollTrigger.refresh());
-  }
-
-// ── FAQ flip cards ────────────────────────────────────────────
-(function initFaqCards() {
-  const cards = [...document.querySelectorAll('.faq-card')];
-  if (!cards.length) return;
-
-  let current = null;
-
-  function flip(card) {
-    if (current && current !== card) {
-      current.classList.remove('flipped');
-      current.setAttribute('aria-pressed', 'false');
-    }
-    card.classList.add('flipped');
-    card.setAttribute('aria-pressed', 'true');
-    current = card;
-  }
-
-  function unflip(card) {
-    card.classList.remove('flipped');
-    card.setAttribute('aria-pressed', 'false');
-    if (current === card) current = null;
-  }
-
-  cards.forEach((card) => {
-    card.addEventListener('click', () => {
-      card.classList.contains('flipped') ? unflip(card) : flip(card);
-    });
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        card.classList.contains('flipped') ? unflip(card) : flip(card);
-      }
-    });
-
-    // Flip back automatically when card scrolls out of view
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (!entry.isIntersecting) unflip(card); },
-      { threshold: 0 }
-    );
-    obs.observe(card);
-  });
-}());
-}());
+// GSAP and ScrollTrigger animations are centralized in animations.js.
 //  Tic Tac Toe (unbeatable minimax AI) 
 function initTicTacToe() {
   const board    = document.getElementById("tttBoard");

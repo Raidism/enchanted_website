@@ -17,14 +17,42 @@ const BLOBS_TOKEN = String(
     || ""
 ).trim();
 
+const baseHeaders = {
+  "Content-Type": "application/json",
+  "Cache-Control": "no-store",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 const json = (statusCode, payload) => ({
   statusCode,
-  headers: {
-    "Content-Type": "application/json",
-    "Cache-Control": "no-store",
-  },
+  headers: baseHeaders,
   body: JSON.stringify(payload),
 });
+
+const getClientIpFromHeaders = (headers = {}) => {
+  const lower = Object.create(null);
+  Object.keys(headers || {}).forEach((key) => {
+    lower[String(key).toLowerCase()] = headers[key];
+  });
+
+  const candidates = [
+    lower["cf-connecting-ip"],
+    lower["x-nf-client-connection-ip"],
+    lower["x-forwarded-for"],
+    lower["client-ip"],
+  ];
+
+  for (const value of candidates) {
+    const first = String(value || "").split(",")[0].trim();
+    if (first) {
+      return first;
+    }
+  }
+
+  return "Unknown";
+};
 
 const getAnalyticsStore = () => {
   if (!BLOBS_SITE_ID || !BLOBS_TOKEN) {
@@ -83,6 +111,14 @@ const writeLogs = async (rows) => {
 
 exports.handler = async (event) => {
   try {
+    if (event.httpMethod === "OPTIONS") {
+      return {
+        statusCode: 204,
+        headers: baseHeaders,
+        body: "",
+      };
+    }
+
     if (event.httpMethod === "GET") {
       const logs = await readLogs();
       return json(200, { success: true, logs });
@@ -92,14 +128,27 @@ exports.handler = async (event) => {
       return json(405, { success: false, message: "Method not allowed." });
     }
 
-    const payload = JSON.parse(event.body || "{}");
+    if (String(event.body || "").length > 12_000) {
+      return json(413, { success: false, message: "Payload too large." });
+    }
+
+    let payload = {};
+    try {
+      payload = JSON.parse(event.body || "{}");
+    } catch {
+      return json(400, { success: false, message: "Invalid JSON payload." });
+    }
+
     const action = String(payload.action || "track").trim();
 
     if (action !== "track") {
       return json(400, { success: false, message: "Unsupported action." });
     }
 
-    const entry = ensureLogShape(payload.entry || {});
+    const entry = ensureLogShape({
+      ...(payload.entry || {}),
+      ip: getClientIpFromHeaders(event.headers || {}),
+    });
     const logs = await readLogs();
     logs.unshift(entry);
     await writeLogs(logs);

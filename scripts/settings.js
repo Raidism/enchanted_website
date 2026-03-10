@@ -16,7 +16,11 @@ const logoutBtn = document.getElementById("logoutBtn");
 const usersBody = document.getElementById("settingsUsersBody");
 const usersMessage = document.getElementById("settingsUsersMessage");
 const onlineList = document.getElementById("settingsOnlineList");
-const historyBody = document.getElementById("settingsHistoryBody");
+const historyList = document.getElementById("settingsHistoryList");
+const historyPagination = document.getElementById("settingsHistoryPagination");
+const HISTORY_PER_PAGE = 10;
+const PAGE_WINDOW = 9;
+let currentHistoryPage = 1;
 
 const pmhPhoto = document.getElementById("pmhPhoto");
 const pmhName = document.getElementById("pmhName");
@@ -174,19 +178,71 @@ const renderOnline = () => {
 };
 
 const renderHistory = () => {
-  if (!historyBody) return;
+  if (!historyList) return;
   const rows = window.ImperiumAuth.getLoginHistory();
-  historyBody.innerHTML = "";
+  historyList.innerHTML = "";
 
-  rows.slice(0, 120).forEach((row) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${formatDateTime(row.loginAt)}</td>
-      <td>${String(row.username || "")}</td>
-      <td>${String(row.role || "")}</td>
+  const boundedRows = rows.slice(0, 120);
+  const totalPages = Math.max(1, Math.ceil(boundedRows.length / HISTORY_PER_PAGE));
+  currentHistoryPage = Math.min(currentHistoryPage, totalPages);
+
+  const startIndex = (currentHistoryPage - 1) * HISTORY_PER_PAGE;
+  const endIndex = startIndex + HISTORY_PER_PAGE;
+  const slice = boundedRows.slice(startIndex, endIndex);
+
+  if (!boundedRows.length) {
+    const li = document.createElement("li");
+    li.textContent = "No login history yet.";
+    historyList.appendChild(li);
+    if (historyPagination) {
+      historyPagination.innerHTML = "";
+    }
+    return;
+  }
+
+  slice.forEach((row) => {
+    const li = document.createElement("li");
+    li.className = "history-item";
+    li.innerHTML = `
+      <span class="history-main">${String(row.username || "Unknown")} <small>(${String(row.role || "member")})</small></span>
+      <span class="history-meta">${formatDateTime(row.loginAt)}</span>
     `;
-    historyBody.appendChild(tr);
+    historyList.appendChild(li);
   });
+
+  if (!historyPagination) {
+    return;
+  }
+
+  historyPagination.innerHTML = "";
+  if (boundedRows.length <= HISTORY_PER_PAGE) {
+    return;
+  }
+
+  const makeBtn = (label, page, disabled = false, active = false) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = label;
+    btn.disabled = disabled;
+    if (active) {
+      btn.classList.add("active-page");
+    }
+    btn.addEventListener("click", () => {
+      if (page === currentHistoryPage) return;
+      currentHistoryPage = page;
+      renderHistory();
+    });
+    return btn;
+  };
+
+  const windowStart = Math.floor((currentHistoryPage - 1) / PAGE_WINDOW) * PAGE_WINDOW + 1;
+  const windowEnd = Math.min(windowStart + PAGE_WINDOW - 1, totalPages);
+
+  historyPagination.appendChild(makeBtn("Prev", Math.max(1, currentHistoryPage - 1), currentHistoryPage <= 1));
+  for (let page = windowStart; page <= windowEnd; page += 1) {
+    historyPagination.appendChild(makeBtn(String(page), page, false, page === currentHistoryPage));
+  }
+  historyPagination.appendChild(makeBtn("Next", Math.min(totalPages, currentHistoryPage + 1), currentHistoryPage >= totalPages));
 };
 
 renderUsers();

@@ -26,7 +26,8 @@ const waitlistTrendEmpty = document.getElementById("waitlistTrendEmpty");
 
 const WAITLIST_KEY = "imperium_waitlist";
 const WAITLIST_DELETED_KEY = "imperium_waitlist_deleted";
-const WAITLIST_API_URL = "/.netlify/functions/waitlist";
+const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+const WAITLIST_API_URL = `${API_BASE}/waitlist`;
 const STATUS_LABELS = {
   pending: "Pending ⏳",
   green: "Green Light ✅",
@@ -36,11 +37,14 @@ const STATUS_LABELS = {
 
 const isAdmin = currentUser.role === "admin";
 const _profileKey = String(currentUser.username || "").trim().toLowerCase();
+const hasDaModerationAccess = _profileKey === "omaralhomran";
+const canModerateWaitlist = isAdmin || hasDaModerationAccess;
 const _ROLE_LABELS = {
   admin:          "Head of IT",
   "ln-obidat":    "Under Secretary General",
   ahmadph:        "Secretary General",
   toleenkmedia:   "Head of Media",
+  omaralhomran:   "Head of DA",
 };
 const _displayName = currentUser.name || currentUser.username;
 const _roleLabel = _ROLE_LABELS[_profileKey] || (isAdmin ? "Admin" : "Member");
@@ -53,7 +57,7 @@ if (_pmhPhoto && currentUser.photo) { _pmhPhoto.src = currentUser.photo; _pmhPho
 if (_pmhName)  _pmhName.textContent  = _displayName;
 if (_pmhRole)  _pmhRole.textContent  = _roleLabel;
 
-if (!isAdmin && accessNotice) {
+if (!canModerateWaitlist && accessNotice) {
   accessNotice.textContent = "Protected view: personal details are masked and actions are read-only for member accounts.";
 }
 
@@ -366,9 +370,9 @@ const renderWaitlist = async () => {
       const row = document.createElement("tr");
       row.setAttribute("data-entry-id", String(entry.id || ""));
 
-      const name = isAdmin ? (entry.name || "Unknown") : maskValue(entry.name);
-      const email = isAdmin ? (entry.email || "Unknown") : maskValue(entry.email);
-      const school = isAdmin ? (entry.school || "Unknown") : maskValue(entry.school);
+      const name = canModerateWaitlist ? (entry.name || "Unknown") : maskValue(entry.name);
+      const email = canModerateWaitlist ? (entry.email || "Unknown") : maskValue(entry.email);
+      const school = canModerateWaitlist ? (entry.school || "Unknown") : maskValue(entry.school);
 
       const statusKey = String(entry.status || "pending");
 
@@ -380,7 +384,7 @@ const renderWaitlist = async () => {
         <td>${formatRole(entry.role)}</td>
         <td><span class="status-pill ${statusKey}">${STATUS_LABELS[statusKey] || STATUS_LABELS.pending}</span></td>
         <td>
-          ${isAdmin
+            ${canModerateWaitlist
       ? `<div class="entry-actions">
             <button class="action-emoji-btn" type="button" data-action="green" data-id="${entry.id}" title="Green Light">✅</button>
             <button class="action-emoji-btn" type="button" data-action="red" data-id="${entry.id}" title="Red Light">❌</button>
@@ -428,9 +432,9 @@ const renderWaitlist = async () => {
     const row = document.createElement("tr");
     row.setAttribute("data-deleted-id", String(entry.id || ""));
 
-    const name = isAdmin ? (entry.name || "Unknown") : maskValue(entry.name);
-    const email = isAdmin ? (entry.email || "Unknown") : maskValue(entry.email);
-    const school = isAdmin ? (entry.school || "Unknown") : maskValue(entry.school);
+    const name = canModerateWaitlist ? (entry.name || "Unknown") : maskValue(entry.name);
+    const email = canModerateWaitlist ? (entry.email || "Unknown") : maskValue(entry.email);
+    const school = canModerateWaitlist ? (entry.school || "Unknown") : maskValue(entry.school);
 
     row.innerHTML = `
       <td>${formatDateTime(entry.deletedAt)}</td>
@@ -448,7 +452,7 @@ const renderWaitlist = async () => {
 };
 
 waitlistTableBody.addEventListener("click", async (event) => {
-  if (!isAdmin) {
+  if (!canModerateWaitlist) {
     return;
   }
 
@@ -521,7 +525,7 @@ waitlistTableBody.addEventListener("click", async (event) => {
 
 if (deletedWaitlistBody) {
   deletedWaitlistBody.addEventListener("click", async (event) => {
-    if (!isAdmin) {
+    if (!canModerateWaitlist) {
       return;
     }
 

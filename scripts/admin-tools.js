@@ -67,7 +67,8 @@
   }
 
   const WAITLIST_KEY = "imperium_waitlist";
-  const WAITLIST_API_URL = "/.netlify/functions/waitlist";
+  const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+  const WAITLIST_API_URL = `${API_BASE}/waitlist`;
   const ANNOUNCEMENTS_KEY = "imperium_announcements";
   const SECRETARIAT_KEY = "imperium_secretariat";
   const ACTIVITY_KEY = "imperium_admin_activity";
@@ -522,7 +523,7 @@
     },
     {
       id: "dsg",
-      name: "Fahad Albulailid",
+      name: "Fahad Albulaihid",
       title: "Deputy Secretary-General (DSG)",
       description: "Supports operations and committee coordination.",
       photo: "assets/deputy secretary general.png",
