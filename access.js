@@ -258,6 +258,21 @@ if (adhamBurstTarget && adhamFireLayer) {
 renderLockoutState();
 setInterval(renderLockoutState, 1000);
 
+// Fade body in on page load
+document.body.style.opacity = "0";
+window.addEventListener("DOMContentLoaded", () => {
+  requestAnimationFrame(() => {
+    document.body.style.transition = "opacity 0.38s ease";
+    document.body.style.opacity = "1";
+  });
+});
+if (document.readyState !== "loading") {
+  requestAnimationFrame(() => {
+    document.body.style.transition = "opacity 0.38s ease";
+    document.body.style.opacity = "1";
+  });
+}
+
 const showPassword = () => {
   passwordInput.type = "text";
 };
@@ -320,9 +335,20 @@ const redirectAfterLogin = (user) => {
     return;
   }
 
-  setTimeout(() => {
-    window.location.href = "dashboard.html";
-  }, 500);
+  const fadeThen = (url, delay) => {
+    if (typeof gsap !== "undefined") {
+      setTimeout(() => {
+        gsap.to(document.body, {
+          opacity: 0, duration: 0.32, ease: "power2.in",
+          onComplete: () => { window.location.href = url; },
+        });
+      }, delay);
+    } else {
+      setTimeout(() => { window.location.href = url; }, delay + 200);
+    }
+  };
+
+  fadeThen("dashboard.html", 480);
 };
 
 if (holdToViewBtn && passwordInput) {
@@ -347,6 +373,68 @@ if (passwordInput) {
     setCapsIndicator(false);
   });
 }
+
+// ═══════════════════════════════════════════════════════════════
+//  GSAP PREMIUM ENTRANCE ANIMATIONS
+// ═══════════════════════════════════════════════════════════════
+(function initAccessGSAP() {
+  if (typeof gsap === "undefined") return;
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const isTouch = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+
+  // ── Entrance timeline
+  if (!prefersReduced) {
+    const header    = document.querySelector(".portal-header");
+    const card      = document.querySelector(".access-card");
+    const sidebar   = document.querySelector(".adham-side");
+    const logoWrap  = document.querySelector(".portal-logo-wrap");
+    const h1El      = document.querySelector(".access-card h1");
+    const subtitleEl = document.querySelector(".access-card .subtitle");
+    const formRows  = document.querySelectorAll(".login-form label, .login-form input, .login-form .password-wrap, .login-form .login-message, .login-form button");
+    const roleBadges = document.querySelectorAll(".access-role-badge");
+
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+    if (header)     tl.from(header,    { y: -28, opacity: 0, duration: 0.6 }, 0);
+    if (card)       tl.from(card,      { y: 36, opacity: 0, scale: 0.96, duration: 0.82, ease: "power4.out" }, 0.15);
+    if (sidebar)    tl.from(sidebar,   { x: 32, opacity: 0, duration: 0.72 }, 0.3);
+    if (logoWrap)   tl.from(logoWrap,  { scale: 0.72, opacity: 0, duration: 0.7, ease: "back.out(1.6)" }, 0.35);
+    if (h1El)       tl.from(h1El,      { y: 18, opacity: 0, duration: 0.58 }, 0.5);
+    if (subtitleEl) tl.from(subtitleEl, { y: 14, opacity: 0, duration: 0.5 }, 0.62);
+    if (formRows.length) tl.from(formRows, { y: 16, opacity: 0, stagger: 0.07, duration: 0.5 }, 0.72);
+    if (roleBadges.length) tl.from(roleBadges, { scale: 0.8, opacity: 0, stagger: 0.08, duration: 0.48, ease: "back.out(1.8)" }, 0.4);
+  }
+
+  // ── Magnetic login button (desktop only)
+  if (!isTouch) {
+    const loginBtnEl = document.getElementById("loginBtn");
+    if (loginBtnEl) {
+      loginBtnEl.addEventListener("mousemove", (e) => {
+        const rect = loginBtnEl.getBoundingClientRect();
+        const x = (e.clientX - rect.left - rect.width / 2) * 0.22;
+        const y = (e.clientY - rect.top - rect.height / 2) * 0.22;
+        gsap.to(loginBtnEl, { x, y, duration: 0.38, ease: "power2.out", overwrite: "auto" });
+      });
+      loginBtnEl.addEventListener("mouseleave", () => {
+        gsap.to(loginBtnEl, { x: 0, y: 0, duration: 0.65, ease: "elastic.out(1, 0.5)", overwrite: "auto" });
+      });
+    }
+  }
+
+  // ── Page exit: fade before navigating to index.html
+  const backLink = document.querySelector(".back-home");
+  if (backLink) {
+    backLink.addEventListener("click", (e) => {
+      if (e.metaKey || e.ctrlKey) return;
+      const href = backLink.getAttribute("href") || "index.html";
+      e.preventDefault();
+      gsap.to(document.body, {
+        opacity: 0, duration: 0.3, ease: "power2.in",
+        onComplete: () => { window.location.href = href; },
+      });
+    });
+  }
+})();
 
 loginForm.addEventListener("submit", (event) => {
   event.preventDefault();

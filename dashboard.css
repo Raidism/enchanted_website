@@ -371,6 +371,58 @@ td {
   gap: 0.7rem;
 }
 
+.uac-user-item {
+  align-items: flex-start !important;
+  gap: 0.85rem !important;
+  padding: 0.65rem 0.75rem !important;
+}
+
+.uac-photo {
+  width: 54px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid rgba(213, 180, 101, 0.4);
+  flex-shrink: 0;
+}
+
+.uac-photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(77, 139, 99, 0.15);
+  font-size: 1.4rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.uac-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.uac-name {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #f0daa0;
+}
+
+.uac-detail {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #9eb0a3;
+  word-break: break-all;
+}
+
+.uac-label {
+  color: #d4e3d7;
+  font-weight: 600;
+}
+
 .admin-profile-card {
   display: grid;
   justify-items: center;

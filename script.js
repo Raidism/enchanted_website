@@ -283,6 +283,11 @@ revealItems.forEach((item, index) => {
     return;
   }
 
+  // GSAP ScrollTrigger handles all reveals when available — skip IntersectionObserver.
+  if (typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined") {
+    return;
+  }
+
   const delay = item.classList.contains("pop-card")
     ? (index % 6) * 85
     : Math.min(index * 90, 360);
@@ -740,3 +745,293 @@ if (shareBtn && shareMessage) {
     }
   });
 }
+
+// ═══════════════════════════════════════════════════════════════
+//  GSAP PREMIUM ANIMATIONS — Apple / Stripe Style
+// ═══════════════════════════════════════════════════════════════
+(function initGSAPAnimations() {
+  if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") {
+    // Fallback: reveal all items immediately so nothing stays hidden.
+    document.querySelectorAll(".reveal").forEach((el) => el.classList.add("show"));
+    return;
+  }
+
+  if (prefersReducedMotion) {
+    document.querySelectorAll(".reveal").forEach((el) => el.classList.add("show"));
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+  document.body.classList.add("gsap-enhanced");
+
+  // ── Scroll Progress Bar ────────────────────────────────────────
+  const scrollProgressEl = document.getElementById("scrollProgress");
+  if (scrollProgressEl) {
+    ScrollTrigger.create({
+      start: "top top",
+      end: "bottom bottom",
+      onUpdate: (self) => {
+        scrollProgressEl.style.width = `${self.progress * 100}%`;
+      },
+    });
+  }
+
+  // ── Header scroll state ────────────────────────────────────────
+  const siteHeader = document.querySelector(".site-header");
+  if (siteHeader) {
+    ScrollTrigger.create({
+      start: "60px top",
+      onEnter: () => siteHeader.classList.add("scrolled"),
+      onLeaveBack: () => siteHeader.classList.remove("scrolled"),
+    });
+  }
+
+  // ── Make section containers instantly visible ──────────────────
+  // GSAP animates children individually — the wrappers should not stay hidden.
+  document.querySelectorAll(".section.reveal, .reveal:not(.pop-card)").forEach((el) => {
+    el.style.transition = "none";
+    el.style.opacity = "1";
+    el.style.transform = "none";
+    el.classList.add("show");
+    // Re-enable transitions on next frame.
+    requestAnimationFrame(() => { el.style.transition = ""; });
+  });
+
+  // ── Hero entrance timeline ─────────────────────────────────────
+  if (!isTouchDevice) {
+    const heroLogoEl   = document.querySelector(".hero-logo-card");
+    const eyebrowEl    = document.querySelector(".eyebrow");
+    const heroH1El     = document.querySelector(".hero-content h1");
+    const heroTextEl   = document.querySelector(".hero-text");
+    const announcementEl = document.getElementById("siteAnnouncement");
+    const heroBadgesEl = document.querySelector(".hero-badges");
+    const heroCtaRowEl = document.querySelector(".hero-cta-row");
+
+    const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+    if (heroLogoEl)   heroTl.from(heroLogoEl,   { opacity: 0, scale: 0.85, y: 44, duration: 1.15, ease: "power4.out" }, 0);
+    if (eyebrowEl)    heroTl.from(eyebrowEl,    { opacity: 0, y: 24, letterSpacing: "0.18em", duration: 0.78 }, 0.3);
+    if (heroH1El)     heroTl.from(heroH1El,     { opacity: 0, y: 34, duration: 0.88 }, 0.46);
+    if (heroTextEl)   heroTl.from(heroTextEl,   { opacity: 0, y: 22, duration: 0.76 }, 0.62);
+    if (announcementEl && !announcementEl.hidden)
+                      heroTl.from(announcementEl, { opacity: 0, y: 18, duration: 0.62 }, 0.68);
+    if (heroBadgesEl) heroTl.from(Array.from(heroBadgesEl.children), { opacity: 0, y: 20, stagger: 0.1, duration: 0.56 }, 0.8);
+    if (heroCtaRowEl) heroTl.from(Array.from(heroCtaRowEl.children), { opacity: 0, y: 22, stagger: 0.13, duration: 0.64 }, 0.94);
+  }
+
+  // ── Set hidden state for pop-cards (GSAP reveals them) ─────────
+  if (!isTouchDevice) {
+    document.querySelectorAll(".pop-card.reveal").forEach((el) => {
+      el.style.transition = "none";
+      gsap.set(el, { opacity: 0, y: 42, scale: 0.92 });
+    });
+  }
+
+  // ── ScrollTrigger.batch: staggered card grids ──────────────────
+  if (!isTouchDevice) {
+    const batchSelectors = [
+      ".value-card.reveal.pop-card",
+      ".team-card.reveal.pop-card",
+      ".stat-card.reveal.pop-card",
+      ".launch-card.reveal.pop-card",
+      ".faq-item.reveal.pop-card",
+    ];
+
+    batchSelectors.forEach((sel) => {
+      const els = document.querySelectorAll(sel);
+      if (!els.length) return;
+
+      ScrollTrigger.batch(els, {
+        start: "top 86%",
+        once: true,
+        interval: 0.06,
+        batchMax: 6,
+        onEnter: (batch) => {
+          gsap.to(batch, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            stagger: 0.1,
+            duration: 0.82,
+            ease: "back.out(1.3)",
+            clearProps: "scale",
+            onComplete() { this.targets().forEach((t) => { t.style.transition = ""; }); },
+          });
+        },
+      });
+    });
+
+    // Roadmap card + share panel (single items)
+    [".roadmap-card.reveal.pop-card", ".share-panel.reveal.pop-card"].forEach((sel) => {
+      const el = document.querySelector(sel);
+      if (!el) return;
+      gsap.to(el, {
+        scrollTrigger: { trigger: el, start: "top 84%", once: true },
+        opacity: 1, y: 0, scale: 1, duration: 0.88, ease: "power3.out",
+        clearProps: "scale",
+        onComplete() { el.style.transition = ""; },
+      });
+    });
+  }
+
+  // ── Roadmap items — slide from left ───────────────────────────
+  const roadItems = document.querySelectorAll(".road-item");
+  if (roadItems.length) {
+    gsap.from(roadItems, {
+      scrollTrigger: { trigger: ".roadmap-card", start: "top 80%", once: true },
+      opacity: 0, x: -28, stagger: 0.12, duration: 0.7, ease: "power2.out",
+    });
+  }
+
+  // ── Countdown numbers — bounce in ─────────────────────────────
+  const countItemEls = document.querySelectorAll(".count-item");
+  if (countItemEls.length) {
+    gsap.from(countItemEls, {
+      scrollTrigger: { trigger: ".countdown", start: "top 88%", once: true },
+      opacity: 0, y: 32, scale: 0.8, stagger: 0.1, duration: 0.72,
+      ease: "back.out(1.8)",
+    });
+  }
+
+  // ── Section h2 headings — slide up ────────────────────────────
+  document.querySelectorAll(".section h2").forEach((h2) => {
+    gsap.from(h2, {
+      scrollTrigger: { trigger: h2, start: "top 88%", once: true },
+      opacity: 0, y: 32, duration: 0.88, ease: "power3.out",
+    });
+  });
+
+  // ── Section intro paragraphs ───────────────────────────────────
+  document.querySelectorAll(".section > p, .section > .container > p").forEach((p) => {
+    gsap.from(p, {
+      scrollTrigger: { trigger: p, start: "top 90%", once: true },
+      opacity: 0, y: 20, duration: 0.72, ease: "power2.out",
+    });
+  });
+
+  // ── Parallax: hero logo card ───────────────────────────────────
+  const heroLogoParallax = document.querySelector(".hero-logo-card");
+  if (heroLogoParallax && !isTouchDevice) {
+    gsap.to(heroLogoParallax, {
+      yPercent: -22,
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".hero",
+        start: "top top",
+        end: "bottom top",
+        scrub: 1.8,
+      },
+    });
+  }
+
+  // ── Parallax: background watermark ────────────────────────────
+  const bgWatermark = document.querySelector(".bg-alt-logo img");
+  if (bgWatermark && !isTouchDevice) {
+    gsap.to(bgWatermark, {
+      yPercent: 14,
+      ease: "none",
+      scrollTrigger: {
+        start: "top top",
+        end: "bottom top",
+        scrub: 2.5,
+      },
+    });
+  }
+
+  // ── 3D Tilt: cards on mousemove ────────────────────────────────
+  if (!isTouchDevice) {
+    document.querySelectorAll(".team-card, .stat-card, .launch-card, .value-card").forEach((card) => {
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        gsap.to(card, {
+          rotateY: px * 9,
+          rotateX: -py * 7,
+          y: -7,
+          transformPerspective: 860,
+          duration: 0.4,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      });
+      card.addEventListener("mouseleave", () => {
+        gsap.to(card, {
+          rotateY: 0,
+          rotateX: 0,
+          y: 0,
+          duration: 0.65,
+          ease: "elastic.out(1, 0.55)",
+          overwrite: "auto",
+        });
+      });
+    });
+  }
+
+  // ── Magnetic: CTA buttons ──────────────────────────────────────
+  if (!isTouchDevice) {
+    document.querySelectorAll(".cta, .share-btn, .waitlist-form button").forEach((btn) => {
+      btn.addEventListener("mousemove", (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = (e.clientX - rect.left - rect.width / 2) * 0.2;
+        const y = (e.clientY - rect.top - rect.height / 2) * 0.2;
+        gsap.to(btn, { x, y, duration: 0.38, ease: "power2.out", overwrite: "auto" });
+      });
+      btn.addEventListener("mouseleave", () => {
+        gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.5)", overwrite: "auto" });
+      });
+    });
+  }
+
+  // ── Active nav section highlight ───────────────────────────────
+  const navAnchors = Array.from(document.querySelectorAll(".nav-links a[href^='#']"));
+  const navSections = navAnchors.map((a) => {
+    const id = (a.getAttribute("href") || "").slice(1);
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  navSections.forEach((section, i) => {
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top center",
+      end: "bottom center",
+      onEnter: () => {
+        navAnchors.forEach((a) => a.classList.remove("active-section"));
+        if (navAnchors[i]) navAnchors[i].classList.add("active-section");
+      },
+      onEnterBack: () => {
+        navAnchors.forEach((a) => a.classList.remove("active-section"));
+        if (navAnchors[i]) navAnchors[i].classList.add("active-section");
+      },
+    });
+  });
+
+  // ── Page transition: fade out before navigating ────────────────
+  document.querySelectorAll("a[href]").forEach((link) => {
+    const href = link.getAttribute("href") || "";
+    if (
+      href.startsWith("#") ||
+      href.startsWith("http") ||
+      href.startsWith("//") ||
+      href.startsWith("mailto") ||
+      href.startsWith("tel") ||
+      href === ""
+    ) return;
+
+    link.addEventListener("click", (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      gsap.to(document.body, {
+        opacity: 0,
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: () => { window.location.href = href; },
+      });
+    });
+  });
+
+  // ── Refresh ScrollTrigger after fonts load ─────────────────────
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => ScrollTrigger.refresh());
+  }
+})();

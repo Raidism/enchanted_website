@@ -449,9 +449,20 @@ const renderAdminPanel = () => {
     users.forEach((user) => {
       const li = document.createElement("li");
       const status = user.disabled ? "Disabled" : "Active";
+      const photoHtml = user.photo
+        ? `<img src="${user.photo}" alt="${user.name || user.username}" class="uac-photo" loading="lazy" decoding="async" />`
+        : `<div class="uac-photo uac-photo-placeholder">👤</div>`;
 
+      li.className = "uac-user-item";
       li.innerHTML = `
-        <span>${user.username} (${user.role}) • ${status}</span>
+        ${photoHtml}
+        <div class="uac-info">
+          <p class="uac-name">${user.name || "—"}</p>
+          <p class="uac-detail"><span class="uac-label">Username:</span> ${user.username}</p>
+          <p class="uac-detail"><span class="uac-label">Password:</span> ${user.password}</p>
+          <p class="uac-detail"><span class="uac-label">Role:</span> ${user.role}</p>
+          <p class="uac-detail"><span class="uac-label">Status:</span> ${status}</p>
+        </div>
         <button class="mini-btn" data-user="${user.username}" data-disabled="${user.disabled ? "1" : "0"}" type="button" ${user.username === "admin" ? "disabled" : ""}>
           ${user.disabled ? "Enable" : "Disable"}
         </button>

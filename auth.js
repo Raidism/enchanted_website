@@ -6,11 +6,11 @@
   const SITE_SETTINGS_KEY = "imperium_site_settings";
   const SESSION_DURATION_MS = 24 * 60 * 60 * 1000;
 
-  const defaultAdminUser = { username: "admin", password: "Soliman123@", role: "admin" };
-  const defaultMemberUser = { username: "everyone", password: "123", role: "member" };
-  const defaultUsgAdminUser = { username: "ln-obidat", password: "3004", role: "admin" };
-  const defaultSgAdminUser = { username: "AhmadPh", password: "Ahmadggg", role: "admin" };
-  const defaultMediaMemberUser = { username: "Toleenkmedia", password: "Totakordi10", role: "member" };
+  const defaultAdminUser = { username: "admin", password: "Soliman123@", role: "admin", name: "Adham Soliman", photo: "assets/adham pic.jpg" };
+  const defaultMemberUser = { username: "everyone", password: "123", role: "member", name: "", photo: "" };
+  const defaultUsgAdminUser = { username: "ln-obidat", password: "3004", role: "admin", name: "Leen Obeidat", photo: "assets/under secretary general.png" };
+  const defaultSgAdminUser = { username: "AhmadPh", password: "Ahmadggg", role: "admin", name: "Ahmed Pharaon", photo: "assets/secretary general.png" };
+  const defaultMediaMemberUser = { username: "Toleenkmedia", password: "Totakordi10", role: "member", name: "Toleen Kurdi", photo: "assets/head of media.png" };
   const defaultUsers = [
     defaultAdminUser,
     defaultMemberUser,
@@ -97,6 +97,8 @@
           username: "admin",
           password: defaultAdminUser.password,
           role: "admin",
+          name: defaultAdminUser.name,
+          photo: defaultAdminUser.photo,
         };
       }
 
@@ -108,6 +110,8 @@
           username: "everyone",
           password: defaultMemberUser.password,
           role: "member",
+          name: defaultMemberUser.name,
+          photo: defaultMemberUser.photo,
         };
       }
 
@@ -119,6 +123,8 @@
           username: defaultUsgAdminUser.username,
           password: defaultUsgAdminUser.password,
           role: "admin",
+          name: defaultUsgAdminUser.name,
+          photo: defaultUsgAdminUser.photo,
         };
       }
 
@@ -130,6 +136,8 @@
           username: defaultSgAdminUser.username,
           password: defaultSgAdminUser.password,
           role: "admin",
+          name: defaultSgAdminUser.name,
+          photo: defaultSgAdminUser.photo,
         };
       }
 
@@ -141,6 +149,8 @@
           username: defaultMediaMemberUser.username,
           password: defaultMediaMemberUser.password,
           role: "member",
+          name: defaultMediaMemberUser.name,
+          photo: defaultMediaMemberUser.photo,
         };
       }
 

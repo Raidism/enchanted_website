@@ -21,8 +21,6 @@ html,
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  overflow: hidden;
 }
 
 body {
@@ -36,6 +34,8 @@ body {
     radial-gradient(circle at 85% 8%, rgba(213, 180, 101, 0.14), transparent 35%),
     linear-gradient(165deg, #040704, #0a100d 45%, #050706);
   position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 body::before,
@@ -98,14 +98,64 @@ body::after {
   font-family: "Cinzel", serif;
   letter-spacing: 0.05em;
   font-weight: 800;
-  color: #f0daa0;
   text-decoration: none;
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(
+    120deg,
+    #050706 0%,
+    #3f7754 22%,
+    #d5b465 44%,
+    #6ea07d 66%,
+    #101612 82%,
+    #f0daa0 100%
+  );
+  background-size: 260% 260%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: brandFlow 8s ease-in-out infinite;
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.brand:hover {
+  transform: translateY(-1px) scale(1.02);
+  filter: drop-shadow(0 4px 10px rgba(213, 180, 101, 0.25));
+}
+
+@keyframes brandFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .back-home {
   color: var(--muted);
   text-decoration: none;
   font-weight: 600;
+  position: relative;
+  transition: color 0.25s ease;
+}
+
+.back-home::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d5b465, transparent);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.back-home:hover {
+  color: #f0daa0;
+}
+
+.back-home:hover::after {
+  transform: scaleX(1);
 }
 
 .access-main {
@@ -141,10 +191,20 @@ body::after {
   background: var(--panel);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  padding: 1.4rem 1.25rem;
+  padding: 1.6rem 1.4rem;
   position: relative;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(213, 180, 101, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   overflow: hidden;
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+  animation: cardBorderPulse 6s ease-in-out infinite;
+}
+
+@keyframes cardBorderPulse {
+  0%, 100% { box-shadow: 0 20px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(213,180,101,.10), inset 0 1px 0 rgba(255,255,255,.08); }
+  50%       { box-shadow: 0 24px 64px rgba(0,0,0,.48), 0 0 0 1px rgba(213,180,101,.26), 0 0 28px rgba(213,180,101,.07), inset 0 1px 0 rgba(255,255,255,.1); }
 }
 
 .adham-side {
@@ -153,9 +213,82 @@ body::after {
   background: rgba(12, 21, 16, 0.68);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  padding: 0.8rem;
+  padding: 1.1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+/* ── Team section inside sidebar ───────────────────────────── */
+.access-team-section {
+  width: 100%;
+}
+
+.access-team-title {
+  margin: 0 0 0.7rem;
+  font-family: "Cinzel", serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #f0daa0;
+  text-align: center;
+}
+
+.access-role-grid {
   display: grid;
-  justify-items: center;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.access-role-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.55rem 0.3rem;
+  border-radius: 10px;
+  border: 1px solid rgba(77, 139, 99, 0.3);
+  background: rgba(77, 139, 99, 0.09);
+  cursor: default;
+  transition: border-color 0.28s ease, background 0.28s ease, transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.access-role-badge:hover {
+  border-color: rgba(213, 180, 101, 0.45);
+  background: rgba(77, 139, 99, 0.16);
+  transform: translateY(-2px);
+}
+
+.role-abbr {
+  font-family: "Cinzel", serif;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #f0daa0;
+  line-height: 1;
+}
+
+.badge-admin .role-abbr { color: #f0daa0; }
+.badge-sg   .role-abbr { color: #8ecfa0; }
+.badge-usg  .role-abbr { color: #8ecfa0; }
+.badge-media .role-abbr { color: #aab9ae; }
+
+.role-label {
+  font-size: 0.67rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.access-team-note {
+  margin: 0;
+  font-size: 0.71rem;
+  color: #6e8873;
+  text-align: center;
+  line-height: 1.45;
 }
 
 .adham-photo-wrap {
@@ -247,13 +380,54 @@ body::after {
   text-align: center;
 }
 
+/* ── Portal logo with spinning ring ───────────────────────────── */
+.portal-logo-wrap {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 0.85rem;
+  display: grid;
+  place-items: center;
+}
+
+.portal-logo-wrap::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: conic-gradient(
+    from 0deg,
+    #050706 0deg,
+    #3f7754 70deg,
+    #d5b465 150deg,
+    #101612 230deg,
+    #6ea07d 300deg,
+    #f0daa0 360deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+  filter: drop-shadow(0 0 7px rgba(213, 180, 101, 0.25));
+  animation: logoRingSpin 7s linear infinite;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes logoRingSpin {
+  from { transform: translate(-50%, -50%) rotate(0turn); }
+  to   { transform: translate(-50%, -50%) rotate(1turn); }
+}
+
 .portal-logo {
-  width: 84px;
-  height: 84px;
+  width: 76%;
+  height: 76%;
   border-radius: 999px;
   border: 1px solid rgba(213, 180, 101, 0.35);
+  object-fit: cover;
+  position: relative;
+  z-index: 1;
   display: block;
-  margin: 0 auto 0.7rem;
 }
 
 h1 {
@@ -285,13 +459,16 @@ h1 {
   background: rgba(8, 13, 10, 0.88);
   color: #f2f7f2;
   border-radius: 10px;
-  padding: 0.68rem 0.75rem;
+  padding: 0.72rem 0.8rem;
   font: inherit;
+  transition: border-color 0.28s ease, box-shadow 0.28s ease;
+  min-height: 44px;
 }
 
 .login-form input:focus {
   outline: none;
   border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(213, 180, 101, 0.14), 0 0 16px rgba(213, 180, 101, 0.08);
 }
 
 .password-wrap {
@@ -328,14 +505,31 @@ h1 {
 }
 
 .login-form button[type="submit"] {
-  margin-top: 0.1rem;
+  margin-top: 0.35rem;
   border: none;
   border-radius: 10px;
-  padding: 0.72rem 1rem;
+  padding: 0.78rem 1rem;
   font-weight: 700;
   cursor: pointer;
   color: #111;
   background: linear-gradient(180deg, #f0daa0, var(--gold));
+  min-height: 46px;
+  will-change: transform;
+  transition:
+    transform 0.34s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.34s cubic-bezier(0.23, 1, 0.32, 1),
+    background 0.3s ease;
+}
+
+.login-form button[type="submit"]:not(.is-loading):not(:disabled):hover {
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 12px 32px rgba(213, 180, 101, 0.35), 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+.login-form button[type="submit"]:not(.is-loading):active {
+  transform: translateY(0) scale(0.975);
+  transition-duration: 0.08s;
+  box-shadow: 0 4px 10px rgba(213, 180, 101, 0.2);
 }
 
 .login-form button[type="submit"].is-loading {
@@ -587,29 +781,41 @@ h1 {
 @media (max-width: 860px) {
   .access-layout {
     grid-template-columns: 1fr;
-    gap: 0.8rem;
-    width: min(460px, 92vw);
+    gap: 1rem;
+    width: min(480px, 94vw);
   }
 
   .portal-header {
-    padding: 0.7rem 0;
+    padding: 0.75rem 0;
   }
 
   .adham-side {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.85rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .access-team-section {
+    flex: 1;
+    min-width: 200px;
   }
 
   .adham-photo-wrap {
-    width: min(170px, 38vw);
+    width: min(140px, 32vw);
+    flex-shrink: 0;
   }
 
   .adham-caption {
-    font-size: 0.86rem;
+    font-size: 0.82rem;
+    width: 100%;
+    text-align: center;
   }
 
   .access-card {
-    padding: 1rem 0.9rem;
+    padding: 1.2rem 1rem;
   }
 
   .cookie-banner {
@@ -622,20 +828,74 @@ h1 {
   }
 }
 
+/* Phone: hide the sidebar photo, keep the team badges */
+@media (max-width: 480px) {
+  body {
+    grid-template-rows: auto auto 1fr auto;
+  }
+
+  .access-layout {
+    width: 94vw;
+    gap: 0.75rem;
+  }
+
+  .access-card {
+    padding: 1.1rem 0.9rem;
+    border-radius: 14px;
+  }
+
+  .adham-side {
+    padding: 0.75rem;
+    border-radius: 14px;
+  }
+
+  .adham-photo-wrap,
+  .adham-caption {
+    display: none;
+  }
+
+  .access-team-section {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .access-role-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
+  }
+
+  .access-role-badge {
+    padding: 0.45rem 0.2rem;
+  }
+
+  .portal-logo-wrap {
+    width: 76px;
+    height: 76px;
+  }
+
+  h1 {
+    font-size: 1.55rem;
+  }
+
+  .subtitle {
+    font-size: 0.86rem;
+  }
+}
+
 @media (max-height: 760px) {
   .portal-header {
     padding: 0.45rem 0;
   }
 
-  .portal-logo {
+  .portal-logo-wrap {
     width: 64px;
     height: 64px;
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.5rem;
   }
 
   .subtitle {
-    margin: 0.35rem 0 0.7rem;
-    font-size: 0.9rem;
+    margin: 0.3rem 0 0.65rem;
+    font-size: 0.88rem;
   }
 
   .access-layout {
@@ -666,6 +926,22 @@ h1 {
   body::before,
   body::after {
     display: none;
+  }
+
+  .login-form button[type="submit"] {
+    will-change: auto;
+  }
+
+  .access-role-badge:hover {
+    transform: none;
+  }
+
+  .portal-logo-wrap::before {
+    animation: none;
+  }
+
+  .access-card {
+    animation: none;
   }
 }
 
