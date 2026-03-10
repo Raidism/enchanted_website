@@ -4,6 +4,7 @@
   const ACTIVE_USERS_KEY = "imperium_active_users";
   const LOGIN_HISTORY_KEY = "imperium_login_history";
   const SITE_SETTINGS_KEY = "imperium_site_settings";
+  const FORCED_LOGOUT_KEY = "imperium_forced_logout";
   const SESSION_DURATION_MS = 24 * 60 * 60 * 1000;
 
   const defaultAdminUser = { username: "admin", password: "Soliman123@", role: "admin", name: "Adham Soliman", photo: "assets/adham pic.jpg" };
@@ -20,7 +21,7 @@
   ];
 
   const defaultSiteSettings = {
-    maintenanceMode: false,
+    maintenanceMode: false, // reset safeguard: default is always off
     maintenanceMessage: "Imperium MUN is temporarily under maintenance. Please check back soon.",
     launchDate: "2026-03-28T00:00:00+03:00",
     announcement: "",
@@ -183,10 +184,28 @@
     return readJson(USERS_KEY, defaultUsers);
   };
 
+  const getForcedLogoutList = () => readJson(FORCED_LOGOUT_KEY, []);
+
   const getCurrentUser = () => {
     init();
     const session = readJson(CURRENT_USER_KEY, null);
     if (!session || typeof session !== "object") {
+      return null;
+    }
+
+    // Check if this user was force-logged out by an admin
+    const forcedList = getForcedLogoutList();
+    const sessionUsername = String(session.username || "").trim().toLowerCase();
+    if (forcedList.includes(sessionUsername)) {
+      const remaining = forcedList.filter((u) => u !== sessionUsername);
+      writeJson(FORCED_LOGOUT_KEY, remaining);
+      const activeUsers = getActiveUsers();
+      const activeKey = Object.keys(activeUsers).find((k) => k.toLowerCase() === sessionUsername);
+      if (activeKey) {
+        delete activeUsers[activeKey];
+        setActiveUsers(activeUsers);
+      }
+      localStorage.removeItem(CURRENT_USER_KEY);
       return null;
     }
 
@@ -409,6 +428,38 @@
     };
   };
 
+  const forceLogoutUser = (creator, usernameInput) => {
+    if (!creator || creator.role !== "admin") {
+      return { success: false, message: "Only admin can force-logout users." };
+    }
+
+    const target = String(usernameInput || "").trim().toLowerCase();
+    if (!target) {
+      return { success: false, message: "Username required." };
+    }
+
+    if (target === String(creator.username || "").trim().toLowerCase()) {
+      return { success: false, message: "You cannot force-logout yourself." };
+    }
+
+    // Remove from active users tracking
+    const activeUsers = getActiveUsers();
+    const activeKey = Object.keys(activeUsers).find((k) => k.toLowerCase() === target);
+    if (activeKey) {
+      delete activeUsers[activeKey];
+      setActiveUsers(activeUsers);
+    }
+
+    // Mark for forced logout so their session is invalidated on next check
+    const list = getForcedLogoutList();
+    if (!list.includes(target)) {
+      list.push(target);
+      writeJson(FORCED_LOGOUT_KEY, list);
+    }
+
+    return { success: true, message: `${usernameInput} has been force-logged out.` };
+  };
+
   init();
 
   window.ImperiumAuth = {
@@ -424,5 +475,6 @@
     getSiteSettings,
     updateSiteSettings,
     setUserDisabled,
+    forceLogoutUser,
   };
 })();

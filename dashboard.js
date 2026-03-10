@@ -1,4 +1,4 @@
-const currentUser = window.ImperiumAuth.getCurrentUser();
+﻿const currentUser = window.ImperiumAuth.getCurrentUser();
 if (!currentUser) {
   window.location.href = "access.html";
   throw new Error("No active session");
@@ -13,7 +13,7 @@ if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
 window.ImperiumAuth.heartbeat();
 setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
 
-const welcomeText = document.getElementById("welcomeText");
+const welcomeText = null; // legacy – replaced by dwh-* elements
 const logoutBtn = document.getElementById("logoutBtn");
 const totalViews = document.getElementById("totalViews");
 const uniqueIps = document.getElementById("uniqueIps");
@@ -34,9 +34,15 @@ const userAccessList = document.getElementById("userAccessList");
 const userAccessCard = userAccessList ? userAccessList.closest(".table-card") : null;
 const adminProfilePhoto = document.getElementById("adminProfilePhoto");
 const adminProfileCaption = document.getElementById("adminProfileCaption");
-const userSpotlightPhoto = document.getElementById("userSpotlightPhoto");
-const userSpotlightName = document.getElementById("userSpotlightName");
-const userSpotlightRole = document.getElementById("userSpotlightRole");
+const dwhPhoto   = document.getElementById("dwhPhoto");
+const dwhNameEl  = document.getElementById("dwhName");
+const dwhRoleEl  = document.getElementById("dwhRole");
+const dwhBriefing = document.getElementById("dwhBriefing");
+const dwhCursor  = document.querySelector(".dwh-cursor");
+// legacy spotlight IDs no longer in DOM
+const userSpotlightPhoto = null;
+const userSpotlightName  = null;
+const userSpotlightRole  = null;
 let isAddUserHandlerBound = false;
 let isSiteSettingsHandlerBound = false;
 let isUserAccessHandlerBound = false;
@@ -100,48 +106,274 @@ const USER_SPOTLIGHT_PRESETS = {
   },
 };
 
-if (isAdmin) {
-  welcomeText.textContent = `Welcome ${WELCOME_NAMES[profileKey] || currentUser.username}`;
-} else {
-  welcomeText.textContent = `Welcome ${currentUser.username}`;
-}
+// ═══════════════════════════════════════════════════════════════
+//  NOTES SYSTEM
+// ═══════════════════════════════════════════════════════════════
+const NOTES_KEY = "imperium_staff_notes";
 
-const renderUserSpotlight = () => {
-  if (!userSpotlightPhoto || !userSpotlightName || !userSpotlightRole) {
-    return;
-  }
-
-  const preset = USER_SPOTLIGHT_PRESETS[profileKey] || {
-    name: currentUser.username,
-    role: isAdmin ? "Admin" : "Member",
-    photo: "assets/imperium mun logo.jpg",
-  };
-
-  userSpotlightPhoto.src = preset.photo;
-  userSpotlightPhoto.alt = `${preset.name} profile photo`;
-  userSpotlightName.textContent = preset.name;
-  userSpotlightRole.textContent = preset.role;
+const readNotes = () => {
+  try {
+    const raw = localStorage.getItem(NOTES_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch { return []; }
 };
 
+const writeNotes = (notes) => {
+  localStorage.setItem(NOTES_KEY, JSON.stringify(Array.isArray(notes) ? notes : []));
+};
+
+const renderITNotes = () => {
+  const list   = document.getElementById("itNotesList");
+  const empty  = document.getElementById("itNotesEmpty");
+  if (!list) return;
+
+  const notes = readNotes().filter((n) => !n.resolved);
+  list.innerHTML = "";
+
+  if (notes.length === 0) {
+    if (empty) empty.hidden = false;
+    return;
+  }
+  if (empty) empty.hidden = true;
+
+  notes
+    .slice()
+    .sort((a, b) => {
+      if (a.priority === "urgent" && b.priority !== "urgent") return -1;
+      if (b.priority === "urgent" && a.priority !== "urgent") return 1;
+      return String(b.timestamp).localeCompare(String(a.timestamp));
+    })
+    .forEach((note) => {
+      const li = document.createElement("li");
+      li.className = `it-note-item${note.priority === "urgent" ? " urgent" : ""}`;
+      li.dataset.noteId = note.id;
+
+      const priorityLabel = note.priority === "urgent" ? "🚨 URGENT" : "Normal";
+      li.innerHTML = `
+        <div class="it-note-header">
+          <span class="it-note-author">${note.authorName || note.author} (${note.authorRole || "member"})</span>
+          <span class="it-note-priority">${priorityLabel}</span>
+          <span class="it-note-time">${formatDateTime(note.timestamp)}</span>
+        </div>
+        <p class="it-note-msg">${note.message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+        <button class="it-note-resolve" data-note-id="${note.id}" type="button">✓ Mark resolved</button>
+      `;
+      list.appendChild(li);
+    });
+
+  list.addEventListener("click", (e) => {
+    if (!(e.target instanceof HTMLButtonElement) || !e.target.dataset.noteId) return;
+    const id = e.target.dataset.noteId;
+    const all = readNotes();
+    const idx = all.findIndex((n) => String(n.id) === String(id));
+    if (idx !== -1) {
+      all[idx].resolved = true;
+      writeNotes(all);
+    }
+    renderITNotes();
+  }, { once: true });
+};
+
+// Note submit form
+const submitNoteForm = document.getElementById("submitNoteForm");
+const submitNoteMessage = document.getElementById("submitNoteMessage");
+
+if (submitNoteForm) {
+  submitNoteForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const msg = String(document.getElementById("noteMessage")?.value || "").trim();
+    const pri = String(document.getElementById("notePriority")?.value || "normal");
+
+    if (!msg) {
+      if (submitNoteMessage) {
+        submitNoteMessage.textContent = "Please write a message before submitting.";
+        submitNoteMessage.classList.remove("success");
+      }
+      return;
+    }
+
+    const spotPreset = USER_SPOTLIGHT_PRESETS[profileKey] || { name: currentUser.username, role: isAdmin ? "Admin" : "Member" };
+    const note = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      author:     currentUser.username,
+      authorName: spotPreset.name || currentUser.username,
+      authorRole: spotPreset.role || (isAdmin ? "Admin" : "Member"),
+      timestamp:  new Date().toISOString(),
+      message:    msg,
+      priority:   pri,
+      resolved:   false,
+    };
+
+    writeNotes([...readNotes(), note]);
+    submitNoteForm.reset();
+
+    if (submitNoteMessage) {
+      submitNoteMessage.textContent = "Note submitted. The IT team will be notified.";
+      submitNoteMessage.classList.add("success");
+      setTimeout(() => { submitNoteMessage.textContent = ""; submitNoteMessage.classList.remove("success"); }, 4000);
+    }
+
+    if (isAdmin) renderITNotes();
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TYPEWRITER WELCOME SEQUENCE
+// ═══════════════════════════════════════════════════════════════
+const displayName = WELCOME_NAMES[profileKey] || currentUser.username;
+const spotPresetForWelcome = USER_SPOTLIGHT_PRESETS[profileKey] || {
+  name: displayName,
+  role: isAdmin ? "Admin" : "Member",
+  photo: "assets/imperium mun logo.jpg",
+};
+
+if (dwhPhoto) {
+  dwhPhoto.src = spotPresetForWelcome.photo;
+  dwhPhoto.alt = `${spotPresetForWelcome.name} profile`;
+}
+if (dwhRoleEl) {
+  dwhRoleEl.textContent = spotPresetForWelcome.role;
+}
+
+const typeText = (el, text, speed = 52) =>
+  new Promise((resolve) => {
+    let i = 0;
+    const tick = () => {
+      if (i <= text.length) {
+        el.textContent = text.slice(0, i);
+        i++;
+        setTimeout(tick, speed);
+      } else {
+        resolve();
+      }
+    };
+    tick();
+  });
+
+const addBriefLine = (text) => {
+  if (!dwhBriefing) return Promise.resolve();
+  const line    = document.createElement("div");
+  line.className = "dwh-brief-line";
+
+  const prompt  = document.createElement("span");
+  prompt.className = "dwh-prompt";
+  prompt.textContent = "▸";
+
+  const textEl  = document.createElement("span");
+  textEl.className = "dwh-brief-text";
+
+  const cur     = document.createElement("span");
+  cur.className  = "dwh-brief-cursor";
+  cur.setAttribute("aria-hidden", "true");
+  cur.textContent = "│";
+
+  line.appendChild(prompt);
+  line.appendChild(textEl);
+  line.appendChild(cur);
+  dwhBriefing.appendChild(line);
+
+  requestAnimationFrame(() => line.classList.add("is-visible"));
+  return typeText(textEl, text, 28).then(() => { cur.style.display = "none"; });
+};
+
+const runWelcomeSequence = async () => {
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (dwhNameEl) {
+    if (prefersReduced) {
+      dwhNameEl.textContent = displayName;
+      if (dwhCursor) dwhCursor.style.display = "none";
+    } else {
+      await new Promise((r) => setTimeout(r, 380));
+      await typeText(dwhNameEl, displayName, 62);
+      if (dwhCursor) dwhCursor.style.display = "none";
+    }
+  }
+
+  if (prefersReduced) return;
+
+  await new Promise((r) => setTimeout(r, 260));
+
+  const pendingCount = readNotes().filter((n) => !n.resolved).length;
+  const lastLoginStr = (() => {
+    try {
+      const sessions = JSON.parse(localStorage.getItem("imperium_active_users") || "{}");
+      const s = sessions[profileKey];
+      if (s && s.lastSeenAt) {
+        return new Date(s.lastSeenAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+      }
+    } catch { /* */ }
+    return null;
+  })();
+
+  const briefLines = [
+    "Portal online. All systems nominal.",
+    lastLoginStr ? `Last active session: ${lastLoginStr}.` : "Welcome back to the Imperium MUN portal.",
+    pendingCount > 0
+      ? `${pendingCount} staff note${pendingCount === 1 ? "" : "s"} pending — check the IT board below.`
+      : "No pending staff notes. All clear.",
+  ];
+
+  for (const line of briefLines) {
+    await new Promise((r) => setTimeout(r, 200));
+    await addBriefLine(line);
+  }
+};
+
+runWelcomeSequence();
+
+// legacy no-op
+const renderUserSpotlight = () => {};
 renderUserSpotlight();
 
 const showLogoutTransition = () => {
+  const preset = USER_SPOTLIGHT_PRESETS[profileKey] || {
+    name: currentUser.username,
+    photo: "assets/imperium mun logo.jpg",
+  };
+
   const overlay = document.createElement("div");
   overlay.className = "logout-overlay";
-  overlay.innerHTML = '<div class="logout-card">Securing session...</div>';
+  overlay.innerHTML = `
+    <div class="logout-card">
+      <div class="logout-photo-ring">
+        <img src="${preset.photo}" alt="" class="logout-photo" />
+      </div>
+      <p class="logout-name">${preset.name}</p>
+      <p class="logout-msg">Goodbye. See you next time.</p>
+      <p class="logout-msg" style="font-size:0.8rem;opacity:0.45;margin-top:0.1rem;">Securing session…</p>
+    </div>
+  `;
   document.body.appendChild(overlay);
   requestAnimationFrame(() => overlay.classList.add("is-visible"));
+
+  if (typeof gsap !== "undefined") {
+    const ring = overlay.querySelector(".logout-photo-ring");
+    const card = overlay.querySelector(".logout-card");
+    gsap.to(ring, { scale: 1.18, opacity: 0, duration: 0.65, ease: "power2.in", delay: 0.95 });
+    gsap.to(card, { y: -24, opacity: 0, duration: 0.48, ease: "power2.in", delay: 1.1 });
+    gsap.to(overlay, {
+      opacity: 0, duration: 0.4, ease: "power2.in", delay: 1.45,
+      onComplete: () => {
+        window.ImperiumAuth.logout();
+        window.location.href = "access.html";
+      },
+    });
+  } else {
+    setTimeout(() => {
+      window.ImperiumAuth.logout();
+      window.location.href = "access.html";
+    }, 1600);
+  }
 };
 
 logoutBtn.addEventListener("click", () => {
   logoutBtn.classList.add("is-loading");
   logoutBtn.disabled = true;
   showLogoutTransition();
-
-  setTimeout(() => {
-    window.ImperiumAuth.logout();
-    window.location.href = "access.html";
-  }, 900);
+  // redirect is handled inside showLogoutTransition via GSAP or setTimeout fallback
 });
 
 const readViewLogs = () => {
@@ -366,7 +598,6 @@ const renderAdminPanel = () => {
   }
 
   adminPanel.hidden = false;
-  renderAdminProfile();
 
   const activeUsers = window.ImperiumAuth.getActiveUsers();
   const entries = Object.values(activeUsers);
@@ -407,26 +638,40 @@ const renderAdminPanel = () => {
   }
 
   if (siteSettingsForm && maintenanceModeInput && maintenanceMessageInput && launchDateInput && announcementInput) {
-    const settings = window.ImperiumAuth.getSiteSettings();
-    maintenanceModeInput.value = settings.maintenanceMode ? "on" : "off";
-    maintenanceMessageInput.value = String(settings.maintenanceMessage || "");
-    launchDateInput.value = toDateTimeLocalValue(settings.launchDate);
-    announcementInput.value = String(settings.announcement || "");
+    // Only re-populate fields from storage when the form is not actively being edited,
+    // so the interval doesn't reset inputs while the user is typing.
+    const formHasFocus = siteSettingsForm.contains(document.activeElement);
+    if (!formHasFocus) {
+      const settings = window.ImperiumAuth.getSiteSettings();
+      maintenanceModeInput.value = settings.maintenanceMode ? "on" : "off";
+      maintenanceMessageInput.value = String(settings.maintenanceMessage || "");
+      launchDateInput.value = toDateTimeLocalValue(settings.launchDate);
+      announcementInput.value = String(settings.announcement || "");
+    }
 
     if (!isSiteSettingsHandlerBound) {
-      siteSettingsForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-
+      const doSave = () => {
         const updateResult = window.ImperiumAuth.updateSiteSettings(currentUser, {
           maintenanceMode: maintenanceModeInput.value === "on",
           maintenanceMessage: String(maintenanceMessageInput.value || "").trim(),
           launchDate: fromDateTimeLocalValue(String(launchDateInput.value || "").trim()),
           announcement: String(announcementInput.value || "").trim(),
         });
-
         siteSettingsMessage.classList.toggle("success", updateResult.success);
         siteSettingsMessage.textContent = updateResult.message;
+        return updateResult;
+      };
+
+      // Auto-save when any field changes (so toggling maintenance mode takes
+      // effect immediately without needing to click the Save button).
+      siteSettingsForm.addEventListener("change", doSave);
+
+      // Also allow explicit Save button click.
+      siteSettingsForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        doSave();
       });
+
       isSiteSettingsHandlerBound = true;
     }
   }
@@ -446,26 +691,34 @@ const renderAdminPanel = () => {
 
     users.sort((a, b) => String(a.username || "").localeCompare(String(b.username || "")));
 
+    const activeUsers = window.ImperiumAuth.getActiveUsers();
+
     users.forEach((user) => {
       const li = document.createElement("li");
       const status = user.disabled ? "Disabled" : "Active";
-      const photoHtml = user.photo
-        ? `<img src="${user.photo}" alt="${user.name || user.username}" class="uac-photo" loading="lazy" decoding="async" />`
-        : `<div class="uac-photo uac-photo-placeholder">👤</div>`;
+      const photoSrc = user.photo || "assets/imperium mun logo.jpg";
+      const photoHtml = `<img src="${photoSrc}" alt="${user.name || user.username}" class="uac-photo" loading="lazy" decoding="async" />`;
+      const isActiveSelf = String(user.username || "").toLowerCase() === String(currentUser.username || "").toLowerCase();
+      const isOnline = Object.keys(activeUsers).some((k) => k.toLowerCase() === String(user.username || "").toLowerCase());
 
       li.className = "uac-user-item";
       li.innerHTML = `
         ${photoHtml}
         <div class="uac-info">
-          <p class="uac-name">${user.name || "—"}</p>
+          <p class="uac-name">${user.name || "—"} ${isOnline ? '<span class="uac-online-dot" title="Currently online"></span>' : ""}</p>
           <p class="uac-detail"><span class="uac-label">Username:</span> ${user.username}</p>
           <p class="uac-detail"><span class="uac-label">Password:</span> ${user.password}</p>
           <p class="uac-detail"><span class="uac-label">Role:</span> ${user.role}</p>
           <p class="uac-detail"><span class="uac-label">Status:</span> ${status}</p>
         </div>
-        <button class="mini-btn" data-user="${user.username}" data-disabled="${user.disabled ? "1" : "0"}" type="button" ${user.username === "admin" ? "disabled" : ""}>
-          ${user.disabled ? "Enable" : "Disable"}
-        </button>
+        <div class="uac-actions">
+          <button class="mini-btn" data-user="${user.username}" data-disabled="${user.disabled ? "1" : "0"}" data-action="toggle" type="button" ${user.username === "admin" ? "disabled" : ""}>
+            ${user.disabled ? "Enable" : "Disable"}
+          </button>
+          <button class="mini-btn mini-btn--danger" data-user="${user.username}" data-action="force-logout" type="button" ${(!isOnline || isActiveSelf) ? "disabled" : ""} title="End this user's session">
+            Force Logout
+          </button>
+        </div>
       `;
 
       userAccessList.appendChild(li);
@@ -479,8 +732,15 @@ const renderAdminPanel = () => {
         }
 
         const username = target.getAttribute("data-user") || "";
-        const disabledFlag = target.getAttribute("data-disabled") === "1";
-        const result = window.ImperiumAuth.setUserDisabled(currentUser, username, !disabledFlag);
+        const action = target.getAttribute("data-action") || "toggle";
+        let result;
+
+        if (action === "force-logout") {
+          result = window.ImperiumAuth.forceLogoutUser(currentUser, username);
+        } else {
+          const disabledFlag = target.getAttribute("data-disabled") === "1";
+          result = window.ImperiumAuth.setUserDisabled(currentUser, username, !disabledFlag);
+        }
 
         if (siteSettingsMessage) {
           siteSettingsMessage.classList.toggle("success", result.success);
@@ -494,10 +754,18 @@ const renderAdminPanel = () => {
       isUserAccessHandlerBound = true;
     }
   }
+
+  if (isAdmin) renderITNotes();
 };
 
   renderAnalytics();
 renderAdminPanel();
+if (isAdmin) renderITNotes();
+
+// Re-render notes whenever storage changes (e.g. another tab submits a note)
+window.addEventListener("storage", (ev) => {
+  if (ev.key === NOTES_KEY && isAdmin) renderITNotes();
+});
 
 let analyticsIntervalId = null;
 let adminIntervalId = null;
@@ -544,3 +812,78 @@ window.addEventListener("storage", (event) => {
 });
 
 startRefreshIntervals();
+
+// ── Lines of Code counter ────────────────────────────────────────
+(async () => {
+  const el = document.getElementById("totalLines");
+  if (!el) return;
+
+  const files = [
+    "index.html", "styles.css", "script.js", "tracker.js", "auth.js",
+    "dashboard.html", "dashboard.css", "dashboard.js",
+    "access.html", "access.css", "access.js",
+    "applications.html", "applications.js",
+    "waitlist.html", "waitlist.js",
+    "netlify/functions/analytics.js", "netlify/functions/waitlist.js",
+  ];
+
+  const base = window.location.origin + window.location.pathname.replace(/[^/]+$/, "");
+  try {
+    const counts = await Promise.all(
+      files.map(f =>
+        fetch(base + f, { cache: "no-store" })
+          .then(r => r.ok ? r.text() : null)
+          .then(txt => (txt && txt.trim()) ? txt.split("\n").length : null)
+          .catch(() => null)
+      )
+    );
+    const valid = counts.filter(n => n !== null);
+    const total = valid.length > 0 ? valid.reduce((a, b) => a + b, 0) : 0;
+    el.textContent = total > 0 ? total.toLocaleString() : "\u2014";
+  } catch {
+    el.textContent = "—";
+  }
+})();
+// ═══════════════════════════════════════════════════════════════
+(function initDashGSAP() {
+  if (typeof gsap === "undefined") return;
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Fade body in on load
+  document.body.style.opacity = "0";
+  requestAnimationFrame(() => {
+    gsap.to(document.body, { opacity: 1, duration: 0.55, ease: "power2.out" });
+  });
+
+  if (!prefersReduced) {
+    const header      = document.querySelector(".dash-header");
+    const hero        = document.getElementById("dashWelcomeHero");
+    const noteSection = document.getElementById("submitNoteSection");
+    const sections    = document.querySelectorAll(".dash-main > .section");
+    const statCards   = document.querySelectorAll(".stat-card");
+    const tableCards  = document.querySelectorAll(".table-card");
+
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    if (header)       tl.from(header,       { y: -22, opacity: 0, duration: 0.5 }, 0);
+    if (hero)         tl.from(hero,         { y: 36, opacity: 0, scale: 0.97, duration: 0.78, ease: "power4.out" }, 0.12);
+    if (noteSection)  tl.from(noteSection,  { y: 24, opacity: 0, duration: 0.6 }, 0.3);
+    if (sections.length)  tl.from(sections,  { y: 28, opacity: 0, stagger: 0.1,  duration: 0.6 }, 0.3);
+    if (statCards.length)  tl.from(statCards,  { y: 26, opacity: 0, scale: 0.93, stagger: 0.08, duration: 0.58, ease: "back.out(1.7)" }, 0.5);
+    if (tableCards.length) tl.from(tableCards, { y: 22, opacity: 0, stagger: 0.07, duration: 0.55 }, 0.58);
+  }
+
+  // Page exit transitions for header nav links
+  document.querySelectorAll(".dash-header a[href]").forEach((link) => {
+    const href = link.getAttribute("href");
+    if (!href || href.startsWith("#")) return;
+    link.addEventListener("click", (e) => {
+      if (e.metaKey || e.ctrlKey) return;
+      e.preventDefault();
+      gsap.to(document.body, {
+        opacity: 0, duration: 0.3, ease: "power2.in",
+        onComplete: () => { window.location.href = href; },
+      });
+    });
+  });
+})();
+

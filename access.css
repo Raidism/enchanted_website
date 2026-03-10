@@ -449,20 +449,23 @@ h1 {
 }
 
 .login-form label {
-  color: #c7d5cb;
-  font-size: 0.9rem;
-  font-weight: 600;
+  color: #b8cdbf;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .login-form input {
-  border: 1px solid rgba(77, 139, 99, 0.5);
-  background: rgba(8, 13, 10, 0.88);
+  border: 1px solid rgba(77, 139, 99, 0.4);
+  background: rgba(6, 10, 7, 0.92);
   color: #f2f7f2;
-  border-radius: 10px;
-  padding: 0.72rem 0.8rem;
+  border-radius: 12px;
+  padding: 0.8rem 0.9rem;
   font: inherit;
+  font-size: 0.97rem;
   transition: border-color 0.28s ease, box-shadow 0.28s ease;
-  min-height: 44px;
+  min-height: 48px;
 }
 
 .login-form input:focus {
@@ -505,15 +508,17 @@ h1 {
 }
 
 .login-form button[type="submit"] {
-  margin-top: 0.35rem;
+  margin-top: 0.5rem;
   border: none;
-  border-radius: 10px;
-  padding: 0.78rem 1rem;
-  font-weight: 700;
+  border-radius: 14px;
+  padding: 0.88rem 1rem;
+  font-weight: 800;
+  font-size: 0.97rem;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  color: #111;
-  background: linear-gradient(180deg, #f0daa0, var(--gold));
-  min-height: 46px;
+  color: #0e1a12;
+  background: linear-gradient(160deg, #f5e4aa, var(--gold) 60%, #c49d42);
+  min-height: 50px;
   will-change: transform;
   transition:
     transform 0.34s cubic-bezier(0.23, 1, 0.32, 1),

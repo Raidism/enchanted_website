@@ -33,21 +33,64 @@ const STATUS_LABELS = {
 };
 
 const isAdmin = currentUser.role === "admin";
-let previousRenderedIds = new Set();
-let activeAction = null;
-welcomeText.textContent = isAdmin ? "Welcome admin" : `Welcome ${currentUser.username}`;
+const _profileKey = String(currentUser.username || "").trim().toLowerCase();
+const _ROLE_LABELS = {
+  admin:          "Head of IT",
+  "ln-obidat":    "Under Secretary General",
+  ahmadph:        "Secretary General",
+  toleenkmedia:   "Head of Media",
+};
+const _displayName = currentUser.name || currentUser.username;
+const _roleLabel = _ROLE_LABELS[_profileKey] || (isAdmin ? "Admin" : "Member");
+
+// Populate mini hero
+const _pmhPhoto = document.getElementById("pmhPhoto");
+const _pmhName  = document.getElementById("pmhName");
+const _pmhRole  = document.getElementById("pmhRole");
+if (_pmhPhoto && currentUser.photo) { _pmhPhoto.src = currentUser.photo; _pmhPhoto.alt = _displayName; }
+if (_pmhName)  _pmhName.textContent  = _displayName;
+if (_pmhRole)  _pmhRole.textContent  = _roleLabel;
+
+// Legacy welcome text (now hidden)
+const welcomeText  = document.getElementById("welcomeText");
+const accessNotice = document.getElementById("accessNotice");
 if (!isAdmin && accessNotice) {
   accessNotice.textContent = "Protected view: personal details are masked and actions are read-only for member accounts.";
 }
+
+let previousRenderedIds = new Set();
+let activeAction = null;
 
 logoutBtn.addEventListener("click", () => {
   logoutBtn.classList.add("is-loading");
   logoutBtn.disabled = true;
 
-  setTimeout(() => {
-    window.ImperiumAuth.logout();
-    window.location.href = "access.html";
-  }, 900);
+  const photoSrc = currentUser.photo || "assets/imperium mun logo.jpg";
+  const overlay  = document.createElement("div");
+  overlay.className = "logout-overlay";
+  overlay.innerHTML = `
+    <div class="logout-card">
+      <div class="logout-photo-ring">
+        <img src="${photoSrc}" alt="" class="logout-photo" />
+      </div>
+      <p class="logout-name">${_displayName}</p>
+      <p class="logout-msg">Goodbye. See you next time.</p>
+      <p class="logout-msg" style="font-size:.8rem;opacity:.4;margin-top:.1rem">Securing session\u2026</p>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add("is-visible"));
+
+  if (typeof gsap !== "undefined") {
+    const ring = overlay.querySelector(".logout-photo-ring");
+    const card = overlay.querySelector(".logout-card");
+    gsap.to(ring, { scale: 1.18, opacity: 0, duration: 0.65, ease: "power2.in", delay: 0.95 });
+    gsap.to(card, { y: -24, opacity: 0, duration: 0.48, ease: "power2.in", delay: 1.1 });
+    gsap.to(overlay, { opacity: 0, duration: 0.4, ease: "power2.in", delay: 1.45,
+      onComplete: () => { window.ImperiumAuth.logout(); window.location.href = "access.html"; } });
+  } else {
+    setTimeout(() => { window.ImperiumAuth.logout(); window.location.href = "access.html"; }, 1600);
+  }
 });
 
 const readWaitlistLocal = () => {
@@ -456,3 +499,40 @@ window.addEventListener("storage", (event) => {
     renderWaitlist();
   }
 });
+
+// GSAP entrance + page transitions
+(function initWaitlistGSAP() {
+  if (typeof gsap === "undefined") return;
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  document.body.style.opacity = "0";
+  requestAnimationFrame(() => {
+    gsap.to(document.body, { opacity: 1, duration: 0.55, ease: "power2.out" });
+  });
+
+  if (!prefersReduced) {
+    const header     = document.querySelector(".dash-header");
+    const hero       = document.getElementById("pageMiniHero");
+    const section    = document.querySelector(".dash-main > .section");
+    const statCards  = document.querySelectorAll(".stat-card");
+    const tableCards = document.querySelectorAll(".table-card");
+
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    if (header)      tl.from(header,      { y: -22, opacity: 0, duration: 0.5 }, 0);
+    if (hero)        tl.from(hero,        { y: 34, opacity: 0, scale: 0.97, duration: 0.72, ease: "power4.out" }, 0.1);
+    if (section)     tl.from(section,     { y: 26, opacity: 0, duration: 0.6 }, 0.26);
+    if (statCards.length)  tl.from(statCards,  { y: 26, opacity: 0, scale: 0.93, stagger: 0.08, duration: 0.56, ease: "back.out(1.7)" }, 0.4);
+    if (tableCards.length) tl.from(tableCards, { y: 22, opacity: 0, stagger: 0.07, duration: 0.55 }, 0.5);
+  }
+
+  document.querySelectorAll(".dash-header a[href]").forEach((link) => {
+    const href = link.getAttribute("href");
+    if (!href || href.startsWith("#")) return;
+    link.addEventListener("click", (e) => {
+      if (e.metaKey || e.ctrlKey) return;
+      e.preventDefault();
+      gsap.to(document.body, { opacity: 0, duration: 0.3, ease: "power2.in",
+        onComplete: () => { window.location.href = href; } });
+    });
+  });
+})();

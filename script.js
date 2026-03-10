@@ -1,4 +1,4 @@
-const yearSpan = document.getElementById("year");
+﻿const yearSpan = document.getElementById("year");
 if (yearSpan) {
   yearSpan.textContent = new Date().getFullYear();
 }
@@ -37,29 +37,85 @@ if (siteAnnouncement && siteSettings.announcement) {
 }
 
 if (siteSettings.maintenanceMode) {
-  document.body.classList.add("site-maintenance");
-  document.body.innerHTML = "";
+  const _currentUser = window.ImperiumAuth && typeof window.ImperiumAuth.getCurrentUser === "function"
+    ? window.ImperiumAuth.getCurrentUser()
+    : null;
+  const _isAdmin = _currentUser && _currentUser.role === "admin";
 
-  const shell = document.createElement("div");
-  shell.className = "maintenance-shell";
+  if (_isAdmin) {
+    // Admin sees the real site — just add a dismissible warning ribbon.
+    const ribbon = document.createElement("div");
+    ribbon.id = "maintenanceRibbon";
+    ribbon.innerHTML =
+      '<span>\uD83D\uDEE0\uFE0F <strong>Maintenance Mode is ON</strong> — Visitors see the maintenance screen.</span>' +
+      '<a href="dashboard.html" style="margin-left:1rem;text-decoration:underline;">Turn it off in Dashboard</a>';
+    Object.assign(ribbon.style, {
+      position: "fixed", top: "0", left: "0", right: "0", zIndex: "9997",
+      background: "#d5b465", color: "#0e1a12", textAlign: "center",
+      padding: "0.55rem 1rem", fontSize: "0.82rem", fontWeight: "700",
+    });
+    document.documentElement.style.setProperty("--ribbon-offset", "2.4rem");
+    document.body.appendChild(ribbon);
+    // don't throw — admin sees real page
+  } else {
+    // Non-admin: show a full-screen overlay (real page still exists behind it)
+    const overlay = document.createElement("div");
+    overlay.id = "maintenanceOverlay";
+    overlay.className = "maintenance-shell";
+    Object.assign(overlay.style, {
+      position: "fixed", inset: "0", zIndex: "9998",
+      background: "var(--bg, #050706)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+    });
 
-  const card = document.createElement("div");
-  card.className = "maintenance-card";
+    const card = document.createElement("div");
+    card.className = "maintenance-card";
 
-  const title = document.createElement("h1");
-  title.textContent = "Imperium MUN";
+    const title = document.createElement("h1");
+    title.textContent = "Imperium MUN";
 
-  const message = document.createElement("p");
-  message.textContent = siteSettings.maintenanceMessage || fallbackSiteSettings.maintenanceMessage;
+    const message = document.createElement("p");
+    message.textContent = siteSettings.maintenanceMessage || fallbackSiteSettings.maintenanceMessage;
 
-  const accessLink = document.createElement("a");
-  accessLink.href = "access.html";
-  accessLink.textContent = "Admin / Team Access";
+    const tttWrap = document.createElement("div");
+    tttWrap.innerHTML =
+      '<div class="ttt-game" id="tttGame">' +
+        '<div class="ttt-header">' +
+          '<p class="ttt-title">\u2665 Site Down? Play while you wait</p>' +
+          '<div class="ttt-scores">' +
+            '<span class="ttt-score-item" id="tttWins">W: 0</span>' +
+            '<span class="ttt-score-sep">\u2022</span>' +
+            '<span class="ttt-score-item ttt-score-draw" id="tttDraws">D: 0</span>' +
+            '<span class="ttt-score-sep">\u2022</span>' +
+            '<span class="ttt-score-item ttt-score-loss" id="tttLosses">L: 0</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ttt-status" id="tttStatus">Your turn (X)</div>' +
+        '<div class="ttt-board" id="tttBoard">' +
+          '<button class="ttt-cell" data-i="0" type="button"></button>' +
+          '<button class="ttt-cell" data-i="1" type="button"></button>' +
+          '<button class="ttt-cell" data-i="2" type="button"></button>' +
+          '<button class="ttt-cell" data-i="3" type="button"></button>' +
+          '<button class="ttt-cell" data-i="4" type="button"></button>' +
+          '<button class="ttt-cell" data-i="5" type="button"></button>' +
+          '<button class="ttt-cell" data-i="6" type="button"></button>' +
+          '<button class="ttt-cell" data-i="7" type="button"></button>' +
+          '<button class="ttt-cell" data-i="8" type="button"></button>' +
+        '</div>' +
+        '<button class="ttt-reset" id="tttReset" type="button">New Game</button>' +
+      '</div>';
 
-  card.append(title, message, accessLink);
-  shell.appendChild(card);
-  document.body.appendChild(shell);
-  throw new Error("Website under maintenance mode");
+    const accessLink = document.createElement("a");
+    accessLink.href = "access.html";
+    accessLink.textContent = "Admin / Team Access";
+
+    card.append(title, message, tttWrap, accessLink);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+    document.documentElement.style.overflow = "hidden";
+    initTicTacToe();
+    throw new Error("Website under maintenance mode");
+  }
 }
 
 const themeToggle = document.getElementById("themeToggle");
@@ -105,15 +161,8 @@ const animateThemeWipe = ({ layerTheme, fromRadius, toRadius, originX, originY }
         { clipPath: `circle(${toRadius}px at ${originX}px ${originY}px)` },
       ],
       {
-        duration: 620,
-        easing: "cubic-bezier(0.22, 0.9, 0.28, 1)",
-        fill: "forwards",
-      }
-    );
-
-    animation.onfinish = () => {
-      layer.remove();
-      resolve();
+        duration: 560,
+        easing: "cubic-bezier(0.32, 0.72, 0, 1)",
     };
 
     animation.oncancel = () => {
@@ -153,17 +202,17 @@ if (themeToggle) {
     themeToggle.disabled = true;
 
     if (nextTheme === "light") {
-      // Dark -> Light: reveal light from toggle outward.
+      // Dark → Light: apply light first, then collapse the dark overlay inward.
+      setTheme("light", true);
       await animateThemeWipe({
-        layerTheme: "light",
-        fromRadius: 0,
-        toRadius: maxRadius,
+        layerTheme: "dark",
+        fromRadius: maxRadius,
+        toRadius: 0,
         originX,
         originY,
       });
-      setTheme("light", true);
     } else {
-      // Light -> Dark: keep a shrinking light layer so dark closes inward to toggle.
+      // Light → Dark: apply dark first, then collapse the light overlay inward.
       setTheme("dark", true);
       await animateThemeWipe({
         layerTheme: "light",
@@ -834,7 +883,7 @@ if (shareBtn && shareMessage) {
       ".team-card.reveal.pop-card",
       ".stat-card.reveal.pop-card",
       ".launch-card.reveal.pop-card",
-      ".faq-item.reveal.pop-card",
+      ".faq-card.reveal.pop-card",
     ];
 
     batchSelectors.forEach((sel) => {
@@ -852,10 +901,15 @@ if (shareBtn && shareMessage) {
             y: 0,
             scale: 1,
             stagger: 0.1,
-            duration: 0.82,
-            ease: "back.out(1.3)",
-            clearProps: "scale",
-            onComplete() { this.targets().forEach((t) => { t.style.transition = ""; }); },
+            duration: 0.78,
+            ease: "expo.out",
+            onComplete() {
+              // Hand off cleanly to CSS — add .show, then wipe all inline GSAP styles
+              this.targets().forEach((t) => {
+                t.classList.add("show");
+                gsap.set(t, { clearProps: "all" });
+              });
+            },
           });
         },
       });
@@ -867,9 +921,11 @@ if (shareBtn && shareMessage) {
       if (!el) return;
       gsap.to(el, {
         scrollTrigger: { trigger: el, start: "top 84%", once: true },
-        opacity: 1, y: 0, scale: 1, duration: 0.88, ease: "power3.out",
-        clearProps: "scale",
-        onComplete() { el.style.transition = ""; },
+        opacity: 1, y: 0, scale: 1, duration: 0.88, ease: "expo.out",
+        onComplete() {
+          el.classList.add("show");
+          gsap.set(el, { clearProps: "all" });
+        },
       });
     });
   }
@@ -888,8 +944,8 @@ if (shareBtn && shareMessage) {
   if (countItemEls.length) {
     gsap.from(countItemEls, {
       scrollTrigger: { trigger: ".countdown", start: "top 88%", once: true },
-      opacity: 0, y: 32, scale: 0.8, stagger: 0.1, duration: 0.72,
-      ease: "back.out(1.8)",
+      opacity: 0, y: 28, scale: 0.88, stagger: 0.1, duration: 0.78,
+      ease: "expo.out",
     });
   }
 
@@ -1006,7 +1062,11 @@ if (shareBtn && shareMessage) {
     });
   });
 
-  // ── Page transition: fade out before navigating ────────────────
+  // ── Page transition: smooth fade-in on arrive + fade-out on leave ──
+  // Fade in when the page loads (handles back-navigation too)
+  gsap.set(document.body, { opacity: 0 });
+  gsap.to(document.body, { opacity: 1, duration: 0.45, ease: "power2.out", delay: 0.05, clearProps: "opacity" });
+
   document.querySelectorAll("a[href]").forEach((link) => {
     const href = link.getAttribute("href") || "";
     if (
@@ -1021,10 +1081,15 @@ if (shareBtn && shareMessage) {
     link.addEventListener("click", (e) => {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       e.preventDefault();
+      // Kill all ScrollTrigger scroll-listeners and any in-flight tweens so
+      // they don't fight the fade and cause stutter
+      ScrollTrigger.getAll().forEach((st) => st.disable(false));
+      gsap.killTweensOf(document.body);
       gsap.to(document.body, {
         opacity: 0,
-        duration: 0.3,
-        ease: "power2.in",
+        duration: 0.35,
+        ease: "power2.inOut",
+        overwrite: true,
         onComplete: () => { window.location.href = href; },
       });
     });
@@ -1034,4 +1099,193 @@ if (shareBtn && shareMessage) {
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => ScrollTrigger.refresh());
   }
-})();
+
+// ── FAQ flip cards ────────────────────────────────────────────
+(function initFaqCards() {
+  const cards = [...document.querySelectorAll('.faq-card')];
+  if (!cards.length) return;
+
+  let current = null;
+
+  function flip(card) {
+    if (current && current !== card) {
+      current.classList.remove('flipped');
+      current.setAttribute('aria-pressed', 'false');
+    }
+    card.classList.add('flipped');
+    card.setAttribute('aria-pressed', 'true');
+    current = card;
+  }
+
+  function unflip(card) {
+    card.classList.remove('flipped');
+    card.setAttribute('aria-pressed', 'false');
+    if (current === card) current = null;
+  }
+
+  cards.forEach((card) => {
+    card.addEventListener('click', () => {
+      card.classList.contains('flipped') ? unflip(card) : flip(card);
+    });
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.classList.contains('flipped') ? unflip(card) : flip(card);
+      }
+    });
+
+    // Flip back automatically when card scrolls out of view
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (!entry.isIntersecting) unflip(card); },
+      { threshold: 0 }
+    );
+    obs.observe(card);
+  });
+}());
+}());
+//  Tic Tac Toe (unbeatable minimax AI) 
+function initTicTacToe() {
+  const board    = document.getElementById("tttBoard");
+  const status   = document.getElementById("tttStatus");
+  const resetBtn = document.getElementById("tttReset");
+  const winsEl   = document.getElementById("tttWins");
+  const drawsEl  = document.getElementById("tttDraws");
+  const lossesEl = document.getElementById("tttLosses");
+  if (!board || !status || !resetBtn) return;
+
+  const TTT_SCORE_KEY = "imperium_ttt_score";
+  let scores = (() => {
+    try { return JSON.parse(localStorage.getItem(TTT_SCORE_KEY) || "{}"); } catch { return {}; }
+  })();
+  scores = { wins: +(scores.wins||0), draws: +(scores.draws||0), losses: +(scores.losses||0) };
+
+  const saveScores = () => {
+    winsEl.textContent   = "W: " + scores.wins;
+    drawsEl.textContent  = "D: " + scores.draws;
+    lossesEl.textContent = "L: " + scores.losses;
+    try { localStorage.setItem(TTT_SCORE_KEY, JSON.stringify(scores)); } catch {}
+  };
+  saveScores();
+
+  const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  let cells, gameOver, humanTurn;
+
+  const checkWinner = (b) => {
+    for (const [a,c,d] of WINS) if (b[a] && b[a]===b[c] && b[a]===b[d]) return b[a];
+    return b.includes(null) ? null : "draw";
+  };
+
+  const minimax = (b, isMax, alpha, beta) => {
+    const w = checkWinner(b);
+    if (w === "O") return 10;
+    if (w === "X") return -10;
+    if (w === "draw") return 0;
+    let best = isMax ? -Infinity : Infinity;
+    for (let i = 0; i < 9; i++) {
+      if (b[i] !== null) continue;
+      b[i] = isMax ? "O" : "X";
+      const score = minimax(b, !isMax, alpha, beta);
+      b[i] = null;
+      if (isMax) { best = Math.max(best, score); alpha = Math.max(alpha, best); }
+      else        { best = Math.min(best, score); beta  = Math.min(beta,  best); }
+      if (beta <= alpha) break;
+    }
+    return best;
+  };
+
+  const bestMove = (b) => {
+    let best = -Infinity, move = -1;
+    for (let i = 0; i < 9; i++) {
+      if (b[i] !== null) continue;
+      b[i] = "O";
+      const s = minimax(b, false, -Infinity, Infinity);
+      b[i] = null;
+      if (s > best) { best = s; move = i; }
+    }
+    return move;
+  };
+
+  const renderBoard = () => {
+    cells.forEach((val, i) => {
+      const btn = board.querySelector(`[data-i="${i}"]`);
+      btn.textContent = val || "";
+      btn.className = "ttt-cell" + (val ? " ttt-taken ttt-" + val.toLowerCase() : "");
+      btn.disabled = val !== null || gameOver || !humanTurn;
+    });
+  };
+
+  const highlight = (combo) => {
+    combo.forEach(i => board.querySelector(`[data-i="${i}"]`).classList.add("ttt-win"));
+  };
+
+  const endGame = (result) => {
+    gameOver = true;
+    if (result === "X") {
+      status.textContent = "You win! ";
+      status.className = "ttt-status ttt-win-msg";
+      scores.wins++;
+    } else if (result === "O") {
+      status.textContent = "AI wins! ";
+      status.className = "ttt-status ttt-loss-msg";
+      scores.losses++;
+    } else {
+      status.textContent = "Draw! ";
+      status.className = "ttt-status ttt-draw-msg";
+      scores.draws++;
+    }
+    saveScores();
+    for (const combo of WINS) {
+      if (cells[combo[0]] && cells[combo[0]] === cells[combo[1]] && cells[combo[0]] === cells[combo[2]]) {
+        highlight(combo);
+        break;
+      }
+    }
+    board.querySelectorAll(".ttt-cell").forEach(b => b.disabled = true);
+  };
+
+  const aiMove = () => {
+    if (gameOver) return;
+    const move = bestMove(cells);
+    if (move === -1) return;
+    cells[move] = "O";
+    humanTurn = true;
+    renderBoard();
+    const w = checkWinner(cells);
+    if (w) { endGame(w); return; }
+    status.textContent = "Your turn (X)";
+    status.className = "ttt-status";
+  };
+
+  const startGame = () => {
+    cells = Array(9).fill(null);
+    gameOver = false;
+    humanTurn = true;
+    status.textContent = "Your turn (X)";
+    status.className = "ttt-status";
+    board.querySelectorAll(".ttt-cell").forEach(b => {
+      b.textContent = "";
+      b.className = "ttt-cell";
+      b.disabled = false;
+    });
+  };
+
+  board.addEventListener("click", (e) => {
+    const btn = e.target.closest(".ttt-cell");
+    if (!btn || gameOver || !humanTurn) return;
+    const i = +btn.getAttribute("data-i");
+    if (cells[i] !== null) return;
+    cells[i] = "X";
+    humanTurn = false;
+    renderBoard();
+    const w = checkWinner(cells);
+    if (w) { endGame(w); return; }
+    status.textContent = "AI thinking";
+    status.className = "ttt-status";
+    setTimeout(aiMove, 340);
+  });
+
+  resetBtn.addEventListener("click", startGame);
+  startGame();
+}
+
+//  Tic Tac Toe (unbeatable minimax AI

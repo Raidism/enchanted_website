@@ -35,18 +35,21 @@
   </header>
 
   <main class="dash-main">
-    <p id="welcomeText" class="welcome-banner">Welcome</p>
+    <!-- Welcome Hero -->
+    <div class="dash-welcome-hero" id="dashWelcomeHero" aria-label="Welcome briefing">
+      <div class="dwh-photo-col" aria-hidden="true">
+        <div class="dwh-photo-ring">
+          <img id="dwhPhoto" src="assets/imperium mun logo.jpg" alt="" class="dwh-photo" loading="eager" decoding="async" />
+        </div>
+      </div>
+      <div class="dwh-text-col">
+        <p class="dwh-eyebrow">IMPERIUM&nbsp;MUN &mdash; SECURE&nbsp;PORTAL</p>
+        <h2 class="dwh-welcome-line" aria-live="polite">Welcome,&nbsp;<span class="dwh-name" id="dwhName"></span><span class="dwh-cursor" aria-hidden="true">█</span></h2>
+        <p class="dwh-role" id="dwhRole"></p>
+        <div class="dwh-briefing" id="dwhBriefing" aria-live="polite"></div>
+      </div>
+    </div>
 
-    <section class="user-spotlight" aria-label="Logged in profile">
-      <div class="user-spotlight-photo-wrap" aria-hidden="true">
-        <img id="userSpotlightPhoto" src="assets/imperium mun logo.jpg" alt="" class="user-spotlight-photo" loading="lazy" decoding="async" />
-        <img src="assets/Secretariat frame.png" alt="" class="user-spotlight-frame" loading="lazy" decoding="async" />
-      </div>
-      <div class="user-spotlight-copy">
-        <p id="userSpotlightName" class="user-spotlight-name">Imperium Team</p>
-        <p id="userSpotlightRole" class="user-spotlight-role">Signed in</p>
-      </div>
-    </section>
 
     <section id="analytics" class="section">
       <h1>Website Analytics</h1>
@@ -62,6 +65,10 @@
         <article class="stat-card">
           <h3>Countries</h3>
           <p id="uniqueCountries">0</p>
+        </article>
+        <article class="stat-card">
+          <h3>Lines of Code</h3>
+          <p id="totalLines">&mdash;</p>
         </article>
       </div>
 
@@ -88,15 +95,6 @@
     <section id="adminPanel" class="section admin-only" hidden>
       <h2>Admin Controls</h2>
       <div class="admin-grid">
-        <article class="table-card admin-profile-card">
-          <h3>Admin Profile</h3>
-          <div class="admin-photo-wrap" aria-hidden="true">
-            <img id="adminProfilePhoto" src="assets/adham pic.jpg" alt="" class="admin-photo" loading="lazy" decoding="async" />
-            <img src="assets/Secretariat frame.png" alt="" class="admin-photo-frame" loading="lazy" decoding="async" />
-          </div>
-          <p id="adminProfileCaption" class="sub">Tough IT guy: Adham.</p>
-        </article>
-
         <article class="table-card">
           <h3>Currently Logged In</h3>
           <ul id="activeUsersList" class="simple-list"></ul>
@@ -149,11 +147,37 @@
           <h3>User Access Control</h3>
           <ul id="userAccessList" class="simple-list"></ul>
         </article>
+
+        <article class="table-card" id="itNotesCard">
+          <h3>📋 Staff Notes for IT</h3>
+          <ul id="itNotesList" class="it-notes-list"></ul>
+          <p id="itNotesEmpty" class="sub" hidden>No pending staff notes.</p>
+        </article>
       </div>
+    </section>
+
+    <!-- Note submission (visible to all signed-in users) -->
+    <section class="submit-note-section" id="submitNoteSection">
+      <article class="table-card">
+        <h3>📝 Leave a Note for IT</h3>
+        <p class="sub">Flag changes, requests, or anything needing IT attention.</p>
+        <form id="submitNoteForm" class="stack-form" novalidate>
+          <label for="noteMessage">Your message</label>
+          <textarea id="noteMessage" name="noteMessage" rows="4" placeholder="Describe what needs attention…"></textarea>
+          <label for="notePriority">Priority</label>
+          <select id="notePriority" name="notePriority">
+            <option value="normal">⚪ Normal</option>
+            <option value="urgent">🚨 Urgent</option>
+          </select>
+          <p id="submitNoteMessage" class="form-message" aria-live="polite"></p>
+          <button type="submit">Submit Note</button>
+        </form>
+      </article>
     </section>
 
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="tracker.js"></script>
   <script src="auth.js"></script>
   <script src="dashboard.js"></script>
