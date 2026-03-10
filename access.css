@@ -272,7 +272,7 @@ body::after {
 .badge-admin .role-abbr { color: #f0daa0; }
 .badge-sg   .role-abbr { color: #8ecfa0; }
 .badge-usg  .role-abbr { color: #8ecfa0; }
-.badge-media .role-abbr { color: #aab9ae; }
+.badge-dsg  .role-abbr { color: #c9d8ce; }
 
 .role-label {
   font-size: 0.67rem;

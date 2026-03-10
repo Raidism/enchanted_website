@@ -4,11 +4,6 @@ if (!currentUser) {
   throw new Error("No active session");
 }
 
-if (currentUser.role !== "admin") {
-  window.location.href = "applications.html";
-  throw new Error("Dashboard analytics is admin-only");
-}
-
 const siteSettings = window.ImperiumAuth.getSiteSettings();
 if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
   window.location.href = "access.html";
@@ -63,6 +58,8 @@ const WELCOME_NAMES = {
   "ln-obidat": "Leen Obeidat",
   ahmadph: "Ahmed Pharaon",
   toleenkmedia: "Toleen Kurdi",
+  omaralhomran: "Omar Alhomran",
+  yamendalegend: "YAMEN ELATTAL",
 };
 
 const ADMIN_PROFILE_PRESETS = {
@@ -85,6 +82,16 @@ const ADMIN_PROFILE_PRESETS = {
     photo: "assets/head of media.png",
     caption: "Welcome back, Toleen Kurdi (Head of Media).",
     alt: "Toleen profile",
+  },
+  omaralhomran: {
+    photo: "assets/Head of DA.png",
+    caption: "Welcome back, Omar Alhomran (Head of DA).",
+    alt: "Omar profile",
+  },
+  yamendalegend: {
+    photo: "assets/HEAD OF CA.png",
+    caption: "Welcome back, YAMEN ELATTAL (Head of CA).",
+    alt: "Yamen profile",
   },
 };
 
@@ -109,7 +116,39 @@ const USER_SPOTLIGHT_PRESETS = {
     role: "Head of Media",
     photo: "assets/head of media.png",
   },
+  omaralhomran: {
+    name: "Omar Alhomran",
+    role: "Head of DA",
+    photo: "assets/Head of DA.png",
+  },
+  yamendalegend: {
+    name: "YAMEN ELATTAL",
+    role: "Head of CA",
+    photo: "assets/HEAD OF CA.png",
+  },
 };
+
+const applyMemberLocks = () => {
+  if (isAdmin) return;
+
+  document.body.classList.add("member-locked-view");
+
+  const lockedSections = document.querySelectorAll("[data-admin-lock]");
+  lockedSections.forEach((section) => {
+    section.classList.add("is-locked");
+  });
+
+  const adminLinks = document.querySelectorAll("[data-admin-link]");
+  adminLinks.forEach((link) => {
+    link.classList.add("locked-link");
+    link.setAttribute("aria-disabled", "true");
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
+  });
+};
+
+applyMemberLocks();
 
 // ═══════════════════════════════════════════════════════════════
 //  NOTES SYSTEM

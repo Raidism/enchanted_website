@@ -27,8 +27,8 @@
       <a class="brand" href="index.html">IMPERIUM MUN</a>
       <div class="header-actions">
         <a href="#analytics">Analytics</a>
-        <a href="ops.html">Ops Center</a>
-        <a href="waitlist.html">Early Access</a>
+        <a href="ops.html" data-admin-link>Ops Center</a>
+        <a href="waitlist.html" data-admin-link>Early Access</a>
         <a href="applications.html">Applications</a>
         <button id="logoutBtn" type="button">Logout</button>
       </div>
@@ -54,6 +54,8 @@
 
     <section id="analytics" class="section">
       <h1>Website Analytics</h1>
+      <p class="sub">Members can view headline analytics. Restricted details are blurred and locked.</p>
+
       <div class="stats-grid">
         <article class="stat-card">
           <h3>Total Views</h3>
@@ -73,26 +75,32 @@
         </article>
       </div>
 
-      <div class="table-card">
+      <div class="table-card" id="recentVisitorsCard" data-admin-lock>
         <h2>Recent Visitors</h2>
         <div class="table-wrap">
           <table>
-    
-      <article class="table-card">
-        <h3>📝 Leave a Note for IT</h3>
-        <p class="sub">Flag changes, requests, or anything needing IT attention.</p>
-        <form id="submitNoteForm" class="stack-form" novalidate>
-          <label for="noteMessage">Your message</label>
-          <textarea id="noteMessage" name="noteMessage" rows="4" placeholder="Describe what needs attention…"></textarea>
-          <label for="notePriority">Priority</label>
-          <select id="notePriority" name="notePriority">
-            <option value="normal">⚪ Normal</option>
-            <option value="urgent">🚨 Urgent</option>
-          </select>
-          <p id="submitNoteMessage" class="form-message" aria-live="polite"></p>
-          <button type="submit">Submit Note</button>
-        </form>
-      </article>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>IP</th>
+                <th>Country</th>
+                <th>Device</th>
+                <th>Page</th>
+              </tr>
+            </thead>
+            <tbody id="visitsTableBody"></tbody>
+          </table>
+        </div>
+        <div id="visitsPagination" class="pagination" aria-label="Recent visitors pagination"></div>
+
+        <div class="lock-glass" aria-hidden="true">
+          <div class="lock-glass-inner">
+            <div class="lock-icon">🔒</div>
+            <p>Restricted Data</p>
+            <small>Only Admin, SG, USG, and DSG can view detailed visitor logs.</small>
+          </div>
+        </div>
+      </div>
     </section>
 
   </main>
