@@ -160,8 +160,8 @@ const animateThemeWipe = ({ layerTheme, fromRadius, toRadius, originX, originY }
         { clipPath: `circle(${toRadius}px at ${originX}px ${originY}px)` },
       ],
       {
-        duration: 560,
-        easing: "cubic-bezier(0.32, 0.72, 0, 1)",
+        duration: 620,
+        easing: "cubic-bezier(0.22, 0.9, 0.28, 1)",
         fill: "forwards",
       }
     );
@@ -210,6 +210,7 @@ if (themeToggle) {
     try {
       if (nextTheme === "light") {
         // Dark → Light: white spreads outward from the toggle.
+        setTheme("light", true);
         await animateThemeWipe({
           layerTheme: "light",
           fromRadius: 0,
@@ -217,7 +218,6 @@ if (themeToggle) {
           originX,
           originY,
         });
-        setTheme("light", true);
       } else {
         // Light → Dark: white collapses back into the toggle.
         setTheme("dark", true);

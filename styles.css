@@ -502,15 +502,16 @@ body[data-theme="light"] .theme-icon.moon {
   pointer-events: none;
   z-index: 9999;
   will-change: clip-path;
-  -webkit-backdrop-filter: blur(8px) saturate(1.25);
-  backdrop-filter: blur(8px) saturate(1.25);
+  contain: paint;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .theme-wipe-layer[data-theme="light"] {
   background:
-    radial-gradient(circle at 8% 8%, rgba(60, 122, 83, 0.12), transparent 34%),
-    radial-gradient(circle at 86% 12%, rgba(199, 158, 64, 0.16), transparent 38%),
-    radial-gradient(circle at 55% 90%, rgba(60, 122, 83, 0.08), transparent 40%),
+    radial-gradient(circle at 20% 18%, rgba(60, 122, 83, 0.1), transparent 42%),
+    radial-gradient(circle at 82% 14%, rgba(199, 158, 64, 0.12), transparent 44%),
     linear-gradient(145deg, rgba(238, 244, 239, 0.92), rgba(248, 252, 249, 0.88));
 }
 
@@ -1283,8 +1284,8 @@ body[data-theme="light"] .road-node-line {
 .faq-card-back {
   position: absolute;
   inset: 0;
-  backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
