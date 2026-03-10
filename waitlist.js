@@ -64,6 +64,9 @@ if (!isAdmin) {
     link.setAttribute("aria-disabled", "true");
     link.addEventListener("click", (event) => {
       event.preventDefault();
+      const href = String(link.getAttribute("href") || "").toLowerCase();
+      const feature = href.includes("ops") ? "ops" : (href.includes("settings") ? "settings" : "restricted");
+      window.location.href = `locked.html?feature=${encodeURIComponent(feature)}&from=waitlist.html`;
     });
   });
 }

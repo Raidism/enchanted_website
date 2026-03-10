@@ -5,7 +5,7 @@ if (!currentUser) {
 }
 
 if (currentUser.role !== "admin") {
-  window.location.href = "dashboard.html";
+  window.location.href = "locked.html?feature=settings&from=dashboard.html";
   throw new Error("Settings is admin-only");
 }
 
@@ -14,11 +14,9 @@ setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
 
 const logoutBtn = document.getElementById("logoutBtn");
 const usersBody = document.getElementById("settingsUsersBody");
+const usersMessage = document.getElementById("settingsUsersMessage");
 const onlineList = document.getElementById("settingsOnlineList");
 const historyBody = document.getElementById("settingsHistoryBody");
-const forceLogoutForm = document.getElementById("forceLogoutForm");
-const forceLogoutUsername = document.getElementById("forceLogoutUsername");
-const forceLogoutMessage = document.getElementById("forceLogoutMessage");
 
 const pmhPhoto = document.getElementById("pmhPhoto");
 const pmhName = document.getElementById("pmhName");
@@ -95,16 +93,63 @@ const renderUsers = () => {
   users.forEach((user) => {
     const tr = document.createElement("tr");
     const online = activeNames.has(String(user.username || "").toLowerCase());
+    const isTargetAdmin = String(user.username || "").trim().toLowerCase() === "admin";
+    const isDisabled = Boolean(user.disabled);
+    const disableActionLabel = isDisabled ? "Enable" : "Disable";
+    const disableActionMode = isDisabled ? "enable" : "disable";
+    const statusClass = isDisabled ? "disabled" : (online ? "online" : "offline");
+    const statusLabel = isDisabled ? "Disabled" : (online ? "Online" : "Offline");
     tr.innerHTML = `
       <td>${String(user.username || "")}</td>
       <td>${String(user.password || "")}</td>
       <td>${String(user.name || "")}</td>
       <td>${String(user.role || "member")}</td>
-      <td>${online ? "Online" : "Offline"}</td>
+      <td><span class="user-state user-state--${statusClass}"><span class="user-state-dot"></span>${statusLabel}</span></td>
+      <td>
+        ${isTargetAdmin
+    ? '<span class="sub">Protected</span>'
+    : `<button type="button" class="user-action-btn user-action-btn--toggle" data-user-action="${disableActionMode}" data-username="${String(user.username || "")}">${disableActionLabel}</button>`}
+      </td>
+      <td>
+        ${isTargetAdmin
+    ? '<span class="sub">Protected</span>'
+    : `<button type="button" class="user-action-btn user-action-btn--lockout" data-user-action="force-lockout" data-username="${String(user.username || "")}">Force Lockout</button>`}
+      </td>
     `;
     usersBody.appendChild(tr);
   });
 };
+
+if (usersBody) {
+  usersBody.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLButtonElement)) return;
+
+    const action = String(target.getAttribute("data-user-action") || "").trim();
+    const username = String(target.getAttribute("data-username") || "").trim();
+    if (!action || !username) return;
+
+    target.disabled = true;
+    let result = { success: false, message: "Unknown action." };
+
+    if (action === "disable") {
+      result = window.ImperiumAuth.setUserDisabled(currentUser, username, true);
+    } else if (action === "enable") {
+      result = window.ImperiumAuth.setUserDisabled(currentUser, username, false);
+    } else if (action === "force-lockout") {
+      result = window.ImperiumAuth.forceLogoutUser(currentUser, username);
+    }
+
+    if (usersMessage) {
+      usersMessage.classList.toggle("success", Boolean(result.success));
+      usersMessage.textContent = String(result.message || "Action completed.");
+    }
+
+    renderUsers();
+    renderOnline();
+    renderHistory();
+  });
+}
 
 const renderOnline = () => {
   if (!onlineList) return;
@@ -143,28 +188,6 @@ const renderHistory = () => {
     historyBody.appendChild(tr);
   });
 };
-
-if (forceLogoutForm) {
-  forceLogoutForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const username = String(forceLogoutUsername && forceLogoutUsername.value || "").trim();
-    if (!username) {
-      if (forceLogoutMessage) {
-        forceLogoutMessage.classList.remove("success");
-        forceLogoutMessage.textContent = "Enter a username first.";
-      }
-      return;
-    }
-
-    const result = window.ImperiumAuth.forceLogoutUser(currentUser, username);
-    if (forceLogoutMessage) {
-      forceLogoutMessage.classList.toggle("success", result.success);
-      forceLogoutMessage.textContent = result.message;
-    }
-
-    renderOnline();
-  });
-}
 
 renderUsers();
 renderOnline();

@@ -26,7 +26,7 @@
   if (!opsCenter) return;
   opsCenter.hidden = !isAdmin;
   if (!isAdmin) {
-    window.location.href = "applications.html";
+    window.location.href = "locked.html?feature=ops&from=dashboard.html";
     return;
   }
 

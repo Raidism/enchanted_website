@@ -1543,6 +1543,19 @@ body[data-theme="light"] .road-node-line {
   opacity: 0.7;
 }
 
+.main-credit .credit-link {
+  color: var(--gold-soft);
+  text-decoration: none;
+  font-weight: 700;
+  border-bottom: 1px dashed rgba(213, 180, 101, 0.45);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.main-credit .credit-link:hover {
+  color: #f7e3ae;
+  border-color: rgba(240, 218, 160, 0.86);
+}
+
 .footer-wrap {
   display: flex;
   justify-content: space-between;

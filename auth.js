@@ -257,18 +257,37 @@
       return null;
     }
 
+    // Backfill missing profile fields for legacy sessions.
+    const users = getUsers();
+    const matchedUser = users.find((user) => normalizeUsername(user.username) === normalizeUsername(session.username));
+    const backfilledSession = {
+      ...session,
+      role: String(session.role || (matchedUser && matchedUser.role) || "member"),
+      name: String(session.name || (matchedUser && matchedUser.name) || "").trim(),
+      photo: String(session.photo || (matchedUser && matchedUser.photo) || "").trim(),
+    };
+
     // Backfill expiry for old sessions so timeout behavior is consistent.
     const expiryIso = getSessionExpiryIso(session);
     if (expiryIso && !session.expiresAt) {
       const next = {
-        ...session,
+        ...backfilledSession,
         expiresAt: expiryIso,
       };
       writeJson(CURRENT_USER_KEY, next);
       return next;
     }
 
-    return session;
+    if (
+      backfilledSession.role !== session.role
+      || backfilledSession.name !== String(session.name || "")
+      || backfilledSession.photo !== String(session.photo || "")
+    ) {
+      writeJson(CURRENT_USER_KEY, backfilledSession);
+      return backfilledSession;
+    }
+
+    return backfilledSession;
   };
 
   const setCurrentUser = (user) => {
@@ -336,6 +355,8 @@
     const current = {
       username: matched.username,
       role: matched.role || "member",
+      name: String(matched.name || "").trim(),
+      photo: String(matched.photo || "").trim(),
       loginAt: new Date().toISOString(),
       expiresAt: new Date(Date.now() + SESSION_DURATION_MS).toISOString(),
     };

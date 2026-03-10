@@ -177,11 +177,23 @@ body::after {
 .portal-footer {
   width: min(1100px, 92vw);
   margin: 0 auto;
-  padding: 0.2rem 0 0.8rem;
+  padding: 0.4rem 0 1rem;
   text-align: center;
   color: #a7b8ab;
   font-size: 0.92rem;
   font-weight: 600;
+}
+
+.portal-footer .credit-link {
+  color: #f0daa0;
+  text-decoration: none;
+  font-weight: 800;
+  border-bottom: 1px dashed rgba(213, 180, 101, 0.44);
+}
+
+.portal-footer .credit-link:hover {
+  color: #f8e7b6;
+  border-bottom-color: rgba(240, 218, 160, 0.86);
 }
 
 .access-card {
@@ -616,6 +628,10 @@ h1 {
   animation: cookieSlideUp 0.25s ease-out;
 }
 
+body.cookie-banner-visible {
+  padding-bottom: 108px;
+}
+
 .cookie-banner.is-closing {
   animation: cookieSlideDown 0.18s ease-in forwards;
 }
@@ -823,9 +839,15 @@ h1 {
     padding: 1.2rem 1rem;
   }
 
+  .portal-footer {
+    padding: 0.55rem 0 1.25rem;
+  }
+
   .cookie-banner {
     flex-direction: column;
     align-items: stretch;
+    bottom: 0.75rem;
+    width: min(92vw, 520px);
   }
 
   .cookie-actions {
@@ -842,6 +864,7 @@ h1 {
   .access-layout {
     width: 94vw;
     gap: 0.75rem;
+    margin-bottom: 0.35rem;
   }
 
   .access-card {
@@ -866,11 +889,48 @@ h1 {
 
   .access-role-grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: 0.4rem;
+    gap: 0.32rem;
   }
 
   .access-role-badge {
-    padding: 0.45rem 0.2rem;
+    padding: 0.4rem 0.15rem;
+  }
+
+  .role-abbr {
+    font-size: 0.75rem;
+  }
+
+  .role-label {
+    font-size: 0.58rem;
+  }
+
+  .access-team-note {
+    font-size: 0.64rem;
+  }
+
+  .portal-footer {
+    font-size: 0.8rem;
+    padding-bottom: 1.35rem;
+  }
+
+  .cookie-banner {
+    bottom: 0.55rem;
+    padding: 0.66rem 0.65rem;
+    gap: 0.55rem;
+  }
+
+  .cookie-banner p {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .cookie-actions {
+    justify-content: stretch;
+  }
+
+  .cookie-btn {
+    flex: 1;
+    min-height: 36px;
   }
 
   .portal-logo-wrap {

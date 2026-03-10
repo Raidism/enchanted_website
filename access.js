@@ -64,6 +64,7 @@ const saveCookieConsent = (value) => {
 
 const hideCookieBanner = () => {
   if (cookieBanner) {
+    document.body.classList.remove("cookie-banner-visible");
     cookieBanner.classList.add("is-closing");
     cookieBanner.style.pointerEvents = "none";
     cookieBanner.style.opacity = "0";
@@ -83,6 +84,7 @@ const showCookieBannerIfNeeded = () => {
 
   const consent = readCookieConsent();
   cookieBanner.hidden = consent === "accepted" || consent === "rejected";
+  document.body.classList.toggle("cookie-banner-visible", !cookieBanner.hidden);
   if (!cookieBanner.hidden) {
     cookieBanner.style.display = "flex";
     cookieBanner.style.pointerEvents = "auto";

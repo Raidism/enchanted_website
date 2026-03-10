@@ -1513,3 +1513,105 @@ tbody tr.row-leave {
   content: " 🔒";
   font-size: 0.8em;
 }
+
+.locked-card {
+  text-align: center;
+  padding: 2rem 1.5rem;
+}
+
+.locked-icon {
+  font-size: 2rem;
+  margin: 0 0 0.4rem;
+}
+
+.locked-title {
+  margin-bottom: 0.45rem;
+}
+
+.locked-message {
+  max-width: 680px;
+  margin: 0 auto 1rem;
+}
+
+.locked-back-link {
+  display: inline-block;
+  text-decoration: none;
+  padding: 0.5rem 0.8rem;
+}
+
+.user-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0.26rem 0.62rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+}
+
+.user-state-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.user-state--online {
+  color: #8fe4ab;
+  border-color: rgba(103, 201, 132, 0.45);
+  background: rgba(57, 140, 79, 0.16);
+}
+
+.user-state--offline {
+  color: #b8c7d6;
+  border-color: rgba(158, 176, 193, 0.38);
+  background: rgba(78, 92, 106, 0.18);
+}
+
+.user-state--disabled {
+  color: #f1a9a9;
+  border-color: rgba(212, 106, 106, 0.46);
+  background: rgba(128, 45, 45, 0.2);
+}
+
+.user-action-btn {
+  border: 1px solid rgba(213, 180, 101, 0.35);
+  border-radius: 10px;
+  padding: 0.35rem 0.62rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #eef6f1;
+  background: linear-gradient(160deg, rgba(18, 30, 22, 0.95), rgba(11, 18, 14, 0.95));
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.user-action-btn:hover {
+  transform: translateY(-1px);
+}
+
+.user-action-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.user-action-btn--toggle {
+  border-color: rgba(113, 190, 137, 0.42);
+}
+
+.user-action-btn--toggle:hover {
+  box-shadow: 0 8px 22px rgba(77, 139, 99, 0.3), 0 0 10px rgba(143, 228, 171, 0.22);
+}
+
+.user-action-btn--lockout {
+  border-color: rgba(213, 180, 101, 0.5);
+}
+
+.user-action-btn--lockout:hover {
+  box-shadow: 0 8px 22px rgba(213, 180, 101, 0.26), 0 0 10px rgba(240, 218, 160, 0.2);
+}

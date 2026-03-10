@@ -46,7 +46,8 @@
 
       <div class="admin-grid">
         <article class="table-card">
-          <h3>User Credentials</h3>
+          <h3>User Management</h3>
+          <p class="sub">All users, online/offline status, and direct account controls.</p>
           <div class="table-wrap">
             <table>
               <thead>
@@ -56,26 +57,19 @@
                   <th>Name</th>
                   <th>Role</th>
                   <th>Status</th>
+                  <th>Enable/Disable</th>
+                  <th>Force Lockout</th>
                 </tr>
               </thead>
               <tbody id="settingsUsersBody"></tbody>
             </table>
           </div>
+          <p id="settingsUsersMessage" class="form-message" aria-live="polite"></p>
         </article>
 
         <article class="table-card">
           <h3>Online Sessions</h3>
           <ul id="settingsOnlineList" class="simple-list"></ul>
-        </article>
-
-        <article class="table-card">
-          <h3>Force Logout</h3>
-          <form id="forceLogoutForm" class="stack-form" novalidate>
-            <label for="forceLogoutUsername">Username</label>
-            <input id="forceLogoutUsername" type="text" placeholder="Enter username" />
-            <p id="forceLogoutMessage" class="form-message" aria-live="polite"></p>
-            <button type="submit">Force Logout User</button>
-          </form>
         </article>
 
         <article class="table-card">
