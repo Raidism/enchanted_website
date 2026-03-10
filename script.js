@@ -114,7 +114,6 @@ if (siteSettings.maintenanceMode) {
     document.body.appendChild(overlay);
     document.documentElement.style.overflow = "hidden";
     initTicTacToe();
-    throw new Error("Website under maintenance mode");
   }
 }
 
@@ -163,6 +162,13 @@ const animateThemeWipe = ({ layerTheme, fromRadius, toRadius, originX, originY }
       {
         duration: 560,
         easing: "cubic-bezier(0.32, 0.72, 0, 1)",
+        fill: "forwards",
+      }
+    );
+
+    animation.onfinish = () => {
+      layer.remove();
+      resolve();
     };
 
     animation.oncancel = () => {
