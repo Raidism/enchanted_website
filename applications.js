@@ -33,6 +33,90 @@ if (_aPmhRole) _aPmhRole.textContent = _appRoleLabel;
 
 const welcomeText = document.getElementById("welcomeText");
 const logoutBtn   = document.getElementById("logoutBtn");
+const applicationsTrendChart = document.getElementById("applicationsTrendChart");
+const applicationsTrendEmpty = document.getElementById("applicationsTrendEmpty");
+
+if (currentUser.role !== "admin") {
+  const adminLinks = document.querySelectorAll("[data-admin-link]");
+  adminLinks.forEach((link) => {
+    link.classList.add("locked-link");
+    link.setAttribute("aria-disabled", "true");
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
+  });
+}
+
+const renderApplicationsTrend = () => {
+  if (!applicationsTrendChart) return;
+
+  let logs = [];
+  try {
+    const raw = localStorage.getItem("imperium_view_logs");
+    const parsed = raw ? JSON.parse(raw) : [];
+    logs = Array.isArray(parsed) ? parsed : [];
+  } catch {
+    logs = [];
+  }
+
+  const applicationsLogs = logs.filter((entry) => String(entry.path || "") === "applications.html");
+  const byDate = applicationsLogs.reduce((acc, row) => {
+    const d = new Date(String(row.timestamp || ""));
+    if (Number.isNaN(d.getTime())) return acc;
+    const key = d.toISOString().slice(0, 10);
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  const points = Object.entries(byDate)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .slice(-10);
+
+  if (!points.length) {
+    applicationsTrendChart.innerHTML = "";
+    if (applicationsTrendEmpty) applicationsTrendEmpty.hidden = false;
+    return;
+  }
+
+  if (applicationsTrendEmpty) applicationsTrendEmpty.hidden = true;
+
+  const width = 600;
+  const height = 180;
+  const left = 40;
+  const top = 20;
+  const chartW = 530;
+  const chartH = 120;
+  const bottom = top + chartH;
+  const maxVal = Math.max(1, ...points.map(([, count]) => count));
+  const stepX = points.length > 1 ? chartW / (points.length - 1) : 0;
+
+  const coords = points.map(([day, count], idx) => {
+    const x = left + idx * stepX;
+    const y = bottom - (count / maxVal) * chartH;
+    return { day: day.slice(5), count, x, y };
+  });
+
+  const polyline = coords.map((p) => `${Math.round(p.x)},${Math.round(p.y)}`).join(" ");
+  const dots = coords.map((p) => `
+    <circle cx="${Math.round(p.x)}" cy="${Math.round(p.y)}" r="4.5" fill="#d5b465"></circle>
+    <text x="${Math.round(p.x)}" y="${Math.round(p.y) - 10}" text-anchor="middle" font-size="10" fill="#f0daa0">${p.count}</text>
+    <text x="${Math.round(p.x)}" y="${bottom + 14}" text-anchor="middle" font-size="10" fill="#9eb0a3">${p.day}</text>
+  `).join("");
+
+  applicationsTrendChart.innerHTML = `
+    <rect x="0" y="0" width="${width}" height="${height}" rx="12" fill="rgba(8,14,10,0.7)"></rect>
+    <line x1="${left}" y1="${bottom}" x2="${left + chartW}" y2="${bottom}" stroke="rgba(213,180,101,0.35)" stroke-width="1"></line>
+    <polyline points="${polyline}" fill="none" stroke="rgba(77,139,99,0.95)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
+    ${dots}
+  `;
+};
+
+renderApplicationsTrend();
+window.addEventListener("storage", (event) => {
+  if (event.key === "imperium_view_logs") {
+    renderApplicationsTrend();
+  }
+});
 
 logoutBtn.addEventListener("click", () => {
   logoutBtn.classList.add("is-loading");

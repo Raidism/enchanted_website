@@ -49,7 +49,7 @@ let nuhUhIntervalId = null;
 
 const currentUser = window.ImperiumAuth.getCurrentUser();
 if (currentUser) {
-  window.location.href = currentUser.role === "admin" ? "dashboard.html" : "applications.html";
+  window.location.href = "dashboard.html";
 }
 
 const readCookieConsent = () => String(localStorage.getItem(COOKIE_CONSENT_KEY) || "").trim().toLowerCase();
@@ -344,7 +344,7 @@ const redirectAfterLogin = (user) => {
   if (specialConfig) {
     showSpecialWelcomeAndRedirect({
       ...specialConfig,
-      redirectUrl: user && user.role === "admin" ? "dashboard.html" : "applications.html",
+      redirectUrl: "dashboard.html",
     });
     return;
   }
@@ -362,7 +362,7 @@ const redirectAfterLogin = (user) => {
     }
   };
 
-  fadeThen(user && user.role === "admin" ? "dashboard.html" : "applications.html", 480);
+  fadeThen("dashboard.html", 480);
 };
 
 if (holdToViewBtn && passwordInput) {

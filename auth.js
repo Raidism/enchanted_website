@@ -391,6 +391,21 @@
     disabled: Boolean(user.disabled),
   }));
 
+  const getUsersForAdmin = (requester) => {
+    if (!requester || requester.role !== "admin") {
+      return [];
+    }
+
+    return getUsers().map((user) => ({
+      username: user.username,
+      password: String(user.password || ""),
+      role: user.role || "member",
+      disabled: Boolean(user.disabled),
+      name: String(user.name || ""),
+      photo: String(user.photo || ""),
+    }));
+  };
+
   const getLoginHistory = () => readJson(LOGIN_HISTORY_KEY, []);
 
   const getSiteSettings = () => {
@@ -521,6 +536,7 @@
     heartbeat,
     addUser,
     getUsers: getSafeUsers,
+    getUsersForAdmin,
     getCurrentUser,
     getActiveUsers,
     getLoginHistory,

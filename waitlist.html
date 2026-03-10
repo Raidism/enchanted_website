@@ -17,14 +17,27 @@
       <a class="brand" href="index.html">IMPERIUM MUN</a>
       <div class="header-actions">
         <a href="dashboard.html">Analytics</a>
+        <a href="ops.html" data-admin-link>Ops Center</a>
         <a href="#early-access">Early Access</a>
         <a href="applications.html">Applications</a>
+        <a href="settings.html" data-admin-link>Settings</a>
         <button id="logoutBtn" type="button">Logout</button>
       </div>
     </div>
   </header>
 
   <main class="dash-main">
+    <div class="page-mini-hero" id="pageMiniHero" aria-label="Profile briefing">
+      <div class="pmh-photo-ring" aria-hidden="true">
+        <img id="pmhPhoto" src="assets/imperium mun logo.jpg" alt="" class="pmh-photo" loading="eager" decoding="async" />
+      </div>
+      <div class="pmh-text">
+        <p class="pmh-eyebrow">IMPERIUM MUN PORTAL</p>
+        <h2 class="pmh-name" id="pmhName">Organizer</h2>
+        <p class="pmh-role" id="pmhRole">Member</p>
+      </div>
+    </div>
+
     <p id="welcomeText" hidden></p>
 
     <section id="early-access" class="section">
@@ -44,6 +57,12 @@
           <h3>Team Roles Interest</h3>
           <p id="teamRoleCount">0</p>
         </article>
+      </div>
+
+      <div class="table-card">
+        <h2>Early Access Trend</h2>
+        <p id="waitlistTrendEmpty" class="sub">No trend data yet.</p>
+        <svg id="waitlistTrendChart" class="ops-growth-chart" viewBox="0 0 600 180" aria-label="Early access trend chart"></svg>
       </div>
 
       <div class="table-card">

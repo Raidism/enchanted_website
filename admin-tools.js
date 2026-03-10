@@ -8,6 +8,20 @@
   }
 
   const isAdmin = String(currentUser.role || "") === "admin";
+  window.ImperiumAuth.heartbeat();
+  setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
+
+  const pmhPhoto = document.getElementById("pmhPhoto");
+  const pmhName = document.getElementById("pmhName");
+  const pmhRole = document.getElementById("pmhRole");
+  const profileDisplayName = currentUser.name || currentUser.username;
+  if (pmhPhoto && currentUser.photo) {
+    pmhPhoto.src = currentUser.photo;
+    pmhPhoto.alt = profileDisplayName;
+  }
+  if (pmhName) pmhName.textContent = profileDisplayName;
+  if (pmhRole) pmhRole.textContent = "Admin";
+
   const opsCenter = document.getElementById("opsCenter");
   if (!opsCenter) return;
   opsCenter.hidden = !isAdmin;
@@ -19,8 +33,36 @@
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
-      window.ImperiumAuth.logout();
-      window.location.href = "access.html";
+      logoutBtn.classList.add("is-loading");
+      logoutBtn.disabled = true;
+
+      const displayName = currentUser.name || currentUser.username || "User";
+      const photoSrc = currentUser.photo || "assets/imperium mun logo.jpg";
+      const overlay = document.createElement("div");
+      overlay.className = "logout-overlay";
+      overlay.innerHTML = `
+        <div class="logout-card">
+          <div class="logout-photo-ring">
+            <img src="${photoSrc}" alt="" class="logout-photo" />
+          </div>
+          <p class="logout-name">${displayName}</p>
+          <p class="logout-msg">Goodbye. See you next time.</p>
+          <p class="logout-msg" style="font-size:.8rem;opacity:.4;margin-top:.1rem">Securing session…</p>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      requestAnimationFrame(() => overlay.classList.add("is-visible"));
+
+      if (typeof gsap !== "undefined") {
+        const ring = overlay.querySelector(".logout-photo-ring");
+        const card = overlay.querySelector(".logout-card");
+        gsap.to(ring, { scale: 1.18, opacity: 0, duration: 0.65, ease: "power2.in", delay: 0.95 });
+        gsap.to(card, { y: -24, opacity: 0, duration: 0.48, ease: "power2.in", delay: 1.1 });
+        gsap.to(overlay, { opacity: 0, duration: 0.4, ease: "power2.in", delay: 1.45,
+          onComplete: () => { window.ImperiumAuth.logout(); window.location.href = "access.html"; } });
+      } else {
+        setTimeout(() => { window.ImperiumAuth.logout(); window.location.href = "access.html"; }, 1600);
+      }
     });
   }
 
@@ -313,31 +355,39 @@
 
     const chart = document.getElementById("opsGrowthChart");
     if (chart) {
+      if (!growthRows.length) {
+        chart.innerHTML = "";
+        return;
+      }
+
       const width = 600;
       const height = 180;
-      const left = 38;
-      const bottom = 150;
-      const chartW = 540;
-      const chartH = 110;
+      const left = 40;
+      const top = 20;
+      const chartW = 530;
+      const chartH = 120;
+      const bottom = top + chartH;
       const maxVal = Math.max(1, ...growthRows.map((row) => row[1]));
-      const barW = growthRows.length ? Math.floor(chartW / growthRows.length) - 8 : 20;
+      const stepX = growthRows.length > 1 ? chartW / (growthRows.length - 1) : 0;
 
-      const bars = growthRows.map(([day, count], idx) => {
-        const h = Math.max(2, Math.round((count / maxVal) * chartH));
-        const x = left + idx * (barW + 8);
-        const y = bottom - h;
-        const label = day.slice(5);
-        return `
-          <rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="6" fill="rgba(77,139,99,0.82)"></rect>
-          <text x="${x + Math.floor(barW / 2)}" y="${bottom + 14}" text-anchor="middle" font-size="10" fill="#9eb0a3">${label}</text>
-          <text x="${x + Math.floor(barW / 2)}" y="${y - 6}" text-anchor="middle" font-size="10" fill="#f0daa0">${count}</text>
-        `;
-      }).join("");
+      const coords = growthRows.map(([day, count], idx) => {
+        const x = left + idx * stepX;
+        const y = bottom - (count / maxVal) * chartH;
+        return { day: day.slice(5), count, x, y };
+      });
+
+      const polyline = coords.map((p) => `${Math.round(p.x)},${Math.round(p.y)}`).join(" ");
+      const dots = coords.map((p) => `
+        <circle cx="${Math.round(p.x)}" cy="${Math.round(p.y)}" r="4.5" fill="#d5b465"></circle>
+        <text x="${Math.round(p.x)}" y="${Math.round(p.y) - 10}" text-anchor="middle" font-size="10" fill="#f0daa0">${p.count}</text>
+        <text x="${Math.round(p.x)}" y="${bottom + 14}" text-anchor="middle" font-size="10" fill="#9eb0a3">${p.day}</text>
+      `).join("");
 
       chart.innerHTML = `
         <rect x="0" y="0" width="${width}" height="${height}" rx="12" fill="rgba(8,14,10,0.7)"></rect>
         <line x1="${left}" y1="${bottom}" x2="${left + chartW}" y2="${bottom}" stroke="rgba(213,180,101,0.35)" stroke-width="1"></line>
-        ${bars}
+        <polyline points="${polyline}" fill="none" stroke="rgba(77,139,99,0.95)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        ${dots}
       `;
     }
   };

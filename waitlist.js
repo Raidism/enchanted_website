@@ -4,11 +4,6 @@ if (!currentUser) {
   throw new Error("No active session");
 }
 
-if (currentUser.role !== "admin") {
-  window.location.href = "applications.html";
-  throw new Error("Early access manager is admin-only");
-}
-
 const siteSettings = window.ImperiumAuth.getSiteSettings();
 if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
   window.location.href = "access.html";
@@ -26,6 +21,8 @@ const delegateCount = document.getElementById("delegateCount");
 const teamRoleCount = document.getElementById("teamRoleCount");
 const waitlistTableBody = document.getElementById("waitlistTableBody");
 const deletedWaitlistBody = document.getElementById("deletedWaitlistBody");
+const waitlistTrendChart = document.getElementById("waitlistTrendChart");
+const waitlistTrendEmpty = document.getElementById("waitlistTrendEmpty");
 
 const WAITLIST_KEY = "imperium_waitlist";
 const WAITLIST_DELETED_KEY = "imperium_waitlist_deleted";
@@ -56,11 +53,19 @@ if (_pmhPhoto && currentUser.photo) { _pmhPhoto.src = currentUser.photo; _pmhPho
 if (_pmhName)  _pmhName.textContent  = _displayName;
 if (_pmhRole)  _pmhRole.textContent  = _roleLabel;
 
-// Legacy welcome text (now hidden)
-const welcomeText  = document.getElementById("welcomeText");
-const accessNotice = document.getElementById("accessNotice");
 if (!isAdmin && accessNotice) {
   accessNotice.textContent = "Protected view: personal details are masked and actions are read-only for member accounts.";
+}
+
+if (!isAdmin) {
+  const adminLinks = document.querySelectorAll("[data-admin-link]");
+  adminLinks.forEach((link) => {
+    link.classList.add("locked-link");
+    link.setAttribute("aria-disabled", "true");
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
+  });
 }
 
 let previousRenderedIds = new Set();
@@ -276,6 +281,60 @@ const formatRole = (value) => {
   return labels[raw] || value || "Unknown";
 };
 
+const renderWaitlistTrend = (rows) => {
+  if (!waitlistTrendChart) return;
+
+  const byDate = rows.reduce((acc, row) => {
+    const d = new Date(String(row.addedAt || ""));
+    if (Number.isNaN(d.getTime())) return acc;
+    const key = d.toISOString().slice(0, 10);
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  const points = Object.entries(byDate)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .slice(-10);
+
+  if (!points.length) {
+    waitlistTrendChart.innerHTML = "";
+    if (waitlistTrendEmpty) waitlistTrendEmpty.hidden = false;
+    return;
+  }
+
+  if (waitlistTrendEmpty) waitlistTrendEmpty.hidden = true;
+
+  const width = 600;
+  const height = 180;
+  const left = 40;
+  const top = 20;
+  const chartW = 530;
+  const chartH = 120;
+  const bottom = top + chartH;
+  const maxVal = Math.max(1, ...points.map(([, count]) => count));
+  const stepX = points.length > 1 ? chartW / (points.length - 1) : 0;
+
+  const coords = points.map(([day, count], idx) => {
+    const x = left + idx * stepX;
+    const y = bottom - (count / maxVal) * chartH;
+    return { day: day.slice(5), count, x, y };
+  });
+
+  const polyline = coords.map((p) => `${Math.round(p.x)},${Math.round(p.y)}`).join(" ");
+  const dots = coords.map((p) => `
+    <circle cx="${Math.round(p.x)}" cy="${Math.round(p.y)}" r="4.5" fill="#d5b465"></circle>
+    <text x="${Math.round(p.x)}" y="${Math.round(p.y) - 10}" text-anchor="middle" font-size="10" fill="#f0daa0">${p.count}</text>
+    <text x="${Math.round(p.x)}" y="${bottom + 14}" text-anchor="middle" font-size="10" fill="#9eb0a3">${p.day}</text>
+  `).join("");
+
+  waitlistTrendChart.innerHTML = `
+    <rect x="0" y="0" width="${width}" height="${height}" rx="12" fill="rgba(8,14,10,0.7)"></rect>
+    <line x1="${left}" y1="${bottom}" x2="${left + chartW}" y2="${bottom}" stroke="rgba(213,180,101,0.35)" stroke-width="1"></line>
+    <polyline points="${polyline}" fill="none" stroke="rgba(77,139,99,0.95)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
+    ${dots}
+  `;
+};
+
 const renderWaitlist = async () => {
   const payload = await getWaitlistRows();
   const rows = Array.isArray(payload.entries) ? payload.entries : [];
@@ -299,52 +358,53 @@ const renderWaitlist = async () => {
     const row = document.createElement("tr");
     row.innerHTML = '<td colspan="7">No early access submissions yet.</td>';
     waitlistTableBody.appendChild(row);
-    return;
+  } else {
+    sorted.slice(0, 200).forEach((entry) => {
+      const row = document.createElement("tr");
+      row.setAttribute("data-entry-id", String(entry.id || ""));
+
+      const name = isAdmin ? (entry.name || "Unknown") : maskValue(entry.name);
+      const email = isAdmin ? (entry.email || "Unknown") : maskValue(entry.email);
+      const school = isAdmin ? (entry.school || "Unknown") : maskValue(entry.school);
+
+      const statusKey = String(entry.status || "pending");
+
+      row.innerHTML = `
+        <td>${formatDateTime(entry.addedAt)}</td>
+        <td>${name}</td>
+        <td>${email}</td>
+        <td>${school}</td>
+        <td>${formatRole(entry.role)}</td>
+        <td><span class="status-pill ${statusKey}">${STATUS_LABELS[statusKey] || STATUS_LABELS.pending}</span></td>
+        <td>
+          ${isAdmin
+      ? `<div class="entry-actions">
+            <button class="action-emoji-btn" type="button" data-action="green" data-id="${entry.id}" title="Green Light">✅</button>
+            <button class="action-emoji-btn" type="button" data-action="red" data-id="${entry.id}" title="Red Light">❌</button>
+            <button class="action-emoji-btn" type="button" data-action="saved" data-id="${entry.id}" title="Save Application">⭐</button>
+            <button class="action-emoji-btn" type="button" data-action="delete" data-id="${entry.id}" title="Delete Application">🗑️</button>
+          </div>`
+      : `<span class="sub">View only</span>`}
+        </td>
+      `;
+
+      if (!previousRenderedIds.has(String(entry.id || ""))) {
+        row.classList.add("row-enter");
+      }
+
+      if (activeAction && activeAction.id === String(entry.id || "")) {
+        if (activeAction.action === "delete") {
+          row.classList.add("row-leave");
+        } else {
+          row.classList.add("row-updated");
+        }
+      }
+
+      waitlistTableBody.appendChild(row);
+    });
   }
 
-  sorted.slice(0, 200).forEach((entry) => {
-    const row = document.createElement("tr");
-    row.setAttribute("data-entry-id", String(entry.id || ""));
-
-    const name = isAdmin ? (entry.name || "Unknown") : maskValue(entry.name);
-    const email = isAdmin ? (entry.email || "Unknown") : maskValue(entry.email);
-    const school = isAdmin ? (entry.school || "Unknown") : maskValue(entry.school);
-
-    const statusKey = String(entry.status || "pending");
-
-    row.innerHTML = `
-      <td>${formatDateTime(entry.addedAt)}</td>
-      <td>${name}</td>
-      <td>${email}</td>
-      <td>${school}</td>
-      <td>${formatRole(entry.role)}</td>
-      <td><span class="status-pill ${statusKey}">${STATUS_LABELS[statusKey] || STATUS_LABELS.pending}</span></td>
-      <td>
-        ${isAdmin
-    ? `<div class="entry-actions">
-          <button class="action-emoji-btn" type="button" data-action="green" data-id="${entry.id}" title="Green Light">✅</button>
-          <button class="action-emoji-btn" type="button" data-action="red" data-id="${entry.id}" title="Red Light">❌</button>
-          <button class="action-emoji-btn" type="button" data-action="saved" data-id="${entry.id}" title="Save Application">⭐</button>
-          <button class="action-emoji-btn" type="button" data-action="delete" data-id="${entry.id}" title="Delete Application">🗑️</button>
-        </div>`
-    : `<span class="sub">View only</span>`}
-      </td>
-    `;
-
-    if (!previousRenderedIds.has(String(entry.id || ""))) {
-      row.classList.add("row-enter");
-    }
-
-    if (activeAction && activeAction.id === String(entry.id || "")) {
-      if (activeAction.action === "delete") {
-        row.classList.add("row-leave");
-      } else {
-        row.classList.add("row-updated");
-      }
-    }
-
-    waitlistTableBody.appendChild(row);
-  });
+  renderWaitlistTrend(sorted);
 
   previousRenderedIds = new Set(sorted.map((entry) => String(entry.id || "")));
   activeAction = null;
