@@ -207,30 +207,32 @@ if (themeToggle) {
     isThemeAnimating = true;
     themeToggle.disabled = true;
 
-    if (nextTheme === "light") {
-      // Dark → Light: apply light first, then collapse the dark overlay inward.
-      setTheme("light", true);
-      await animateThemeWipe({
-        layerTheme: "dark",
-        fromRadius: maxRadius,
-        toRadius: 0,
-        originX,
-        originY,
-      });
-    } else {
-      // Light → Dark: apply dark first, then collapse the light overlay inward.
-      setTheme("dark", true);
-      await animateThemeWipe({
-        layerTheme: "light",
-        fromRadius: maxRadius,
-        toRadius: 0,
-        originX,
-        originY,
-      });
+    try {
+      if (nextTheme === "light") {
+        // Dark → Light: white spreads outward from the toggle.
+        await animateThemeWipe({
+          layerTheme: "light",
+          fromRadius: 0,
+          toRadius: maxRadius,
+          originX,
+          originY,
+        });
+        setTheme("light", true);
+      } else {
+        // Light → Dark: white collapses back into the toggle.
+        setTheme("dark", true);
+        await animateThemeWipe({
+          layerTheme: "light",
+          fromRadius: maxRadius,
+          toRadius: 0,
+          originX,
+          originY,
+        });
+      }
+    } finally {
+      themeToggle.disabled = false;
+      isThemeAnimating = false;
     }
-
-    themeToggle.disabled = false;
-    isThemeAnimating = false;
   });
 }
 
