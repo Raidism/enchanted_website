@@ -172,7 +172,7 @@ body::after {
 }
 
 .container {
-  width: min(1100px, 92vw);
+  width: min(1160px, 94vw);
   margin: 0 auto;
 }
 
@@ -929,6 +929,8 @@ h3 {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--sp-2);
+  padding-inline: 0.35rem;
+  overflow: visible;
 }
 
 .hero-cta-row {
@@ -956,13 +958,17 @@ h3 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--sp-3);
+  padding-inline: 0.35rem;
+  overflow: visible;
 }
 
 .launch-grid,
 .value-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(330px, 0.95fr) minmax(420px, 1.05fr);
   gap: var(--sp-3);
+  padding-inline: 0.6rem;
+  overflow: visible;
 }
 
 .value-grid {
@@ -1253,6 +1259,8 @@ body[data-theme="light"] .road-node-line {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: var(--sp-3);
+  padding-inline: 0.25rem;
+  overflow: visible;
 }
 
 .faq-hint {
@@ -1263,9 +1271,11 @@ body[data-theme="light"] .road-node-line {
 
 .faq-card {
   perspective: 900px;
-  height: 210px;
+  min-height: 224px;
+  height: auto;
   cursor: pointer;
   outline: none;
+  overflow: visible;
 }
 
 .faq-card-inner {
@@ -1291,6 +1301,7 @@ body[data-theme="light"] .road-node-line {
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: 1.25rem 1.1rem 2rem;
   transition: border-color 0.28s ease, box-shadow 0.28s ease;
 }
 
@@ -1312,10 +1323,11 @@ body[data-theme="light"] .road-node-line {
 .faq-card-front p {
   font-family: "Cinzel", serif;
   font-weight: 700;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: var(--text);
-  line-height: 1.55;
+  line-height: 1.5;
   margin: 0;
+  max-width: 24ch;
 }
 
 .faq-card-front::after {
@@ -1334,8 +1346,9 @@ body[data-theme="light"] .road-node-line {
 .faq-card-back p {
   color: var(--muted);
   font-size: 0.88rem;
-  line-height: 1.65;
+  line-height: 1.6;
   margin: 0;
+  max-width: 26ch;
 }
 
 .faq-card-back::before {
@@ -1554,6 +1567,68 @@ body[data-theme="light"] .road-node-line {
 .main-credit .credit-link:hover {
   color: #f7e3ae;
   border-color: rgba(240, 218, 160, 0.86);
+}
+
+.waitlist-launch-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  background: radial-gradient(circle at 50% 75%, rgba(77, 139, 99, 0.16), rgba(5, 8, 6, 0.8) 56%);
+}
+
+.waitlist-launch-scene {
+  position: relative;
+  width: min(520px, 88vw);
+  height: min(420px, 68vh);
+}
+
+.waitlist-rocket {
+  position: absolute;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  font-size: clamp(2.1rem, 7vw, 3.2rem);
+  filter: drop-shadow(0 8px 16px rgba(213, 180, 101, 0.3));
+}
+
+.waitlist-flame {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  width: 14px;
+  height: 40px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 242, 177, 0.95), rgba(255, 142, 51, 0.9) 52%, rgba(255, 77, 40, 0));
+  filter: blur(0.2px);
+}
+
+.waitlist-smoke {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(220, 236, 226, 0.9), rgba(175, 194, 183, 0.05));
+  transform: translateX(-50%);
+  opacity: 0;
+}
+
+.waitlist-launch-label {
+  position: absolute;
+  left: 50%;
+  top: 18px;
+  transform: translateX(-50%);
+  text-align: center;
+  font-weight: 700;
+  color: #f0daa0;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 12px rgba(213, 180, 101, 0.25);
 }
 
 .footer-wrap {
@@ -2017,6 +2092,7 @@ body.gsap-enhanced .value-card:hover {
   .launch-grid,
   .value-grid {
     grid-template-columns: 1fr;
+    padding-inline: 0.3rem;
   }
 
   .team-grid {

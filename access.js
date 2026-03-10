@@ -427,12 +427,12 @@ if (passwordInput) {
     if (loginBtnEl) {
       loginBtnEl.addEventListener("mousemove", (e) => {
         const rect = loginBtnEl.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width / 2) * 0.22;
-        const y = (e.clientY - rect.top - rect.height / 2) * 0.22;
-        gsap.to(loginBtnEl, { x, y, duration: 0.38, ease: "power2.out", overwrite: "auto" });
+        const x = (e.clientX - rect.left - rect.width / 2) * 0.12;
+        const y = (e.clientY - rect.top - rect.height / 2) * 0.12;
+        gsap.to(loginBtnEl, { x, y, duration: 0.52, ease: "power2.out", overwrite: "auto" });
       });
       loginBtnEl.addEventListener("mouseleave", () => {
-        gsap.to(loginBtnEl, { x: 0, y: 0, duration: 0.65, ease: "elastic.out(1, 0.5)", overwrite: "auto" });
+        gsap.to(loginBtnEl, { x: 0, y: 0, duration: 0.8, ease: "power3.out", overwrite: "auto" });
       });
     }
   }

@@ -10,6 +10,8 @@ if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
   throw new Error("Maintenance mode is active for non-admin users");
 }
 
+const applicationsOpen = Boolean(siteSettings.applicationsOpen);
+
 window.ImperiumAuth.heartbeat();
 setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
 
@@ -52,6 +54,15 @@ if (currentUser.role !== "admin") {
 
 const renderApplicationsTrend = () => {
   if (!applicationsTrendChart) return;
+
+  if (!applicationsOpen) {
+    applicationsTrendChart.innerHTML = "";
+    if (applicationsTrendEmpty) {
+      applicationsTrendEmpty.hidden = false;
+      applicationsTrendEmpty.textContent = "Applications are not open yet. Traffic trend is 0 for now.";
+    }
+    return;
+  }
 
   let logs = [];
   try {

@@ -708,6 +708,7 @@ setInterval(updateCountdown, 1000);
 const waitlistForm = document.getElementById("waitlistForm");
 const waitlistMessage = document.getElementById("waitlistMessage");
 const waitlistCount = document.getElementById("waitlistCount");
+const waitlistSubmitBtn = waitlistForm ? waitlistForm.querySelector('button[type="submit"]') : null;
 
 const readWaitlistLocal = () => {
   try {
@@ -780,6 +781,77 @@ const refreshWaitlistCount = async () => {
 
 refreshWaitlistCount();
 
+const playWaitlistLaunchAnimation = (nameText) => new Promise((resolve) => {
+  const overlay = document.createElement("div");
+  overlay.className = "waitlist-launch-overlay";
+  overlay.innerHTML = `
+    <div class="waitlist-launch-scene">
+      <div class="waitlist-launch-label">EARLY ACCESS RESERVED FOR ${String(nameText || "YOU").toUpperCase()}</div>
+      <div class="waitlist-rocket">🚀</div>
+      <div class="waitlist-flame"></div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const scene = overlay.querySelector(".waitlist-launch-scene");
+  const rocket = overlay.querySelector(".waitlist-rocket");
+  const flame = overlay.querySelector(".waitlist-flame");
+
+  const spawnSmoke = () => {
+    if (!scene) return;
+    const puff = document.createElement("span");
+    puff.className = "waitlist-smoke";
+    puff.style.left = `${48 + (Math.random() * 14 - 7)}%`;
+    scene.appendChild(puff);
+
+    if (typeof gsap !== "undefined") {
+      gsap.fromTo(
+        puff,
+        { y: 0, scale: 0.42, opacity: 0.72 },
+        {
+          y: 84 + Math.random() * 40,
+          x: (Math.random() - 0.5) * 28,
+          scale: 2 + Math.random() * 1.2,
+          opacity: 0,
+          duration: 0.9,
+          ease: "power1.out",
+          onComplete: () => puff.remove(),
+        }
+      );
+    } else {
+      setTimeout(() => puff.remove(), 900);
+    }
+  };
+
+  if (typeof gsap === "undefined") {
+    overlay.style.opacity = "1";
+    setTimeout(() => {
+      overlay.remove();
+      resolve();
+    }, 1050);
+    return;
+  }
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      overlay.remove();
+      resolve();
+    },
+  });
+
+  tl.to(overlay, { opacity: 1, duration: 0.2, ease: "power1.out" })
+    .fromTo(rocket, { y: 8, scale: 0.92 }, { y: 0, scale: 1, duration: 0.24, ease: "back.out(1.8)" }, "<")
+    .to(flame, { scaleY: 1.28, transformOrigin: "50% 0%", duration: 0.18, yoyo: true, repeat: 2, ease: "power1.inOut" }, "<")
+    .add(() => {
+      for (let i = 0; i < 9; i += 1) {
+        setTimeout(spawnSmoke, i * 40);
+      }
+    }, "<")
+    .to(rocket, { y: -230, scale: 1.08, duration: 0.75, ease: "power3.in" }, ">")
+    .to(flame, { y: -224, opacity: 0, duration: 0.62, ease: "power2.in" }, "<")
+    .to(overlay, { opacity: 0, duration: 0.28, ease: "power2.out" }, "-=0.16");
+});
+
 if (waitlistForm && waitlistMessage) {
   waitlistForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -818,6 +890,10 @@ if (waitlistForm && waitlistMessage) {
       };
 
       try {
+        if (waitlistSubmitBtn) {
+          waitlistSubmitBtn.disabled = true;
+          waitlistSubmitBtn.textContent = "Reserving...";
+        }
         const remotePayload = await postWaitlistRemote(entry);
         if (Array.isArray(remotePayload.entries)) {
           writeWaitlistLocal(remotePayload.entries);
@@ -825,6 +901,7 @@ if (waitlistForm && waitlistMessage) {
 
         waitlistForm.reset();
         await refreshWaitlistCount();
+        await playWaitlistLaunchAnimation(name);
 
         waitlistMessage.classList.add("success");
         waitlistMessage.textContent = "You are in. We will notify you first when applications open.";
@@ -851,9 +928,15 @@ if (waitlistForm && waitlistMessage) {
         writeWaitlistLocal(rows);
         waitlistForm.reset();
         await refreshWaitlistCount();
+        await playWaitlistLaunchAnimation(name);
 
         waitlistMessage.classList.add("success");
         waitlistMessage.textContent = `Saved locally on this device only. (${String(error.message || "server unavailable")})`;
+      } finally {
+        if (waitlistSubmitBtn) {
+          waitlistSubmitBtn.disabled = false;
+          waitlistSubmitBtn.textContent = "Reserve Early Access 🔔";
+        }
       }
     };
 
@@ -1121,12 +1204,12 @@ if (shareBtn && shareMessage) {
     document.querySelectorAll(".cta, .share-btn, .waitlist-form button").forEach((btn) => {
       btn.addEventListener("mousemove", (e) => {
         const rect = btn.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width / 2) * 0.2;
-        const y = (e.clientY - rect.top - rect.height / 2) * 0.2;
-        gsap.to(btn, { x, y, duration: 0.38, ease: "power2.out", overwrite: "auto" });
+        const x = (e.clientX - rect.left - rect.width / 2) * 0.12;
+        const y = (e.clientY - rect.top - rect.height / 2) * 0.12;
+        gsap.to(btn, { x, y, duration: 0.52, ease: "power2.out", overwrite: "auto" });
       });
       btn.addEventListener("mouseleave", () => {
-        gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.5)", overwrite: "auto" });
+        gsap.to(btn, { x: 0, y: 0, duration: 0.8, ease: "power3.out", overwrite: "auto" });
       });
     });
   }
