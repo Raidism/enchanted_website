@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ops Center | Imperium MUN</title>
+  <meta name="description" content="Operations control center for Imperium MUN organizers." />
+  <link rel="icon" type="image/jpeg" href="assets/imperium mun logo.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+  <header class="dash-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html">IMPERIUM MUN</a>
+      <div class="header-actions">
+        <a href="dashboard.html">Analytics</a>
+        <a href="#opsCenter">Ops Center</a>
+        <a href="waitlist.html">Early Access</a>
+        <a href="applications.html">Applications</a>
+        <button id="logoutBtn" type="button">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dash-main">
+    <section id="opsCenter" class="section admin-only" hidden>
+      <h1>Pre-Launch Ops Center</h1>
+      <p class="sub">Control launch settings, manage early access signups, and prepare conference operations.</p>
+
+      <div class="admin-grid">
+        <article class="table-card">
+          <h3>Launch & Event Settings</h3>
+          <form id="launchOpsForm" class="stack-form" novalidate>
+            <label for="applicationsOpenToggle">Applications Status</label>
+            <select id="applicationsOpenToggle" name="applicationsOpenToggle">
+              <option value="closed">Closed</option>
+              <option value="open">Open</option>
+            </select>
+
+            <label for="launchDateOpsInput">Applications Opening Date</label>
+            <input id="launchDateOpsInput" name="launchDateOpsInput" type="datetime-local" />
+
+            <label for="conferenceDateInput">Conference Date</label>
+            <input id="conferenceDateInput" name="conferenceDateInput" type="datetime-local" />
+
+            <label for="locationTextInput">Location Text</label>
+            <input id="locationTextInput" name="locationTextInput" type="text" placeholder="Riyadh, Saudi Arabia" />
+
+            <label for="conferenceDescriptionInput">Conference Description</label>
+            <textarea id="conferenceDescriptionInput" name="conferenceDescriptionInput" rows="4" placeholder="Describe the conference."></textarea>
+
+            <label for="countdownEnabledToggle">Countdown Timer</label>
+            <select id="countdownEnabledToggle" name="countdownEnabledToggle">
+              <option value="on">Enabled</option>
+              <option value="off">Hidden</option>
+            </select>
+
+            <label for="notifyAllOnOpenToggle">Notify Early List When Opening</label>
+            <select id="notifyAllOnOpenToggle" name="notifyAllOnOpenToggle">
+              <option value="off">No</option>
+              <option value="on">Yes</option>
+            </select>
+
+            <p id="launchOpsMessage" class="form-message" aria-live="polite"></p>
+            <button type="submit">Save Launch Settings</button>
+          </form>
+        </article>
+
+        <article class="table-card">
+          <h3>Announcement System</h3>
+          <form id="announcementForm" class="stack-form" novalidate>
+            <label for="announcementTitleInput">Title</label>
+            <input id="announcementTitleInput" name="announcementTitleInput" type="text" required />
+
+            <label for="announcementBodyInput">Announcement</label>
+            <textarea id="announcementBodyInput" name="announcementBodyInput" rows="3" required></textarea>
+
+            <label for="announcementSendToggle">Send to Early Access Students</label>
+            <select id="announcementSendToggle" name="announcementSendToggle">
+              <option value="off">No</option>
+              <option value="on">Yes</option>
+            </select>
+
+            <p id="announcementMessage" class="form-message" aria-live="polite"></p>
+            <button type="submit">Publish Announcement</button>
+          </form>
+          <ul id="announcementHistoryList" class="simple-list"></ul>
+        </article>
+
+        <article class="table-card">
+          <h3>Early Access Tools</h3>
+          <div class="stack-form">
+            <label for="eaSearchInput">Global Search</label>
+            <input id="eaSearchInput" type="text" placeholder="Search name, email, school" />
+
+            <label for="eaSchoolFilter">Filter by School</label>
+            <select id="eaSchoolFilter"></select>
+
+            <label for="eaInterestFilter">Filter by Interest</label>
+            <select id="eaInterestFilter"></select>
+          </div>
+          <div class="ea-toolbar">
+            <p class="sub">Total Students: <strong id="eaLiveCount">0</strong></p>
+            <button id="eaExportBtn" type="button">Export CSV</button>
+            <button id="eaNotifyAllBtn" type="button">Mark All Notified</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Joined</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>School</th>
+                  <th>Interest</th>
+                  <th>Notified</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="eaTableBody"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="table-card">
+          <h3>Secretariat Management</h3>
+          <form id="secretariatForm" class="stack-form" novalidate>
+            <label for="secNameInput">Name</label>
+            <input id="secNameInput" type="text" />
+
+            <label for="secTitleInput">Title</label>
+            <input id="secTitleInput" type="text" />
+
+            <label for="secDescInput">Description</label>
+            <textarea id="secDescInput" rows="3"></textarea>
+
+            <label for="secPhotoInput">Photo URL / Path</label>
+            <input id="secPhotoInput" type="text" placeholder="assets/your-photo.png" />
+
+            <button type="submit">Add Member</button>
+          </form>
+          <ul id="secretariatList" class="simple-list"></ul>
+        </article>
+
+        <article class="table-card">
+          <h3>Ops Analytics</h3>
+          <ul id="opsAnalyticsList" class="simple-list"></ul>
+          <svg id="opsGrowthChart" class="ops-growth-chart" viewBox="0 0 600 180" aria-label="Growth chart"></svg>
+        </article>
+
+        <article class="table-card">
+          <h3>Activity Log</h3>
+          <ul id="activityLogList" class="simple-list"></ul>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="tracker.js"></script>
+  <script src="auth.js"></script>
+  <script src="admin-tools.js"></script>
+</body>
+</html>

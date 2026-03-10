@@ -1451,3 +1451,9 @@ tbody tr.row-leave {
   font-size: 0.8rem;
   color: #9ab0a1;
 }
+
+.ops-growth-chart {
+  width: 100%;
+  height: auto;
+  margin-top: 0.7rem;
+}

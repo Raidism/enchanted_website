@@ -2,13 +2,27 @@
   if (!window.ImperiumAuth) return;
 
   const currentUser = window.ImperiumAuth.getCurrentUser();
-  if (!currentUser) return;
+  if (!currentUser) {
+    window.location.href = "access.html";
+    return;
+  }
 
   const isAdmin = String(currentUser.role || "") === "admin";
   const opsCenter = document.getElementById("opsCenter");
   if (!opsCenter) return;
   opsCenter.hidden = !isAdmin;
-  if (!isAdmin) return;
+  if (!isAdmin) {
+    window.location.href = "applications.html";
+    return;
+  }
+
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      window.ImperiumAuth.logout();
+      window.location.href = "access.html";
+    });
+  }
 
   const WAITLIST_KEY = "imperium_waitlist";
   const WAITLIST_API_URL = "/.netlify/functions/waitlist";
@@ -281,6 +295,10 @@
       .map(([day, count]) => `${day.slice(5)}: ${count}`)
       .join(" | ") || "No growth data";
 
+    const growthRows = Object.entries(byDate)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .slice(-10);
+
     [
       `Total early access signups: ${total}`,
       `Signups in last 24 hours: ${last24}`,
@@ -292,6 +310,36 @@
       li.textContent = line;
       opsAnalyticsList.appendChild(li);
     });
+
+    const chart = document.getElementById("opsGrowthChart");
+    if (chart) {
+      const width = 600;
+      const height = 180;
+      const left = 38;
+      const bottom = 150;
+      const chartW = 540;
+      const chartH = 110;
+      const maxVal = Math.max(1, ...growthRows.map((row) => row[1]));
+      const barW = growthRows.length ? Math.floor(chartW / growthRows.length) - 8 : 20;
+
+      const bars = growthRows.map(([day, count], idx) => {
+        const h = Math.max(2, Math.round((count / maxVal) * chartH));
+        const x = left + idx * (barW + 8);
+        const y = bottom - h;
+        const label = day.slice(5);
+        return `
+          <rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="6" fill="rgba(77,139,99,0.82)"></rect>
+          <text x="${x + Math.floor(barW / 2)}" y="${bottom + 14}" text-anchor="middle" font-size="10" fill="#9eb0a3">${label}</text>
+          <text x="${x + Math.floor(barW / 2)}" y="${y - 6}" text-anchor="middle" font-size="10" fill="#f0daa0">${count}</text>
+        `;
+      }).join("");
+
+      chart.innerHTML = `
+        <rect x="0" y="0" width="${width}" height="${height}" rx="12" fill="rgba(8,14,10,0.7)"></rect>
+        <line x1="${left}" y1="${bottom}" x2="${left + chartW}" y2="${bottom}" stroke="rgba(213,180,101,0.35)" stroke-width="1"></line>
+        ${bars}
+      `;
+    }
   };
 
   const renderWaitlistTable = () => {

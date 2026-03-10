@@ -33,13 +33,23 @@ const SPECIAL_WELCOME_USERS = {
     title: "Welcome, Toleen Kurdi",
     message: "Media access granted. Loading your dashboard...",
   },
+  omaralhomran: {
+    photo: "assets/Head of DA.png",
+    title: "Welcome, Omar Alhomran",
+    message: "Head of DA access granted. Loading your workspace...",
+  },
+  yamendalegend: {
+    photo: "assets/HEAD OF CA.png",
+    title: "Welcome, YAMEN ELATTAL",
+    message: "Head of CA access granted. Loading your workspace...",
+  },
 };
 let nuhUhModeStarted = false;
 let nuhUhIntervalId = null;
 
 const currentUser = window.ImperiumAuth.getCurrentUser();
 if (currentUser) {
-  window.location.href = "dashboard.html";
+  window.location.href = currentUser.role === "admin" ? "dashboard.html" : "applications.html";
 }
 
 const readCookieConsent = () => String(localStorage.getItem(COOKIE_CONSENT_KEY) || "").trim().toLowerCase();
@@ -314,7 +324,7 @@ const showSpecialWelcomeAndRedirect = (config) => {
   }, 1200);
 
   setTimeout(() => {
-    window.location.href = "dashboard.html";
+    window.location.href = config.redirectUrl || "dashboard.html";
   }, 1550);
 };
 
@@ -325,13 +335,17 @@ const redirectAfterLogin = (user) => {
       photo: "assets/adham pic.jpg",
       title: "Welcome, Adham",
       message: "Main admin access granted. Loading your dashboard...",
+      redirectUrl: "dashboard.html",
     });
     return;
   }
 
   const specialConfig = SPECIAL_WELCOME_USERS[username];
   if (specialConfig) {
-    showSpecialWelcomeAndRedirect(specialConfig);
+    showSpecialWelcomeAndRedirect({
+      ...specialConfig,
+      redirectUrl: user && user.role === "admin" ? "dashboard.html" : "applications.html",
+    });
     return;
   }
 
@@ -348,7 +362,7 @@ const redirectAfterLogin = (user) => {
     }
   };
 
-  fadeThen("dashboard.html", 480);
+  fadeThen(user && user.role === "admin" ? "dashboard.html" : "applications.html", 480);
 };
 
 if (holdToViewBtn && passwordInput) {

@@ -4,6 +4,11 @@ if (!currentUser) {
   throw new Error("No active session");
 }
 
+if (currentUser.role !== "admin") {
+  window.location.href = "applications.html";
+  throw new Error("Early access manager is admin-only");
+}
+
 const siteSettings = window.ImperiumAuth.getSiteSettings();
 if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
   window.location.href = "access.html";

@@ -4,6 +4,11 @@ if (!currentUser) {
   throw new Error("No active session");
 }
 
+if (currentUser.role !== "admin") {
+  window.location.href = "applications.html";
+  throw new Error("Dashboard analytics is admin-only");
+}
+
 const siteSettings = window.ImperiumAuth.getSiteSettings();
 if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
   window.location.href = "access.html";
@@ -580,6 +585,10 @@ const renderAnalytics = async () => {
 };
 
 const renderAdminPanel = () => {
+  if (!adminPanel || !activeUsersList || !addUserForm || !addUserMessage || !siteSettingsForm) {
+    return;
+  }
+
   if (!isAdmin) {
     adminPanel.hidden = true;
     if (addUserForm) {

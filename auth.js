@@ -12,12 +12,16 @@
   const defaultUsgAdminUser = { username: "ln-obidat", password: "3004", role: "admin", name: "Leen Obeidat", photo: "assets/under secretary general.png" };
   const defaultSgAdminUser = { username: "AhmadPh", password: "Ahmadggg", role: "admin", name: "Ahmed Pharaon", photo: "assets/secretary general.png" };
   const defaultMediaMemberUser = { username: "Toleenkmedia", password: "Totakordi10", role: "member", name: "Toleen Kurdi", photo: "assets/head of media.png" };
+  const defaultDaMemberUser = { username: "OmarAlhomran", password: "0987654321", role: "member", name: "Omar Alhomran", photo: "assets/Head of DA.png" };
+  const defaultCaMemberUser = { username: "Yamendalegend", password: "YamenloveAdham", role: "member", name: "YAMEN ELATTAL", photo: "assets/HEAD OF CA.png" };
   const defaultUsers = [
     defaultAdminUser,
     defaultMemberUser,
     defaultUsgAdminUser,
     defaultSgAdminUser,
     defaultMediaMemberUser,
+    defaultDaMemberUser,
+    defaultCaMemberUser,
   ];
 
   const defaultSiteSettings = {
@@ -94,6 +98,8 @@
       const usgIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultUsgAdminUser.username));
       const sgIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultSgAdminUser.username));
       const mediaIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultMediaMemberUser.username));
+      const daIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultDaMemberUser.username));
+      const caIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultCaMemberUser.username));
 
       if (adminIndex === -1) {
         existingUsers.push(defaultAdminUser);
@@ -157,6 +163,32 @@
           role: "member",
           name: defaultMediaMemberUser.name,
           photo: defaultMediaMemberUser.photo,
+        };
+      }
+
+      if (daIndex === -1) {
+        existingUsers.push(defaultDaMemberUser);
+      } else {
+        existingUsers[daIndex] = {
+          ...existingUsers[daIndex],
+          username: defaultDaMemberUser.username,
+          password: defaultDaMemberUser.password,
+          role: "member",
+          name: defaultDaMemberUser.name,
+          photo: defaultDaMemberUser.photo,
+        };
+      }
+
+      if (caIndex === -1) {
+        existingUsers.push(defaultCaMemberUser);
+      } else {
+        existingUsers[caIndex] = {
+          ...existingUsers[caIndex],
+          username: defaultCaMemberUser.username,
+          password: defaultCaMemberUser.password,
+          role: "member",
+          name: defaultCaMemberUser.name,
+          photo: defaultCaMemberUser.photo,
         };
       }
 
