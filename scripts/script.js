@@ -6,6 +6,10 @@ if (yearSpan) {
 const WAITLIST_KEY = "imperium_waitlist";
 const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
 const WAITLIST_API_URL = `${API_BASE}/waitlist`;
+const INSTAGRAM_API_URL = `${API_BASE}/instagram`;
+const INSTAGRAM_USERNAME = "imperiummun26";
+const INSTAGRAM_CACHE_KEY = "imperium_instagram_stats";
+const INSTAGRAM_CACHE_TTL_MS = 1000 * 60 * 20;
 const newWaitlistId = () => `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const fallbackSiteSettings = {
@@ -31,6 +35,140 @@ const getSiteSettings = () => {
 };
 
 const siteSettings = getSiteSettings();
+
+const formatCompactCount = (value) => {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric < 0) {
+    return "0";
+  }
+  return Math.round(numeric).toLocaleString();
+};
+
+const formatRelativeUpdatedAt = (value) => {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return "--";
+  }
+
+  return parsed.toLocaleString([], {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+};
+
+const setInstagramUpdatedAt = (value) => {
+  const updatedEl = document.getElementById("instagramStatsUpdatedAt");
+  if (!updatedEl) {
+    return;
+  }
+  updatedEl.textContent = `Last updated: ${formatRelativeUpdatedAt(value)}`;
+};
+
+const readInstagramCache = () => {
+  try {
+    const raw = localStorage.getItem(INSTAGRAM_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+
+    const age = Date.now() - Number(parsed.savedAt || 0);
+    if (!Number.isFinite(age) || age < 0 || age > INSTAGRAM_CACHE_TTL_MS) {
+      return null;
+    }
+
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const writeInstagramCache = (stats) => {
+  try {
+    const savedAtIso = new Date().toISOString();
+    localStorage.setItem(INSTAGRAM_CACHE_KEY, JSON.stringify({ ...stats, savedAt: Date.now(), savedAtIso }));
+  } catch {
+    // Ignore quota and privacy mode errors.
+  }
+};
+
+const applyInstagramStats = (stats) => {
+  const followersEl = document.getElementById("instagramFollowers");
+  const postsEl = document.getElementById("instagramPosts");
+  const followingEl = document.getElementById("instagramFollowing");
+  const statusEl = document.getElementById("instagramStatsStatus");
+
+  if (!followersEl || !postsEl || !followingEl) {
+    return;
+  }
+
+  const followers = Number(stats && stats.followers);
+  const posts = Number(stats && stats.posts);
+  const following = Number(stats && stats.following);
+
+  const safeFollowers = Number.isFinite(followers) && followers >= 0
+    ? followers
+    : Number(followersEl.dataset.fallback || 0);
+  const safePosts = Number.isFinite(posts) && posts >= 0
+    ? posts
+    : Number(postsEl.dataset.fallback || 0);
+  const safeFollowing = Number.isFinite(following) && following >= 0
+    ? following
+    : Number(followingEl.dataset.fallback || 0);
+
+  followersEl.textContent = formatCompactCount(safeFollowers);
+  postsEl.textContent = formatCompactCount(safePosts);
+  followingEl.textContent = formatCompactCount(safeFollowing);
+
+  if (statusEl) {
+    const stale = Boolean(stats && stats.stale);
+    statusEl.textContent = stale
+      ? "Showing fallback Instagram numbers right now."
+      : "Live Instagram stats synced.";
+  }
+
+  setInstagramUpdatedAt((stats && stats.fetchedAt) || (stats && stats.savedAtIso));
+};
+
+const syncInstagramStats = async () => {
+  const statusEl = document.getElementById("instagramStatsStatus");
+  const cached = readInstagramCache();
+
+  if (cached) {
+    applyInstagramStats(cached);
+    if (statusEl) {
+      statusEl.textContent = "Showing recently synced Instagram stats.";
+    }
+  } else {
+    setInstagramUpdatedAt(null);
+  }
+
+  try {
+    const response = await fetch(`${INSTAGRAM_API_URL}?username=${encodeURIComponent(INSTAGRAM_USERNAME)}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Instagram API returned ${response.status}`);
+    }
+
+    const payload = await response.json();
+    applyInstagramStats(payload);
+    writeInstagramCache(payload);
+  } catch {
+    if (statusEl && !cached) {
+      statusEl.textContent = "Unable to sync Instagram stats right now.";
+    }
+  }
+};
+
+syncInstagramStats();
+
 const parsedLaunchDate = new Date(siteSettings.launchDate);
 const launchDate = Number.isNaN(parsedLaunchDate.getTime())
   ? new Date(fallbackSiteSettings.launchDate)

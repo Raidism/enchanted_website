@@ -12,3 +12,9 @@
   to = "/.netlify/functions/analytics"
   status = 200
   force = true
+
+[[redirects]]
+  from = "/api/instagram"
+  to = "/.netlify/functions/instagram"
+  status = 200
+  force = true
