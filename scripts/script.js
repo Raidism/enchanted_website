@@ -106,13 +106,20 @@ const applyInstagramStats = (stats) => {
     ? following
     : Number(followingEl.dataset.fallback || 0);
 
-  followersEl.textContent = formatCompactCount(safeFollowers);
-  postsEl.textContent = formatCompactCount(safePosts);
-  followingEl.textContent = formatCompactCount(safeFollowing);
+  const allZero = safeFollowers === 0 && safePosts === 0 && safeFollowing === 0;
+  const finalFollowers = allZero ? Number(followersEl.dataset.fallback || 0) : safeFollowers;
+  const finalPosts = allZero ? Number(postsEl.dataset.fallback || 0) : safePosts;
+  const finalFollowing = allZero ? Number(followingEl.dataset.fallback || 0) : safeFollowing;
+
+  followersEl.textContent = formatCompactCount(finalFollowers);
+  postsEl.textContent = formatCompactCount(finalPosts);
+  followingEl.textContent = formatCompactCount(finalFollowing);
 
   const isManual = String(stats && stats.source || "").toLowerCase() === "manual";
   const isStale = Boolean(stats && stats.stale);
-  if (isManual) {
+  if (allZero) {
+    setInstagramStatus("Instagram sync delayed. Showing fallback numbers.", "stale");
+  } else if (isManual) {
     setInstagramStatus("Live Instagram stats synced.", "live");
   } else if (isStale) {
     setInstagramStatus("Instagram sync delayed. Showing fallback numbers.", "stale");

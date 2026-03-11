@@ -62,6 +62,11 @@ let currentVisitPage = 1;
 const isAdmin = currentUser.role === "admin";
 const isMainAdmin = String(currentUser.username || "").trim().toLowerCase() === "admin";
 const profileKey = String(currentUser.username || "").trim().toLowerCase();
+const DEFAULT_INSTAGRAM_STATS = {
+  followers: 487,
+  posts: 18,
+  following: 4,
+};
 const WELCOME_NAMES = {
   admin: "Adham Mohamed",
   "ln-obidat": "Leen Obeidat",
@@ -175,17 +180,25 @@ const renderInstagramStatsPanel = () => {
   }
 
   const settings = window.ImperiumAuth.getSiteSettings();
+  const normalizeCount = (value, fallback) => {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) && numeric >= 0 ? Math.floor(numeric) : fallback;
+  };
+  const defaultFollowers = normalizeCount(settings.instagramFollowers, DEFAULT_INSTAGRAM_STATS.followers);
+  const defaultPosts = normalizeCount(settings.instagramPosts, DEFAULT_INSTAGRAM_STATS.posts);
+  const defaultFollowing = normalizeCount(settings.instagramFollowing, DEFAULT_INSTAGRAM_STATS.following);
+
   if (instagramStatsSourceInput) {
     instagramStatsSourceInput.value = String(settings.instagramStatsSource || "live") === "manual" ? "manual" : "live";
   }
   if (instagramFollowersInput) {
-    instagramFollowersInput.value = String(Number(settings.instagramFollowers) || 0);
+    instagramFollowersInput.value = String(defaultFollowers);
   }
   if (instagramPostsInput) {
-    instagramPostsInput.value = String(Number(settings.instagramPosts) || 0);
+    instagramPostsInput.value = String(defaultPosts);
   }
   if (instagramFollowingInput) {
-    instagramFollowingInput.value = String(Number(settings.instagramFollowing) || 0);
+    instagramFollowingInput.value = String(defaultFollowing);
   }
 
   if (!isInstagramStatsHandlerBound) {
@@ -193,9 +206,9 @@ const renderInstagramStatsPanel = () => {
       event.preventDefault();
 
       const source = String((instagramStatsSourceInput && instagramStatsSourceInput.value) || "live").trim().toLowerCase();
-      const followers = Math.max(0, Math.floor(Number((instagramFollowersInput && instagramFollowersInput.value) || 0)));
-      const posts = Math.max(0, Math.floor(Number((instagramPostsInput && instagramPostsInput.value) || 0)));
-      const following = Math.max(0, Math.floor(Number((instagramFollowingInput && instagramFollowingInput.value) || 0)));
+      const followers = normalizeCount(instagramFollowersInput && instagramFollowersInput.value, defaultFollowers);
+      const posts = normalizeCount(instagramPostsInput && instagramPostsInput.value, defaultPosts);
+      const following = normalizeCount(instagramFollowingInput && instagramFollowingInput.value, defaultFollowing);
 
       const result = window.ImperiumAuth.updateSiteSettings(currentUser, {
         instagramStatsSource: source === "manual" ? "manual" : "live",
