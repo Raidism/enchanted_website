@@ -39,6 +39,13 @@ const dwhNameEl  = document.getElementById("dwhName");
 const dwhRoleEl  = document.getElementById("dwhRole");
 const dwhBriefing = document.getElementById("dwhBriefing");
 const dwhCursor  = document.querySelector(".dwh-cursor");
+const instagramStatsAdminCard = document.getElementById("instagramStatsAdminCard");
+const instagramStatsForm = document.getElementById("instagramStatsForm");
+const instagramStatsSourceInput = document.getElementById("instagramStatsSource");
+const instagramFollowersInput = document.getElementById("instagramFollowersInput");
+const instagramPostsInput = document.getElementById("instagramPostsInput");
+const instagramFollowingInput = document.getElementById("instagramFollowingInput");
+const instagramStatsMessage = document.getElementById("instagramStatsMessage");
 // legacy spotlight IDs no longer in DOM
 const userSpotlightPhoto = null;
 const userSpotlightName  = null;
@@ -46,6 +53,7 @@ const userSpotlightRole  = null;
 let isAddUserHandlerBound = false;
 let isSiteSettingsHandlerBound = false;
 let isUserAccessHandlerBound = false;
+let isInstagramStatsHandlerBound = false;
 const VISITS_PER_PAGE = 10;
 const PAGE_WINDOW = 9;
 const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
@@ -153,6 +161,64 @@ const applyMemberLocks = () => {
 };
 
 applyMemberLocks();
+
+const renderInstagramStatsPanel = () => {
+  if (!instagramStatsAdminCard || !instagramStatsForm) {
+    return;
+  }
+
+  if (!isAdmin) {
+    instagramStatsForm.querySelectorAll("input, select, button").forEach((el) => {
+      el.disabled = true;
+    });
+    return;
+  }
+
+  const settings = window.ImperiumAuth.getSiteSettings();
+  if (instagramStatsSourceInput) {
+    instagramStatsSourceInput.value = String(settings.instagramStatsSource || "live") === "manual" ? "manual" : "live";
+  }
+  if (instagramFollowersInput) {
+    instagramFollowersInput.value = String(Number(settings.instagramFollowers) || 0);
+  }
+  if (instagramPostsInput) {
+    instagramPostsInput.value = String(Number(settings.instagramPosts) || 0);
+  }
+  if (instagramFollowingInput) {
+    instagramFollowingInput.value = String(Number(settings.instagramFollowing) || 0);
+  }
+
+  if (!isInstagramStatsHandlerBound) {
+    instagramStatsForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const source = String((instagramStatsSourceInput && instagramStatsSourceInput.value) || "live").trim().toLowerCase();
+      const followers = Math.max(0, Math.floor(Number((instagramFollowersInput && instagramFollowersInput.value) || 0)));
+      const posts = Math.max(0, Math.floor(Number((instagramPostsInput && instagramPostsInput.value) || 0)));
+      const following = Math.max(0, Math.floor(Number((instagramFollowingInput && instagramFollowingInput.value) || 0)));
+
+      const result = window.ImperiumAuth.updateSiteSettings(currentUser, {
+        instagramStatsSource: source === "manual" ? "manual" : "live",
+        instagramFollowers: followers,
+        instagramPosts: posts,
+        instagramFollowing: following,
+      });
+
+      if (instagramStatsMessage) {
+        instagramStatsMessage.classList.toggle("success", result.success);
+        instagramStatsMessage.textContent = result.success
+          ? "Instagram snapshot settings saved."
+          : result.message;
+      }
+
+      if (result.success) {
+        renderInstagramStatsPanel();
+      }
+    });
+
+    isInstagramStatsHandlerBound = true;
+  }
+};
 
 // ═══════════════════════════════════════════════════════════════
 //  NOTES SYSTEM
@@ -812,6 +878,7 @@ const renderAdminPanel = () => {
 
   renderAnalytics();
 renderAdminPanel();
+renderInstagramStatsPanel();
 if (isAdmin) renderITNotes();
 
 // Re-render notes whenever storage changes (e.g. another tab submits a note)

@@ -76,6 +76,46 @@
         </article>
       </div>
 
+      <div class="table-card" id="instagramStatsAdminCard" data-admin-lock>
+        <h2>Instagram Snapshot Controls</h2>
+        <p class="sub">Set a manual source to update homepage community stats instantly, or switch back to live sync.</p>
+        <form id="instagramStatsForm" class="instagram-stats-form" novalidate>
+          <label for="instagramStatsSource">Data Source</label>
+          <select id="instagramStatsSource" name="instagramStatsSource">
+            <option value="live">Live (auto fetch)</option>
+            <option value="manual">Manual (dashboard controlled)</option>
+          </select>
+
+          <div class="instagram-stats-grid">
+            <div>
+              <label for="instagramFollowersInput">Followers</label>
+              <input id="instagramFollowersInput" name="instagramFollowersInput" type="number" min="0" step="1" required />
+            </div>
+            <div>
+              <label for="instagramPostsInput">Posts</label>
+              <input id="instagramPostsInput" name="instagramPostsInput" type="number" min="0" step="1" required />
+            </div>
+            <div>
+              <label for="instagramFollowingInput">Following</label>
+              <input id="instagramFollowingInput" name="instagramFollowingInput" type="number" min="0" step="1" required />
+            </div>
+          </div>
+
+          <div class="instagram-stats-actions">
+            <button type="submit">Save Instagram Snapshot</button>
+            <p id="instagramStatsMessage" class="sub" aria-live="polite"></p>
+          </div>
+        </form>
+
+        <div class="lock-glass" aria-hidden="true">
+          <div class="lock-glass-inner">
+            <div class="lock-icon">🔒</div>
+            <p>Restricted Controls</p>
+            <small>Only Admin, SG, USG, and DSG can edit Instagram snapshot controls.</small>
+          </div>
+        </div>
+      </div>
+
       <div class="table-card" id="recentVisitorsCard" data-admin-lock>
         <h2>Recent Visitors</h2>
         <div class="table-wrap">

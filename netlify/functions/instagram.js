@@ -1,5 +1,4 @@
 const DEFAULT_USERNAME = "imperiummun26";
-const CACHE_SECONDS = 60 * 30;
 
 const FALLBACK_STATS = {
   followers: 487,
@@ -9,7 +8,7 @@ const FALLBACK_STATS = {
 
 const baseHeaders = {
   "Content-Type": "application/json",
-  "Cache-Control": `public, max-age=${CACHE_SECONDS}`,
+  "Cache-Control": "no-store",
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET,OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",

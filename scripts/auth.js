@@ -34,6 +34,10 @@
     locationText: "Riyadh, Saudi Arabia",
     conferenceDescription: "Imperium MUN is a student-led conference focused on collaboration, critical thinking, and impactful debate.",
     countdownEnabled: true,
+    instagramStatsSource: "live",
+    instagramFollowers: 487,
+    instagramPosts: 18,
+    instagramFollowing: 4,
   };
 
   const readJson = (key, fallback) => {
@@ -464,6 +468,21 @@
       next.conferenceDescription || defaultSiteSettings.conferenceDescription
     ).trim();
     next.countdownEnabled = Boolean(next.countdownEnabled);
+
+    const normalizeCount = (value, fallback) => {
+      const numeric = Number(value);
+      if (!Number.isFinite(numeric) || numeric < 0) {
+        return fallback;
+      }
+      return Math.floor(numeric);
+    };
+
+    next.instagramStatsSource = String(next.instagramStatsSource || "live").trim().toLowerCase() === "manual"
+      ? "manual"
+      : "live";
+    next.instagramFollowers = normalizeCount(next.instagramFollowers, defaultSiteSettings.instagramFollowers);
+    next.instagramPosts = normalizeCount(next.instagramPosts, defaultSiteSettings.instagramPosts);
+    next.instagramFollowing = normalizeCount(next.instagramFollowing, defaultSiteSettings.instagramFollowing);
 
     if (!next.locationText) {
       next.locationText = defaultSiteSettings.locationText;

@@ -617,6 +617,83 @@ h2 {
   margin-top: 1.2rem;
 }
 
+.instagram-stats-form {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 0.9rem;
+}
+
+.instagram-stats-form label {
+  display: block;
+  margin-bottom: 0.34rem;
+  color: #d4e3d7;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.instagram-stats-form input,
+.instagram-stats-form select {
+  width: 100%;
+  border: 1px solid rgba(77, 139, 99, 0.4);
+  background: rgba(10, 16, 12, 0.92);
+  color: #e8f2ec;
+  border-radius: 10px;
+  padding: 0.58rem 0.7rem;
+  font: inherit;
+}
+
+.instagram-stats-form input:focus,
+.instagram-stats-form select:focus {
+  outline: none;
+  border-color: rgba(213, 180, 101, 0.72);
+  box-shadow: 0 0 0 2px rgba(213, 180, 101, 0.2);
+}
+
+.instagram-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.instagram-stats-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.instagram-stats-actions button {
+  border: 1px solid rgba(142, 207, 160, 0.45);
+  background: linear-gradient(140deg, rgba(142, 207, 160, 0.26), rgba(77, 139, 99, 0.18));
+  color: #dff6e4;
+  border-radius: 10px;
+  padding: 0.56rem 0.84rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.instagram-stats-actions button:hover {
+  border-color: rgba(142, 207, 160, 0.65);
+  transform: translateY(-1px);
+}
+
+#instagramStatsMessage {
+  margin: 0;
+}
+
+#instagramStatsMessage.success {
+  color: #8ecfa0;
+}
+
+@media (max-width: 860px) {
+  .instagram-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .pagination {
   margin-top: 0.9rem;
   display: flex;

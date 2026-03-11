@@ -1535,6 +1535,105 @@ body[data-theme="light"] .road-node-line {
   font-size: 0.92rem;
 }
 
+.instagram-sync-status {
+  margin: 0.9rem 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.42rem 0.76rem;
+  border-radius: 999px;
+  border: 1px solid rgba(142, 207, 160, 0.52);
+  color: #d9f4df;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  background:
+    linear-gradient(120deg, rgba(142, 207, 160, 0.2), rgba(50, 110, 72, 0.2)),
+    radial-gradient(circle at 24% 50%, rgba(142, 207, 160, 0.2), transparent 55%);
+  box-shadow: 0 0 0 1px rgba(142, 207, 160, 0.12), 0 6px 18px rgba(7, 32, 14, 0.32);
+  position: relative;
+  overflow: hidden;
+}
+
+.instagram-sync-status::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #6df098;
+  box-shadow: 0 0 0 0 rgba(109, 240, 152, 0.62);
+  animation: instagramPulseDot 1.5s ease-out infinite;
+  flex: 0 0 auto;
+}
+
+.instagram-sync-status::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, 0.22) 38%, transparent 56%);
+  transform: translateX(-120%);
+  animation: instagramSyncSweep 2.9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.instagram-sync-status.is-stale {
+  border-color: rgba(213, 180, 101, 0.55);
+  color: #f1dfb5;
+  background:
+    linear-gradient(120deg, rgba(213, 180, 101, 0.2), rgba(146, 108, 42, 0.2)),
+    radial-gradient(circle at 24% 50%, rgba(213, 180, 101, 0.2), transparent 55%);
+}
+
+.instagram-sync-status.is-stale::before {
+  background: #f2c663;
+  box-shadow: 0 0 0 0 rgba(242, 198, 99, 0.58);
+}
+
+.instagram-sync-status.is-error {
+  border-color: rgba(240, 120, 120, 0.55);
+  color: #ffd2d2;
+  background:
+    linear-gradient(120deg, rgba(240, 120, 120, 0.16), rgba(130, 42, 42, 0.16)),
+    radial-gradient(circle at 24% 50%, rgba(240, 120, 120, 0.2), transparent 55%);
+}
+
+.instagram-sync-status.is-error::before {
+  background: #ff8f8f;
+  box-shadow: 0 0 0 0 rgba(255, 143, 143, 0.55);
+}
+
+@keyframes instagramPulseDot {
+  0% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 rgba(109, 240, 152, 0.62);
+  }
+  70% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 7px rgba(109, 240, 152, 0);
+  }
+  100% {
+    transform: scale(0.92);
+    box-shadow: 0 0 0 0 rgba(109, 240, 152, 0);
+  }
+}
+
+@keyframes instagramSyncSweep {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  28% {
+    opacity: 0.9;
+  }
+  62% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
 .email-link {
   color: var(--gold-soft);
   text-decoration: none;
