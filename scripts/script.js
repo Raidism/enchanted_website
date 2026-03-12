@@ -1139,6 +1139,9 @@ if (waitlistForm && waitlistMessage) {
         school,
         role,
       };
+      const countBeforeSubmit = waitlistCount
+        ? Number.parseInt(String(waitlistCount.textContent || "0").replace(/[^\d]/g, ""), 10) || 0
+        : 0;
 
       let reservationSuccess = false;
       waitlistSubmitInFlight = true;
@@ -1152,7 +1155,9 @@ if (waitlistForm && waitlistMessage) {
         if (Array.isArray(remotePayload.entries)) {
           writeWaitlistLocal(remotePayload.entries);
           if (waitlistCount) {
-            waitlistCount.textContent = String(remotePayload.entries.length);
+            const serverCount = remotePayload.entries.length;
+            const nextCount = Math.max(countBeforeSubmit + 1, serverCount);
+            waitlistCount.textContent = String(nextCount);
           }
         } else if (waitlistCount) {
           const optimisticRows = [
