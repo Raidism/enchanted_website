@@ -892,6 +892,15 @@ const refreshWaitlistCount = async () => {
   }
 };
 
+const flashWaitlistCount = () => {
+  if (!waitlistCount) {
+    return;
+  }
+  waitlistCount.classList.remove("count-gold-flash");
+  void waitlistCount.offsetWidth;
+  waitlistCount.classList.add("count-gold-flash");
+};
+
 refreshWaitlistCount();
 
 const playWaitlistLaunchAnimation = (nameText) => new Promise((resolve) => {
@@ -1074,6 +1083,8 @@ if (waitlistForm && waitlistMessage) {
         role,
       };
 
+      let reservationSuccess = false;
+
       try {
         if (waitlistSubmitBtn) {
           waitlistSubmitBtn.disabled = true;
@@ -1086,18 +1097,32 @@ if (waitlistForm && waitlistMessage) {
 
         waitlistForm.reset();
         await refreshWaitlistCount();
+        flashWaitlistCount();
         await playWaitlistLaunchAnimation(name);
+        reservationSuccess = true;
 
         waitlistMessage.classList.add("success");
-        waitlistMessage.textContent = "You are in. We will notify you first when applications open.";
+        waitlistMessage.textContent = "Completed. You are in. We will notify you first when applications open.";
       } catch (error) {
+        const errorText = String(error && error.message ? error.message : "").toLowerCase();
+        if (errorText.includes("already registered") || errorText.includes("already on the early list")) {
+          waitlistMessage.classList.remove("success");
+          waitlistMessage.textContent = errorText.includes("name")
+            ? "This name is already on the early list."
+            : "This email is already on the early list.";
+          return;
+        }
+
         // Fallback for environments without Netlify function support.
         const rows = readWaitlistLocal();
-        const exists = rows.some((item) => String(item.email || "").toLowerCase() === email);
+        const emailExists = rows.some((item) => String(item.email || "").toLowerCase() === email);
+        const nameExists = rows.some((item) => String(item.name || "").trim().toLowerCase() === name.toLowerCase());
 
-        if (exists) {
+        if (emailExists || nameExists) {
           waitlistMessage.classList.remove("success");
-          waitlistMessage.textContent = "You are already on the early list with this email.";
+          waitlistMessage.textContent = emailExists
+            ? "This email is already on the early list."
+            : "This name is already on the early list.";
           return;
         }
 
@@ -1113,14 +1138,24 @@ if (waitlistForm && waitlistMessage) {
         writeWaitlistLocal(rows);
         waitlistForm.reset();
         await refreshWaitlistCount();
+        flashWaitlistCount();
         await playWaitlistLaunchAnimation(name);
+        reservationSuccess = true;
 
         waitlistMessage.classList.add("success");
-        waitlistMessage.textContent = `Saved locally on this device only. (${String(error.message || "server unavailable")})`;
+        waitlistMessage.textContent = `Completed (saved locally on this device only). (${String(error.message || "server unavailable")})`;
       } finally {
         if (waitlistSubmitBtn) {
-          waitlistSubmitBtn.disabled = false;
-          waitlistSubmitBtn.textContent = "Reserve Early Access 🔔";
+          if (reservationSuccess) {
+            waitlistSubmitBtn.textContent = "Completed";
+            setTimeout(() => {
+              waitlistSubmitBtn.disabled = false;
+              waitlistSubmitBtn.textContent = "Reserve Early Access 🔔";
+            }, 900);
+          } else {
+            waitlistSubmitBtn.disabled = false;
+            waitlistSubmitBtn.textContent = "Reserve Early Access 🔔";
+          }
         }
       }
     };

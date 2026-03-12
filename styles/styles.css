@@ -1114,6 +1114,33 @@ body[data-theme="light"] .waitlist-form select {
   color: #9ce0b1;
 }
 
+#waitlistCount {
+  display: inline-block;
+  transition: color 0.35s ease;
+}
+
+#waitlistCount.count-gold-flash {
+  animation: waitlistCountGoldFlash 950ms ease;
+}
+
+@keyframes waitlistCountGoldFlash {
+  0% {
+    color: inherit;
+    transform: scale(1);
+    text-shadow: none;
+  }
+  40% {
+    color: var(--gold-soft);
+    transform: scale(1.18);
+    text-shadow: 0 0 12px rgba(213, 180, 101, 0.55);
+  }
+  100% {
+    color: inherit;
+    transform: scale(1);
+    text-shadow: none;
+  }
+}
+
 .roadmap-card {
   padding: 2rem 2rem 1.75rem;
 }

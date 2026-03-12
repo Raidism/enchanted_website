@@ -234,7 +234,8 @@ const formatRole = (value) => {
     "volunteering-team": "Volunteering Team",
     "security-team": "Security Team",
     "press-team": "Press Team",
-    "sponsors-partnerships": "Sponsors and Partnerships",
+    partnerships: "Partnerships",
+    "sponsors-partnerships": "Partnerships",
   };
 
   return labels[raw] || value || "Unknown";

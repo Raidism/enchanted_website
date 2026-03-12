@@ -13,7 +13,7 @@ const ACCESS_GATE_COOKIE = "imperium_access_gate";
 const ACCESS_GATE_TTL_MS = 2 * 60 * 60 * 1000;
 const ACCESS_GATE_MAX_ATTEMPTS = 5;
 const ACCESS_GATE_LOCKOUT_MS = 10 * 60 * 1000;
-const ACCESS_GATE_PASSWORD = String(process.env.ACCESS_GATE_PASSWORD || "imperium-gate-2026");
+const ACCESS_GATE_PASSWORD = "1001";
 const ACCESS_GATE_SECRET = String(process.env.ACCESS_GATE_SECRET || process.env.SESSION_SECRET || "imperium-access-secret");
 const ACCESS_GATE_PASSWORD_HASH = crypto.createHash("sha256").update(ACCESS_GATE_PASSWORD).digest("hex");
 
@@ -786,6 +786,10 @@ app.post("/api/waitlist", (req, res) => {
 
   if (entries.some((e) => normalizeUsername(e.email) === normalizeUsername(email))) {
     return res.status(409).json({ success: false, message: "Email already registered.", entries, deletedEntries });
+  }
+
+  if (entries.some((e) => normalizeUsername(e.name) === normalizeUsername(name))) {
+    return res.status(409).json({ success: false, message: "Name already registered.", entries, deletedEntries });
   }
 
   entries.unshift(normalizeWaitlistEntry({
