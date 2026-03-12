@@ -1,570 +1,257 @@
 (function () {
-  const USERS_KEY = "imperium_users";
-  const CURRENT_USER_KEY = "imperium_current_user";
-  const ACTIVE_USERS_KEY = "imperium_active_users";
-  const LOGIN_HISTORY_KEY = "imperium_login_history";
-  const SITE_SETTINGS_KEY = "imperium_site_settings";
-  const FORCED_LOGOUT_KEY = "imperium_forced_logout";
-  const SESSION_DURATION_MS = 24 * 60 * 60 * 1000;
+  const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+  let cachedUser = null;
+  let cachedSettings = null;
 
-  const defaultAdminUser = { username: "admin", password: "Soliman123@", role: "admin", name: "Adham Soliman", photo: "assets/adham pic.jpg" };
-  const defaultMemberUser = { username: "everyone", password: "123", role: "member", name: "", photo: "" };
-  const defaultUsgAdminUser = { username: "ln-obidat", password: "3004", role: "admin", name: "Leen Obeidat", photo: "assets/under secretary general.png" };
-  const defaultSgAdminUser = { username: "AhmadPh", password: "Ahmadggg", role: "admin", name: "Ahmed Pharaon", photo: "assets/secretary general.png" };
-  const defaultMediaMemberUser = { username: "Toleenkmedia", password: "Totakordi10", role: "member", name: "Toleen Kurdi", photo: "assets/head of media.png" };
-  const defaultDaMemberUser = { username: "OmarAlhomran", password: "0987654321", role: "member", name: "Omar Alhomran", photo: "assets/Head of DA.png" };
-  const defaultCaMemberUser = { username: "Yamendalegend", password: "YamenloveAdham", role: "member", name: "YAMEN ELATTAL", photo: "assets/HEAD OF CA.png" };
-  const defaultUsers = [
-    defaultAdminUser,
-    defaultMemberUser,
-    defaultUsgAdminUser,
-    defaultSgAdminUser,
-    defaultMediaMemberUser,
-    defaultDaMemberUser,
-    defaultCaMemberUser,
-  ];
-
-  const defaultSiteSettings = {
-    maintenanceMode: false, // reset safeguard: default is always off
-    maintenanceMessage: "Imperium MUN is temporarily under maintenance. Please check back soon.",
-    launchDate: "2026-03-28T00:00:00+03:00",
-    announcement: "",
-    applicationsOpen: false,
-    conferenceDate: "2026-05-15T09:00:00+03:00",
-    locationText: "Riyadh, Saudi Arabia",
-    conferenceDescription: "Imperium MUN is a student-led conference focused on collaboration, critical thinking, and impactful debate.",
-    countdownEnabled: true,
-    instagramStatsSource: "live",
-    instagramFollowers: 487,
-    instagramPosts: 18,
-    instagramFollowing: 4,
-  };
-
-  const readJson = (key, fallback) => {
+  const parseJsonSafe = (text) => {
     try {
-      const raw = localStorage.getItem(key);
-      if (!raw) {
-        return fallback;
-      }
-      return JSON.parse(raw);
+      return JSON.parse(text);
     } catch {
-      return fallback;
+      return null;
     }
   };
 
-  const writeJson = (key, value) => {
-    localStorage.setItem(key, JSON.stringify(value));
+  const requestSync = (method, path, body) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, `${API_BASE}${path}`, false);
+    xhr.setRequestHeader("Accept", "application/json");
+    if (body !== undefined) {
+      xhr.setRequestHeader("Content-Type", "application/json");
+    }
+
+    try {
+      xhr.send(body === undefined ? null : JSON.stringify(body));
+      const payload = parseJsonSafe(xhr.responseText || "");
+      return {
+        ok: xhr.status >= 200 && xhr.status < 300,
+        status: xhr.status,
+        payload,
+      };
+    } catch {
+      return {
+        ok: false,
+        status: 0,
+        payload: null,
+      };
+    }
   };
 
-  const normalizeUsername = (value) => String(value || "").trim().toLowerCase();
-  const isMainAdminUser = (user) => normalizeUsername(user && user.username) === "admin";
+  const requestAsync = async (method, path, body) => {
+    const response = await fetch(`${API_BASE}${path}`, {
+      method,
+      headers: {
+        Accept: "application/json",
+        ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+      },
+      body: body === undefined ? undefined : JSON.stringify(body),
+      cache: "no-store",
+    });
 
-  const getSessionExpiryIso = (session) => {
-    if (!session || typeof session !== "object") {
-      return "";
-    }
-
-    const explicit = String(session.expiresAt || "").trim();
-    if (explicit) {
-      return explicit;
-    }
-
-    const loginAt = new Date(String(session.loginAt || ""));
-    if (Number.isNaN(loginAt.getTime())) {
-      return "";
-    }
-
-    return new Date(loginAt.getTime() + SESSION_DURATION_MS).toISOString();
+    const payload = await response.json().catch(() => null);
+    return {
+      ok: response.ok,
+      status: response.status,
+      payload,
+    };
   };
 
-  const isExpiredSession = (session) => {
-    const expiryIso = getSessionExpiryIso(session);
-    if (!expiryIso) {
-      return false;
+  const ensureCurrentUser = () => {
+    if (cachedUser) {
+      return cachedUser;
     }
 
-    const expiryDate = new Date(expiryIso);
-    if (Number.isNaN(expiryDate.getTime())) {
-      return false;
+    const result = requestSync("GET", "/auth/me");
+    if (result.ok && result.payload && result.payload.user) {
+      cachedUser = result.payload.user;
+      return cachedUser;
     }
 
-    return Date.now() >= expiryDate.getTime();
+    cachedUser = null;
+    return null;
+  };
+
+  const ensureSiteSettings = () => {
+    if (cachedSettings) {
+      return cachedSettings;
+    }
+
+    const result = requestSync("GET", "/site-settings");
+    if (result.ok && result.payload && result.payload.settings) {
+      cachedSettings = result.payload.settings;
+      return cachedSettings;
+    }
+
+    cachedSettings = {
+      maintenanceMode: false,
+      maintenanceMessage: "Imperium MUN is temporarily under maintenance. Please check back soon.",
+      launchDate: "2026-03-28T00:00:00+03:00",
+      announcement: "",
+      applicationsOpen: false,
+      conferenceDate: "2026-05-15T09:00:00+03:00",
+      locationText: "Riyadh, Saudi Arabia",
+      conferenceDescription: "Imperium MUN is a student-led conference focused on collaboration, critical thinking, and impactful debate.",
+      countdownEnabled: true,
+      instagramStatsSource: "live",
+      instagramFollowers: 487,
+      instagramPosts: 18,
+      instagramFollowing: 4,
+    };
+
+    return cachedSettings;
   };
 
   const init = () => {
-    const users = readJson(USERS_KEY, null);
-    if (!Array.isArray(users) || users.length === 0) {
-      writeJson(USERS_KEY, defaultUsers);
-    } else {
-      const existingUsers = [...users];
-      const adminIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === "admin");
-      const everyoneIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === "everyone");
-      const usgIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultUsgAdminUser.username));
-      const sgIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultSgAdminUser.username));
-      const mediaIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultMediaMemberUser.username));
-      const daIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultDaMemberUser.username));
-      const caIndex = existingUsers.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(defaultCaMemberUser.username));
-
-      if (adminIndex === -1) {
-        existingUsers.push(defaultAdminUser);
-      } else {
-        existingUsers[adminIndex] = {
-          ...existingUsers[adminIndex],
-          username: "admin",
-          password: defaultAdminUser.password,
-          role: "admin",
-          name: defaultAdminUser.name,
-          photo: defaultAdminUser.photo,
-        };
-      }
-
-      if (everyoneIndex === -1) {
-        existingUsers.push(defaultMemberUser);
-      } else {
-        existingUsers[everyoneIndex] = {
-          ...existingUsers[everyoneIndex],
-          username: "everyone",
-          password: defaultMemberUser.password,
-          role: "member",
-          name: defaultMemberUser.name,
-          photo: defaultMemberUser.photo,
-        };
-      }
-
-      if (usgIndex === -1) {
-        existingUsers.push(defaultUsgAdminUser);
-      } else {
-        existingUsers[usgIndex] = {
-          ...existingUsers[usgIndex],
-          username: defaultUsgAdminUser.username,
-          password: defaultUsgAdminUser.password,
-          role: "admin",
-          name: defaultUsgAdminUser.name,
-          photo: defaultUsgAdminUser.photo,
-        };
-      }
-
-      if (sgIndex === -1) {
-        existingUsers.push(defaultSgAdminUser);
-      } else {
-        existingUsers[sgIndex] = {
-          ...existingUsers[sgIndex],
-          username: defaultSgAdminUser.username,
-          password: defaultSgAdminUser.password,
-          role: "admin",
-          name: defaultSgAdminUser.name,
-          photo: defaultSgAdminUser.photo,
-        };
-      }
-
-      if (mediaIndex === -1) {
-        existingUsers.push(defaultMediaMemberUser);
-      } else {
-        existingUsers[mediaIndex] = {
-          ...existingUsers[mediaIndex],
-          username: defaultMediaMemberUser.username,
-          password: defaultMediaMemberUser.password,
-          role: "member",
-          name: defaultMediaMemberUser.name,
-          photo: defaultMediaMemberUser.photo,
-        };
-      }
-
-      if (daIndex === -1) {
-        existingUsers.push(defaultDaMemberUser);
-      } else {
-        existingUsers[daIndex] = {
-          ...existingUsers[daIndex],
-          username: defaultDaMemberUser.username,
-          password: defaultDaMemberUser.password,
-          role: "member",
-          name: defaultDaMemberUser.name,
-          photo: defaultDaMemberUser.photo,
-        };
-      }
-
-      if (caIndex === -1) {
-        existingUsers.push(defaultCaMemberUser);
-      } else {
-        existingUsers[caIndex] = {
-          ...existingUsers[caIndex],
-          username: defaultCaMemberUser.username,
-          password: defaultCaMemberUser.password,
-          role: "member",
-          name: defaultCaMemberUser.name,
-          photo: defaultCaMemberUser.photo,
-        };
-      }
-
-      writeJson(USERS_KEY, existingUsers);
-    }
-
-    const activeUsers = readJson(ACTIVE_USERS_KEY, null);
-    if (!activeUsers || typeof activeUsers !== "object") {
-      writeJson(ACTIVE_USERS_KEY, {});
-    }
-
-    const history = readJson(LOGIN_HISTORY_KEY, null);
-    if (!Array.isArray(history)) {
-      writeJson(LOGIN_HISTORY_KEY, []);
-    }
-
-    const siteSettings = readJson(SITE_SETTINGS_KEY, null);
-    if (!siteSettings || typeof siteSettings !== "object") {
-      writeJson(SITE_SETTINGS_KEY, defaultSiteSettings);
-    } else {
-      writeJson(SITE_SETTINGS_KEY, {
-        ...defaultSiteSettings,
-        ...siteSettings,
-      });
-    }
-  };
-
-  const getUsers = () => {
-    init();
-    return readJson(USERS_KEY, defaultUsers);
-  };
-
-  const getForcedLogoutList = () => readJson(FORCED_LOGOUT_KEY, []);
-
-  const getCurrentUser = () => {
-    init();
-    const session = readJson(CURRENT_USER_KEY, null);
-    if (!session || typeof session !== "object") {
-      return null;
-    }
-
-    // Check if this user was force-logged out by an admin
-    const forcedList = getForcedLogoutList();
-    const sessionUsername = String(session.username || "").trim().toLowerCase();
-    if (forcedList.includes(sessionUsername)) {
-      const remaining = forcedList.filter((u) => u !== sessionUsername);
-      writeJson(FORCED_LOGOUT_KEY, remaining);
-      const activeUsers = getActiveUsers();
-      const activeKey = Object.keys(activeUsers).find((k) => k.toLowerCase() === sessionUsername);
-      if (activeKey) {
-        delete activeUsers[activeKey];
-        setActiveUsers(activeUsers);
-      }
-      localStorage.removeItem(CURRENT_USER_KEY);
-      return null;
-    }
-
-    if (isExpiredSession(session)) {
-      const activeUsers = getActiveUsers();
-      const username = String(session.username || "").trim();
-      if (username && activeUsers[username]) {
-        delete activeUsers[username];
-        setActiveUsers(activeUsers);
-      }
-      localStorage.removeItem(CURRENT_USER_KEY);
-      return null;
-    }
-
-    // Backfill missing profile fields for legacy sessions.
-    const users = getUsers();
-    const matchedUser = users.find((user) => normalizeUsername(user.username) === normalizeUsername(session.username));
-    const backfilledSession = {
-      ...session,
-      role: String(session.role || (matchedUser && matchedUser.role) || "member"),
-      name: String(session.name || (matchedUser && matchedUser.name) || "").trim(),
-      photo: String(session.photo || (matchedUser && matchedUser.photo) || "").trim(),
-    };
-
-    // Backfill expiry for old sessions so timeout behavior is consistent.
-    const expiryIso = getSessionExpiryIso(session);
-    if (expiryIso && !session.expiresAt) {
-      const next = {
-        ...backfilledSession,
-        expiresAt: expiryIso,
-      };
-      writeJson(CURRENT_USER_KEY, next);
-      return next;
-    }
-
-    if (
-      backfilledSession.role !== session.role
-      || backfilledSession.name !== String(session.name || "")
-      || backfilledSession.photo !== String(session.photo || "")
-    ) {
-      writeJson(CURRENT_USER_KEY, backfilledSession);
-      return backfilledSession;
-    }
-
-    return backfilledSession;
-  };
-
-  const setCurrentUser = (user) => {
-    writeJson(CURRENT_USER_KEY, user);
-  };
-
-  const getActiveUsers = () => {
-    init();
-    return readJson(ACTIVE_USERS_KEY, {});
-  };
-
-  const setActiveUsers = (value) => {
-    writeJson(ACTIVE_USERS_KEY, value);
-  };
-
-  const addLoginHistory = (entry) => {
-    const history = readJson(LOGIN_HISTORY_KEY, []);
-    history.unshift(entry);
-    writeJson(LOGIN_HISTORY_KEY, history.slice(0, 250));
-  };
-
-  const heartbeat = () => {
-    const current = getCurrentUser();
-    if (!current) {
-      return;
-    }
-
-    const activeUsers = getActiveUsers();
-    if (!activeUsers[current.username]) {
-      activeUsers[current.username] = {
-        username: current.username,
-        role: current.role,
-        loginAt: new Date().toISOString(),
-      };
-    }
-    activeUsers[current.username].lastSeenAt = new Date().toISOString();
-    setActiveUsers(activeUsers);
+    ensureSiteSettings();
+    ensureCurrentUser();
   };
 
   const login = (usernameInput, passwordInput) => {
-    init();
-
-    const usernameNormalized = normalizeUsername(usernameInput);
+    const username = String(usernameInput || "").trim();
     const password = String(passwordInput || "");
-    const users = getUsers();
+    const result = requestSync("POST", "/auth/login", { username, password });
 
-    const matched = users.find((user) => normalizeUsername(user.username) === usernameNormalized);
-
-    if (!matched || matched.password !== password) {
-      return { success: false, message: "Wrong username or password." };
-    }
-
-    if (matched.disabled) {
-      return { success: false, message: "This account is disabled. Contact admin." };
-    }
-
-    const siteSettings = getSiteSettings();
-    if (siteSettings.maintenanceMode && (matched.role || "member") !== "admin") {
+    if (!result.ok || !result.payload || !result.payload.success) {
       return {
         success: false,
-        message: siteSettings.maintenanceMessage || "Website is under maintenance. Please try again later.",
+        message: result.payload && result.payload.message ? result.payload.message : "Wrong username or password.",
       };
     }
 
-    const current = {
-      username: matched.username,
-      role: matched.role || "member",
-      name: String(matched.name || "").trim(),
-      photo: String(matched.photo || "").trim(),
-      loginAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + SESSION_DURATION_MS).toISOString(),
+    cachedUser = result.payload.user || null;
+    cachedSettings = null;
+
+    return {
+      success: true,
+      user: cachedUser,
     };
-
-    setCurrentUser(current);
-    heartbeat();
-    addLoginHistory({
-      username: current.username,
-      role: current.role,
-      loginAt: current.loginAt,
-    });
-
-    return { success: true, user: current };
   };
 
   const logout = () => {
-    const current = readJson(CURRENT_USER_KEY, null);
-    if (current) {
-      const activeUsers = getActiveUsers();
-      delete activeUsers[current.username];
-      setActiveUsers(activeUsers);
-    }
-    localStorage.removeItem(CURRENT_USER_KEY);
+    requestSync("POST", "/auth/logout");
+    cachedUser = null;
   };
 
-  const addUser = (creator, usernameInput, passwordInput, roleInput) => {
-    if (!creator || creator.role !== "admin") {
-      return { success: false, message: "Only admin can add users." };
-    }
+  const heartbeat = () => {
+    requestAsync("POST", "/auth/heartbeat").catch(() => {
+      // Ignore background heartbeat errors.
+    });
+  };
 
+  const addUser = (_creator, usernameInput, passwordInput, roleInput) => {
     const username = String(usernameInput || "").trim();
     const password = String(passwordInput || "").trim();
-    const role = String(roleInput || "member").trim().toLowerCase() === "admin" ? "admin" : "member";
+    const role = String(roleInput || "member").trim();
 
-    if (!username || !password) {
-      return { success: false, message: "Username and password are required." };
+    const result = requestSync("POST", "/users", {
+      username,
+      password,
+      role,
+    });
+
+    if (!result.ok || !result.payload) {
+      return {
+        success: false,
+        message: result.payload && result.payload.message ? result.payload.message : "Failed to add user.",
+      };
     }
 
-    const users = getUsers();
-    const exists = users.some((user) => normalizeUsername(user.username) === normalizeUsername(username));
-    if (exists) {
-      return { success: false, message: "Username already exists." };
-    }
-
-    users.push({ username, password, role, disabled: false });
-    writeJson(USERS_KEY, users);
-    return { success: true, message: "User added successfully." };
+    return {
+      success: Boolean(result.payload.success),
+      message: String(result.payload.message || "User added successfully."),
+    };
   };
 
-  const getSafeUsers = () => getUsers().map((user) => ({
-    username: user.username,
-    role: user.role || "member",
-    disabled: Boolean(user.disabled),
-  }));
-
-  const getUsersForAdmin = (requester) => {
-    if (!requester || requester.role !== "admin") {
+  const getUsers = () => {
+    const result = requestSync("GET", "/users");
+    if (!result.ok || !result.payload || !Array.isArray(result.payload.users)) {
       return [];
     }
-
-    return getUsers().map((user) => ({
-      username: user.username,
-      password: String(user.password || ""),
-      role: user.role || "member",
-      disabled: Boolean(user.disabled),
-      name: String(user.name || ""),
-      photo: String(user.photo || ""),
-    }));
+    return result.payload.users;
   };
 
-  const getLoginHistory = () => readJson(LOGIN_HISTORY_KEY, []);
+  const getUsersForAdmin = () => getUsers();
 
-  const getSiteSettings = () => {
-    init();
-    return readJson(SITE_SETTINGS_KEY, defaultSiteSettings);
-  };
+  const getCurrentUser = () => ensureCurrentUser();
 
-  const updateSiteSettings = (creator, updates) => {
-    if (!creator || creator.role !== "admin") {
-      return { success: false, message: "Only admin can change site settings." };
+  const getActiveUsers = () => {
+    const result = requestSync("GET", "/sessions/active");
+    if (!result.ok || !result.payload || typeof result.payload.activeUsers !== "object") {
+      return {};
     }
+    return result.payload.activeUsers;
+  };
 
+  const getLoginHistory = () => {
+    const result = requestSync("GET", "/auth/history");
+    if (!result.ok || !result.payload || !Array.isArray(result.payload.rows)) {
+      return [];
+    }
+    return result.payload.rows;
+  };
+
+  const getSiteSettings = () => ensureSiteSettings();
+
+  const updateSiteSettings = (_creator, updates) => {
     if (!updates || typeof updates !== "object") {
       return { success: false, message: "Invalid settings payload." };
     }
 
-    const current = getSiteSettings();
-    const next = {
-      ...current,
-      ...updates,
-    };
-
-    next.maintenanceMode = Boolean(next.maintenanceMode);
-    next.maintenanceMessage = String(next.maintenanceMessage || defaultSiteSettings.maintenanceMessage).trim();
-    if (!next.maintenanceMessage) {
-      next.maintenanceMessage = defaultSiteSettings.maintenanceMessage;
+    const result = requestSync("PUT", "/site-settings", updates);
+    if (!result.ok || !result.payload) {
+      return {
+        success: false,
+        message: result.payload && result.payload.message ? result.payload.message : "Failed to update site settings.",
+      };
     }
 
-    next.launchDate = String(next.launchDate || defaultSiteSettings.launchDate).trim();
-    next.announcement = String(next.announcement || "").trim();
-    next.applicationsOpen = Boolean(next.applicationsOpen);
-    next.conferenceDate = String(next.conferenceDate || defaultSiteSettings.conferenceDate).trim();
-    next.locationText = String(next.locationText || defaultSiteSettings.locationText).trim();
-    next.conferenceDescription = String(
-      next.conferenceDescription || defaultSiteSettings.conferenceDescription
-    ).trim();
-    next.countdownEnabled = Boolean(next.countdownEnabled);
-
-    const normalizeCount = (value, fallback) => {
-      const numeric = Number(value);
-      if (!Number.isFinite(numeric) || numeric < 0) {
-        return fallback;
-      }
-      return Math.floor(numeric);
-    };
-
-    next.instagramStatsSource = String(next.instagramStatsSource || "live").trim().toLowerCase() === "manual"
-      ? "manual"
-      : "live";
-    next.instagramFollowers = normalizeCount(next.instagramFollowers, defaultSiteSettings.instagramFollowers);
-    next.instagramPosts = normalizeCount(next.instagramPosts, defaultSiteSettings.instagramPosts);
-    next.instagramFollowing = normalizeCount(next.instagramFollowing, defaultSiteSettings.instagramFollowing);
-
-    if (!next.locationText) {
-      next.locationText = defaultSiteSettings.locationText;
-    }
-
-    if (!next.conferenceDescription) {
-      next.conferenceDescription = defaultSiteSettings.conferenceDescription;
-    }
-
-    writeJson(SITE_SETTINGS_KEY, next);
-    return { success: true, message: "Site settings updated.", settings: next };
-  };
-
-  const setUserDisabled = (creator, usernameInput, disabledInput) => {
-    if (!creator || creator.role !== "admin" || !isMainAdminUser(creator)) {
-      return { success: false, message: "Only the main admin account can change user access." };
-    }
-
-    const targetUsername = String(usernameInput || "").trim();
-    if (!targetUsername) {
-      return { success: false, message: "Username is required." };
-    }
-
-    const users = getUsers();
-    const index = users.findIndex((user) => normalizeUsername(user.username) === normalizeUsername(targetUsername));
-    if (index === -1) {
-      return { success: false, message: "User not found." };
-    }
-
-    if (normalizeUsername(users[index].username) === "admin") {
-      return { success: false, message: "Admin access cannot be disabled." };
-    }
-
-    users[index] = {
-      ...users[index],
-      disabled: Boolean(disabledInput),
-    };
-
-    writeJson(USERS_KEY, users);
-
-    if (Boolean(disabledInput)) {
-      const activeUsers = getActiveUsers();
-      delete activeUsers[users[index].username];
-      setActiveUsers(activeUsers);
+    if (result.payload.settings) {
+      cachedSettings = result.payload.settings;
+    } else {
+      cachedSettings = null;
     }
 
     return {
-      success: true,
-      message: `User ${users[index].username} ${Boolean(disabledInput) ? "disabled" : "enabled"}.`,
+      success: Boolean(result.payload.success),
+      message: String(result.payload.message || "Site settings updated."),
+      settings: result.payload.settings,
     };
   };
 
-  const forceLogoutUser = (creator, usernameInput) => {
-    if (!creator || creator.role !== "admin") {
-      return { success: false, message: "Only admin can force-logout users." };
+  const setUserDisabled = (_creator, usernameInput, disabledInput) => {
+    const result = requestSync("POST", "/users/disable", {
+      username: String(usernameInput || "").trim(),
+      disabled: Boolean(disabledInput),
+    });
+
+    if (!result.ok || !result.payload) {
+      return {
+        success: false,
+        message: result.payload && result.payload.message ? result.payload.message : "Failed to update user access.",
+      };
     }
 
-    const target = String(usernameInput || "").trim().toLowerCase();
-    if (!target) {
-      return { success: false, message: "Username required." };
+    return {
+      success: Boolean(result.payload.success),
+      message: String(result.payload.message || "User access updated."),
+    };
+  };
+
+  const forceLogoutUser = (_creator, usernameInput) => {
+    const result = requestSync("POST", "/users/force-logout", {
+      username: String(usernameInput || "").trim(),
+    });
+
+    if (!result.ok || !result.payload) {
+      return {
+        success: false,
+        message: result.payload && result.payload.message ? result.payload.message : "Failed to force logout user.",
+      };
     }
 
-    if (target === String(creator.username || "").trim().toLowerCase()) {
-      return { success: false, message: "You cannot force-logout yourself." };
-    }
-
-    // Remove from active users tracking
-    const activeUsers = getActiveUsers();
-    const activeKey = Object.keys(activeUsers).find((k) => k.toLowerCase() === target);
-    if (activeKey) {
-      delete activeUsers[activeKey];
-      setActiveUsers(activeUsers);
-    }
-
-    // Mark for forced logout so their session is invalidated on next check
-    const list = getForcedLogoutList();
-    if (!list.includes(target)) {
-      list.push(target);
-      writeJson(FORCED_LOGOUT_KEY, list);
-    }
-
-    return { success: true, message: `${usernameInput} has been force-logged out.` };
+    return {
+      success: Boolean(result.payload.success),
+      message: String(result.payload.message || "User force-logged out."),
+    };
   };
 
   init();
@@ -575,7 +262,7 @@
     logout,
     heartbeat,
     addUser,
-    getUsers: getSafeUsers,
+    getUsers,
     getUsersForAdmin,
     getCurrentUser,
     getActiveUsers,

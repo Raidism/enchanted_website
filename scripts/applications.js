@@ -37,6 +37,8 @@ const welcomeText = document.getElementById("welcomeText");
 const logoutBtn   = document.getElementById("logoutBtn");
 const applicationsTrendChart = document.getElementById("applicationsTrendChart");
 const applicationsTrendEmpty = document.getElementById("applicationsTrendEmpty");
+const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+const ANALYTICS_API_URL = `${API_BASE}/analytics`;
 
 if (currentUser.role !== "admin") {
   const adminLinks = document.querySelectorAll("[data-admin-link]");
@@ -52,7 +54,17 @@ if (currentUser.role !== "admin") {
   });
 }
 
-const renderApplicationsTrend = () => {
+const fetchAnalyticsLogs = async () => {
+  const response = await fetch(ANALYTICS_API_URL, { method: "GET", cache: "no-store" });
+  if (!response.ok) {
+    throw new Error("Failed to load analytics logs.");
+  }
+
+  const payload = await response.json();
+  return payload && Array.isArray(payload.logs) ? payload.logs : [];
+};
+
+const renderApplicationsTrend = async () => {
   if (!applicationsTrendChart) return;
 
   if (!applicationsOpen) {
@@ -66,9 +78,7 @@ const renderApplicationsTrend = () => {
 
   let logs = [];
   try {
-    const raw = localStorage.getItem("imperium_view_logs");
-    const parsed = raw ? JSON.parse(raw) : [];
-    logs = Array.isArray(parsed) ? parsed : [];
+    logs = await fetchAnalyticsLogs();
   } catch {
     logs = [];
   }
@@ -126,11 +136,6 @@ const renderApplicationsTrend = () => {
 };
 
 renderApplicationsTrend();
-window.addEventListener("storage", (event) => {
-  if (event.key === "imperium_view_logs") {
-    renderApplicationsTrend();
-  }
-});
 
 logoutBtn.addEventListener("click", () => {
   logoutBtn.classList.add("is-loading");

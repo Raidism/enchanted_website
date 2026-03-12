@@ -503,23 +503,6 @@ logoutBtn.addEventListener("click", () => {
   // redirect is handled inside showLogoutTransition via GSAP or setTimeout fallback
 });
 
-const readViewLogs = () => {
-  try {
-    const raw = localStorage.getItem("imperium_view_logs");
-    if (!raw) {
-      return [];
-    }
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
-
-const writeViewLogsLocal = (logs) => {
-  localStorage.setItem("imperium_view_logs", JSON.stringify((Array.isArray(logs) ? logs : []).slice(0, 2000)));
-};
-
 const fetchViewLogsRemote = async () => {
   const response = await fetch(ANALYTICS_API_URL, { method: "GET", cache: "no-store" });
   if (!response.ok) {
@@ -535,13 +518,7 @@ const fetchViewLogsRemote = async () => {
 };
 
 const getAnalyticsLogs = async () => {
-  try {
-    const remoteLogs = await fetchViewLogsRemote();
-    writeViewLogsLocal(remoteLogs);
-    return remoteLogs;
-  } catch {
-    return readViewLogs();
-  }
+  return fetchViewLogsRemote();
 };
 
 const formatDateTime = (iso) => {

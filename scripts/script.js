@@ -3,7 +3,6 @@ if (yearSpan) {
   yearSpan.textContent = new Date().getFullYear();
 }
 
-const WAITLIST_KEY = "imperium_waitlist";
 const SITE_SETTINGS_STORAGE_KEY = "imperium_site_settings";
 const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
 const WAITLIST_API_URL = `${API_BASE}/waitlist`;
@@ -844,24 +843,6 @@ const waitlistMessage = document.getElementById("waitlistMessage");
 const waitlistCount = document.getElementById("waitlistCount");
 const waitlistSubmitBtn = waitlistForm ? waitlistForm.querySelector('button[type="submit"]') : null;
 
-const readWaitlistLocal = () => {
-  try {
-    const raw = localStorage.getItem(WAITLIST_KEY);
-    if (!raw) {
-      return [];
-    }
-
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
-
-const writeWaitlistLocal = (rows) => {
-  localStorage.setItem(WAITLIST_KEY, JSON.stringify(rows.slice(0, 3000)));
-};
-
 const fetchWaitlistRemote = async () => {
   const response = await fetch(WAITLIST_API_URL, { method: "GET", cache: "no-store" });
   if (!response.ok) {
@@ -895,13 +876,7 @@ const postWaitlistRemote = async (entry) => {
 };
 
 const getWaitlistRows = async () => {
-  try {
-    const remoteRows = await fetchWaitlistRemote();
-    writeWaitlistLocal(remoteRows);
-    return remoteRows;
-  } catch {
-    return readWaitlistLocal();
-  }
+  return fetchWaitlistRemote();
 };
 
 const refreshWaitlistCount = async () => {
@@ -909,8 +884,12 @@ const refreshWaitlistCount = async () => {
     return;
   }
 
-  const rows = await getWaitlistRows();
-  waitlistCount.textContent = String(rows.length);
+  try {
+    const rows = await getWaitlistRows();
+    waitlistCount.textContent = String(rows.length);
+  } catch {
+    waitlistCount.textContent = "0";
+  }
 };
 
 refreshWaitlistCount();

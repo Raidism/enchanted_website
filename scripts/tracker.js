@@ -1,65 +1,8 @@
 (function () {
-  const VIEW_LOGS_KEY = "imperium_view_logs";
   const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
   const ANALYTICS_API_URL = `${API_BASE}/analytics`;
-  const GEO_CACHE_KEY = "imperium_geo_cache";
-  const GEO_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
-  const LAST_VIEW_KEY = "imperium_last_view";
   const DEDUPE_WINDOW_MS = 2000;
-
-  const readLogs = () => {
-    try {
-      const raw = localStorage.getItem(VIEW_LOGS_KEY);
-      if (!raw) {
-        return [];
-      }
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  };
-
-  const writeLogs = (logs) => {
-    localStorage.setItem(VIEW_LOGS_KEY, JSON.stringify(logs.slice(0, 1000)));
-  };
-
-  const readGeoCache = () => {
-    try {
-      const raw = localStorage.getItem(GEO_CACHE_KEY);
-      if (!raw) {
-        return null;
-      }
-
-      const parsed = JSON.parse(raw);
-      if (!parsed || typeof parsed !== "object") {
-        return null;
-      }
-
-      if (!parsed.savedAt || Date.now() - parsed.savedAt > GEO_CACHE_TTL_MS) {
-        return null;
-      }
-
-      if (parsed.geo && String(parsed.geo.ip || "").trim().toLowerCase() === "unknown") {
-        return null;
-      }
-
-      return parsed.geo || null;
-    } catch {
-      return null;
-    }
-  };
-
-  const writeGeoCache = (geo) => {
-    if (!geo || String(geo.ip || "").toLowerCase() === "unknown") {
-      return;
-    }
-
-    localStorage.setItem(GEO_CACHE_KEY, JSON.stringify({
-      savedAt: Date.now(),
-      geo,
-    }));
-  };
+  let lastTracked = { path: "", timestamp: 0 };
 
   const flagFromCode = (code) => {
     const normalized = String(code || "").trim().toUpperCase();
@@ -111,11 +54,6 @@
   };
 
   const fetchGeo = async () => {
-    const cached = readGeoCache();
-    if (cached) {
-      return cached;
-    }
-
     try {
       const providers = [
         async () => {
@@ -140,7 +78,6 @@
         try {
           const geo = await provider();
           if (String(geo.ip || "").toLowerCase() !== "unknown") {
-            writeGeoCache(geo);
             return geo;
           }
         } catch {
@@ -162,19 +99,12 @@
   const trackView = async () => {
     const path = window.location.pathname.split("/").pop() || "index.html";
 
-    try {
-      const rawLastView = localStorage.getItem(LAST_VIEW_KEY);
-      const parsedLastView = rawLastView ? JSON.parse(rawLastView) : null;
-      if (
-        parsedLastView
-        && parsedLastView.path === path
-        && typeof parsedLastView.timestamp === "number"
-        && Date.now() - parsedLastView.timestamp < DEDUPE_WINDOW_MS
-      ) {
-        return;
-      }
-    } catch {
-      // Ignore malformed dedupe metadata and proceed.
+    if (
+      lastTracked.path === path
+      && typeof lastTracked.timestamp === "number"
+      && Date.now() - lastTracked.timestamp < DEDUPE_WINDOW_MS
+    ) {
+      return;
     }
 
     const geo = await fetchGeo();
@@ -189,40 +119,26 @@
       userAgent: navigator.userAgent,
     };
 
-    try {
-      const analyticsPayload = JSON.stringify({
-        action: "track",
-        entry,
+    const analyticsPayload = JSON.stringify({
+      action: "track",
+      entry,
+    });
+
+    if (navigator.sendBeacon) {
+      const blob = new Blob([analyticsPayload], { type: "application/json" });
+      navigator.sendBeacon(ANALYTICS_API_URL, blob);
+    } else {
+      await fetch(ANALYTICS_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        keepalive: true,
+        body: analyticsPayload,
       });
-
-      if (navigator.sendBeacon) {
-        const blob = new Blob([analyticsPayload], { type: "application/json" });
-        const accepted = navigator.sendBeacon(ANALYTICS_API_URL, blob);
-        if (!accepted) {
-          throw new Error("Beacon not accepted");
-        }
-      } else {
-        const response = await fetch(ANALYTICS_API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          keepalive: true,
-          body: analyticsPayload,
-        });
-
-        if (!response.ok) {
-          throw new Error("Remote analytics unavailable");
-        }
-      }
-    } catch {
-      // Keep local fallback so analytics still work when function is unavailable.
-      const logs = readLogs();
-      logs.unshift(entry);
-      writeLogs(logs);
     }
 
-    localStorage.setItem(LAST_VIEW_KEY, JSON.stringify({ path, timestamp: Date.now() }));
+    lastTracked = { path, timestamp: Date.now() };
   };
 
   trackView();

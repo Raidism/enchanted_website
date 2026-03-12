@@ -16,3 +16,6 @@ yarn-error.log*
 
 # Netlify local tooling cache
 .netlify/
+
+# Server runtime data
+server/data/

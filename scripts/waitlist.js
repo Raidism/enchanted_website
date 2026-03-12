@@ -24,8 +24,6 @@ const deletedWaitlistBody = document.getElementById("deletedWaitlistBody");
 const waitlistTrendChart = document.getElementById("waitlistTrendChart");
 const waitlistTrendEmpty = document.getElementById("waitlistTrendEmpty");
 
-const WAITLIST_KEY = "imperium_waitlist";
-const WAITLIST_DELETED_KEY = "imperium_waitlist_deleted";
 const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
 const WAITLIST_API_URL = `${API_BASE}/waitlist`;
 const STATUS_LABELS = {
@@ -110,42 +108,6 @@ logoutBtn.addEventListener("click", () => {
   }
 });
 
-const readWaitlistLocal = () => {
-  try {
-    const raw = localStorage.getItem(WAITLIST_KEY);
-    if (!raw) {
-      return [];
-    }
-
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
-
-const writeWaitlistLocal = (rows) => {
-  localStorage.setItem(WAITLIST_KEY, JSON.stringify(rows.slice(0, 3000)));
-};
-
-const readDeletedLocal = () => {
-  try {
-    const raw = localStorage.getItem(WAITLIST_DELETED_KEY);
-    if (!raw) {
-      return [];
-    }
-
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
-
-const writeDeletedLocal = (rows) => {
-  localStorage.setItem(WAITLIST_DELETED_KEY, JSON.stringify(rows.slice(0, 500)));
-};
-
 const fetchWaitlistRemote = async () => {
   const response = await fetch(WAITLIST_API_URL, { method: "GET", cache: "no-store" });
   if (!response.ok) {
@@ -190,17 +152,7 @@ const updateWaitlistRemote = async ({ action, id, status }) => {
 };
 
 const getWaitlistRows = async () => {
-  try {
-    const remotePayload = await fetchWaitlistRemote();
-    writeWaitlistLocal(remotePayload.entries);
-    writeDeletedLocal(remotePayload.deletedEntries);
-    return remotePayload;
-  } catch {
-    return {
-      entries: readWaitlistLocal(),
-      deletedEntries: readDeletedLocal(),
-    };
-  }
+  return fetchWaitlistRemote();
 };
 
 const updateLocalStatus = (rows, id, nextStatus) => rows.map((entry) => {
