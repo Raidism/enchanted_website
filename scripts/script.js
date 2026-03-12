@@ -845,6 +845,7 @@ const waitlistCount = document.getElementById("waitlistCount");
 const waitlistSubmitBtn = waitlistForm ? waitlistForm.querySelector('button[type="submit"]') : null;
 let waitlistSubmitInFlight = false;
 let waitlistLocalCache = [];
+let waitlistSubmitWatchdogId = null;
 
 const readWaitlistLocal = () => {
   try {
@@ -1146,6 +1147,23 @@ if (waitlistForm && waitlistMessage) {
       let reservationSuccess = false;
       waitlistSubmitInFlight = true;
 
+      if (waitlistSubmitWatchdogId) {
+        clearTimeout(waitlistSubmitWatchdogId);
+        waitlistSubmitWatchdogId = null;
+      }
+      waitlistSubmitWatchdogId = setTimeout(() => {
+        if (!waitlistSubmitInFlight) {
+          return;
+        }
+        waitlistSubmitInFlight = false;
+        if (waitlistSubmitBtn) {
+          waitlistSubmitBtn.disabled = false;
+          waitlistSubmitBtn.textContent = "Reserve Early Access 🔔";
+        }
+        waitlistMessage.classList.remove("success");
+        waitlistMessage.textContent = "Request timed out. Please try again.";
+      }, 12000);
+
       try {
         if (waitlistSubmitBtn) {
           waitlistSubmitBtn.disabled = true;
@@ -1232,6 +1250,10 @@ if (waitlistForm && waitlistMessage) {
         waitlistMessage.classList.add("success");
         waitlistMessage.textContent = `Completed (saved locally on this device only). (${String(error.message || "server unavailable")})`;
       } finally {
+        if (waitlistSubmitWatchdogId) {
+          clearTimeout(waitlistSubmitWatchdogId);
+          waitlistSubmitWatchdogId = null;
+        }
         waitlistSubmitInFlight = false;
         if (waitlistSubmitBtn) {
           if (reservationSuccess) {
