@@ -1,11 +1,11 @@
 const currentUser = window.ImperiumAuth.getCurrentUser();
 if (!currentUser) {
-  window.location.href = "access.html";
+  window.location.href = "/access";
   throw new Error("No active session");
 }
 
 if (currentUser.role !== "admin") {
-  window.location.href = "locked.html?feature=settings&from=dashboard.html";
+  window.location.href = "/locked?feature=settings&from=dashboard";
   throw new Error("Settings is admin-only");
 }
 
@@ -68,13 +68,13 @@ const showLogoutTransition = () => {
       delay: 1.45,
       onComplete: () => {
         window.ImperiumAuth.logout();
-        window.location.href = "access.html";
+        window.location.href = "/access";
       },
     });
   } else {
     setTimeout(() => {
       window.ImperiumAuth.logout();
-      window.location.href = "access.html";
+      window.location.href = "/access";
     }, 1600);
   }
 };

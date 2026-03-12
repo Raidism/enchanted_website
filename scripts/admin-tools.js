@@ -3,7 +3,7 @@
 
   const currentUser = window.ImperiumAuth.getCurrentUser();
   if (!currentUser) {
-    window.location.href = "access.html";
+    window.location.href = "/access";
     return;
   }
 
@@ -26,7 +26,7 @@
   if (!opsCenter) return;
   opsCenter.hidden = !isAdmin;
   if (!isAdmin) {
-    window.location.href = "locked.html?feature=ops&from=dashboard.html";
+    window.location.href = "/locked?feature=ops&from=dashboard";
     return;
   }
 
@@ -59,9 +59,9 @@
         gsap.to(ring, { scale: 1.18, opacity: 0, duration: 0.65, ease: "power2.in", delay: 0.95 });
         gsap.to(card, { y: -24, opacity: 0, duration: 0.48, ease: "power2.in", delay: 1.1 });
         gsap.to(overlay, { opacity: 0, duration: 0.4, ease: "power2.in", delay: 1.45,
-          onComplete: () => { window.ImperiumAuth.logout(); window.location.href = "access.html"; } });
+          onComplete: () => { window.ImperiumAuth.logout(); window.location.href = "/access"; } });
       } else {
-        setTimeout(() => { window.ImperiumAuth.logout(); window.location.href = "access.html"; }, 1600);
+        setTimeout(() => { window.ImperiumAuth.logout(); window.location.href = "/access"; }, 1600);
       }
     });
   }

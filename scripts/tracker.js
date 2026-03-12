@@ -97,7 +97,20 @@
   };
 
   const trackView = async () => {
-    const path = window.location.pathname.split("/").pop() || "index.html";
+    const route = String(window.location.pathname || "/").replace(/\/+$/, "") || "/";
+    const routeToLegacyPath = {
+      "/": "index.html",
+      "/contact": "contact-adham.html",
+      "/access": "access-gate.html",
+      "/portal": "access.html",
+      "/dashboard": "dashboard.html",
+      "/applications": "applications.html",
+      "/waitlist": "waitlist.html",
+      "/settings": "settings.html",
+      "/ops": "ops.html",
+      "/locked": "locked.html",
+    };
+    const path = routeToLegacyPath[route] || (window.location.pathname.split("/").pop() || "index.html");
 
     if (
       lastTracked.path === path

@@ -239,7 +239,7 @@ if (siteSettings.maintenanceMode) {
     ribbon.id = "maintenanceRibbon";
     ribbon.innerHTML =
       '<span>\uD83D\uDEE0\uFE0F <strong>Maintenance Mode is ON</strong> — Visitors see the maintenance screen.</span>' +
-      '<a href="dashboard.html" style="margin-left:1rem;text-decoration:underline;">Turn it off in Dashboard</a>';
+      '<a href="/dashboard" style="margin-left:1rem;text-decoration:underline;">Turn it off in Dashboard</a>';
     Object.assign(ribbon.style, {
       position: "fixed", top: "0", left: "0", right: "0", zIndex: "9997",
       background: "#d5b465", color: "#0e1a12", textAlign: "center",
@@ -297,7 +297,7 @@ if (siteSettings.maintenanceMode) {
       '</div>';
 
     const accessLink = document.createElement("a");
-    accessLink.href = "access.html";
+    accessLink.href = "/access";
     accessLink.textContent = "Admin / Team Access";
 
     card.append(title, message, tttWrap, accessLink);

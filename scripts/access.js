@@ -49,7 +49,7 @@ let nuhUhIntervalId = null;
 
 const currentUser = window.ImperiumAuth.getCurrentUser();
 if (currentUser) {
-  window.location.href = "dashboard.html";
+  window.location.href = "/dashboard";
 }
 
 const readCookieConsent = () => String(localStorage.getItem(COOKIE_CONSENT_KEY) || "").trim().toLowerCase();
@@ -271,18 +271,18 @@ renderLockoutState();
 setInterval(renderLockoutState, 1000);
 
 // Fade body in on page load
+const runIntroFade = () => {
+  requestAnimationFrame(() => {
+    document.body.style.transition = "opacity 0.38s ease";
+    document.body.style.opacity = "1";
+  });
+};
+
 document.body.style.opacity = "0";
-window.addEventListener("DOMContentLoaded", () => {
-  requestAnimationFrame(() => {
-    document.body.style.transition = "opacity 0.38s ease";
-    document.body.style.opacity = "1";
-  });
-});
-if (document.readyState !== "loading") {
-  requestAnimationFrame(() => {
-    document.body.style.transition = "opacity 0.38s ease";
-    document.body.style.opacity = "1";
-  });
+if (document.readyState === "loading") {
+  window.addEventListener("DOMContentLoaded", runIntroFade, { once: true });
+} else {
+  runIntroFade();
 }
 
 const showPassword = () => {
@@ -326,7 +326,7 @@ const showSpecialWelcomeAndRedirect = (config) => {
   }, 1200);
 
   setTimeout(() => {
-    window.location.href = config.redirectUrl || "dashboard.html";
+    window.location.href = config.redirectUrl || "/dashboard";
   }, 1550);
 };
 
@@ -337,7 +337,7 @@ const redirectAfterLogin = (user) => {
       photo: "assets/adham pic.jpg",
       title: "Welcome, Adham",
       message: "Main admin access granted. Loading your dashboard...",
-      redirectUrl: "dashboard.html",
+      redirectUrl: "/dashboard",
     });
     return;
   }
@@ -346,7 +346,7 @@ const redirectAfterLogin = (user) => {
   if (specialConfig) {
     showSpecialWelcomeAndRedirect({
       ...specialConfig,
-      redirectUrl: "dashboard.html",
+      redirectUrl: "/dashboard",
     });
     return;
   }
@@ -364,7 +364,7 @@ const redirectAfterLogin = (user) => {
     }
   };
 
-  fadeThen("dashboard.html", 480);
+  fadeThen("/dashboard", 480);
 };
 
 if (holdToViewBtn && passwordInput) {
@@ -437,12 +437,12 @@ if (passwordInput) {
     }
   }
 
-  // ── Page exit: fade before navigating to index.html
+  // ── Page exit: fade before navigating home
   const backLink = document.querySelector(".back-home");
   if (backLink) {
     backLink.addEventListener("click", (e) => {
       if (e.metaKey || e.ctrlKey) return;
-      const href = backLink.getAttribute("href") || "index.html";
+      const href = backLink.getAttribute("href") || "/";
       e.preventDefault();
       gsap.to(document.body, {
         opacity: 0, duration: 0.3, ease: "power2.in",

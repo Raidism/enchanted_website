@@ -1,12 +1,12 @@
 const currentUser = window.ImperiumAuth.getCurrentUser();
 if (!currentUser) {
-  window.location.href = "access.html";
+  window.location.href = "/access";
   throw new Error("No active session");
 }
 
 const siteSettings = window.ImperiumAuth.getSiteSettings();
 if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
-  window.location.href = "access.html";
+  window.location.href = "/access";
   throw new Error("Maintenance mode is active for non-admin users");
 }
 
@@ -68,7 +68,7 @@ if (!isAdmin) {
       event.preventDefault();
       const href = String(link.getAttribute("href") || "").toLowerCase();
       const feature = href.includes("ops") ? "ops" : (href.includes("settings") ? "settings" : "restricted");
-      window.location.href = `locked.html?feature=${encodeURIComponent(feature)}&from=waitlist.html`;
+      window.location.href = `/locked?feature=${encodeURIComponent(feature)}&from=waitlist`;
     });
   });
 }
@@ -102,9 +102,9 @@ logoutBtn.addEventListener("click", () => {
     gsap.to(ring, { scale: 1.18, opacity: 0, duration: 0.65, ease: "power2.in", delay: 0.95 });
     gsap.to(card, { y: -24, opacity: 0, duration: 0.48, ease: "power2.in", delay: 1.1 });
     gsap.to(overlay, { opacity: 0, duration: 0.4, ease: "power2.in", delay: 1.45,
-      onComplete: () => { window.ImperiumAuth.logout(); window.location.href = "access.html"; } });
+      onComplete: () => { window.ImperiumAuth.logout(); window.location.href = "/access"; } });
   } else {
-    setTimeout(() => { window.ImperiumAuth.logout(); window.location.href = "access.html"; }, 1600);
+    setTimeout(() => { window.ImperiumAuth.logout(); window.location.href = "/access"; }, 1600);
   }
 });
 

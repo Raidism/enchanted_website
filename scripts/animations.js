@@ -215,23 +215,35 @@
   gsap.set(document.body, { opacity: 0 });
   gsap.to(document.body, { opacity: 1, duration: 0.38, ease: "power2.out", clearProps: "opacity" });
 
+  let isPageTransitioning = false;
   document.querySelectorAll("a[href]").forEach((link) => {
     const href = link.getAttribute("href") || "";
-    if (!href || href.startsWith("#") || href.startsWith("http") || href.startsWith("//") || href.startsWith("mailto") || href.startsWith("tel")) {
+    const target = (link.getAttribute("target") || "").toLowerCase();
+    if (!href || href.startsWith("#") || href.startsWith("http") || href.startsWith("//") || href.startsWith("mailto") || href.startsWith("tel") || href.startsWith("javascript:") || target === "_blank" || link.hasAttribute("download")) {
+      return;
+    }
+
+    const destination = new URL(href, window.location.href);
+    const currentPath = `${window.location.pathname}${window.location.search}`;
+    const targetPath = `${destination.pathname}${destination.search}`;
+    if (destination.origin !== window.location.origin || targetPath === currentPath) {
       return;
     }
 
     const isCreditLink = link.classList.contains("credit-link");
     link.addEventListener("click", (event) => {
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (isPageTransitioning) return;
+      isPageTransitioning = true;
       event.preventDefault();
       gsap.killTweensOf(document.body);
+      gsap.set(document.body, { willChange: "opacity" });
       gsap.to(document.body, {
         opacity: 0,
         duration: isCreditLink ? 0.22 : 0.28,
         ease: "power2.inOut",
         overwrite: true,
-        onComplete: () => { window.location.href = href; },
+        onComplete: () => { window.location.href = destination.pathname + destination.search + destination.hash; },
       });
     });
   });

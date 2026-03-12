@@ -1,0 +1,186 @@
+:root {
+  --bg: #060907;
+  --bg-soft: #0d1611;
+  --text: #f4f7f4;
+  --muted: #b8c9be;
+  --gold: #d5b465;
+  --green: #4d8b63;
+  --danger: #d96262;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100dvh;
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(77, 139, 99, 0.2), transparent 34%),
+    radial-gradient(circle at 86% 2%, rgba(213, 180, 101, 0.18), transparent 38%),
+    linear-gradient(165deg, #050706, #0a110d 44%, #050706);
+  overflow-x: hidden;
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+body.is-blackout {
+  filter: saturate(0.1) contrast(1.1);
+  animation: blackoutPulse 0.9s steps(1, end) infinite;
+}
+
+@keyframes blackoutPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0.06;
+  }
+  52% {
+    opacity: 0.92;
+  }
+}
+
+.gate-header {
+  width: min(1080px, 92vw);
+  margin: 0 auto;
+  padding: 1.15rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  text-decoration: none;
+  font-family: "Cinzel", serif;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  background: linear-gradient(120deg, #3f7754 10%, #d5b465 48%, #8ecfa0 84%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.back-home {
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.gate-main {
+  min-height: calc(100dvh - 74px);
+  display: grid;
+  place-items: center;
+  padding: 1rem 1rem 2.4rem;
+}
+
+.gate-card {
+  width: min(580px, 96vw);
+  border: 1px solid rgba(213, 180, 101, 0.28);
+  border-radius: 22px;
+  background: linear-gradient(160deg, rgba(12, 21, 16, 0.82), rgba(10, 17, 14, 0.95));
+  padding: 1.4rem;
+  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.38);
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  color: rgba(213, 180, 101, 0.84);
+}
+
+h1 {
+  margin: 0.45rem 0 0.7rem;
+  font-family: "Cinzel", serif;
+  font-size: clamp(1.7rem, 4.3vw, 2.7rem);
+  background: linear-gradient(110deg, #8ecfa0 5%, #d5b465 52%, #f0daa0 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+}
+
+.gate-form {
+  display: grid;
+  gap: 0.72rem;
+  margin-top: 1.05rem;
+}
+
+.gate-form label {
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(240, 218, 160, 0.9);
+  font-weight: 700;
+}
+
+.gate-form input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(77, 139, 99, 0.45);
+  background: rgba(8, 13, 10, 0.9);
+  color: var(--text);
+  padding: 0.78rem 0.85rem;
+  font-size: 1rem;
+}
+
+.gate-form input:focus {
+  outline: none;
+  border-color: rgba(213, 180, 101, 0.86);
+  box-shadow: 0 0 0 3px rgba(213, 180, 101, 0.2);
+}
+
+.gate-message {
+  min-height: 1.35rem;
+  margin: 0;
+  color: var(--muted);
+}
+
+.gate-message.error {
+  color: #ffb3b3;
+}
+
+.gate-message.success {
+  color: #b6efc8;
+}
+
+#gateButton {
+  border: none;
+  border-radius: 12px;
+  padding: 0.78rem 1rem;
+  font-size: 0.96rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: #07120b;
+  background: linear-gradient(120deg, #8ecfa0, #d5b465);
+  transition: transform 0.16s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+#gateButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(213, 180, 101, 0.26);
+}
+
+#gateButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.lockout-hint {
+  margin: 0.75rem 0 0;
+  color: var(--danger);
+  font-weight: 700;
+}

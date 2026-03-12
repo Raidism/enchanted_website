@@ -1,6 +1,6 @@
 const currentUser = window.ImperiumAuth.getCurrentUser();
 if (!currentUser) {
-  window.location.href = "access.html";
+  window.location.href = "/access";
   throw new Error("No active session");
 }
 
@@ -9,7 +9,20 @@ setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
 
 const params = new URLSearchParams(window.location.search);
 const feature = String(params.get("feature") || "restricted").trim().toLowerCase();
-const from = String(params.get("from") || "dashboard.html").trim();
+const from = String(params.get("from") || "dashboard").trim();
+
+const normalizeBackRoute = (value) => {
+  const candidate = String(value || "").trim().toLowerCase();
+  const map = {
+    dashboard: "/dashboard",
+    "dashboard.html": "/dashboard",
+    waitlist: "/waitlist",
+    "waitlist.html": "/waitlist",
+    applications: "/applications",
+    "applications.html": "/applications",
+  };
+  return map[candidate] || "/dashboard";
+};
 
 const featureLabels = {
   ops: "Ops Center",
@@ -28,8 +41,7 @@ if (lockedMessage) {
   lockedMessage.textContent = "This section is available only to approved admin roles. If you need access, contact the main admin.";
 }
 if (backLink) {
-  const safeBack = /^(dashboard|waitlist|applications)\.html$/i.test(from) ? from : "dashboard.html";
-  backLink.href = safeBack;
+  backLink.href = normalizeBackRoute(from);
 }
 
 if (currentUser.role !== "admin") {
@@ -40,14 +52,15 @@ if (currentUser.role !== "admin") {
     link.addEventListener("click", (event) => {
       event.preventDefault();
       const targetFeature = String(link.getAttribute("data-locked-feature") || "restricted").trim().toLowerCase();
-      window.location.href = `locked.html?feature=${encodeURIComponent(targetFeature)}&from=${encodeURIComponent(safeBackFromCurrent())}`;
+      window.location.href = `/locked?feature=${encodeURIComponent(targetFeature)}&from=${encodeURIComponent(safeBackFromCurrent())}`;
     });
   });
 }
 
 function safeBackFromCurrent() {
-  const candidate = String(from || "dashboard.html").trim();
-  return /^(dashboard|waitlist|applications)\.html$/i.test(candidate) ? candidate : "dashboard.html";
+  const candidate = String(from || "dashboard").trim();
+  const safeRoute = normalizeBackRoute(candidate);
+  return safeRoute.replace(/^\//, "");
 }
 
 const pmhPhoto = document.getElementById("pmhPhoto");
@@ -95,13 +108,13 @@ if (logoutBtn) {
         delay: 1.45,
         onComplete: () => {
           window.ImperiumAuth.logout();
-          window.location.href = "access.html";
+          window.location.href = "/access";
         },
       });
     } else {
       setTimeout(() => {
         window.ImperiumAuth.logout();
-        window.location.href = "access.html";
+        window.location.href = "/access";
       }, 1600);
     }
   });

@@ -9,6 +9,41 @@ const app = express();
 const PORT = Number(process.env.PORT || 8080);
 const SESSION_COOKIE = "imperium_sid";
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+const ACCESS_GATE_COOKIE = "imperium_access_gate";
+const ACCESS_GATE_TTL_MS = 2 * 60 * 60 * 1000;
+const ACCESS_GATE_MAX_ATTEMPTS = 5;
+const ACCESS_GATE_LOCKOUT_MS = 10 * 60 * 1000;
+const ACCESS_GATE_PASSWORD = String(process.env.ACCESS_GATE_PASSWORD || "imperium-gate-2026");
+const ACCESS_GATE_SECRET = String(process.env.ACCESS_GATE_SECRET || process.env.SESSION_SECRET || "imperium-access-secret");
+const ACCESS_GATE_PASSWORD_HASH = crypto.createHash("sha256").update(ACCESS_GATE_PASSWORD).digest("hex");
+
+const PAGE_ROUTE_FILES = {
+  "/": "index.html",
+  "/access": "access-gate.html",
+  "/portal": "access.html",
+  "/contact": "contact-adham.html",
+  "/dashboard": "dashboard.html",
+  "/applications": "applications.html",
+  "/waitlist": "waitlist.html",
+  "/settings": "settings.html",
+  "/ops": "ops.html",
+  "/locked": "locked.html",
+};
+
+const LEGACY_PAGE_REDIRECTS = {
+  "/index.html": "/",
+  "/access-gate.html": "/access",
+  "/access.html": "/portal",
+  "/contact-adham.html": "/contact",
+  "/dashboard.html": "/dashboard",
+  "/applications.html": "/applications",
+  "/waitlist.html": "/waitlist",
+  "/settings.html": "/settings",
+  "/ops.html": "/ops",
+  "/locked.html": "/locked",
+};
+
+const accessGateAttempts = new Map();
 
 const defaultSiteSettings = {
   maintenanceMode: false,
@@ -38,6 +73,46 @@ const DEFAULT_USERS = [
 
 const nowIso = () => new Date().toISOString();
 const normalizeUsername = (v) => String(v || "").trim().toLowerCase();
+
+const createSignedToken = (expiresAtMs) => {
+  const payload = String(expiresAtMs);
+  const signature = crypto.createHmac("sha256", ACCESS_GATE_SECRET).update(payload).digest("hex");
+  return `${payload}.${signature}`;
+};
+
+const verifySignedToken = (token) => {
+  const raw = String(token || "").trim();
+  const [payload, signature] = raw.split(".");
+  if (!payload || !signature) return false;
+
+  const expiresAtMs = Number(payload);
+  if (!Number.isFinite(expiresAtMs) || Date.now() >= expiresAtMs) return false;
+
+  const expectedSignature = crypto.createHmac("sha256", ACCESS_GATE_SECRET).update(payload).digest("hex");
+  if (signature.length !== expectedSignature.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
+};
+
+const setAccessGateCookie = (res) => {
+  const expiresAtMs = Date.now() + ACCESS_GATE_TTL_MS;
+  const token = createSignedToken(expiresAtMs);
+  res.cookie(ACCESS_GATE_COOKIE, token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false,
+    expires: new Date(expiresAtMs),
+    path: "/",
+  });
+};
+
+const clearAccessGateCookie = (res) => {
+  res.clearCookie(ACCESS_GATE_COOKIE, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false,
+    path: "/",
+  });
+};
 
 const readUsers = () => readJson("users", []);
 const writeUsers = (users) => writeJson("users", users);
@@ -309,6 +384,50 @@ app.use(cookieParser());
 
 app.get("/api/health", (_req, res) => {
   res.json({ success: true, status: "ok", time: nowIso() });
+});
+
+app.post("/api/access-gate/verify", (req, res) => {
+  const ip = getClientIpFromHeaders(req.headers);
+  const record = accessGateAttempts.get(ip) || { failedAttempts: 0, lockoutUntil: 0 };
+
+  if (record.lockoutUntil && Date.now() < record.lockoutUntil) {
+    const retryMs = Math.max(0, record.lockoutUntil - Date.now());
+    return res.status(429).json({
+      success: false,
+      message: "Too many wrong attempts. Try again later.",
+      retryMs,
+    });
+  }
+
+  const passwordInput = String(req.body && req.body.password ? req.body.password : "");
+  if (!passwordInput) {
+    return res.status(400).json({ success: false, message: "Password is required." });
+  }
+
+  const inputHash = crypto.createHash("sha256").update(passwordInput).digest("hex");
+  if (!crypto.timingSafeEqual(Buffer.from(inputHash), Buffer.from(ACCESS_GATE_PASSWORD_HASH))) {
+    const nextFailedAttempts = record.failedAttempts + 1;
+    if (nextFailedAttempts >= ACCESS_GATE_MAX_ATTEMPTS) {
+      const lockoutUntil = Date.now() + ACCESS_GATE_LOCKOUT_MS;
+      accessGateAttempts.set(ip, { failedAttempts: nextFailedAttempts, lockoutUntil });
+      return res.status(429).json({
+        success: false,
+        message: "Too many wrong attempts. Try again later.",
+        retryMs: ACCESS_GATE_LOCKOUT_MS,
+      });
+    }
+
+    accessGateAttempts.set(ip, { failedAttempts: nextFailedAttempts, lockoutUntil: 0 });
+    return res.status(401).json({
+      success: false,
+      message: "Wrong password.",
+      attemptsLeft: ACCESS_GATE_MAX_ATTEMPTS - nextFailedAttempts,
+    });
+  }
+
+  accessGateAttempts.delete(ip);
+  setAccessGateCookie(res);
+  return res.json({ success: true, redirectPath: "/portal" });
 });
 
 app.post("/api/auth/login", (req, res) => {
@@ -759,6 +878,34 @@ app.get("/api/instagram", async (req, res) => {
       fetchedAt: nowIso(),
     });
   }
+});
+
+const requireAccessGate = (req, res, next) => {
+  const token = req.cookies && req.cookies[ACCESS_GATE_COOKIE];
+  if (!verifySignedToken(token)) {
+    clearAccessGateCookie(res);
+    return res.redirect(302, "/access");
+  }
+  return next();
+};
+
+Object.entries(LEGACY_PAGE_REDIRECTS).forEach(([legacyPath, cleanPath]) => {
+  app.get(legacyPath, (_req, res) => {
+    res.redirect(301, cleanPath);
+  });
+});
+
+Object.entries(PAGE_ROUTE_FILES).forEach(([routePath, fileName]) => {
+  if (routePath === "/portal") {
+    app.get(routePath, requireAccessGate, (_req, res) => {
+      res.sendFile(path.join(__dirname, "..", fileName));
+    });
+    return;
+  }
+
+  app.get(routePath, (_req, res) => {
+    res.sendFile(path.join(__dirname, "..", fileName));
+  });
 });
 
 app.use(express.static(path.join(__dirname, "..")));

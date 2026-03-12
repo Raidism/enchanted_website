@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Access Checkpoint | Imperium MUN</title>
+  <meta name="description" content="Password checkpoint before entering the Imperium MUN access portal." />
+  <link rel="icon" type="image/jpeg" href="assets/imperium mun logo.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/access-gate.css" />
+</head>
+<body>
+  <header class="gate-header">
+    <a class="brand" href="/">IMPERIUM MUN</a>
+    <a class="back-home" href="/">Back to Website</a>
+  </header>
+
+  <main class="gate-main">
+    <section class="gate-card" aria-labelledby="gateTitle">
+      <p class="eyebrow">Security Dashboard</p>
+      <h1 id="gateTitle">What is the password?</h1>
+      <p class="subtitle">Enter the security password to continue to the access portal.</p>
+
+      <form id="gateForm" class="gate-form" novalidate>
+        <label for="gatePassword">Password</label>
+        <input id="gatePassword" name="gatePassword" type="password" autocomplete="current-password" required />
+
+        <p id="gateMessage" class="gate-message" aria-live="polite"></p>
+        <button id="gateButton" type="submit">Continue to Portal</button>
+      </form>
+
+      <p id="lockoutHint" class="lockout-hint" hidden></p>
+    </section>
+  </main>
+
+  <script src="scripts/tracker.js"></script>
+  <script src="scripts/access-gate.js"></script>
+</body>
+</html>
