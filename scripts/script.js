@@ -843,6 +843,8 @@ const waitlistForm = document.getElementById("waitlistForm");
 const waitlistMessage = document.getElementById("waitlistMessage");
 const waitlistCount = document.getElementById("waitlistCount");
 const waitlistSubmitBtn = waitlistForm ? waitlistForm.querySelector('button[type="submit"]') : null;
+let waitlistSubmitInFlight = false;
+let waitlistLocalCache = [];
 
 const readWaitlistLocal = () => {
   try {
@@ -856,12 +858,15 @@ const readWaitlistLocal = () => {
 };
 
 const writeWaitlistLocal = (rows) => {
+  waitlistLocalCache = Array.isArray(rows) ? [...rows] : [];
   try {
-    localStorage.setItem(WAITLIST_LOCAL_BACKUP_KEY, JSON.stringify(Array.isArray(rows) ? rows : []));
+    localStorage.setItem(WAITLIST_LOCAL_BACKUP_KEY, JSON.stringify(waitlistLocalCache));
   } catch {
     // Ignore local backup write failures.
   }
 };
+
+waitlistLocalCache = readWaitlistLocal();
 
 const fetchWithTimeout = async (url, options = {}, timeoutMs = 8000) => {
   const controller = new AbortController();
@@ -918,7 +923,7 @@ const refreshWaitlistCount = async () => {
     const rows = await getWaitlistRows();
     waitlistCount.textContent = String(rows.length);
   } catch {
-    const localRows = readWaitlistLocal();
+    const localRows = waitlistLocalCache.length ? waitlistLocalCache : readWaitlistLocal();
     waitlistCount.textContent = String(localRows.length);
   }
 };
@@ -1086,6 +1091,10 @@ if (waitlistForm && waitlistMessage) {
   waitlistForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
+    if (waitlistSubmitInFlight) {
+      return;
+    }
+
     if (siteSettings.applicationsOpen) {
       waitlistMessage.classList.remove("success");
       waitlistMessage.textContent = "Applications are open now. Please use the applications page.";
@@ -1120,6 +1129,7 @@ if (waitlistForm && waitlistMessage) {
       };
 
       let reservationSuccess = false;
+      waitlistSubmitInFlight = true;
 
       try {
         if (waitlistSubmitBtn) {
@@ -1132,6 +1142,9 @@ if (waitlistForm && waitlistMessage) {
           if (waitlistCount) {
             waitlistCount.textContent = String(remotePayload.entries.length);
           }
+        } else if (waitlistCount) {
+          const currentCount = Number(waitlistCount.textContent || 0);
+          waitlistCount.textContent = String(Number.isFinite(currentCount) ? currentCount + 1 : 1);
         }
 
         waitlistForm.reset();
@@ -1139,7 +1152,7 @@ if (waitlistForm && waitlistMessage) {
           await refreshWaitlistCount();
         }
         flashWaitlistCount();
-        await playWaitlistLaunchAnimationSafe(name);
+        playWaitlistLaunchAnimationSafe(name).catch(() => {});
         reservationSuccess = true;
 
         waitlistMessage.classList.add("success");
@@ -1155,7 +1168,7 @@ if (waitlistForm && waitlistMessage) {
         }
 
         // Fallback for environments without Netlify function support.
-        const rows = readWaitlistLocal();
+        const rows = waitlistLocalCache.length ? [...waitlistLocalCache] : readWaitlistLocal();
         const emailExists = rows.some((item) => String(item.email || "").toLowerCase() === email);
         const nameExists = rows.some((item) => String(item.name || "").trim().toLowerCase() === name.toLowerCase());
 
@@ -1184,12 +1197,13 @@ if (waitlistForm && waitlistMessage) {
           await refreshWaitlistCount();
         }
         flashWaitlistCount();
-        await playWaitlistLaunchAnimationSafe(name);
+        playWaitlistLaunchAnimationSafe(name).catch(() => {});
         reservationSuccess = true;
 
         waitlistMessage.classList.add("success");
         waitlistMessage.textContent = `Completed (saved locally on this device only). (${String(error.message || "server unavailable")})`;
       } finally {
+        waitlistSubmitInFlight = false;
         if (waitlistSubmitBtn) {
           if (reservationSuccess) {
             waitlistSubmitBtn.textContent = "Completed";
