@@ -9,6 +9,7 @@ const WAITLIST_API_URL = `${API_BASE}/waitlist`;
 const INSTAGRAM_API_URL = `${API_BASE}/instagram`;
 const INSTAGRAM_USERNAME = "imperiummun26";
 const newWaitlistId = () => `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+const WAITLIST_LOCAL_BACKUP_KEY = "imperium_waitlist_local_backup";
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const fallbackSiteSettings = {
   maintenanceMode: false,
@@ -843,8 +844,37 @@ const waitlistMessage = document.getElementById("waitlistMessage");
 const waitlistCount = document.getElementById("waitlistCount");
 const waitlistSubmitBtn = waitlistForm ? waitlistForm.querySelector('button[type="submit"]') : null;
 
+const readWaitlistLocal = () => {
+  try {
+    const raw = localStorage.getItem(WAITLIST_LOCAL_BACKUP_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+const writeWaitlistLocal = (rows) => {
+  try {
+    localStorage.setItem(WAITLIST_LOCAL_BACKUP_KEY, JSON.stringify(Array.isArray(rows) ? rows : []));
+  } catch {
+    // Ignore local backup write failures.
+  }
+};
+
+const fetchWithTimeout = async (url, options = {}, timeoutMs = 8000) => {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+};
+
 const fetchWaitlistRemote = async () => {
-  const response = await fetch(WAITLIST_API_URL, { method: "GET", cache: "no-store" });
+  const response = await fetchWithTimeout(WAITLIST_API_URL, { method: "GET", cache: "no-store" }, 8000);
   if (!response.ok) {
     throw new Error("Failed to load remote waitlist.");
   }
@@ -858,13 +888,13 @@ const fetchWaitlistRemote = async () => {
 };
 
 const postWaitlistRemote = async (entry) => {
-  const response = await fetch(WAITLIST_API_URL, {
+  const response = await fetchWithTimeout(WAITLIST_API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(entry),
-  });
+  }, 8000);
 
   const payload = await response.json().catch(() => ({}));
   if (!response.ok || !payload.success) {
@@ -888,7 +918,8 @@ const refreshWaitlistCount = async () => {
     const rows = await getWaitlistRows();
     waitlistCount.textContent = String(rows.length);
   } catch {
-    waitlistCount.textContent = "0";
+    const localRows = readWaitlistLocal();
+    waitlistCount.textContent = String(localRows.length);
   }
 };
 
@@ -1046,6 +1077,11 @@ const playWaitlistLaunchAnimation = (nameText) => new Promise((resolve) => {
     .to(overlay, { opacity: 0, duration: 0.28, ease: "power2.out" }, "-=0.16");
 });
 
+const playWaitlistLaunchAnimationSafe = (nameText) => Promise.race([
+  playWaitlistLaunchAnimation(nameText),
+  new Promise((resolve) => setTimeout(resolve, 1800)),
+]);
+
 if (waitlistForm && waitlistMessage) {
   waitlistForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -1093,12 +1129,17 @@ if (waitlistForm && waitlistMessage) {
         const remotePayload = await postWaitlistRemote(entry);
         if (Array.isArray(remotePayload.entries)) {
           writeWaitlistLocal(remotePayload.entries);
+          if (waitlistCount) {
+            waitlistCount.textContent = String(remotePayload.entries.length);
+          }
         }
 
         waitlistForm.reset();
-        await refreshWaitlistCount();
+        if (!Array.isArray(remotePayload.entries)) {
+          await refreshWaitlistCount();
+        }
         flashWaitlistCount();
-        await playWaitlistLaunchAnimation(name);
+        await playWaitlistLaunchAnimationSafe(name);
         reservationSuccess = true;
 
         waitlistMessage.classList.add("success");
@@ -1137,9 +1178,13 @@ if (waitlistForm && waitlistMessage) {
 
         writeWaitlistLocal(rows);
         waitlistForm.reset();
-        await refreshWaitlistCount();
+        if (waitlistCount) {
+          waitlistCount.textContent = String(rows.length);
+        } else {
+          await refreshWaitlistCount();
+        }
         flashWaitlistCount();
-        await playWaitlistLaunchAnimation(name);
+        await playWaitlistLaunchAnimationSafe(name);
         reservationSuccess = true;
 
         waitlistMessage.classList.add("success");
