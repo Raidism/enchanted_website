@@ -1088,6 +1088,18 @@ const playWaitlistLaunchAnimationSafe = (nameText) => Promise.race([
 ]);
 
 if (waitlistForm && waitlistMessage) {
+  const restoreWaitlistSubmitLabel = () => {
+    if (!waitlistSubmitBtn || waitlistSubmitInFlight) {
+      return;
+    }
+    if (waitlistSubmitBtn.textContent !== "Reserve Early Access 🔔") {
+      waitlistSubmitBtn.textContent = "Reserve Early Access 🔔";
+    }
+  };
+
+  waitlistForm.addEventListener("input", restoreWaitlistSubmitLabel);
+  waitlistForm.addEventListener("change", restoreWaitlistSubmitLabel);
+
   waitlistForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
@@ -1143,6 +1155,18 @@ if (waitlistForm && waitlistMessage) {
             waitlistCount.textContent = String(remotePayload.entries.length);
           }
         } else if (waitlistCount) {
+          const optimisticRows = [
+            {
+              id: newWaitlistId(),
+              ...entry,
+              addedAt: new Date().toISOString(),
+              status: "pending",
+              reviewedAt: "",
+              reviewedBy: "",
+            },
+            ...(waitlistLocalCache.length ? waitlistLocalCache : readWaitlistLocal()),
+          ];
+          writeWaitlistLocal(optimisticRows);
           const currentCount = Number(waitlistCount.textContent || 0);
           waitlistCount.textContent = String(Number.isFinite(currentCount) ? currentCount + 1 : 1);
         }
@@ -1206,11 +1230,8 @@ if (waitlistForm && waitlistMessage) {
         waitlistSubmitInFlight = false;
         if (waitlistSubmitBtn) {
           if (reservationSuccess) {
+            waitlistSubmitBtn.disabled = false;
             waitlistSubmitBtn.textContent = "Completed";
-            setTimeout(() => {
-              waitlistSubmitBtn.disabled = false;
-              waitlistSubmitBtn.textContent = "Reserve Early Access 🔔";
-            }, 900);
           } else {
             waitlistSubmitBtn.disabled = false;
             waitlistSubmitBtn.textContent = "Reserve Early Access 🔔";

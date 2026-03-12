@@ -68,13 +68,13 @@ const showLogoutTransition = () => {
       delay: 1.45,
       onComplete: () => {
         window.ImperiumAuth.logout();
-        window.location.href = "/access";
+        window.location.href = "/";
       },
     });
   } else {
     setTimeout(() => {
       window.ImperiumAuth.logout();
-      window.location.href = "/access";
+      window.location.href = "/";
     }, 1600);
   }
 };

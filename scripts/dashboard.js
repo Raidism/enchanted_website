@@ -485,13 +485,13 @@ const showLogoutTransition = () => {
       opacity: 0, duration: 0.4, ease: "power2.in", delay: 1.45,
       onComplete: () => {
         window.ImperiumAuth.logout();
-        window.location.href = "/access";
+        window.location.href = "/";
       },
     });
   } else {
     setTimeout(() => {
       window.ImperiumAuth.logout();
-      window.location.href = "/access";
+      window.location.href = "/";
     }, 1600);
   }
 };
