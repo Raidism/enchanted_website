@@ -31,21 +31,7 @@ body {
 }
 
 body.is-blackout {
-  filter: saturate(0.1) contrast(1.1);
-  animation: blackoutPulse 0.9s steps(1, end) infinite;
-}
-
-@keyframes blackoutPulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  40% {
-    opacity: 0.06;
-  }
-  52% {
-    opacity: 0.92;
-  }
+  filter: saturate(0.92) contrast(1.02);
 }
 
 .gate-header {

@@ -390,6 +390,20 @@ app.post("/api/access-gate/verify", (req, res) => {
   const ip = getClientIpFromHeaders(req.headers);
   const record = accessGateAttempts.get(ip) || { failedAttempts: 0, lockoutUntil: 0 };
 
+  const passwordInput = String(req.body && req.body.password ? req.body.password : "");
+  if (!passwordInput) {
+    return res.status(400).json({ success: false, message: "Password is required." });
+  }
+
+  const inputHash = crypto.createHash("sha256").update(passwordInput).digest("hex");
+  const passwordMatches = crypto.timingSafeEqual(Buffer.from(inputHash), Buffer.from(ACCESS_GATE_PASSWORD_HASH));
+
+  if (passwordMatches) {
+    accessGateAttempts.delete(ip);
+    setAccessGateCookie(res);
+    return res.json({ success: true, redirectPath: "/portal" });
+  }
+
   if (record.lockoutUntil && Date.now() < record.lockoutUntil) {
     const retryMs = Math.max(0, record.lockoutUntil - Date.now());
     return res.status(429).json({
@@ -399,13 +413,7 @@ app.post("/api/access-gate/verify", (req, res) => {
     });
   }
 
-  const passwordInput = String(req.body && req.body.password ? req.body.password : "");
-  if (!passwordInput) {
-    return res.status(400).json({ success: false, message: "Password is required." });
-  }
-
-  const inputHash = crypto.createHash("sha256").update(passwordInput).digest("hex");
-  if (!crypto.timingSafeEqual(Buffer.from(inputHash), Buffer.from(ACCESS_GATE_PASSWORD_HASH))) {
+  if (!passwordMatches) {
     const nextFailedAttempts = record.failedAttempts + 1;
     if (nextFailedAttempts >= ACCESS_GATE_MAX_ATTEMPTS) {
       const lockoutUntil = Date.now() + ACCESS_GATE_LOCKOUT_MS;
@@ -424,10 +432,6 @@ app.post("/api/access-gate/verify", (req, res) => {
       attemptsLeft: ACCESS_GATE_MAX_ATTEMPTS - nextFailedAttempts,
     });
   }
-
-  accessGateAttempts.delete(ip);
-  setAccessGateCookie(res);
-  return res.json({ success: true, redirectPath: "/portal" });
 });
 
 app.post("/api/auth/login", (req, res) => {

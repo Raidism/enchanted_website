@@ -40,18 +40,16 @@ const isLockedOut = () => {
 
 const renderLockoutState = () => {
   if (!isLockedOut()) {
-    document.body.classList.remove("is-blackout");
     gateButton.disabled = false;
     lockoutHint.hidden = true;
     return;
   }
 
   const remaining = getLockoutUntil() - Date.now();
-  document.body.classList.add("is-blackout");
-  gateButton.disabled = true;
+  gateButton.disabled = false;
   gateMessage.classList.remove("success");
   gateMessage.classList.add("error");
-  gateMessage.textContent = "System lockout active after too many wrong attempts.";
+  gateMessage.textContent = "Too many wrong attempts. You can still try the correct password now.";
   lockoutHint.hidden = false;
   lockoutHint.textContent = `Try again in ${formatRemaining(remaining)}.`;
 };
@@ -76,15 +74,11 @@ const verifyGatePassword = async (password) => {
 };
 
 renderLockoutState();
-setInterval(renderLockoutState, 1000);
 
 gateForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  if (isLockedOut()) {
-    renderLockoutState();
-    return;
-  }
+  const lockedBeforeSubmit = isLockedOut();
 
   const password = String(gatePassword.value || "");
   if (!password.trim()) {
@@ -105,7 +99,9 @@ gateForm.addEventListener("submit", async (event) => {
       clearLockout();
       gateMessage.classList.remove("error");
       gateMessage.classList.add("success");
-      gateMessage.textContent = "Access approved. Opening portal...";
+      gateMessage.textContent = lockedBeforeSubmit
+        ? "dont be dum next time. Access approved. Opening portal..."
+        : "Access approved. Opening portal...";
       setTimeout(() => {
         window.location.href = String(result.payload.redirectPath || "/portal");
       }, 280);

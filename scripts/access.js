@@ -44,8 +44,6 @@ const SPECIAL_WELCOME_USERS = {
     message: "Head of CA access granted. Loading your workspace...",
   },
 };
-let nuhUhModeStarted = false;
-let nuhUhIntervalId = null;
 
 const currentUser = window.ImperiumAuth.getCurrentUser();
 if (currentUser) {
@@ -160,48 +158,9 @@ const renderLockoutState = () => {
   const remaining = getLockoutUntil() - Date.now();
   loginBtn.classList.remove("is-loading");
   loginBtn.disabled = false;
-  loginBtn.textContent = "nuh uh";
+  loginBtn.textContent = DEFAULT_LOGIN_BUTTON_TEXT;
   loginMessage.classList.remove("success");
-  loginMessage.textContent = `nuh uh — Too many wrong attempts. Try again in ${formatRemaining(remaining)} or contact the IT Team (Adham Soliman).`;
-};
-
-const startNuhUhMode = () => {
-  if (nuhUhModeStarted) {
-    return;
-  }
-  nuhUhModeStarted = true;
-
-  const title = document.querySelector("h1");
-  if (title) {
-    title.textContent = "nuh uh";
-  }
-
-  const textTargets = [
-    ...document.querySelectorAll("p, a, button, label, h2, h3, li, th, td, .subtitle, .brand, .back-home, .portal-footer"),
-  ];
-
-  let cursor = 0;
-  nuhUhIntervalId = setInterval(() => {
-    if (cursor >= textTargets.length) {
-      clearInterval(nuhUhIntervalId);
-      nuhUhIntervalId = null;
-      return;
-    }
-
-    const target = textTargets[cursor];
-    if (target && !target.classList.contains("scan-lines")) {
-      target.textContent = "nuh uh";
-    }
-    cursor += 1;
-  }, 110);
-};
-
-const stopNuhUhMode = () => {
-  if (nuhUhIntervalId) {
-    clearInterval(nuhUhIntervalId);
-    nuhUhIntervalId = null;
-  }
-  nuhUhModeStarted = false;
+  loginMessage.textContent = `Too many wrong attempts. Try again in ${formatRemaining(remaining)}. If the password is correct, you can still log in now.`;
 };
 
 let clickSpamLevel = 0;
@@ -268,7 +227,6 @@ if (adhamBurstTarget && adhamFireLayer) {
 }
 
 renderLockoutState();
-setInterval(renderLockoutState, 1000);
 
 // Fade body in on page load
 const runIntroFade = () => {
@@ -463,7 +421,6 @@ loginForm.addEventListener("submit", (event) => {
     const lockoutBypass = window.ImperiumAuth.login(username, password);
     if (lockoutBypass.success) {
       clearLockout();
-      stopNuhUhMode();
       loginBtn.classList.remove("is-loading");
       loginBtn.disabled = false;
       loginBtn.textContent = DEFAULT_LOGIN_BUTTON_TEXT;
@@ -474,9 +431,8 @@ loginForm.addEventListener("submit", (event) => {
       return;
     }
 
-    loginBtn.textContent = "nuh uh";
+    loginBtn.textContent = DEFAULT_LOGIN_BUTTON_TEXT;
     renderLockoutState();
-    startNuhUhMode();
     return;
   }
 
@@ -502,7 +458,7 @@ loginForm.addEventListener("submit", (event) => {
 
       if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
         setLockoutUntil(Date.now() + LOCKOUT_DURATION_MS);
-        loginBtn.textContent = "nuh uh";
+        loginBtn.textContent = DEFAULT_LOGIN_BUTTON_TEXT;
         renderLockoutState();
         return;
       }
