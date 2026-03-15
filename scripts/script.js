@@ -38,6 +38,20 @@ const getSiteSettings = () => {
 };
 
 const siteSettings = getSiteSettings();
+const siteAnnouncement = document.getElementById("siteAnnouncement");
+
+const applyAnnouncementFromSettings = (settings) => {
+  if (!siteAnnouncement) return;
+  const text = String(settings && settings.announcement || "").trim();
+  if (!text) {
+    siteAnnouncement.textContent = "";
+    siteAnnouncement.hidden = true;
+    return;
+  }
+
+  siteAnnouncement.hidden = false;
+  siteAnnouncement.textContent = text;
+};
 
 const formatCompactCount = (value) => {
   const numeric = Number(value);
@@ -160,7 +174,20 @@ syncInstagramStats();
 window.addEventListener("storage", (event) => {
   if (event.key === SITE_SETTINGS_STORAGE_KEY) {
     syncInstagramStats();
+    let nextSettings = null;
+    try {
+      nextSettings = event.newValue ? JSON.parse(event.newValue) : null;
+    } catch {
+      nextSettings = null;
+    }
+    applyAnnouncementFromSettings(nextSettings || getSiteSettings());
   }
+});
+
+window.addEventListener("imperium:site-settings-updated", (event) => {
+  const detailSettings = event && event.detail && event.detail.settings ? event.detail.settings : getSiteSettings();
+  syncInstagramStats();
+  applyAnnouncementFromSettings(detailSettings);
 });
 
 const parsedLaunchDate = new Date(siteSettings.launchDate);
@@ -168,11 +195,7 @@ const launchDate = Number.isNaN(parsedLaunchDate.getTime())
   ? new Date(fallbackSiteSettings.launchDate)
   : parsedLaunchDate;
 
-const siteAnnouncement = document.getElementById("siteAnnouncement");
-if (siteAnnouncement && siteSettings.announcement) {
-  siteAnnouncement.hidden = false;
-  siteAnnouncement.textContent = siteSettings.announcement;
-}
+applyAnnouncementFromSettings(siteSettings);
 
 const conferenceDescription = document.getElementById("conferenceDescription");
 if (conferenceDescription && siteSettings.conferenceDescription) {

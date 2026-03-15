@@ -1,7 +1,22 @@
 (function () {
   const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+  const SITE_SETTINGS_STORAGE_KEY = "imperium_site_settings";
   let cachedUser = null;
   let cachedSettings = null;
+
+  const broadcastSiteSettings = (settings) => {
+    try {
+      localStorage.setItem(SITE_SETTINGS_STORAGE_KEY, JSON.stringify(settings || {}));
+    } catch {
+      // Ignore storage write errors (private mode/quota).
+    }
+
+    try {
+      window.dispatchEvent(new CustomEvent("imperium:site-settings-updated", { detail: { settings: settings || {} } }));
+    } catch {
+      // Ignore event dispatch errors.
+    }
+  };
 
   const parseJsonSafe = (text) => {
     try {
@@ -208,6 +223,10 @@
       cachedSettings = result.payload.settings;
     } else {
       cachedSettings = null;
+    }
+
+    if (cachedSettings) {
+      broadcastSiteSettings(cachedSettings);
     }
 
     return {
