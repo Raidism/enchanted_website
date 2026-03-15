@@ -96,6 +96,7 @@ const renderUsers = () => {
   usersBody.innerHTML = "";
   users.forEach((user) => {
     const tr = document.createElement("tr");
+    const maskedPassword = "********";
     const online = activeNames.has(String(user.username || "").toLowerCase());
     const isTargetAdmin = String(user.username || "").trim().toLowerCase() === "admin";
     const isDisabled = Boolean(user.disabled);
@@ -105,7 +106,7 @@ const renderUsers = () => {
     const statusLabel = isDisabled ? "Disabled" : (online ? "Online" : "Offline");
     tr.innerHTML = `
       <td>${String(user.username || "")}</td>
-      <td>${String(user.password || "")}</td>
+      <td><span class="masked-password" aria-label="Hidden password">${maskedPassword}</span></td>
       <td>${String(user.name || "")}</td>
       <td>${String(user.role || "member")}</td>
       <td><span class="user-state user-state--${statusClass}"><span class="user-state-dot"></span>${statusLabel}</span></td>

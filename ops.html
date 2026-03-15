@@ -43,6 +43,31 @@
       <p class="sub">Control launch settings, manage early access signups, and prepare conference operations.</p>
 
       <div class="admin-grid">
+        <article class="table-card maintenance-card-ops">
+          <h3>Site Availability Control</h3>
+          <p class="sub">Use this switch to put the public site into maintenance mode instantly. Admins can still access control pages.</p>
+
+          <div class="maintenance-status-row">
+            <span class="maintenance-status-label">Current Status</span>
+            <span id="maintenanceStatusBadge" class="maintenance-status-badge">Live</span>
+          </div>
+
+          <form id="maintenanceOpsForm" class="stack-form" novalidate>
+            <label for="maintenanceModeToggle">Maintenance Mode</label>
+            <label class="switch-control" for="maintenanceModeToggle">
+              <input id="maintenanceModeToggle" name="maintenanceModeToggle" type="checkbox" />
+              <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+              <span id="maintenanceModeText" class="switch-text">Live</span>
+            </label>
+
+            <label for="maintenanceMessageInput">Down Page Message</label>
+            <textarea id="maintenanceMessageInput" name="maintenanceMessageInput" rows="3" placeholder="We are updating the site and will be back shortly."></textarea>
+
+            <p id="maintenanceOpsMessage" class="form-message" aria-live="polite"></p>
+            <button type="submit">Apply Maintenance Settings</button>
+          </form>
+        </article>
+
         <article class="table-card">
           <h3>Launch & Event Settings</h3>
           <form id="launchOpsForm" class="stack-form" novalidate>

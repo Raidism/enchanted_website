@@ -21,6 +21,7 @@ const PAGE_ROUTE_FILES = {
   "/": "index.html",
   "/access": "access-gate.html",
   "/portal": "access.html",
+  "/maintenance": "maintenance.html",
   "/contact": "contact-adham.html",
   "/dashboard": "dashboard.html",
   "/applications": "applications.html",
@@ -34,6 +35,7 @@ const LEGACY_PAGE_REDIRECTS = {
   "/index.html": "/",
   "/access-gate.html": "/access",
   "/access.html": "/portal",
+  "/maintenance.html": "/maintenance",
   "/contact-adham.html": "/contact",
   "/dashboard.html": "/dashboard",
   "/applications.html": "/applications",
@@ -42,6 +44,12 @@ const LEGACY_PAGE_REDIRECTS = {
   "/ops.html": "/ops",
   "/locked.html": "/locked",
 };
+
+const MAINTENANCE_BYPASS_ROUTES = new Set([
+  "/access",
+  "/portal",
+  "/maintenance",
+]);
 
 const accessGateAttempts = new Map();
 
@@ -176,7 +184,7 @@ const sanitizeUser = (user) => ({
 
 const sanitizeUserForAdmin = (user) => ({
   username: user.username,
-  password: String(user.password || ""),
+  passwordMasked: String(user.passwordHash || user.password ? "********" : ""),
   role: user.role || "member",
   disabled: Boolean(user.disabled),
   name: String(user.name || ""),
@@ -199,6 +207,15 @@ const getSession = (req) => {
   }
 
   return { sid, session, sessions };
+};
+
+const isAdminRequest = (req) => {
+  const found = getSession(req);
+  if (!found) return false;
+
+  const users = readUsers();
+  const user = users.find((u) => normalizeUsername(u.username) === normalizeUsername(found.session.username));
+  return Boolean(user && !user.disabled && user.role === "admin");
 };
 
 const setSessionCookie = (res, sid, expiresAtIso) => {
@@ -381,6 +398,36 @@ ensureSeedData();
 
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
+
+app.use((req, res, next) => {
+  if (String(req.path || "").startsWith("/api/")) {
+    return next();
+  }
+
+  if (req.method !== "GET") {
+    return next();
+  }
+
+  const accepts = String(req.headers && req.headers.accept ? req.headers.accept : "").toLowerCase();
+  if (!accepts.includes("text/html")) {
+    return next();
+  }
+
+  const settings = readSettings();
+  if (!settings.maintenanceMode) {
+    return next();
+  }
+
+  if (MAINTENANCE_BYPASS_ROUTES.has(req.path)) {
+    return next();
+  }
+
+  if (isAdminRequest(req)) {
+    return next();
+  }
+
+  return res.redirect(302, "/maintenance");
+});
 
 app.get("/api/health", (_req, res) => {
   res.json({ success: true, status: "ok", time: nowIso() });

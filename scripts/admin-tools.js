@@ -91,6 +91,13 @@
   const notifyAllOnOpenToggle = document.getElementById("notifyAllOnOpenToggle");
   const launchOpsMessage = document.getElementById("launchOpsMessage");
 
+  const maintenanceOpsForm = document.getElementById("maintenanceOpsForm");
+  const maintenanceModeToggle = document.getElementById("maintenanceModeToggle");
+  const maintenanceModeText = document.getElementById("maintenanceModeText");
+  const maintenanceMessageInput = document.getElementById("maintenanceMessageInput");
+  const maintenanceStatusBadge = document.getElementById("maintenanceStatusBadge");
+  const maintenanceOpsMessage = document.getElementById("maintenanceOpsMessage");
+
   const announcementForm = document.getElementById("announcementForm");
   const announcementTitleInput = document.getElementById("announcementTitleInput");
   const announcementBodyInput = document.getElementById("announcementBodyInput");
@@ -681,6 +688,53 @@
     if (notifyAllOnOpenToggle) notifyAllOnOpenToggle.value = "off";
   };
 
+  const renderMaintenanceStatus = (enabled) => {
+    if (maintenanceStatusBadge) {
+      maintenanceStatusBadge.textContent = enabled ? "Maintenance" : "Live";
+      maintenanceStatusBadge.classList.toggle("is-on", enabled);
+    }
+    if (maintenanceModeText) {
+      maintenanceModeText.textContent = enabled ? "Maintenance" : "Live";
+    }
+  };
+
+  const hydrateMaintenanceForm = () => {
+    if (!maintenanceOpsForm) return;
+    const settings = window.ImperiumAuth.getSiteSettings();
+    const enabled = Boolean(settings.maintenanceMode);
+    if (maintenanceModeToggle) maintenanceModeToggle.checked = enabled;
+    if (maintenanceMessageInput) {
+      maintenanceMessageInput.value = String(settings.maintenanceMessage || "");
+    }
+    renderMaintenanceStatus(enabled);
+  };
+
+  const saveMaintenanceSettings = () => {
+    if (!maintenanceOpsForm) return;
+
+    const maintenanceMode = Boolean(maintenanceModeToggle && maintenanceModeToggle.checked);
+    const maintenanceMessage = String(maintenanceMessageInput && maintenanceMessageInput.value || "").trim();
+
+    const result = window.ImperiumAuth.updateSiteSettings(currentUser, {
+      maintenanceMode,
+      maintenanceMessage,
+    });
+
+    if (maintenanceOpsMessage) {
+      maintenanceOpsMessage.classList.toggle("success", Boolean(result.success));
+      maintenanceOpsMessage.textContent = String(result.message || "Maintenance settings updated.");
+    }
+
+    if (!result.success) {
+      showToast(String(result.message || "Failed to update maintenance settings."), false);
+      return;
+    }
+
+    renderMaintenanceStatus(maintenanceMode);
+    showToast(`Maintenance mode ${maintenanceMode ? "enabled" : "disabled"}.`, true);
+    logActivity(`Set maintenance mode to ${maintenanceMode ? "ON" : "OFF"}`);
+  };
+
   const bindEvents = () => {
     if (eaSearchInput) eaSearchInput.addEventListener("input", renderWaitlistTable);
     if (eaSchoolFilter) eaSchoolFilter.addEventListener("change", renderWaitlistTable);
@@ -731,6 +785,19 @@
       });
       launchOpsForm.addEventListener("change", scheduleAutoSave);
       launchOpsForm.addEventListener("input", scheduleAutoSave);
+    }
+
+    if (maintenanceModeToggle) {
+      maintenanceModeToggle.addEventListener("change", () => {
+        renderMaintenanceStatus(Boolean(maintenanceModeToggle.checked));
+      });
+    }
+
+    if (maintenanceOpsForm) {
+      maintenanceOpsForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        saveMaintenanceSettings();
+      });
     }
 
     if (announcementForm) {
@@ -818,6 +885,7 @@
 
   const init = async () => {
     hydrateLaunchForm();
+    hydrateMaintenanceForm();
     renderAnnouncements();
     renderSecretariat();
     renderActivityLog();

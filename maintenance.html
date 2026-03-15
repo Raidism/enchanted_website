@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maintenance | Imperium MUN</title>
+  <meta name="description" content="Imperium MUN is currently under maintenance." />
+  <link rel="icon" type="image/jpeg" href="assets/imperium mun logo.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060a08;
+      --card: rgba(14, 23, 18, 0.88);
+      --text: #ecf4ee;
+      --muted: #a7b8ab;
+      --accent: #d5b465;
+      --accent-2: #4d8b63;
+      --line: rgba(213, 180, 101, 0.3);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(77, 139, 99, 0.24), transparent 34%),
+        radial-gradient(circle at 88% 14%, rgba(213, 180, 101, 0.16), transparent 36%),
+        var(--bg);
+      display: grid;
+      place-items: center;
+      padding: 1.2rem;
+    }
+
+    .maintenance-card {
+      width: min(700px, 96vw);
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      padding: 1.8rem;
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .maintenance-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 0% 60%, rgba(77, 139, 99, 0.18), transparent 55%),
+        radial-gradient(ellipse at 100% 0%, rgba(213, 180, 101, 0.14), transparent 58%);
+      pointer-events: none;
+    }
+
+    .maintenance-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .label {
+      display: inline-block;
+      margin: 0 0 0.9rem;
+      padding: 0.34rem 0.62rem;
+      border-radius: 999px;
+      border: 1px solid rgba(213, 180, 101, 0.42);
+      background: rgba(213, 180, 101, 0.12);
+      color: #f2ddb0;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      font-size: clamp(1.6rem, 4.8vw, 2.6rem);
+      line-height: 1.1;
+      color: #f0daa0;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.65;
+    }
+
+    #maintenanceMessage {
+      margin-top: 0.95rem;
+      color: var(--muted);
+      font-size: 1.02rem;
+      max-width: 58ch;
+    }
+
+    .actions {
+      margin-top: 1.2rem;
+      display: flex;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 1px solid rgba(213, 180, 101, 0.42);
+      border-radius: 11px;
+      padding: 0.64rem 0.9rem;
+      color: #f3f7f4;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      background: linear-gradient(160deg, rgba(17, 28, 21, 0.95), rgba(10, 16, 12, 0.96));
+      transition: transform 0.2s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(240, 218, 160, 0.72);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.26);
+    }
+
+    .btn.primary {
+      color: #0f1a13;
+      border-color: rgba(213, 180, 101, 0.84);
+      background: linear-gradient(150deg, #f7e9ba, #d5b465 58%, #bb9034);
+    }
+
+    .footer-note {
+      margin-top: 1.05rem;
+      font-size: 0.86rem;
+      color: #90a99a;
+    }
+  </style>
+</head>
+<body>
+  <main class="maintenance-card" role="main" aria-labelledby="maintenanceTitle">
+    <div class="maintenance-inner">
+      <p class="label">Service Status</p>
+      <h1 id="maintenanceTitle">Imperium MUN is temporarily unavailable</h1>
+      <p id="maintenanceMessage">We are performing scheduled maintenance. Please check back shortly.</p>
+
+      <div class="actions">
+        <a class="btn" href="/">Refresh</a>
+        <a class="btn primary" href="/access">Admin and Team Access</a>
+      </div>
+
+      <p class="footer-note">If you are part of the organizing team, sign in to access dashboard controls.</p>
+    </div>
+  </main>
+
+  <script>
+    (async function () {
+      try {
+        const response = await fetch("/api/site-settings", { method: "GET", cache: "no-store" });
+        if (!response.ok) return;
+        const payload = await response.json();
+        if (!payload || !payload.settings) return;
+        const message = String(payload.settings.maintenanceMessage || "").trim();
+        if (!message) return;
+        var messageEl = document.getElementById("maintenanceMessage");
+        if (messageEl) {
+          messageEl.textContent = message;
+        }
+      } catch (_) {
+        // Keep the static fallback message when settings are unavailable.
+      }
+    })();
+  </script>
+</body>
+</html>

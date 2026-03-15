@@ -1807,3 +1807,120 @@ tbody tr.row-leave {
 .user-action-btn--lockout:hover {
   box-shadow: 0 8px 22px rgba(213, 180, 101, 0.26), 0 0 10px rgba(240, 218, 160, 0.2);
 }
+
+.masked-password {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(213, 180, 101, 0.26);
+  border-radius: 999px;
+  padding: 0.12rem 0.56rem;
+  font-family: "Inter", monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #cfdcd3;
+  background: rgba(7, 11, 8, 0.62);
+}
+
+.maintenance-card-ops {
+  border-color: rgba(213, 180, 101, 0.38);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.maintenance-status-row {
+  margin-top: 0.45rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  padding: 0.62rem 0.72rem;
+  border-radius: 12px;
+  border: 1px solid rgba(213, 180, 101, 0.22);
+  background: rgba(11, 18, 14, 0.7);
+}
+
+.maintenance-status-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8fac99;
+}
+
+.maintenance-status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.25rem 0.62rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  border: 1px solid rgba(97, 189, 124, 0.44);
+  color: #a7e8ba;
+  background: rgba(57, 130, 79, 0.2);
+}
+
+.maintenance-status-badge.is-on {
+  border-color: rgba(213, 180, 101, 0.55);
+  color: #f2ddb0;
+  background: rgba(164, 121, 44, 0.24);
+}
+
+.switch-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.62rem;
+  margin-top: 0.1rem;
+  margin-bottom: 0.2rem;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.switch-control input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.switch-track {
+  width: 52px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(102, 195, 128, 0.4);
+  background: rgba(37, 73, 48, 0.44);
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  transition: border-color 0.22s ease, background 0.22s ease;
+}
+
+.switch-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #d7eadf;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+  transition: transform 0.2s ease;
+}
+
+.switch-control input:checked + .switch-track {
+  border-color: rgba(213, 180, 101, 0.6);
+  background: rgba(150, 111, 39, 0.46);
+}
+
+.switch-control input:checked + .switch-track .switch-thumb {
+  transform: translateX(22px);
+  background: #f4e3b6;
+}
+
+.switch-control input:focus-visible + .switch-track {
+  box-shadow: 0 0 0 3px rgba(213, 180, 101, 0.18);
+}
+
+.switch-text {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #dce8df;
+}
