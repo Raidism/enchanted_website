@@ -104,6 +104,7 @@
   const announcementSendToggle = document.getElementById("announcementSendToggle");
   const announcementHistoryList = document.getElementById("announcementHistoryList");
   const announcementMessage = document.getElementById("announcementMessage");
+  const clearAnnouncementsBtn = document.getElementById("clearAnnouncementsBtn");
 
   const secretariatForm = document.getElementById("secretariatForm");
   const secNameInput = document.getElementById("secNameInput");
@@ -485,6 +486,13 @@
 
   const getAnnouncements = () => readLocal(ANNOUNCEMENTS_KEY, []);
 
+  const syncWebsiteAnnouncement = (rows) => {
+    const items = Array.isArray(rows) ? rows : getAnnouncements();
+    const latest = items.length ? String(items[0].body || "").trim() : "";
+    const result = window.ImperiumAuth.updateSiteSettings(currentUser, { announcement: latest });
+    return result;
+  };
+
   const renderAnnouncements = () => {
     if (!announcementHistoryList) return;
     const rows = getAnnouncements();
@@ -511,8 +519,12 @@
         if (!window.confirm("Delete this announcement?")) return;
         const next = getAnnouncements().filter((entry) => entry.id !== item.id);
         writeLocal(ANNOUNCEMENTS_KEY, next);
+        const sync = syncWebsiteAnnouncement(next);
         renderAnnouncements();
         logActivity(`Deleted announcement: ${item.title}`);
+        if (!sync.success) {
+          showToast(String(sync.message || "Failed to sync announcement state."), false);
+        }
       });
 
       actions.appendChild(delBtn);
@@ -826,21 +838,39 @@
           createdAt: new Date().toISOString(),
         });
         writeLocal(ANNOUNCEMENTS_KEY, list.slice(0, 200));
-
-        window.ImperiumAuth.updateSiteSettings(currentUser, { announcement: body });
+        const sync = syncWebsiteAnnouncement(list);
 
         if (sendToEarly) {
           await markAllNotified();
         }
 
         if (announcementMessage) {
-          announcementMessage.classList.add("success");
-          announcementMessage.textContent = "Announcement published.";
+          announcementMessage.classList.toggle("success", Boolean(sync.success));
+          announcementMessage.textContent = sync.success
+            ? "Announcement published."
+            : String(sync.message || "Announcement saved locally but website sync failed.");
         }
 
         if (announcementForm) announcementForm.reset();
         renderAnnouncements();
         logActivity(`Published announcement: ${title}`);
+      });
+    }
+
+    if (clearAnnouncementsBtn) {
+      clearAnnouncementsBtn.addEventListener("click", () => {
+        if (!window.confirm("Clear all announcements? This cannot be undone.")) return;
+        writeLocal(ANNOUNCEMENTS_KEY, []);
+        const sync = syncWebsiteAnnouncement([]);
+        renderAnnouncements();
+        if (announcementMessage) {
+          announcementMessage.classList.toggle("success", Boolean(sync.success));
+          announcementMessage.textContent = sync.success
+            ? "All announcements cleared."
+            : String(sync.message || "Announcements cleared locally but website sync failed.");
+        }
+        logActivity("Cleared all announcements");
+        showToast(sync.success ? "Announcements cleared." : "Cleared locally, sync failed.", Boolean(sync.success));
       });
     }
 
