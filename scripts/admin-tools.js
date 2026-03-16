@@ -488,7 +488,7 @@
 
   const syncWebsiteAnnouncement = (rows) => {
     const items = Array.isArray(rows) ? rows : getAnnouncements();
-    const latest = items.length ? String(items[0].body || "").trim() : "";
+    const latest = items.length ? (items[0].title ? `${items[0].title}: ${items[0].body}` : items[0].body).trim() : "";
     const result = window.ImperiumAuth.updateSiteSettings(currentUser, { announcement: latest });
     return result;
   };

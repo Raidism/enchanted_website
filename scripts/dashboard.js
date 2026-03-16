@@ -6,7 +6,7 @@ if (!currentUser) {
 
 const siteSettings = window.ImperiumAuth.getSiteSettings();
 if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
-  window.location.href = "/access";
+  window.location.href = "/maintenance";
   throw new Error("Maintenance mode is active for non-admin users");
 }
 
@@ -684,12 +684,8 @@ const renderAnalytics = async () => {
 };
 
 const renderAdminPanel = () => {
-  if (!adminPanel || !activeUsersList || !addUserForm || !addUserMessage || !siteSettingsForm) {
-    return;
-  }
-
   if (!isAdmin) {
-    adminPanel.hidden = true;
+    if (adminPanel) adminPanel.hidden = true;
     if (addUserForm) {
       addUserForm.querySelectorAll("input, select, button").forEach((element) => {
         element.disabled = true;
@@ -705,7 +701,7 @@ const renderAdminPanel = () => {
     return;
   }
 
-  adminPanel.hidden = false;
+  if (adminPanel) adminPanel.hidden = false;
 
   const activeUsers = window.ImperiumAuth.getActiveUsers();
   const entries = Object.values(activeUsers);
