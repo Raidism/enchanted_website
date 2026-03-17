@@ -56,13 +56,33 @@ if (teamAppsOpen && teamAppsActive) {
   if (teamAppsPlaceholder) teamAppsPlaceholder.style.display = "none";
   teamAppsActive.style.display = "block";
 
+  // Smooth animation for team app buttons
+  const buttons = teamAppsActive.querySelectorAll("a[data-team]");
+  if (typeof gsap !== "undefined" && buttons.length > 0) {
+    buttons.forEach((btn, idx) => {
+      gsap.from(btn, {
+        opacity: 0,
+        y: 12,
+        duration: 0.4,
+        delay: 0.05 + idx * 0.08,
+        ease: "power2.out",
+      });
+      btn.addEventListener("mouseenter", () => {
+        gsap.to(btn, { scale: 1.05, duration: 0.2, ease: "power2.out" });
+      });
+      btn.addEventListener("mouseleave", () => {
+        gsap.to(btn, { scale: 1, duration: 0.15, ease: "power2.out" });
+      });
+    });
+  }
+
   const LINKS = {
     security: "https://docs.google.com/forms/d/e/1FAIpQLSfrLZhVXPsgatwY1Z8tJWD6hEOjjKV1pgsFmb4CzriU0L9w7w/viewform?usp=header",
     media: "https://docs.google.com/forms/d/e/1FAIpQLSdKxP_oa4nUAn496celU3lgHEgun1yyEZxtKH74cAirlDPuNg/viewform?usp=header",
     volunteer: "https://docs.google.com/forms/d/e/1FAIpQLScwVL7U5YXXfua9w4qjaHA7oEIRHGRH9b5yjQXNUp8h3OfyoQ/viewform?usp=header",
   };
 
-  teamAppsActive.querySelectorAll("a[data-team]").forEach((btn) => {
+  buttons.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       const team = btn.getAttribute("data-team");
@@ -71,7 +91,20 @@ if (teamAppsOpen && teamAppsActive) {
         if (window.ImperiumTracker && window.ImperiumTracker.trackEvent) {
           window.ImperiumTracker.trackEvent("team_application_click", team);
         }
-        setTimeout(() => window.open(url, "_blank"), 100);
+        // Animate button feedback before opening link
+        if (typeof gsap !== "undefined") {
+          gsap.to(btn, {
+            scale: 0.95,
+            duration: 0.1,
+            ease: "power2.in",
+            onComplete: () => {
+              window.open(url, "_blank");
+              gsap.to(btn, { scale: 1.05, duration: 0.2, ease: "power2.out" });
+            },
+          });
+        } else {
+          window.open(url, "_blank");
+        }
       }
     });
   });

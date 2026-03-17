@@ -235,8 +235,20 @@ if (String(siteSettings.teamApplicationsOpen || "false") === "true") {
   const heroApply = document.getElementById("heroApplyBtn");
   const accessSec = document.getElementById("join");
   
-  if (heroWaitlist) heroWaitlist.style.display = "none";
-  if (heroApply)    heroApply.style.display = "inline-flex";
+  if (heroWaitlist) {
+    heroWaitlist.style.display = "none";
+  }
+  if (heroApply) {
+    heroApply.style.display = "inline-flex";
+    if (typeof gsap !== "undefined") {
+      gsap.from(heroApply, {
+        opacity: 0,
+        scale: 0.92,
+        duration: 0.4,
+        ease: "power2.out",
+      });
+    }
+  }
   
   if (accessSec) {
     const heading = accessSec.querySelector("h2");

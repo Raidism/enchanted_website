@@ -107,20 +107,39 @@ if (logoutBtn) {
 
 if (reopenOnboardingBtn) {
   reopenOnboardingBtn.addEventListener("click", () => {
-    if (!window.ImperiumOnboarding || typeof window.ImperiumOnboarding.open !== "function") {
-      if (reopenOnboardingMessage) {
-        reopenOnboardingMessage.textContent = "Onboarding is unavailable right now.";
-      }
-      return;
+    reopenOnboardingBtn.disabled = true;
+    if (reopenOnboardingMessage) {
+      reopenOnboardingMessage.textContent = "Updating onboarding...";
     }
 
-    window.ImperiumOnboarding.open(currentUser, { force: true });
-    if (reopenOnboardingMessage) {
-      reopenOnboardingMessage.textContent = "Onboarding opened.";
-      setTimeout(() => {
-        reopenOnboardingMessage.textContent = "";
-      }, 2800);
+    const { success, message: msg } = window.ImperiumAuth.updateSiteSettings(currentUser, {
+      onboardingReplayTriggered: true,
+    });
+
+    if (success) {
+      if (reopenOnboardingMessage) {
+        reopenOnboardingMessage.textContent = "Onboarding will display on next login. You can also open it now if you'd like to test it.";
+        reopenOnboardingMessage.classList.add("success");
+      }
+      if (window.ImperiumOnboarding && typeof window.ImperiumOnboarding.open === "function") {
+        setTimeout(() => {
+          window.ImperiumOnboarding.open(currentUser, { force: true });
+        }, 500);
+      }
+    } else {
+      if (reopenOnboardingMessage) {
+        reopenOnboardingMessage.textContent = msg || "Failed to update onboarding.";
+        reopenOnboardingMessage.classList.add("error");
+      }
     }
+
+    reopenOnboardingBtn.disabled = false;
+    setTimeout(() => {
+      if (reopenOnboardingMessage) {
+        reopenOnboardingMessage.textContent = "";
+        reopenOnboardingMessage.className = "sub";
+      }
+    }, 4000);
   });
 }
 
@@ -215,39 +234,56 @@ const renderOnline = () => {
     });
 };
 
-const renderTeamAppsToggle = () => {
-  const toggle = document.getElementById("appsTeamToggle");
+const renderTeamAppsButtons = () => {
+  const openBtn = document.getElementById("appsTeamOpenBtn");
+  const closeBtn = document.getElementById("appsTeamCloseBtn");
+  const statusDisplay = document.getElementById("appsTeamStatusDisplay");
   const message = document.getElementById("appsTeamMessage");
-  if (!toggle) return;
+  if (!openBtn || !closeBtn) return;
 
-  const current = window.ImperiumAuth.getSiteSettings();
-  toggle.checked = Boolean(current.teamApplicationsOpen);
-
-  toggle.addEventListener("change", () => {
-    const newState = toggle.checked;
-    toggle.disabled = true;
-
-    if (message) {
-      message.textContent = "Updating...";
-      message.className = "form-message";
+  const updateDisplay = () => {
+    const current = window.ImperiumAuth.getSiteSettings();
+    const isOpen = Boolean(current.teamApplicationsOpen);
+    if (statusDisplay) {
+      statusDisplay.textContent = isOpen ? "🟢 Open for Recruiting" : "🔴 Closed";
+      statusDisplay.style.color = isOpen ? "#4fd1c5" : "#888";
     }
+  };
 
-    const { success, message: msg } = window.ImperiumAuth.updateSiteSettings(currentUser, {
-      teamApplicationsOpen: newState,
-    });
+  updateDisplay();
 
-    toggle.disabled = false;
-    
-    if (message) {
-      message.textContent = success ? `Team Applications ${newState ? "Opened" : "Closed"}.` : msg;
-      message.classList.toggle("success", success);
-      message.classList.toggle("error", !success);
-      setTimeout(() => { message.textContent = ""; }, 3000);
-    }
-  });
+  const handleStateChange = (newState) => {
+    return () => {
+      openBtn.disabled = true;
+      closeBtn.disabled = true;
+
+      if (message) {
+        message.textContent = "Updating...";
+        message.className = "form-message";
+      }
+
+      const { success, message: msg } = window.ImperiumAuth.updateSiteSettings(currentUser, {
+        teamApplicationsOpen: newState,
+      });
+
+      updateDisplay();
+      openBtn.disabled = false;
+      closeBtn.disabled = false;
+      
+      if (message) {
+        message.textContent = success ? `Team Applications ${newState ? "Opened" : "Closed"}.` : msg;
+        message.classList.toggle("success", success);
+        message.classList.toggle("error", !success);
+        setTimeout(() => { message.textContent = ""; }, 3000);
+      }
+    };
+  };
+
+  openBtn.addEventListener("click", handleStateChange(true));
+  closeBtn.addEventListener("click", handleStateChange(false));
 };
 
-renderTeamAppsToggle();
+renderTeamAppsButtons();
 
 const renderHistory = () => {
   if (!historyList) return;
