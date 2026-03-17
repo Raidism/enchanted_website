@@ -9,7 +9,9 @@ set -euo pipefail
 # Optional environment variables:
 #   APP_DIR=/var/www/imperium_website BRANCH=main REMOTE=origin PM2_APP=imperium_website BACKUP_RETENTION_DAYS=7 ./update-vps.sh --restart
 
-APP_DIR="${APP_DIR:-/var/www/imperium_website}"
+# Default to the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+APP_DIR="${APP_DIR:-$SCRIPT_DIR}"
 BRANCH="${BRANCH:-main}"
 REMOTE="${REMOTE:-origin}"
 PM2_APP="${PM2_APP:-imperium_website}"
