@@ -273,6 +273,45 @@
     };
   };
 
+  const getOnboardingStatus = () => {
+    const result = requestSync("GET", "/auth/onboarding");
+    if (!result.ok || !result.payload) {
+      return {
+        success: false,
+        onboardingCompleted: Boolean(cachedUser && cachedUser.onboardingCompleted),
+      };
+    }
+
+    const onboardingCompleted = Boolean(result.payload.onboardingCompleted);
+    if (cachedUser) {
+      cachedUser.onboardingCompleted = onboardingCompleted;
+    }
+
+    return {
+      success: true,
+      onboardingCompleted,
+    };
+  };
+
+  const completeOnboarding = () => {
+    const result = requestSync("POST", "/auth/onboarding/complete", {});
+    if (!result.ok || !result.payload) {
+      return {
+        success: false,
+        message: result.payload && result.payload.message ? result.payload.message : "Failed to save onboarding state.",
+      };
+    }
+
+    if (cachedUser) {
+      cachedUser.onboardingCompleted = true;
+    }
+
+    return {
+      success: true,
+      onboardingCompleted: true,
+    };
+  };
+
   init();
 
   window.ImperiumAuth = {
@@ -290,5 +329,7 @@
     updateSiteSettings,
     setUserDisabled,
     forceLogoutUser,
+    getOnboardingStatus,
+    completeOnboarding,
   };
 })();

@@ -8,15 +8,25 @@
   }
 
   const isAdmin = String(currentUser.role || "") === "admin";
+  const profileKey = String(currentUser.username || "").trim().toLowerCase();
+  const PROFILE_FALLBACKS = {
+    joumohd08: {
+      name: "Joumana Mohamed",
+      photo: "assets/Joumana Mohamed .png",
+    },
+  };
+  const profileFallback = PROFILE_FALLBACKS[profileKey] || {};
+  const profileDisplayName = String(currentUser.name || profileFallback.name || currentUser.username || "User");
+  const profilePhotoSrc = String(currentUser.photo || profileFallback.photo || "assets/imperium mun logo.jpg");
+
   window.ImperiumAuth.heartbeat();
   setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
 
   const pmhPhoto = document.getElementById("pmhPhoto");
   const pmhName = document.getElementById("pmhName");
   const pmhRole = document.getElementById("pmhRole");
-  const profileDisplayName = currentUser.name || currentUser.username;
-  if (pmhPhoto && currentUser.photo) {
-    pmhPhoto.src = currentUser.photo;
+  if (pmhPhoto) {
+    pmhPhoto.src = profilePhotoSrc;
     pmhPhoto.alt = profileDisplayName;
   }
   if (pmhName) pmhName.textContent = profileDisplayName;
@@ -36,8 +46,8 @@
       logoutBtn.classList.add("is-loading");
       logoutBtn.disabled = true;
 
-      const displayName = currentUser.name || currentUser.username || "User";
-      const photoSrc = currentUser.photo || "assets/imperium mun logo.jpg";
+      const displayName = profileDisplayName;
+      const photoSrc = profilePhotoSrc;
       const overlay = document.createElement("div");
       overlay.className = "logout-overlay";
       overlay.innerHTML = `

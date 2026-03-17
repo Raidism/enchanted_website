@@ -1,6 +1,7 @@
 (function () {
   const STORAGE_PREFIX = "imperium_onboarding_done_v1";
   const STORAGE_LAST_USER = "imperium_last_login_user";
+  const MAIN_ADMIN_USERNAME = "admin";
 
   const COMMON_STEPS = [
     {
@@ -53,12 +54,27 @@
   const completionKeyForUser = (user) => `${STORAGE_PREFIX}:${normalizeUsername(user)}`;
 
   const hasCompleted = (user) => {
+    if (window.ImperiumAuth && typeof window.ImperiumAuth.getOnboardingStatus === "function") {
+      const result = window.ImperiumAuth.getOnboardingStatus();
+      if (result && result.success) {
+        return Boolean(result.onboardingCompleted);
+      }
+    }
+
+    if (user && typeof user.onboardingCompleted === "boolean") {
+      return Boolean(user.onboardingCompleted);
+    }
+
     const username = normalizeUsername(user);
     if (!username) return true;
     return localStorage.getItem(completionKeyForUser(user)) === "1";
   };
 
   const setCompleted = (user) => {
+    if (window.ImperiumAuth && typeof window.ImperiumAuth.completeOnboarding === "function") {
+      window.ImperiumAuth.completeOnboarding();
+    }
+
     const username = normalizeUsername(user);
     if (!username) return;
     localStorage.setItem(completionKeyForUser(user), "1");
@@ -93,8 +109,12 @@
         </div>
 
         <div class="onb-actions">
-          <button type="button" class="onb-btn onb-btn-ghost" id="onbSkipBtn">Skip</button>
+          <label class="onb-optout" for="onbDontShowAgain">
+            <input id="onbDontShowAgain" type="checkbox" class="onb-optout-check" />
+            <span>Don't show me this again</span>
+          </label>
           <div class="onb-actions-right">
+            <button type="button" class="onb-btn onb-btn-ghost" id="onbSkipBtn">Skip</button>
             <button type="button" class="onb-btn onb-btn-subtle" id="onbBackBtn">Back</button>
             <button type="button" class="onb-btn onb-btn-primary" id="onbNextBtn">Next</button>
           </div>
@@ -117,6 +137,7 @@
     const backBtn = overlay.querySelector("#onbBackBtn");
     const nextBtn = overlay.querySelector("#onbNextBtn");
     const skipBtn = overlay.querySelector("#onbSkipBtn");
+    const dontShowAgainInput = overlay.querySelector("#onbDontShowAgain");
 
     const steps = buildStepsForUser(user);
     let index = 0;
@@ -148,7 +169,8 @@
     };
 
     const close = ({ complete }) => {
-      if (complete) {
+      const shouldPersist = Boolean(complete && dontShowAgainInput && dontShowAgainInput.checked);
+      if (shouldPersist) {
         setCompleted(user);
       }
 
@@ -160,7 +182,7 @@
 
       document.removeEventListener("keydown", onKeydown);
       if (typeof options.onClose === "function") {
-        options.onClose({ complete: Boolean(complete) });
+        options.onClose({ complete: Boolean(complete), persisted: shouldPersist });
       }
     };
 
@@ -217,6 +239,9 @@
     return {
       open: () => {
         setLastLoginUser(user);
+        if (dontShowAgainInput) {
+          dontShowAgainInput.checked = false;
+        }
         overlay.hidden = false;
         requestAnimationFrame(() => {
           overlay.classList.add("is-open");
@@ -236,6 +261,10 @@
 
   const maybeShow = (user, options = {}) => {
     if (!user) return;
+    const username = normalizeUsername(user);
+    if (!options.force && username === MAIN_ADMIN_USERNAME) {
+      return;
+    }
     if (!options.force && hasCompleted(user)) return;
     open(user, options);
   };

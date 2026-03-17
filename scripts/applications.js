@@ -23,14 +23,22 @@ const _appRoleLabels = {
   toleenkmedia:   "Head of Media",
   joumohd08:      "Head of HR",
 };
-const _appDisplayName = currentUser.name || currentUser.username;
+const _APP_PROFILE_FALLBACKS = {
+  joumohd08: {
+    name: "Joumana Mohamed",
+    photo: "assets/Joumana Mohamed .png",
+  },
+};
+const _appProfileFallback = _APP_PROFILE_FALLBACKS[_appProfileKey] || {};
+const _appDisplayName = String(currentUser.name || _appProfileFallback.name || currentUser.username || "User");
+const _appProfilePhoto = String(currentUser.photo || _appProfileFallback.photo || "assets/imperium mun logo.jpg");
 const _appRoleLabel   = _appRoleLabels[_appProfileKey] || (currentUser.role === "admin" ? "Admin" : "Member");
 
 // Populate mini hero
 const _aPmhPhoto = document.getElementById("pmhPhoto");
 const _aPmhName  = document.getElementById("pmhName");
 const _aPmhRole  = document.getElementById("pmhRole");
-if (_aPmhPhoto && currentUser.photo) { _aPmhPhoto.src = currentUser.photo; _aPmhPhoto.alt = _appDisplayName; }
+if (_aPmhPhoto) { _aPmhPhoto.src = _appProfilePhoto; _aPmhPhoto.alt = _appDisplayName; }
 if (_aPmhName) _aPmhName.textContent = _appDisplayName;
 if (_aPmhRole) _aPmhRole.textContent = _appRoleLabel;
 

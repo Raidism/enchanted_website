@@ -268,14 +268,54 @@ const setCapsIndicator = (isOn) => {
   }
 };
 
-const showSpecialWelcomeAndRedirect = (config) => {
+const preloadImage = (src, timeoutMs = 420) => new Promise((resolve) => {
+  const target = String(src || "").trim();
+  if (!target) {
+    resolve();
+    return;
+  }
+
+  const image = new Image();
+  let settled = false;
+
+  const finish = () => {
+    if (settled) return;
+    settled = true;
+    resolve();
+  };
+
+  const timer = setTimeout(finish, timeoutMs);
+
+  image.onload = () => {
+    clearTimeout(timer);
+    if (typeof image.decode === "function") {
+      image.decode().catch(() => {}).finally(finish);
+    } else {
+      finish();
+    }
+  };
+
+  image.onerror = () => {
+    clearTimeout(timer);
+    finish();
+  };
+
+  image.src = target;
+});
+
+const showSpecialWelcomeAndRedirect = async (config) => {
+  await Promise.all([
+    preloadImage(config.photo),
+    preloadImage("assets/Secretariat frame.png", 260),
+  ]);
+
   const overlay = document.createElement("div");
   overlay.className = "special-welcome-overlay";
   overlay.innerHTML = `
     <div class="special-welcome-card">
       <div class="special-photo-wrap" aria-hidden="true">
-        <img src="${config.photo}" alt="" class="special-photo" loading="eager" decoding="async" />
-        <img src="assets/Secretariat frame.png" alt="" class="special-frame" loading="eager" decoding="async" />
+        <img src="${config.photo}" alt="" class="special-photo" loading="eager" decoding="async" fetchpriority="high" />
+        <img src="assets/Secretariat frame.png" alt="" class="special-frame" loading="eager" decoding="async" fetchpriority="high" />
       </div>
       <h2>${config.title}</h2>
       <p>${config.message}</p>

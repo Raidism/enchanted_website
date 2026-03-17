@@ -161,8 +161,25 @@ const ensureSeedData = () => {
       ...u,
       passwordHash: bcrypt.hashSync(String(u.password), 10),
       disabled: false,
+      onboardingCompleted: Boolean(u.onboardingCompleted),
     }));
     writeUsers(seeded);
+  } else {
+    let changed = false;
+    const normalizedUsers = users.map((u) => {
+      if (typeof u.onboardingCompleted === "boolean") {
+        return u;
+      }
+      changed = true;
+      return {
+        ...u,
+        onboardingCompleted: false,
+      };
+    });
+
+    if (changed) {
+      writeUsers(normalizedUsers);
+    }
   }
 
   const settings = readJson("site_settings", null);
@@ -202,6 +219,7 @@ const sanitizeUser = (user) => ({
   disabled: Boolean(user.disabled),
   name: String(user.name || ""),
   photo: String(user.photo || ""),
+  onboardingCompleted: Boolean(user.onboardingCompleted),
 });
 
 const sanitizeUserForAdmin = (user) => ({
@@ -211,6 +229,7 @@ const sanitizeUserForAdmin = (user) => ({
   disabled: Boolean(user.disabled),
   name: String(user.name || ""),
   photo: String(user.photo || ""),
+  onboardingCompleted: Boolean(user.onboardingCompleted),
 });
 
 const getSession = (req) => {
@@ -593,6 +612,25 @@ app.post("/api/auth/heartbeat", requireAuth, (req, res) => {
   res.json({ success: true });
 });
 
+app.get("/api/auth/onboarding", requireAuth, (req, res) => {
+  return res.json({
+    success: true,
+    onboardingCompleted: Boolean(req.auth.user.onboardingCompleted),
+  });
+});
+
+app.post("/api/auth/onboarding/complete", requireAuth, (req, res) => {
+  const users = readUsers();
+  const idx = users.findIndex((u) => normalizeUsername(u.username) === normalizeUsername(req.auth.user.username));
+  if (idx === -1) {
+    return res.status(404).json({ success: false, message: "User not found." });
+  }
+
+  users[idx].onboardingCompleted = true;
+  writeUsers(users);
+  return res.json({ success: true, onboardingCompleted: true });
+});
+
 app.get("/api/auth/history", requireAuth, requireAdmin, (_req, res) => {
   res.json({ success: true, rows: readHistory() });
 });
@@ -624,6 +662,7 @@ app.post("/api/users", requireAuth, requireAdmin, (req, res) => {
     disabled: false,
     name: "",
     photo: "",
+    onboardingCompleted: false,
   });
 
   writeUsers(users);

@@ -480,6 +480,23 @@ body::after {
   gap: 0.7rem;
 }
 
+.onb-optout {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #b6c8ba;
+  font-size: 0.82rem;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.onb-optout-check {
+  width: 16px;
+  height: 16px;
+  accent-color: #d5b465;
+}
+
 .onb-actions-right {
   display: inline-flex;
   gap: 0.55rem;
@@ -541,6 +558,12 @@ body::after {
 
   .onb-actions {
     gap: 0.5rem;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .onb-optout {
+    align-self: flex-start;
   }
 
   .onb-btn {
