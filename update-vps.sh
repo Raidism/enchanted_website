@@ -142,6 +142,14 @@ echo "==> Resetting working tree to $REMOTE/$BRANCH"
 git reset --hard "$REMOTE/$BRANCH"
 set_deploy_status "true" "syncing" "45" "Applying repository update..." "" "" "" ""
 
+echo "==> Restoring data files (ensuring persistence against git resets)"
+# Copy back any data files that might have been deleted by git reset (e.g. if they were untracked in this update)
+if [[ -d "$BACKUP_DIR" ]]; then
+  mkdir -p "$APP_DIR/server/data"
+  cp -r "$BACKUP_DIR/"* "$APP_DIR/server/data/" 2>/dev/null || true
+  echo "Data restored from $BACKUP_DIR"
+fi
+
 echo "==> Installing dependencies"
 if [[ -f package-lock.json ]]; then
   npm ci --silent
