@@ -26,6 +26,27 @@
     }
   };
 
+  const normalizeProfileKey = (value) => String(value || "").trim().toLowerCase().replace(/[^a-z0-9_-]/g, "");
+  const PROFILE_FALLBACKS = {
+    joumohd08: {
+      name: "Joumana Mohamed",
+      photo: "assets/Joumana Mohamed .png",
+    },
+  };
+
+  const applyUserFallbackProfile = (user) => {
+    if (!user || typeof user !== "object") return user;
+    const key = normalizeProfileKey(user.username);
+    const mapped = PROFILE_FALLBACKS[key];
+    if (!mapped) return user;
+
+    return {
+      ...user,
+      name: String(user.name || mapped.name || ""),
+      photo: String(user.photo || mapped.photo || ""),
+    };
+  };
+
   const requestSync = (method, path, body) => {
     const xhr = new XMLHttpRequest();
     xhr.open(method, `${API_BASE}${path}`, false);
@@ -77,7 +98,7 @@
 
     const result = requestSync("GET", "/auth/me");
     if (result.ok && result.payload && result.payload.user) {
-      cachedUser = result.payload.user;
+      cachedUser = applyUserFallbackProfile(result.payload.user);
       return cachedUser;
     }
 
@@ -133,6 +154,7 @@
     }
 
     cachedUser = result.payload.user || null;
+    cachedUser = applyUserFallbackProfile(cachedUser);
     cachedSettings = null;
 
     return {

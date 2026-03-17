@@ -61,7 +61,8 @@ const ANALYTICS_API_URL = `${API_BASE}/analytics`;
 let currentVisitPage = 1;
 const isAdmin = currentUser.role === "admin";
 const isMainAdmin = String(currentUser.username || "").trim().toLowerCase() === "admin";
-const profileKey = String(currentUser.username || "").trim().toLowerCase();
+const normalizeProfileKey = (value) => String(value || "").trim().toLowerCase().replace(/[^a-z0-9_-]/g, "");
+const profileKey = normalizeProfileKey(currentUser.username);
 const DEFAULT_INSTAGRAM_STATS = {
   followers: 487,
   posts: 18,
@@ -152,6 +153,26 @@ const USER_SPOTLIGHT_PRESETS = {
     photo: "assets/Joumana Mohamed .png",
   },
 };
+
+const DASHBOARD_PROFILE_FALLBACKS = {
+  joumohd08: {
+    name: "Joumana Mohamed",
+    photo: "assets/Joumana Mohamed .png",
+    role: "Head of HR",
+  },
+};
+
+const resolvedDashboardProfile = (() => {
+  const mappedName = WELCOME_NAMES[profileKey] || "";
+  const mappedSpotlight = USER_SPOTLIGHT_PRESETS[profileKey] || {};
+  const mappedFallback = DASHBOARD_PROFILE_FALLBACKS[profileKey] || {};
+
+  return {
+    name: String(currentUser.name || mappedName || mappedSpotlight.name || mappedFallback.name || currentUser.username || "User"),
+    photo: String(currentUser.photo || mappedSpotlight.photo || mappedFallback.photo || "assets/imperium mun logo.jpg"),
+    role: String(mappedSpotlight.role || mappedFallback.role || (isAdmin ? "Admin" : "Member")),
+  };
+})();
 
 const maybeShowOnboarding = () => {
   if (!window.ImperiumOnboarding || typeof window.ImperiumOnboarding.maybeShow !== "function") {
@@ -372,11 +393,11 @@ if (submitNoteForm) {
 // ═══════════════════════════════════════════════════════════════
 //  TYPEWRITER WELCOME SEQUENCE
 // ═══════════════════════════════════════════════════════════════
-const displayName = WELCOME_NAMES[profileKey] || currentUser.username;
+const displayName = resolvedDashboardProfile.name;
 const spotPresetForWelcome = USER_SPOTLIGHT_PRESETS[profileKey] || {
-  name: displayName,
-  role: isAdmin ? "Admin" : "Member",
-  photo: "assets/imperium mun logo.jpg",
+  name: resolvedDashboardProfile.name,
+  role: resolvedDashboardProfile.role,
+  photo: resolvedDashboardProfile.photo,
 };
 
 if (dwhPhoto) {
