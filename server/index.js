@@ -156,8 +156,6 @@ const readWaitlist = () => readJson("waitlist_entries", []);
 const writeWaitlist = (rows) => writeJson("waitlist_entries", rows.slice(0, 3000));
 const readDeletedWaitlist = () => readJson("waitlist_deleted", []);
 const writeDeletedWaitlist = (rows) => writeJson("waitlist_deleted", rows.slice(0, 500));
-const readAnalytics = () => readJson("analytics_logs", []);
-const writeAnalytics = (rows) => writeJson("analytics_logs", rows.slice(0, 2000));
 
 const ensureSeedData = () => {
   const users = readUsers();
