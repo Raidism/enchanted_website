@@ -131,14 +131,15 @@ if (currentUser.role !== "admin") {
   });
 }
 
-const fetchAnalyticsLogs = async () => {
-  const response = await fetch(ANALYTICS_API_URL, { method: "GET", cache: "no-store" });
+// Fetch click events specifically for trend analysis
+const fetchClickEvents = async () => {
+  const response = await fetch(`${API_BASE}/analytics/clicks`, { method: "GET", cache: "no-store" });
   if (!response.ok) {
-    throw new Error("Failed to load analytics logs.");
+    throw new Error("Failed to load analytics clicks.");
   }
 
   const payload = await response.json();
-  return payload && Array.isArray(payload.logs) ? payload.logs : [];
+  return payload && Array.isArray(payload.clicks) ? payload.clicks : [];
 };
 
 const renderApplicationsTrend = async () => {
@@ -153,30 +154,30 @@ const renderApplicationsTrend = async () => {
     return;
   }
 
-  let logs = [];
+  let clicks = [];
   try {
-    logs = await fetchAnalyticsLogs();
+    clicks = await fetchClickEvents();
   } catch {
-    logs = [];
+    clicks = [];
   }
+  const teamEvents = clicks.filter((entry) => String(entry.event || "") === "team_application_click");
 
-  const applicationsLogs = logs.filter((entry) => {
-    const path = String(entry.path || "").trim().toLowerCase();
-    return path === "applications" || path === "applications.html";
-  });
-  const byDate = applicationsLogs.reduce((acc, row) => {
+  const byDateAndTeam = teamEvents.reduce((acc, row) => {
     const d = new Date(String(row.timestamp || ""));
     if (Number.isNaN(d.getTime())) return acc;
-    const key = d.toISOString().slice(0, 10);
-    acc[key] = (acc[key] || 0) + 1;
+    const dayKey = d.toISOString().slice(0, 10);
+    const team = String(row.label || "").toLowerCase();
+    if (!["media", "security", "volunteer"].includes(team)) return acc;
+    if (!acc[dayKey]) acc[dayKey] = { media: 0, security: 0, volunteer: 0 };
+    acc[dayKey][team] += 1;
     return acc;
   }, {});
 
-  const points = Object.entries(byDate)
+  const ordered = Object.entries(byDateAndTeam)
     .sort((a, b) => a[0].localeCompare(b[0]))
     .slice(-10);
 
-  if (!points.length) {
+  if (!ordered.length) {
     applicationsTrendChart.innerHTML = "";
     if (applicationsTrendEmpty) applicationsTrendEmpty.hidden = false;
     return;
@@ -191,27 +192,71 @@ const renderApplicationsTrend = async () => {
   const chartW = 530;
   const chartH = 120;
   const bottom = top + chartH;
-  const maxVal = Math.max(1, ...points.map(([, count]) => count));
-  const stepX = points.length > 1 ? chartW / (points.length - 1) : 0;
+  const series = {
+    media: [],
+    security: [],
+    volunteer: [],
+  };
 
-  const coords = points.map(([day, count], idx) => {
+  const stepX = ordered.length > 1 ? chartW / (ordered.length - 1) : 0;
+  let maxVal = 1;
+
+  ordered.forEach(([day, counts], idx) => {
     const x = left + idx * stepX;
-    const y = bottom - (count / maxVal) * chartH;
-    return { day: day.slice(5), count, x, y };
+    ["media", "security", "volunteer"].forEach((team) => {
+      const v = counts[team] || 0;
+      if (v > maxVal) maxVal = v;
+      const y = bottom - (v / maxVal) * chartH;
+      series[team].push({ x, y, v, day: day.slice(5) });
+    });
   });
 
-  const polyline = coords.map((p) => `${Math.round(p.x)},${Math.round(p.y)}`).join(" ");
-  const dots = coords.map((p) => `
-    <circle cx="${Math.round(p.x)}" cy="${Math.round(p.y)}" r="4.5" fill="#d5b465"></circle>
-    <text x="${Math.round(p.x)}" y="${Math.round(p.y) - 10}" text-anchor="middle" font-size="10" fill="#f0daa0">${p.count}</text>
-    <text x="${Math.round(p.x)}" y="${bottom + 14}" text-anchor="middle" font-size="10" fill="#9eb0a3">${p.day}</text>
+  const colorMap = {
+    media: "#4fd1c5",
+    security: "#f6ad55",
+    volunteer: "#9f7aea",
+  };
+
+  const buildPolyline = (points, color) => {
+    const coords = points.map((p) => `${Math.round(p.x)},${Math.round(p.y)}`).join(" ");
+    if (!coords) return "";
+    return `<polyline points="${coords}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>`;
+  };
+
+  const buildDots = (points, color) => points.map((p) => `
+    <circle cx="${Math.round(p.x)}" cy="${Math.round(p.y)}" r="3.8" fill="${color}"></circle>
   `).join("");
+
+  const mediaLine = buildPolyline(series.media, colorMap.media);
+  const secLine = buildPolyline(series.security, colorMap.security);
+  const volLine = buildPolyline(series.volunteer, colorMap.volunteer);
+
+  const xLabels = ordered.map(([day], idx) => {
+    const x = left + idx * stepX;
+    return `<text x="${Math.round(x)}" y="${bottom + 14}" text-anchor="middle" font-size="10" fill="#9eb0a3">${day.slice(5)}</text>`;
+  }).join("");
+
+  const allDots = [
+    buildDots(series.media, colorMap.media),
+    buildDots(series.security, colorMap.security),
+    buildDots(series.volunteer, colorMap.volunteer),
+  ].join("");
 
   applicationsTrendChart.innerHTML = `
     <rect x="0" y="0" width="${width}" height="${height}" rx="12" fill="rgba(8,14,10,0.7)"></rect>
     <line x1="${left}" y1="${bottom}" x2="${left + chartW}" y2="${bottom}" stroke="rgba(213,180,101,0.35)" stroke-width="1"></line>
-    <polyline points="${polyline}" fill="none" stroke="rgba(77,139,99,0.95)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
-    ${dots}
+    ${mediaLine}
+    ${secLine}
+    ${volLine}
+    ${allDots}
+    ${xLabels}
+    <rect x="${left}" y="${top - 12}" width="180" height="18" rx="9" fill="rgba(5,10,7,0.8)" stroke="rgba(213,180,101,0.3)" stroke-width="1"></rect>
+    <circle cx="${left + 12}" cy="${top - 3}" r="4" fill="${colorMap.media}"></circle>
+    <text x="${left + 20}" y="${top}" font-size="10" fill="#e2f0e6">Media</text>
+    <circle cx="${left + 70}" cy="${top - 3}" r="4" fill="${colorMap.security}"></circle>
+    <text x="${left + 78}" y="${top}" font-size="10" fill="#e2f0e6">Security</text>
+    <circle cx="${left + 138}" cy="${top - 3}" r="4" fill="${colorMap.volunteer}"></circle>
+    <text x="${left + 146}" y="${top}" font-size="10" fill="#e2f0e6">Volunteer</text>
   `;
 };
 

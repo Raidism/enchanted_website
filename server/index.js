@@ -27,6 +27,7 @@ const PAGE_ROUTE_FILES = {
   "/maintenance": "maintenance.html",
   "/contact": "contact-adham.html",
   "/dashboard": "dashboard.html",
+  "/apply": "apply.html",
   "/applications": "applications.html",
   "/waitlist": "waitlist.html",
   "/settings": "settings.html",

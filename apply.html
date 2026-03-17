@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apply for Teams | Imperium MUN</title>
+  <meta name="description" content="Apply to join Imperium MUN volunteer, media, or security teams." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Imperium MUN" />
+  <meta property="og:title" content="Apply for Teams | Imperium MUN" />
+  <meta property="og:description" content="Choose your role and apply to join the Imperium MUN organizing teams." />
+  <meta property="og:image" content="assets/imperium mun logo.jpg" />
+  <meta property="og:image:alt" content="Imperium MUN official logo" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Apply for Teams | Imperium MUN" />
+  <meta name="twitter:description" content="Apply to join Imperium MUN volunteer, media, or security teams." />
+  <meta name="twitter:image" content="assets/imperium mun logo.jpg" />
+  <link rel="icon" type="image/jpeg" href="assets/imperium mun logo.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+  <div class="bg-alt-logo" aria-hidden="true">
+    <img src="assets/background logo.png" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/imperium mun logo.jpg';" />
+    <span class="ornament-grid"></span>
+  </div>
+
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="/">IMPERIUM MUN</a>
+      <div class="nav-actions">
+        <nav>
+          <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+          </ul>
+        </nav>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch theme" aria-pressed="false" title="Toggle theme">
+          <span class="theme-icon sun" aria-hidden="true">☀</span>
+          <span class="theme-icon moon" aria-hidden="true">☾</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 3.5rem 0 4rem;">
+    <section class="section" style="padding-top: 1rem; padding-bottom: 0;">
+      <p class="eyebrow">Team Applications</p>
+      <h2>What would you like to apply for?</h2>
+      <p class="section-intro">
+        Choose the team that matches your strengths. After you pick, we will redirect you to a short Google Form to complete your application.
+      </p>
+
+      <div class="launch-grid" style="padding-inline: 0; grid-template-columns: repeat(3, minmax(0, 1fr));">
+        <article class="value-card reveal pop-card apply-card" data-team="volunteer">
+          <h3>Volunteer Team 🤝</h3>
+          <p>Help run the conference on the ground – registration, committee support, and smooth logistics during all days.</p>
+          <button type="button" class="cta" data-team-cta>Apply as Volunteer</button>
+        </article>
+
+        <article class="value-card reveal pop-card apply-card" data-team="media">
+          <h3>Media Team 📸</h3>
+          <p>Capture the story of Imperium MUN – photos, short videos, social posts, and creative coverage across the event.</p>
+          <button type="button" class="cta" data-team-cta>Apply as Media</button>
+        </article>
+
+        <article class="value-card reveal pop-card apply-card" data-team="security">
+          <h3>Security Team 🛡️</h3>
+          <p>Support delegate safety and order – coordinate access, room checks, and help keep the venue professional.</p>
+          <button type="button" class="cta" data-team-cta>Apply as Security</button>
+        </article>
+      </div>
+
+      <p id="applyStatusMessage" class="muted" style="margin-top: 1.1rem; min-height: 1.2em;" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-wrap">
+      <p>© <span id="year"></span> Imperium MUN. All rights reserved.</p>
+      <a href="https://instagram.com/imperiummun26" target="_blank" rel="noopener noreferrer" aria-label="Visit Imperium MUN on Instagram" class="insta-link">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 1.75A4 4 0 0 0 3.75 7.75v8.5a4 4 0 0 0 4 4h8.5a4 4 0 0 0 4-4v-8.5a4 4 0 0 0-4-4h-8.5ZM17.5 6.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5Z"/>
+        </svg>
+      </a>
+    </div>
+    <p class="main-credit">Made with love by the IT Team (<a class="credit-link" href="/contact">Adham</a>) ❤️</p>
+  </footer>
+
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="scripts/tracker.js"></script>
+  <script defer src="scripts/script.js"></script>
+  <script defer src="scripts/apply.js"></script>
+</body>
+</html>
+
