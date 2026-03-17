@@ -43,12 +43,28 @@
     <section id="settings" class="section">
       <h1>Settings & Access Control</h1>
       <p class="sub">View credentials, monitor online users, force logout sessions, and inspect login history.</p>
-      <div class="settings-quick-actions">
+      <div class="settings-quick-actions" style="margin-bottom: 2rem;">
         <button id="reopenOnboardingBtn" type="button" class="mini-btn">Replay Onboarding</button>
-        <p id="reopenOnboardingMessage" class="sub" aria-live="polite"></p>
+        <p id="reopenOnboardingMessage" class="sub" aria-live="polite" style="margin-top: 0.5rem;"></p>
       </div>
 
       <div class="admin-grid">
+        <article class="table-card">
+          <h3>Application Controls</h3>
+          <p class="sub">Manage public recruitment phases.</p>
+          <div class="form-group flex-row">
+            <label for="appsTeamToggle" class="toggle-label">
+              <input type="checkbox" id="appsTeamToggle" />
+              <span class="toggle-slider"></span>
+              <span class="toggle-text">Open Team Applications (Security, Media, Volunteer)</span>
+            </label>
+          </div>
+          <p class="sub" style="font-size: 0.85rem; margin-top: 0.5rem;">
+            When enabled, "Join Early Access" on the main page becomes "Apply Now".
+          </p>
+          <p id="appsTeamMessage" class="form-message" aria-live="polite"></p>
+        </article>
+
         <article class="table-card">
           <h3>User Management</h3>
           <p class="sub">All users, online/offline status, and direct account controls.</p>

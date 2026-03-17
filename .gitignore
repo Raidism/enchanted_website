@@ -17,4 +17,11 @@ yarn-error.log*
 # Netlify local tooling cache
 .netlify/
 
+# Ignore server data files to prevent overwriting live data on deploy
+server/data/*.json
+# Keep exception for structure if needed, but risky. For now, ignore all to be safe.
+# !server/data/.keep
+
 # Keep server/data tracked so VPS can receive account/settings updates via Git.
+# (Commented out because this wipes live data)
+# server/data/

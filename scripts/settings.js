@@ -215,6 +215,40 @@ const renderOnline = () => {
     });
 };
 
+const renderTeamAppsToggle = () => {
+  const toggle = document.getElementById("appsTeamToggle");
+  const message = document.getElementById("appsTeamMessage");
+  if (!toggle) return;
+
+  const current = window.ImperiumAuth.getSiteSettings();
+  toggle.checked = Boolean(current.teamApplicationsOpen);
+
+  toggle.addEventListener("change", () => {
+    const newState = toggle.checked;
+    toggle.disabled = true;
+
+    if (message) {
+      message.textContent = "Updating...";
+      message.className = "form-message";
+    }
+
+    const { success, message: msg } = window.ImperiumAuth.updateSiteSettings(currentUser, {
+      teamApplicationsOpen: newState,
+    });
+
+    toggle.disabled = false;
+    
+    if (message) {
+      message.textContent = success ? `Team Applications ${newState ? "Opened" : "Closed"}.` : msg;
+      message.classList.toggle("success", success);
+      message.classList.toggle("error", !success);
+      setTimeout(() => { message.textContent = ""; }, 3000);
+    }
+  });
+};
+
+renderTeamAppsToggle();
+
 const renderHistory = () => {
   if (!historyList) return;
   const rows = window.ImperiumAuth.getLoginHistory();

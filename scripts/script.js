@@ -16,6 +16,7 @@ const WAITLIST_LOCAL_BACKUP_KEY = "imperium_waitlist_local_backup";
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const fallbackSiteSettings = {
   maintenanceMode: false,
+  teamApplicationsOpen: false, // Default closed
   maintenanceMessage: "Imperium MUN is temporarily under maintenance. Please check back soon.",
   launchDate: "2026-03-28T00:00:00+03:00",
   announcement: "",
@@ -229,7 +230,28 @@ const launchDate = Number.isNaN(parsedLaunchDate.getTime())
   ? new Date(fallbackSiteSettings.launchDate)
   : parsedLaunchDate;
 
-applyAnnouncementFromSettings(siteSettings);
+if (String(siteSettings.teamApplicationsOpen || "false") === "true") {
+  const heroWaitlist = document.getElementById("heroWaitlistBtn");
+  const heroApply = document.getElementById("heroApplyBtn");
+  const accessSec = document.getElementById("join");
+  
+  if (heroWaitlist) heroWaitlist.style.display = "none";
+  if (heroApply)    heroApply.style.display = "inline-flex";
+  
+  if (accessSec) {
+    const heading = accessSec.querySelector("h2");
+    if (heading) heading.textContent = "Applications Now Open! 📝";
+    
+    // Hide countdown if apps are open
+    const cd = document.querySelector(".launch-grid");
+    if (cd) cd.hidden = true;
+    
+    const intro = accessSec.querySelector(".section-intro");
+    if (intro) {
+      intro.innerHTML = `<a href="/applications" class="cta" style="margin-top:1rem;">Go to Applications Portal &rarr;</a>`;
+    }
+  }
+}
 
 const showUpdateAppliedNotice = () => {
   const params = new URLSearchParams(window.location.search || "");

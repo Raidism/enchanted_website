@@ -3,9 +3,12 @@ const crypto = require("crypto");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
+const useragent = require("express-useragent"); // new dep
+const geoip = require("geoip-lite"); // new dep
 const { readJson, writeJson } = require("./store");
 
 const app = express();
+app.use(useragent.express());
 const PORT = Number(process.env.PORT || 8080);
 const SESSION_COOKIE = "imperium_sid";
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
@@ -143,6 +146,8 @@ const readSessions = () => readJson("sessions", {});
 const writeSessions = (sessions) => writeJson("sessions", sessions);
 const readHistory = () => readJson("login_history", []);
 const writeHistory = (history) => writeJson("login_history", history);
+const readAnalytics = () => readJson("analytics_logs", { clicks: [], visits: [] });
+const writeAnalytics = (data) => writeJson("analytics_logs", data);
 const readSettings = () => ({ ...defaultSiteSettings, ...readJson("site_settings", {}) });
 const writeSettings = (settings) => writeJson("site_settings", { ...defaultSiteSettings, ...settings });
 const readDeployStatus = () => ({ ...defaultDeployStatus, ...readJson("deploy_status", {}) });
@@ -197,6 +202,11 @@ const ensureSeedData = () => {
 
   if (!Array.isArray(readWaitlist())) {
     writeWaitlist([]);
+  }
+
+  const logs = readAnalytics();
+  if (!logs || !Array.isArray(logs.clicks)) {
+    writeAnalytics({ clicks: [], visits: [] });
   }
 
   if (!Array.isArray(readDeletedWaitlist())) {
@@ -742,6 +752,44 @@ app.get("/api/sessions/active", requireAuth, requireAdmin, (_req, res) => {
   });
 
   res.json({ success: true, activeUsers: map });
+});
+
+app.post("/api/analytics/track", (req, res) => {
+  const { event, label } = req.body || {};
+  if (!event) return res.json({ success: false });
+
+  const data = readAnalytics() || { clicks: [], visits: [] };
+  const entry = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    timestamp: nowIso(),
+    event: String(event).substring(0, 50),
+    label: String(label || "").substring(0, 100),
+    ip: String(req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0],
+    userAgent: req.useragent ? req.useragent.source : "unknown",
+  };
+  
+  if (req.useragent) {
+    entry.browser = req.useragent.browser;
+    entry.os = req.useragent.os;
+    entry.platform = req.useragent.platform;
+  }
+
+  // Ensure array exists
+  if (!Array.isArray(data.clicks)) {
+    data.clicks = [];
+  }
+  
+  data.clicks.push(entry);
+  // Optional: Rotate logs if too large
+  if (data.clicks.length > 5000) data.clicks = data.clicks.slice(-5000);
+  
+  writeAnalytics(data);
+  res.json({ success: true });
+});
+
+app.get("/api/analytics/clicks", requireAuth, requireAdmin, (_req, res) => {
+  const data = readAnalytics();
+  res.json({ success: true, clicks: data.clicks || [] });
 });
 
 app.get("/api/site-settings", (_req, res) => {

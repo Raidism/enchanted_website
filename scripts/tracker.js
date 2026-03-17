@@ -1,6 +1,7 @@
 (function () {
   const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
   const ANALYTICS_API_URL = `${API_BASE}/analytics`;
+  const TRACK_API_URL = `${API_BASE}/analytics/track`;
   const DEDUPE_WINDOW_MS = 2000;
   const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   const effectiveType = String(connection && connection.effectiveType ? connection.effectiveType : "").toLowerCase();
@@ -149,6 +150,14 @@
       entry,
     });
 
+    try {
+      fetch(TRACK_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ event: "view", label: path }),
+      }).catch(() => {});
+    } catch {}
+
     if (navigator.sendBeacon) {
       const blob = new Blob([analyticsPayload], { type: "application/json" });
       navigator.sendBeacon(ANALYTICS_API_URL, blob);
@@ -181,6 +190,27 @@
     }
 
     setTimeout(run, 350);
+  };
+
+  const trackEvent = (name, lbl) => {
+    try {
+      const body = JSON.stringify({ event: name, label: lbl || window.location.pathname });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(TRACK_API_URL, new Blob([body], { type: "application/json" }));
+      } else {
+        fetch(TRACK_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          keepalive: true,
+          body,
+        }).catch(() => {});
+      }
+    } catch {}
+  };
+
+  window.ImperiumTracker = {
+    track: scheduleTrack,
+    trackEvent,
   };
 
   if (document.readyState === "complete") {

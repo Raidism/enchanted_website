@@ -44,6 +44,39 @@ if (_aPmhName) _aPmhName.textContent = _appDisplayName;
 if (_aPmhRole) _aPmhRole.textContent = _appRoleLabel;
 if (_aPmhHero) { _aPmhHero.classList.remove("profile-pending"); _aPmhHero.classList.add("profile-ready"); }
 
+const teamAppsOpen = Boolean(siteSettings.teamApplicationsOpen);
+const teamAppsCard = document.getElementById("teamAppsCard");
+const teamAppsStatus = document.getElementById("teamAppsStatus");
+const teamAppsPlaceholder = document.getElementById("teamAppsPlaceholder");
+const teamAppsActive = document.querySelector(".team-apps-buttons") ? document.getElementById("teamAppsActive") : null;
+
+if (teamAppsOpen && teamAppsActive) {
+  if (teamAppsStatus) teamAppsStatus.textContent = "Open ✅";
+  if (teamAppsStatus) teamAppsStatus.style.color = "#4fd1c5";
+  if (teamAppsPlaceholder) teamAppsPlaceholder.style.display = "none";
+  teamAppsActive.style.display = "block";
+
+  const LINKS = {
+    security: "https://docs.google.com/forms/d/e/1FAIpQLSfrLZhVXPsgatwY1Z8tJWD6hEOjjKV1pgsFmb4CzriU0L9w7w/viewform?usp=header",
+    media: "https://docs.google.com/forms/d/e/1FAIpQLSdKxP_oa4nUAn496celU3lgHEgun1yyEZxtKH74cAirlDPuNg/viewform?usp=header",
+    volunteer: "https://docs.google.com/forms/d/e/1FAIpQLScwVL7U5YXXfua9w4qjaHA7oEIRHGRH9b5yjQXNUp8h3OfyoQ/viewform?usp=header",
+  };
+
+  teamAppsActive.querySelectorAll("a[data-team]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const team = btn.getAttribute("data-team");
+      const url = LINKS[team];
+      if (url) {
+        if (window.ImperiumTracker && window.ImperiumTracker.trackEvent) {
+          window.ImperiumTracker.trackEvent("team_application_click", team);
+        }
+        setTimeout(() => window.open(url, "_blank"), 100);
+      }
+    });
+  });
+}
+
 const welcomeText = document.getElementById("welcomeText");
 const logoutBtn   = document.getElementById("logoutBtn");
 const applicationsTrendChart = document.getElementById("applicationsTrendChart");

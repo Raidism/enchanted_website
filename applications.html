@@ -63,18 +63,27 @@
       <div class="apps-grid">
         <article class="app-card">
           <h3>Chair Applications</h3>
-          <p>Coming Soon</p>
+          <p class="app-status">Coming Soon</p>
           <div class="placeholder-box">No chair applications submitted yet.</div>
         </article>
         <article class="app-card">
           <h3>Delegate Applications</h3>
-          <p>Coming Soon</p>
+          <p class="app-status">Coming Soon</p>
           <div class="placeholder-box">No delegate applications submitted yet.</div>
         </article>
-        <article class="app-card">
+        <article class="app-card" id="teamAppsCard">
           <h3>Teams Applications</h3>
-          <p>Coming Soon</p>
-          <div class="placeholder-box">No teams applications submitted yet.</div>
+          <p class="app-status" id="teamAppsStatus">Coming Soon</p>
+          <div class="placeholder-box" id="teamAppsPlaceholder">No teams applications submitted yet.</div>
+          
+          <div id="teamAppsActive" style="display: none; padding-top: 1rem;">
+            <p style="margin-bottom: 1rem; font-size: 0.9rem; opacity: 0.8;">Select a role to apply for:</p>
+            <div class="team-apps-buttons" style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <a href="#" data-team="security" class="action-btn" style="text-align: center; justify-content: center;">Security Team 🛡️</a>
+              <a href="#" data-team="media" class="action-btn" style="text-align: center; justify-content: center;">Media Team 📸</a>
+              <a href="#" data-team="volunteer" class="action-btn" style="text-align: center; justify-content: center;">Volunteer Team 🤝</a>
+            </div>
+          </div>
         </article>
       </div>
     </section>
