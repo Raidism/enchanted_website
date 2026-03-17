@@ -146,8 +146,31 @@ const readSessions = () => readJson("sessions", {});
 const writeSessions = (sessions) => writeJson("sessions", sessions);
 const readHistory = () => readJson("login_history", []);
 const writeHistory = (history) => writeJson("login_history", history);
-const readAnalytics = () => readJson("analytics_logs", { clicks: [], visits: [] });
-const writeAnalytics = (data) => writeJson("analytics_logs", data);
+// Analytics storage is normalized to a simple array of log objects.
+// Older shapes like { clicks: [], visits: [] } are migrated in-memory.
+const readAnalytics = () => {
+  const raw = readJson("analytics_logs", null);
+  if (!raw) return [];
+
+  if (Array.isArray(raw)) {
+    return raw;
+  }
+
+  if (raw && Array.isArray(raw.clicks)) {
+    return raw.clicks;
+  }
+
+  if (raw && Array.isArray(raw.visits)) {
+    return raw.visits;
+  }
+
+  return [];
+};
+
+const writeAnalytics = (rows) => {
+  const normalized = Array.isArray(rows) ? rows : [];
+  return writeJson("analytics_logs", normalized);
+};
 const readSettings = () => ({ ...defaultSiteSettings, ...readJson("site_settings", {}) });
 const writeSettings = (settings) => writeJson("site_settings", { ...defaultSiteSettings, ...settings });
 const readDeployStatus = () => ({ ...defaultDeployStatus, ...readJson("deploy_status", {}) });
@@ -202,15 +225,11 @@ const ensureSeedData = () => {
     writeWaitlist([]);
   }
 
-  const logs = readAnalytics();
-  if (!logs || !Array.isArray(logs.clicks)) {
-    writeAnalytics({ clicks: [], visits: [] });
-  }
-
   if (!Array.isArray(readDeletedWaitlist())) {
     writeDeletedWaitlist([]);
   }
 
+  // Ensure analytics log file exists in normalized array format.
   if (!Array.isArray(readAnalytics())) {
     writeAnalytics([]);
   }
@@ -756,7 +775,7 @@ app.post("/api/analytics/track", (req, res) => {
   const { event, label } = req.body || {};
   if (!event) return res.json({ success: false });
 
-  const data = readAnalytics() || { clicks: [], visits: [] };
+  const clicks = readAnalytics();
   const entry = {
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     timestamp: nowIso(),
@@ -772,22 +791,19 @@ app.post("/api/analytics/track", (req, res) => {
     entry.platform = req.useragent.platform;
   }
 
-  // Ensure array exists
-  if (!Array.isArray(data.clicks)) {
-    data.clicks = [];
-  }
-  
-  data.clicks.push(entry);
+  clicks.push(entry);
   // Optional: Rotate logs if too large
-  if (data.clicks.length > 5000) data.clicks = data.clicks.slice(-5000);
-  
-  writeAnalytics(data);
+  if (clicks.length > 5000) {
+    clicks.splice(0, clicks.length - 5000);
+  }
+
+  writeAnalytics(clicks);
   res.json({ success: true });
 });
 
 app.get("/api/analytics/clicks", requireAuth, requireAdmin, (_req, res) => {
-  const data = readAnalytics();
-  res.json({ success: true, clicks: data.clicks || [] });
+  const clicks = readAnalytics();
+  res.json({ success: true, clicks });
 });
 
 app.get("/api/site-settings", (_req, res) => {
