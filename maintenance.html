@@ -109,6 +109,78 @@
       flex-wrap: wrap;
     }
 
+    .deploy-status {
+      margin-top: 1.1rem;
+      border: 1px solid rgba(213, 180, 101, 0.26);
+      background: rgba(9, 14, 11, 0.72);
+      border-radius: 14px;
+      padding: 0.78rem 0.82rem;
+    }
+
+    .deploy-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.8rem;
+      color: #dce6df;
+      font-size: 0.92rem;
+    }
+
+    .deploy-percent {
+      color: #f0daa0;
+      font-weight: 800;
+      font-size: 0.9rem;
+      letter-spacing: 0.03em;
+    }
+
+    .deploy-bar {
+      margin-top: 0.58rem;
+      height: 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(213, 180, 101, 0.28);
+      background: rgba(5, 8, 6, 0.85);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .deploy-bar-fill {
+      height: 100%;
+      width: 4%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #4d8b63 0%, #d5b465 62%, #f0daa0 100%);
+      transition: width 0.45s ease;
+      position: relative;
+    }
+
+    .deploy-bar-fill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, transparent 0%, rgba(255, 255, 255, 0.32) 48%, transparent 100%);
+      transform: translateX(-100%);
+      animation: shimmer 1.25s linear infinite;
+    }
+
+    .deploy-meta {
+      margin-top: 0.55rem;
+      font-size: 0.83rem;
+      color: #95ab9e;
+    }
+
+    .deploy-status[data-state="done"] .deploy-bar-fill {
+      background: linear-gradient(90deg, #4f9968 0%, #7bc180 55%, #b9dd9e 100%);
+    }
+
+    .deploy-status[data-state="failed"] .deploy-bar-fill {
+      background: linear-gradient(90deg, #9a473f 0%, #cf6953 55%, #f09a71 100%);
+    }
+
+    @keyframes shimmer {
+      to {
+        transform: translateX(100%);
+      }
+    }
+
     .btn {
       border: 1px solid rgba(213, 180, 101, 0.42);
       border-radius: 11px;
@@ -147,6 +219,17 @@
       <h1 id="maintenanceTitle">Imperium MUN is temporarily unavailable</h1>
       <p id="maintenanceMessage">We are performing scheduled maintenance. Please check back shortly.</p>
 
+      <div id="deployStatus" class="deploy-status" data-state="loading" aria-live="polite">
+        <div class="deploy-head">
+          <strong id="deployPhaseLabel">Preparing update...</strong>
+          <span id="deployPercent" class="deploy-percent">0%</span>
+        </div>
+        <div class="deploy-bar" role="progressbar" aria-label="Deployment progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div id="deployBarFill" class="deploy-bar-fill"></div>
+        </div>
+        <p id="deployMeta" class="deploy-meta">Checking deployment status from server...</p>
+      </div>
+
       <div class="actions">
         <a class="btn" href="/">Refresh</a>
         <a class="btn primary" href="/access">Admin and Team Access</a>
@@ -158,6 +241,41 @@
 
   <script>
     (async function () {
+      var deployStatusEl = document.getElementById("deployStatus");
+      var deployPhaseLabel = document.getElementById("deployPhaseLabel");
+      var deployPercentEl = document.getElementById("deployPercent");
+      var deployBarFill = document.getElementById("deployBarFill");
+      var deployMeta = document.getElementById("deployMeta");
+      var progressbar = deployStatusEl ? deployStatusEl.querySelector('[role="progressbar"]') : null;
+
+      var updateProgressUi = function (phaseLabel, progress, state, meta) {
+        var safeProgress = Math.max(0, Math.min(100, Number(progress) || 0));
+        if (deployPhaseLabel) deployPhaseLabel.textContent = phaseLabel;
+        if (deployPercentEl) deployPercentEl.textContent = safeProgress + "%";
+        if (deployBarFill) deployBarFill.style.width = safeProgress + "%";
+        if (progressbar) progressbar.setAttribute("aria-valuenow", String(safeProgress));
+        if (deployMeta && meta) deployMeta.textContent = meta;
+        if (deployStatusEl) deployStatusEl.setAttribute("data-state", state || "loading");
+      };
+
+      var phaseLabelMap = {
+        idle: "Waiting for deployment...",
+        starting: "Preparing update...",
+        fetching: "Downloading latest version...",
+        syncing: "Applying repository changes...",
+        installing: "Installing dependencies...",
+        restarting: "Restarting website service...",
+        "restart-skipped": "Finishing update...",
+        completed: "Update applied successfully",
+        failed: "Update failed",
+      };
+
+      var redirectToHomeWithNotice = function () {
+        setTimeout(function () {
+          window.location.href = "/?update=applied";
+        }, 900);
+      };
+
       try {
         const response = await fetch("/api/site-settings", { method: "GET", cache: "no-store" });
         if (!response.ok) return;
@@ -172,6 +290,46 @@
       } catch (_) {
         // Keep the static fallback message when settings are unavailable.
       }
+
+      var pollDeployStatus = async function () {
+        try {
+          var response = await fetch("/api/deploy-status", { method: "GET", cache: "no-store" });
+          if (!response.ok) {
+            updateProgressUi("Waiting for deployment...", 8, "loading", "Deployment status endpoint is not reachable yet.");
+            return;
+          }
+
+          var payload = await response.json();
+          var status = payload && payload.status ? payload.status : null;
+          if (!status) {
+            updateProgressUi("Waiting for deployment...", 8, "loading", "No status data yet.");
+            return;
+          }
+
+          var phase = String(status.phase || "idle").trim().toLowerCase();
+          var progress = Number(status.progress || 0);
+          var label = phaseLabelMap[phase] || "Applying update...";
+          var state = "loading";
+          if (phase === "completed") state = "done";
+          if (phase === "failed") state = "failed";
+
+          var meta = status.message || "Updating website...";
+          if (phase === "completed") {
+            meta = (status.releaseTag ? "Release: " + status.releaseTag + " • " : "") + "Redirecting back to website...";
+          }
+
+          updateProgressUi(label, progress, state, meta);
+
+          if (phase === "completed") {
+            redirectToHomeWithNotice();
+          }
+        } catch (_) {
+          updateProgressUi("Updating website...", 12, "loading", "Deploy status temporarily unavailable. Retrying...");
+        }
+      };
+
+      pollDeployStatus();
+      setInterval(pollDeployStatus, 2500);
     })();
   </script>
 </body>

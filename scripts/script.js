@@ -197,6 +197,54 @@ const launchDate = Number.isNaN(parsedLaunchDate.getTime())
 
 applyAnnouncementFromSettings(siteSettings);
 
+const showUpdateAppliedNotice = () => {
+  const params = new URLSearchParams(window.location.search || "");
+  if (params.get("update") !== "applied") {
+    return;
+  }
+
+  const notice = document.createElement("div");
+  notice.setAttribute("role", "status");
+  notice.textContent = "Update applied successfully. You are now on the latest version.";
+  Object.assign(notice.style, {
+    position: "fixed",
+    right: "1rem",
+    bottom: "1rem",
+    zIndex: "9999",
+    maxWidth: "min(92vw, 460px)",
+    padding: "0.7rem 0.85rem",
+    borderRadius: "12px",
+    border: "1px solid rgba(213, 180, 101, 0.5)",
+    background: "rgba(8, 14, 10, 0.94)",
+    color: "#dcecdc",
+    boxShadow: "0 14px 34px rgba(0,0,0,0.34)",
+    fontWeight: "600",
+    fontSize: "0.88rem",
+    opacity: "0",
+    transform: "translateY(10px)",
+    transition: "opacity .3s ease, transform .3s ease",
+  });
+  document.body.appendChild(notice);
+
+  requestAnimationFrame(() => {
+    notice.style.opacity = "1";
+    notice.style.transform = "translateY(0)";
+  });
+
+  setTimeout(() => {
+    notice.style.opacity = "0";
+    notice.style.transform = "translateY(8px)";
+    setTimeout(() => notice.remove(), 320);
+  }, 4200);
+
+  params.delete("update");
+  const nextQuery = params.toString();
+  const nextUrl = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ""}${window.location.hash || ""}`;
+  window.history.replaceState({}, "", nextUrl);
+};
+
+showUpdateAppliedNotice();
+
 const conferenceDescription = document.getElementById("conferenceDescription");
 if (conferenceDescription && siteSettings.conferenceDescription) {
   conferenceDescription.textContent = siteSettings.conferenceDescription;

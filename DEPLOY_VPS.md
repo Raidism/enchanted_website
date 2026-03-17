@@ -98,6 +98,17 @@ If you want it to restart PM2 automatically after update:
 ./update-vps.sh --restart
 ```
 
+During `update-vps.sh`, the script now automatically:
+- Turns `maintenanceMode` on
+- Writes live deployment progress to `server/data/deploy_status.json`
+- Restarts PM2 (when `--restart` is used)
+- Turns maintenance off when complete
+
+What visitors see:
+- The `/maintenance` page shows a live progress bar + deployment phase
+- When deployment completes, the page auto-redirects to `/` with an "update applied" confirmation
+- If deployment fails, maintenance stays on and the maintenance message indicates a failed update
+
 Defaults used by the script:
 - `APP_DIR=/var/www/imperium_website`
 - `REMOTE=origin`

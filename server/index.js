@@ -69,6 +69,20 @@ const defaultSiteSettings = {
   instagramFollowing: 4,
 };
 
+const defaultDeployStatus = {
+  active: false,
+  phase: "idle",
+  message: "No deployment in progress.",
+  progress: 0,
+  startedAt: "",
+  updatedAt: "",
+  completedAt: "",
+  failedAt: "",
+  target: "",
+  commit: "",
+  releaseTag: "",
+};
+
 const DEFAULT_USERS = [
   { username: "admin", password: "Soliman123@", role: "admin", name: "Adham Soliman", photo: "assets/adham pic.jpg" },
   { username: "everyone", password: "123", role: "member", name: "", photo: "" },
@@ -131,6 +145,8 @@ const readHistory = () => readJson("login_history", []);
 const writeHistory = (history) => writeJson("login_history", history);
 const readSettings = () => ({ ...defaultSiteSettings, ...readJson("site_settings", {}) });
 const writeSettings = (settings) => writeJson("site_settings", { ...defaultSiteSettings, ...settings });
+const readDeployStatus = () => ({ ...defaultDeployStatus, ...readJson("deploy_status", {}) });
+const writeDeployStatus = (status) => writeJson("deploy_status", { ...defaultDeployStatus, ...status });
 const readWaitlist = () => readJson("waitlist_entries", []);
 const writeWaitlist = (rows) => writeJson("waitlist_entries", rows.slice(0, 3000));
 const readDeletedWaitlist = () => readJson("waitlist_deleted", []);
@@ -172,6 +188,11 @@ const ensureSeedData = () => {
 
   if (!Array.isArray(readAnalytics())) {
     writeAnalytics([]);
+  }
+
+  const deployStatus = readJson("deploy_status", null);
+  if (!deployStatus || typeof deployStatus !== "object") {
+    writeDeployStatus(defaultDeployStatus);
   }
 };
 
@@ -686,6 +707,10 @@ app.get("/api/sessions/active", requireAuth, requireAdmin, (_req, res) => {
 
 app.get("/api/site-settings", (_req, res) => {
   res.json({ success: true, settings: readSettings() });
+});
+
+app.get("/api/deploy-status", (_req, res) => {
+  res.json({ success: true, status: readDeployStatus() });
 });
 
 app.put("/api/site-settings", requireAuth, requireAdmin, (req, res) => {
