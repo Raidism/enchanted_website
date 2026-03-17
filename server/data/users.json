@@ -1,0 +1,74 @@
+[
+  {
+    "username": "admin",
+    "password": "Soliman123@",
+    "role": "admin",
+    "name": "Adham Soliman",
+    "photo": "assets/adham pic.jpg",
+    "passwordHash": "$2a$10$iyn8XjUXTBBsuvmYfRftheC0HN/e/ps5pBkBcMg3y1oWQ0NX6yf8u",
+    "disabled": false
+  },
+  {
+    "username": "everyone",
+    "password": "123",
+    "role": "member",
+    "name": "",
+    "photo": "",
+    "passwordHash": "$2a$10$KnKXTduZ.0KZII95w4a/3.X5WqhSbfrdqiByrbnY5ZL7kUXnIcATm",
+    "disabled": false
+  },
+  {
+    "username": "ln-obidat",
+    "password": "3004",
+    "role": "admin",
+    "name": "Leen Obeidat",
+    "photo": "assets/under secretary general.png",
+    "passwordHash": "$2a$10$OENVXjURAvtzyT0RS6sjxukP3uoLQg6WGmzo8bqz/wdYhCaJ3A98q",
+    "disabled": false
+  },
+  {
+    "username": "AhmadPh",
+    "password": "Ahmadggg",
+    "role": "admin",
+    "name": "Ahmed Pharaon",
+    "photo": "assets/secretary general.png",
+    "passwordHash": "$2a$10$HW4YkQ2vKw2BRbK4Tt4Da.CXkbDmoyeYw41Q1CmsKRCLn6SoATlW6",
+    "disabled": false
+  },
+  {
+    "username": "Toleenkmedia",
+    "password": "Totakordi10",
+    "role": "member",
+    "name": "Toleen Kurdi",
+    "photo": "assets/head of media.png",
+    "passwordHash": "$2a$10$5.xxZIzMBilBcAzBTwNGTOHPT9hQqz1XcGDQz0hxe8pVYk5vWJb4i",
+    "disabled": false
+  },
+  {
+    "username": "OmarAlhomran",
+    "password": "0987654321",
+    "role": "member",
+    "name": "Omar Alhomran",
+    "photo": "assets/Head of DA.png",
+    "passwordHash": "$2a$10$hx7.l3Nqw6s1v83xiEorSud04p9UhOcPal4VbQIE0T.Rm7mpvXMh2",
+    "disabled": false
+  },
+  {
+    "username": "Yamendalegend",
+    "password": "YamenloveAdham",
+    "role": "member",
+    "name": "YAMEN ELATTAL",
+    "photo": "assets/HEAD OF CA.png",
+    "passwordHash": "$2a$10$47oFLQbUDbZ31srYFDySLeZEzr0OXwfNNrioIjWVqniMpJ7wGhMqW",
+    "disabled": false
+  },
+  {
+    "username": "joumohd08",
+    "password": "jojonana1811",
+    "role": "admin",
+    "name": "Joumana Mohamed",
+    "photo": "assets/Joumana Mohamed .png",
+    "passwordHash": "$2a$10$Wi0EHPrNTT2dBS3MVYcU8esVlnP9k5YHZ0.sm5dZhohkmriESTiUq",
+    "disabled": false
+  }
+]

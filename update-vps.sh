@@ -7,12 +7,13 @@ set -euo pipefail
 #   ./update-vps.sh --restart
 #
 # Optional environment variables:
-#   APP_DIR=/var/www/imperium_website BRANCH=main REMOTE=origin PM2_APP=imperium-web ./update-vps.sh --restart
+#   APP_DIR=/var/www/imperium_website BRANCH=main REMOTE=origin PM2_APP=imperium_website BACKUP_RETENTION_DAYS=7 ./update-vps.sh --restart
 
 APP_DIR="${APP_DIR:-/var/www/imperium_website}"
 BRANCH="${BRANCH:-main}"
 REMOTE="${REMOTE:-origin}"
-PM2_APP="${PM2_APP:-imperium-web}"
+PM2_APP="${PM2_APP:-imperium_website}"
+BACKUP_RETENTION_DAYS="${BACKUP_RETENTION_DAYS:-7}"
 
 DO_RESTART="false"
 if [[ "${1:-}" == "--restart" ]]; then
@@ -25,6 +26,15 @@ if [[ ! -d "$APP_DIR/.git" ]]; then
 fi
 
 cd "$APP_DIR"
+
+BACKUP_ROOT="$APP_DIR/server"
+BACKUP_DIR="$BACKUP_ROOT/data_backup_$(date +"%Y-%m-%d_%H-%M-%S")"
+
+echo "==> Backing up server data to $BACKUP_DIR"
+mkdir -p "$BACKUP_DIR"
+if [[ -d "$APP_DIR/server/data" ]]; then
+  cp -a "$APP_DIR/server/data/." "$BACKUP_DIR/"
+fi
 
 DEPLOY_TARGET="$REMOTE/$BRANCH"
 DEPLOY_STARTED_AT="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
@@ -144,7 +154,13 @@ if [[ "$DO_RESTART" == "true" ]]; then
   if command -v pm2 >/dev/null 2>&1; then
     echo "==> Restarting PM2 app: $PM2_APP"
     set_deploy_status "true" "restarting" "90" "Restarting application service..." "" "" "" ""
-    pm2 restart "$PM2_APP"
+    if pm2 describe "$PM2_APP" >/dev/null 2>&1; then
+      pm2 restart "$PM2_APP"
+    else
+      echo "==> PM2 app $PM2_APP not found, starting new process from server/index.js"
+      pm2 start server/index.js --name "$PM2_APP"
+    fi
+    pm2 save >/dev/null 2>&1 || true
   else
     echo "WARNING: PM2 not found; skipped restart."
     set_deploy_status "true" "restart-skipped" "90" "PM2 not found, restart skipped." "" "" "" ""
@@ -159,6 +175,9 @@ LATEST_SUBJECT="$(git log -1 --pretty=%s)"
 RELEASE_TAG="$LATEST_COMMIT - $LATEST_SUBJECT"
 set_deploy_status "false" "completed" "100" "Deployment completed successfully." "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" "" "$LATEST_COMMIT" "$RELEASE_TAG"
 set_maintenance_state "false" "Imperium MUN is temporarily under maintenance. Please check back soon."
+
+echo "==> Cleaning old backups (older than ${BACKUP_RETENTION_DAYS} days)"
+find "$BACKUP_ROOT" -maxdepth 1 -type d -name 'data_backup_*' -mtime "+${BACKUP_RETENTION_DAYS}" -exec rm -rf {} + 2>/dev/null || true
 
 echo ""
 echo "✅ VPS updated: $(date)"
