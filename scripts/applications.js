@@ -30,8 +30,8 @@ const _APP_PROFILE_FALLBACKS = {
   },
 };
 const _appProfileFallback = _APP_PROFILE_FALLBACKS[_appProfileKey] || {};
-const _appDisplayName = String(currentUser.name || _appProfileFallback.name || currentUser.username || "User");
-const _appProfilePhoto = String(currentUser.photo || _appProfileFallback.photo || "assets/imperium mun logo.jpg");
+const _appDisplayName = String(_appProfileFallback.name || currentUser.name || currentUser.username || "User");
+const _appProfilePhoto = String(_appProfileFallback.photo || currentUser.photo || "assets/imperium mun logo.jpg");
 const _appRoleLabel   = _appRoleLabels[_appProfileKey] || (currentUser.role === "admin" ? "Admin" : "Member");
 
 // Populate mini hero

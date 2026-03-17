@@ -42,8 +42,8 @@
 
     return {
       ...user,
-      name: String(user.name || mapped.name || ""),
-      photo: String(user.photo || mapped.photo || ""),
+      name: String(mapped.name || user.name || ""),
+      photo: String(mapped.photo || user.photo || ""),
     };
   };
 

@@ -168,8 +168,8 @@ const resolvedDashboardProfile = (() => {
   const mappedFallback = DASHBOARD_PROFILE_FALLBACKS[profileKey] || {};
 
   return {
-    name: String(currentUser.name || mappedName || mappedSpotlight.name || mappedFallback.name || currentUser.username || "User"),
-    photo: String(currentUser.photo || mappedSpotlight.photo || mappedFallback.photo || "assets/imperium mun logo.jpg"),
+    name: String(mappedName || mappedSpotlight.name || mappedFallback.name || currentUser.name || currentUser.username || "User"),
+    photo: String(mappedSpotlight.photo || mappedFallback.photo || currentUser.photo || "assets/imperium mun logo.jpg"),
     role: String(mappedSpotlight.role || mappedFallback.role || (isAdmin ? "Admin" : "Member")),
   };
 })();

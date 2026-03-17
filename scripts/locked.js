@@ -67,9 +67,19 @@ const pmhPhoto = document.getElementById("pmhPhoto");
 const pmhName = document.getElementById("pmhName");
 const pmhRole = document.getElementById("pmhRole");
 const pmhHero = document.getElementById("pageMiniHero");
-const displayName = currentUser.name || currentUser.username;
+
+const PROFILE_FALLBACKS = {
+  joumohd08: {
+    name: "Joumana Mohamed",
+    photo: "assets/Joumana Mohamed .png",
+  },
+};
+const profileFallback = PROFILE_FALLBACKS[String(currentUser.username || "").trim().toLowerCase()] || {};
+const displayName = profileFallback.name || currentUser.name || currentUser.username;
+const displayPhoto = profileFallback.photo || currentUser.photo || "assets/imperium mun logo.jpg";
+
 if (pmhPhoto) {
-  pmhPhoto.src = currentUser.photo || "assets/imperium mun logo.jpg";
+  pmhPhoto.src = displayPhoto;
   pmhPhoto.alt = displayName;
 }
 if (pmhName) pmhName.textContent = displayName;

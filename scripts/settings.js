@@ -32,8 +32,8 @@ const PROFILE_FALLBACKS = {
   },
 };
 const profileFallback = PROFILE_FALLBACKS[profileKey] || {};
-const profileDisplayName = String(currentUser.name || profileFallback.name || currentUser.username || "User");
-const profilePhotoSrc = String(currentUser.photo || profileFallback.photo || "assets/imperium mun logo.jpg");
+const profileDisplayName = String(profileFallback.name || currentUser.name || currentUser.username || "User");
+const profilePhotoSrc = String(profileFallback.photo || currentUser.photo || "assets/imperium mun logo.jpg");
 
 const pmhPhoto = document.getElementById("pmhPhoto");
 const pmhName = document.getElementById("pmhName");
