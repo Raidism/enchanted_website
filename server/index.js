@@ -61,6 +61,7 @@ const defaultSiteSettings = {
   maintenanceMessage: "Imperium MUN is temporarily under maintenance. Please check back soon.",
   launchDate: "2026-03-28T00:00:00+03:00",
   announcement: "",
+  teamApplicationsOpen: false,
   applicationsOpen: false,
   conferenceDate: "2026-05-15T09:00:00+03:00",
   locationText: "Riyadh, Saudi Arabia",
@@ -832,6 +833,7 @@ app.put("/api/site-settings", requireAuth, requireAdmin, (req, res) => {
   next.maintenanceMessage = String(next.maintenanceMessage || defaultSiteSettings.maintenanceMessage).trim() || defaultSiteSettings.maintenanceMessage;
   next.launchDate = String(next.launchDate || defaultSiteSettings.launchDate).trim();
   next.announcement = String(next.announcement || "").trim();
+  next.teamApplicationsOpen = Boolean(next.teamApplicationsOpen);
   next.applicationsOpen = Boolean(next.applicationsOpen);
   next.conferenceDate = String(next.conferenceDate || defaultSiteSettings.conferenceDate).trim();
   next.locationText = String(next.locationText || defaultSiteSettings.locationText).trim() || defaultSiteSettings.locationText;

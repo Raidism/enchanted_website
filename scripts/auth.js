@@ -122,6 +122,7 @@
       maintenanceMessage: "Imperium MUN is temporarily under maintenance. Please check back soon.",
       launchDate: "2026-03-28T00:00:00+03:00",
       announcement: "",
+      teamApplicationsOpen: false,
       applicationsOpen: false,
       conferenceDate: "2026-05-15T09:00:00+03:00",
       locationText: "Riyadh, Saudi Arabia",

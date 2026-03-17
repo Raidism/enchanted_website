@@ -1,4 +1,4 @@
-﻿const yearSpan = document.getElementById("year");
+const yearSpan = document.getElementById("year");
 if (yearSpan) {
   yearSpan.textContent = new Date().getFullYear();
 }
@@ -240,6 +240,7 @@ if (String(siteSettings.teamApplicationsOpen || "false") === "true") {
   }
   if (heroApply) {
     heroApply.style.display = "inline-flex";
+    heroApply.textContent = "Apply Now for Teams 📝";
     if (typeof gsap !== "undefined") {
       gsap.from(heroApply, {
         opacity: 0,
