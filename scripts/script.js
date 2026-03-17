@@ -8,6 +8,9 @@ const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBas
 const WAITLIST_API_URL = `${API_BASE}/waitlist`;
 const INSTAGRAM_API_URL = `${API_BASE}/instagram`;
 const INSTAGRAM_USERNAME = "imperiummun26";
+const _connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+const _effectiveType = String(_connection && _connection.effectiveType ? _connection.effectiveType : "").toLowerCase();
+const _isConstrainedNetwork = Boolean(_connection && _connection.saveData) || /(^|[^a-z])2g|3g([^a-z]|$)/.test(_effectiveType);
 const newWaitlistId = () => `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 const WAITLIST_LOCAL_BACKUP_KEY = "imperium_waitlist_local_backup";
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -169,11 +172,42 @@ const syncInstagramStats = async () => {
   }
 };
 
-syncInstagramStats();
+const scheduleInstagramSync = () => {
+  const manualStats = getManualInstagramStats();
+  if (manualStats) {
+    applyInstagramStats(manualStats);
+    return;
+  }
+
+  if (_isConstrainedNetwork) {
+    const settings = getSiteSettings();
+    applyInstagramStats({
+      followers: Number(settings.instagramFollowers) || fallbackSiteSettings.instagramFollowers,
+      posts: Number(settings.instagramPosts) || fallbackSiteSettings.instagramPosts,
+      following: Number(settings.instagramFollowing) || fallbackSiteSettings.instagramFollowing,
+      stale: true,
+      source: "fallback",
+    });
+    setInstagramStatus("Weak network mode: showing cached Instagram stats.", "stale");
+    return;
+  }
+
+  const run = () => {
+    syncInstagramStats();
+  };
+
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(run, { timeout: 2200 });
+  } else {
+    setTimeout(run, 550);
+  }
+};
+
+scheduleInstagramSync();
 
 window.addEventListener("storage", (event) => {
   if (event.key === SITE_SETTINGS_STORAGE_KEY) {
-    syncInstagramStats();
+    scheduleInstagramSync();
     let nextSettings = null;
     try {
       nextSettings = event.newValue ? JSON.parse(event.newValue) : null;
@@ -186,7 +220,7 @@ window.addEventListener("storage", (event) => {
 
 window.addEventListener("imperium:site-settings-updated", (event) => {
   const detailSettings = event && event.detail && event.detail.settings ? event.detail.settings : getSiteSettings();
-  syncInstagramStats();
+  scheduleInstagramSync();
   applyAnnouncementFromSettings(detailSettings);
 });
 

@@ -6,8 +6,11 @@
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const isTouchDevice = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const effectiveType = String(connection && connection.effectiveType ? connection.effectiveType : "").toLowerCase();
+  const isConstrainedNetwork = Boolean(connection && connection.saveData) || /(^|[^a-z])2g|3g([^a-z]|$)/.test(effectiveType);
 
-  if (prefersReducedMotion) {
+  if (prefersReducedMotion || isConstrainedNetwork) {
     document.querySelectorAll(".reveal").forEach((el) => el.classList.add("show"));
     return;
   }
