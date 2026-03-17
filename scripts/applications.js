@@ -21,6 +21,7 @@ const _appRoleLabels = {
   "ln-obidat":    "Under Secretary General",
   ahmadph:        "Secretary General",
   toleenkmedia:   "Head of Media",
+  joumohd08:      "Head of HR",
 };
 const _appDisplayName = currentUser.name || currentUser.username;
 const _appRoleLabel   = _appRoleLabels[_appProfileKey] || (currentUser.role === "admin" ? "Admin" : "Member");

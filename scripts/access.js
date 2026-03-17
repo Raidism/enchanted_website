@@ -43,6 +43,11 @@ const SPECIAL_WELCOME_USERS = {
     title: "Welcome, YAMEN ELATTAL",
     message: "Head of CA access granted. Loading your workspace...",
   },
+  joumohd08: {
+    photo: "assets/Joumana Mohamed .png",
+    title: "Welcome, Joumana Mohamed",
+    message: "Head of HR access granted. Loading your dashboard...",
+  },
 };
 
 const currentUser = window.ImperiumAuth.getCurrentUser();

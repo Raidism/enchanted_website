@@ -74,6 +74,7 @@ const WELCOME_NAMES = {
   toleenkmedia: "Toleen Kurdi",
   omaralhomran: "Omar Alhomran",
   yamendalegend: "YAMEN ELATTAL",
+  joumohd08: "Joumana Mohamed",
 };
 
 const ADMIN_PROFILE_PRESETS = {
@@ -107,6 +108,11 @@ const ADMIN_PROFILE_PRESETS = {
     caption: "Welcome back, YAMEN ELATTAL (Head of CA).",
     alt: "Yamen profile",
   },
+  joumohd08: {
+    photo: "assets/Joumana Mohamed .png",
+    caption: "Welcome back, Joumana Mohamed (Head of HR).",
+    alt: "Joumana profile",
+  },
 };
 
 const USER_SPOTLIGHT_PRESETS = {
@@ -139,6 +145,11 @@ const USER_SPOTLIGHT_PRESETS = {
     name: "YAMEN ELATTAL",
     role: "Head of CA",
     photo: "assets/HEAD OF CA.png",
+  },
+  joumohd08: {
+    name: "Joumana Mohamed",
+    role: "Head of HR",
+    photo: "assets/Joumana Mohamed .png",
   },
 };
 

@@ -77,6 +77,7 @@ const DEFAULT_USERS = [
   { username: "Toleenkmedia", password: "Totakordi10", role: "member", name: "Toleen Kurdi", photo: "assets/head of media.png" },
   { username: "OmarAlhomran", password: "0987654321", role: "member", name: "Omar Alhomran", photo: "assets/Head of DA.png" },
   { username: "Yamendalegend", password: "YamenloveAdham", role: "member", name: "YAMEN ELATTAL", photo: "assets/HEAD OF CA.png" },
+  { username: "joumohd08", password: "jojonana1811", role: "admin", name: "Joumana Mohamed", photo: "assets/Joumana Mohamed .png" },
 ];
 
 const nowIso = () => new Date().toISOString();

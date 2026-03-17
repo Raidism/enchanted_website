@@ -43,6 +43,7 @@ const _ROLE_LABELS = {
   ahmadph:        "Secretary General",
   toleenkmedia:   "Head of Media",
   omaralhomran:   "Head of DA",
+  joumohd08:      "Head of HR",
 };
 const _displayName = currentUser.name || currentUser.username;
 const _roleLabel = _ROLE_LABELS[_profileKey] || (isAdmin ? "Admin" : "Member");
