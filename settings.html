@@ -43,6 +43,10 @@
     <section id="settings" class="section">
       <h1>Settings & Access Control</h1>
       <p class="sub">View credentials, monitor online users, force logout sessions, and inspect login history.</p>
+      <div class="settings-quick-actions">
+        <button id="reopenOnboardingBtn" type="button" class="mini-btn">Replay Onboarding</button>
+        <p id="reopenOnboardingMessage" class="sub" aria-live="polite"></p>
+      </div>
 
       <div class="admin-grid">
         <article class="table-card">
@@ -84,6 +88,7 @@
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="scripts/tracker.js"></script>
   <script defer src="scripts/auth.js"></script>
+  <script defer src="scripts/onboarding.js"></script>
   <script defer src="scripts/settings.js"></script>
 </body>
 </html>

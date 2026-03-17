@@ -153,6 +153,18 @@ const USER_SPOTLIGHT_PRESETS = {
   },
 };
 
+const maybeShowOnboarding = () => {
+  if (!window.ImperiumOnboarding || typeof window.ImperiumOnboarding.maybeShow !== "function") {
+    return;
+  }
+
+  setTimeout(() => {
+    window.ImperiumOnboarding.maybeShow(currentUser);
+  }, 380);
+};
+
+maybeShowOnboarding();
+
 const applyMemberLocks = () => {
   if (isAdmin) return;
 

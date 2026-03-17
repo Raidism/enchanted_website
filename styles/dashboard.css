@@ -355,6 +355,203 @@ body::after {
   font-weight: 600;
 }
 
+.settings-quick-actions {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  margin: 0.6rem 0 1rem;
+  flex-wrap: wrap;
+}
+
+.onb-lock-scroll {
+  overflow: hidden;
+}
+
+.onb-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+}
+
+.onb-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 8, 6, 0.6);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.onb-modal {
+  position: relative;
+  width: min(620px, 92vw);
+  border-radius: 20px;
+  border: 1px solid rgba(213, 180, 101, 0.24);
+  background: linear-gradient(170deg, rgba(12, 19, 14, 0.95), rgba(8, 12, 10, 0.94));
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.48);
+  padding: 1.1rem 1.15rem;
+  transform: translateY(10px) scale(0.98);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.onb-overlay.is-open .onb-backdrop {
+  opacity: 1;
+}
+
+.onb-overlay.is-open .onb-modal {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.onb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.onb-counter {
+  margin: 0;
+  color: #f0daa0;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.onb-dots {
+  display: inline-flex;
+  gap: 0.34rem;
+  align-items: center;
+}
+
+.onb-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(158, 176, 163, 0.45);
+  transition: transform 0.22s ease, background-color 0.22s ease;
+}
+
+.onb-dot.is-active {
+  background: #d5b465;
+  transform: scale(1.22);
+}
+
+.onb-step-wrap {
+  margin-top: 0.95rem;
+  min-height: 160px;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.onb-step-wrap.is-changing {
+  opacity: 0;
+  transform: translateX(8px);
+}
+
+.onb-title {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  font-size: clamp(1.2rem, 2.4vw, 1.62rem);
+  color: #f2dfad;
+  line-height: 1.2;
+}
+
+.onb-desc {
+  margin: 0.56rem 0 0;
+  color: #d8e3db;
+  line-height: 1.62;
+  font-size: 0.96rem;
+}
+
+.onb-tip {
+  margin: 0.55rem 0 0;
+  color: #9eb0a3;
+  font-size: 0.84rem;
+}
+
+.onb-actions {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.onb-actions-right {
+  display: inline-flex;
+  gap: 0.55rem;
+}
+
+.onb-btn {
+  border-radius: 11px;
+  border: 1px solid transparent;
+  padding: 0.56rem 0.88rem;
+  font-weight: 700;
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+
+.onb-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.onb-btn-ghost {
+  border-color: rgba(158, 176, 163, 0.4);
+  background: rgba(19, 28, 21, 0.85);
+  color: #cedace;
+}
+
+.onb-btn-subtle {
+  border-color: rgba(158, 176, 163, 0.35);
+  background: rgba(17, 25, 19, 0.9);
+  color: #d9e5dc;
+}
+
+.onb-btn-primary {
+  border-color: rgba(213, 180, 101, 0.84);
+  background: linear-gradient(150deg, #f7e9ba, #d5b465 58%, #bb9034);
+  color: #111a13;
+}
+
+@media (max-width: 680px) {
+  .onb-overlay {
+    place-items: stretch;
+  }
+
+  .onb-modal {
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    padding: 1rem;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .onb-step-wrap {
+    min-height: 0;
+    align-self: center;
+  }
+
+  .onb-actions {
+    gap: 0.5rem;
+  }
+
+  .onb-btn {
+    width: 100%;
+  }
+
+  .onb-actions-right {
+    flex: 1;
+  }
+}
+
 /* ── Note submission section ──────────────────────────── */
 .submit-note-section {
   margin-bottom: 1.6rem;

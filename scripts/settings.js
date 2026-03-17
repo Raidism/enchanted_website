@@ -18,6 +18,8 @@ const usersMessage = document.getElementById("settingsUsersMessage");
 const onlineList = document.getElementById("settingsOnlineList");
 const historyList = document.getElementById("settingsHistoryList");
 const historyPagination = document.getElementById("settingsHistoryPagination");
+const reopenOnboardingBtn = document.getElementById("reopenOnboardingBtn");
+const reopenOnboardingMessage = document.getElementById("reopenOnboardingMessage");
 const HISTORY_PER_PAGE = 10;
 const PAGE_WINDOW = 9;
 let currentHistoryPage = 1;
@@ -84,6 +86,25 @@ if (logoutBtn) {
     logoutBtn.classList.add("is-loading");
     logoutBtn.disabled = true;
     showLogoutTransition();
+  });
+}
+
+if (reopenOnboardingBtn) {
+  reopenOnboardingBtn.addEventListener("click", () => {
+    if (!window.ImperiumOnboarding || typeof window.ImperiumOnboarding.open !== "function") {
+      if (reopenOnboardingMessage) {
+        reopenOnboardingMessage.textContent = "Onboarding is unavailable right now.";
+      }
+      return;
+    }
+
+    window.ImperiumOnboarding.open(currentUser, { force: true });
+    if (reopenOnboardingMessage) {
+      reopenOnboardingMessage.textContent = "Onboarding opened.";
+      setTimeout(() => {
+        reopenOnboardingMessage.textContent = "";
+      }, 2800);
+    }
   });
 }
 
