@@ -66,6 +66,7 @@ function safeBackFromCurrent() {
 const pmhPhoto = document.getElementById("pmhPhoto");
 const pmhName = document.getElementById("pmhName");
 const pmhRole = document.getElementById("pmhRole");
+const pmhHero = document.getElementById("pageMiniHero");
 const displayName = currentUser.name || currentUser.username;
 if (pmhPhoto) {
   pmhPhoto.src = currentUser.photo || "assets/imperium mun logo.jpg";
@@ -73,6 +74,10 @@ if (pmhPhoto) {
 }
 if (pmhName) pmhName.textContent = displayName;
 if (pmhRole) pmhRole.textContent = currentUser.role === "admin" ? "Admin" : "Member";
+if (pmhHero) {
+  pmhHero.classList.remove("profile-pending");
+  pmhHero.classList.add("profile-ready");
+}
 
 const logoutBtn = document.getElementById("logoutBtn");
 if (logoutBtn) {

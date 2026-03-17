@@ -363,6 +363,17 @@ body::after {
   flex-wrap: wrap;
 }
 
+.profile-pending {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.profile-ready {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.18s ease;
+}
+
 .onb-lock-scroll {
   overflow: hidden;
 }

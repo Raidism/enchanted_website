@@ -60,9 +60,11 @@ const _roleLabel = _ROLE_LABELS[_profileKey] || (isAdmin ? "Admin" : "Member");
 const _pmhPhoto = document.getElementById("pmhPhoto");
 const _pmhName  = document.getElementById("pmhName");
 const _pmhRole  = document.getElementById("pmhRole");
+const _pmhHero  = document.getElementById("pageMiniHero");
 if (_pmhPhoto) { _pmhPhoto.src = _profilePhoto; _pmhPhoto.alt = _displayName; }
 if (_pmhName)  _pmhName.textContent  = _displayName;
 if (_pmhRole)  _pmhRole.textContent  = _roleLabel;
+if (_pmhHero) { _pmhHero.classList.remove("profile-pending"); _pmhHero.classList.add("profile-ready"); }
 
 if (!canModerateWaitlist && accessNotice) {
   accessNotice.textContent = "Protected view: personal details are masked and actions are read-only for member accounts.";

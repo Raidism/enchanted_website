@@ -25,12 +25,17 @@
   const pmhPhoto = document.getElementById("pmhPhoto");
   const pmhName = document.getElementById("pmhName");
   const pmhRole = document.getElementById("pmhRole");
+  const pmhHero = document.getElementById("pageMiniHero");
   if (pmhPhoto) {
     pmhPhoto.src = profilePhotoSrc;
     pmhPhoto.alt = profileDisplayName;
   }
   if (pmhName) pmhName.textContent = profileDisplayName;
   if (pmhRole) pmhRole.textContent = "Admin";
+  if (pmhHero) {
+    pmhHero.classList.remove("profile-pending");
+    pmhHero.classList.add("profile-ready");
+  }
 
   const opsCenter = document.getElementById("opsCenter");
   if (!opsCenter) return;
