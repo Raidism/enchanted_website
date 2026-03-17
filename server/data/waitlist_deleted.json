@@ -1,0 +1,69 @@
+[
+  {
+    "id": "1773326733245_fopj5qv2",
+    "name": "adhams",
+    "email": "solimans1188@gmail.com",
+    "school": "mris",
+    "role": "chair",
+    "addedAt": "2026-03-12T14:45:33.245Z",
+    "status": "pending",
+    "reviewedAt": "",
+    "reviewedBy": "",
+    "notified": false,
+    "notifiedAt": "",
+    "deletedAt": "2026-03-15T13:39:39.642Z",
+    "deletedBy": "AhmadPh"
+  },
+  {
+    "id": "1773327432415_mu2o7v5q",
+    "name": "adham",
+    "email": "adhamsoliman118@gmail.com",
+    "school": "mris",
+    "role": "partnerships",
+    "addedAt": "2026-03-12T14:57:12.415Z",
+    "status": "red",
+    "reviewedAt": "2026-03-15T13:39:30.552Z",
+    "reviewedBy": "AhmadPh",
+    "notified": false,
+    "notifiedAt": ""
+  },
+  {
+    "id": "1773327882563_g49npn9g",
+    "name": "adhamss",
+    "email": "solimans118a8@gmail.com",
+    "school": "asasas",
+    "role": "chair",
+    "addedAt": "2026-03-12T15:04:42.563Z",
+    "status": "red",
+    "reviewedAt": "2026-03-15T13:39:29.158Z",
+    "reviewedBy": "AhmadPh",
+    "notified": false,
+    "notifiedAt": ""
+  },
+  {
+    "id": "1773326530549_po5cpyxd",
+    "name": "adham",
+    "email": "solimans1188@gmail.com",
+    "school": "mris",
+    "role": "delegate",
+    "addedAt": "2026-03-12T14:42:10.549Z",
+    "status": "red",
+    "reviewedAt": "2026-03-12T14:44:37.027Z",
+    "reviewedBy": "admin",
+    "notified": false,
+    "notifiedAt": ""
+  },
+  {
+    "id": "1773322194157_t03u5etd",
+    "name": "adham",
+    "email": "solimans1188@gmail.com",
+    "school": "mris",
+    "role": "delegate",
+    "addedAt": "2026-03-12T13:29:54.157Z",
+    "status": "saved",
+    "reviewedAt": "2026-03-12T13:30:57.053Z",
+    "reviewedBy": "admin",
+    "notified": false,
+    "notifiedAt": ""
+  }
+]
