@@ -294,4 +294,18 @@
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => ScrollTrigger.refresh());
   }
+
+  const resetInteractiveTransforms = () => {
+    document.querySelectorAll(".team-card, .stat-card, .launch-card, .value-card, .cta, .share-btn, .waitlist-form button").forEach((el) => {
+      gsap.set(el, { clearProps: "transform,filter" });
+    });
+    gsap.set(document.body, { clearProps: "opacity,filter" });
+  };
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      resetInteractiveTransforms();
+      ScrollTrigger.refresh();
+    }
+  });
 })();

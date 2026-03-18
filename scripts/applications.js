@@ -10,8 +10,6 @@ if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
   throw new Error("Maintenance mode is active for non-admin users");
 }
 
-const applicationsOpen = Boolean(siteSettings.applicationsOpen);
-
 window.ImperiumAuth.heartbeat();
 setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
 
@@ -44,95 +42,11 @@ if (_aPmhName) _aPmhName.textContent = _appDisplayName;
 if (_aPmhRole) _aPmhRole.textContent = _appRoleLabel;
 if (_aPmhHero) { _aPmhHero.classList.remove("profile-pending"); _aPmhHero.classList.add("profile-ready"); }
 
-const teamAppsOpen = Boolean(siteSettings.teamApplicationsOpen);
-const teamAppsCard = document.getElementById("teamAppsCard");
-const teamAppsStatus = document.getElementById("teamAppsStatus");
-const teamAppsPlaceholder = document.getElementById("teamAppsPlaceholder");
-const teamAppsActive = document.querySelector(".team-apps-buttons") ? document.getElementById("teamAppsActive") : null;
-const TEAM_LINKS = {
-  security: "https://docs.google.com/forms/d/e/1FAIpQLSfrLZhVXPsgatwY1Z8tJWD6hEOjjKV1pgsFmb4CzriU0L9w7w/viewform?usp=header",
-  media: "https://docs.google.com/forms/d/e/1FAIpQLSdKxP_oa4nUAn496celU3lgHEgun1yyEZxtKH74cAirlDPuNg/viewform?usp=header",
-  volunteer: "https://docs.google.com/forms/d/e/1FAIpQLScwVL7U5YXXfua9w4qjaHA7oEIRHGRH9b5yjQXNUp8h3OfyoQ/viewform?usp=header",
-};
+const teamAppsStatusNotice = document.getElementById("teamAppsStatusNotice");
+const teamAppsBtn = document.getElementById("teamAppsBtn");
 
-if (teamAppsStatus) {
-  teamAppsStatus.classList.toggle("is-open", teamAppsOpen);
-  teamAppsStatus.classList.toggle("is-closed", !teamAppsOpen);
-}
-
-if (teamAppsCard) {
-  teamAppsCard.classList.toggle("team-apps-card-open", teamAppsOpen);
-}
-
-if (teamAppsOpen && teamAppsActive) {
-  if (teamAppsStatus) teamAppsStatus.textContent = "Open";
-  if (teamAppsPlaceholder) teamAppsPlaceholder.style.display = "none";
-  teamAppsActive.hidden = false;
-
-  // Smooth animation for team app buttons
-  const buttons = teamAppsActive.querySelectorAll("a[data-team]");
-  if (typeof gsap !== "undefined" && buttons.length > 0) {
-    buttons.forEach((btn, idx) => {
-      gsap.from(btn, {
-        opacity: 0,
-        y: 12,
-        duration: 0.4,
-        delay: 0.05 + idx * 0.08,
-        ease: "power2.out",
-      });
-      btn.addEventListener("mouseenter", () => {
-        gsap.to(btn, { scale: 1.05, duration: 0.2, ease: "power2.out" });
-      });
-      btn.addEventListener("mouseleave", () => {
-        gsap.to(btn, { scale: 1, duration: 0.15, ease: "power2.out" });
-      });
-    });
-  }
-
-  buttons.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      const team = btn.getAttribute("data-team");
-      const url = TEAM_LINKS[team];
-      if (url) {
-        if (window.ImperiumTracker && window.ImperiumTracker.trackEvent) {
-          window.ImperiumTracker.trackEvent("team_application_click", team);
-        }
-
-        buttons.forEach((item) => item.classList.add("is-disabled"));
-
-        const navigate = () => {
-          window.location.assign(url);
-        };
-
-        if (typeof gsap !== "undefined") {
-          gsap.to(btn, {
-            scale: 0.95,
-            duration: 0.1,
-            ease: "power2.in",
-            onComplete: () => {
-              btn.classList.add("is-selected");
-              gsap.to(btn, { scale: 1.05, duration: 0.2, ease: "power2.out" });
-              setTimeout(navigate, team === "volunteer" ? 320 : 180);
-            },
-          });
-        } else {
-          navigate();
-        }
-      }
-    });
-  });
-} else {
-  if (teamAppsStatus) teamAppsStatus.textContent = "Closed";
-  if (teamAppsActive) teamAppsActive.hidden = true;
-}
-
-const welcomeText = document.getElementById("welcomeText");
 const logoutBtn   = document.getElementById("logoutBtn");
-const applicationsTrendChart = document.getElementById("applicationsTrendChart");
-const applicationsTrendEmpty = document.getElementById("applicationsTrendEmpty");
 const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
-const ANALYTICS_API_URL = `${API_BASE}/analytics`;
 
 if (currentUser.role !== "admin") {
   const adminLinks = document.querySelectorAll("[data-admin-link]");
@@ -148,136 +62,57 @@ if (currentUser.role !== "admin") {
   });
 }
 
-// Fetch click events specifically for trend analysis
-const fetchClickEvents = async () => {
-  const response = await fetch(`${API_BASE}/analytics/clicks`, { method: "GET", cache: "no-store" });
-  if (!response.ok) {
-    throw new Error("Failed to load analytics clicks.");
+const applyTeamStatus = (settings) => {
+  const isOpen = Boolean(settings && settings.teamApplicationsOpen);
+  if (teamAppsStatusNotice) {
+    teamAppsStatusNotice.textContent = `Team Applications: ${isOpen ? "Open Recruiting" : "Closed"}`;
+    teamAppsStatusNotice.classList.toggle("success", isOpen);
+    teamAppsStatusNotice.classList.toggle("error", !isOpen);
   }
 
-  const payload = await response.json();
-  return payload && Array.isArray(payload.clicks) ? payload.clicks : [];
+  if (teamAppsBtn) {
+    teamAppsBtn.classList.toggle("is-open", isOpen);
+    teamAppsBtn.classList.toggle("is-closed", !isOpen);
+  }
 };
 
-const renderApplicationsTrend = async () => {
-  if (!applicationsTrendChart) return;
+applyTeamStatus(siteSettings);
 
-  if (!applicationsOpen) {
-    applicationsTrendChart.innerHTML = "";
-    if (applicationsTrendEmpty) {
-      applicationsTrendEmpty.hidden = false;
-      applicationsTrendEmpty.textContent = "Applications are not open yet. Traffic trend is 0 for now.";
+if (teamAppsBtn) {
+  teamAppsBtn.addEventListener("click", () => {
+    if (window.ImperiumTracker && typeof window.ImperiumTracker.trackEvent === "function") {
+      window.ImperiumTracker.trackEvent("applications_workspace_open", "team");
     }
-    return;
-  }
-
-  let clicks = [];
-  try {
-    clicks = await fetchClickEvents();
-  } catch {
-    clicks = [];
-  }
-  const teamEvents = clicks.filter((entry) => String(entry.event || "") === "team_application_click");
-
-  const byDateAndTeam = teamEvents.reduce((acc, row) => {
-    const d = new Date(String(row.timestamp || ""));
-    if (Number.isNaN(d.getTime())) return acc;
-    const dayKey = d.toISOString().slice(0, 10);
-    const team = String(row.label || "").toLowerCase();
-    if (!["media", "security", "volunteer"].includes(team)) return acc;
-    if (!acc[dayKey]) acc[dayKey] = { media: 0, security: 0, volunteer: 0 };
-    acc[dayKey][team] += 1;
-    return acc;
-  }, {});
-
-  const ordered = Object.entries(byDateAndTeam)
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .slice(-10);
-
-  if (!ordered.length) {
-    applicationsTrendChart.innerHTML = "";
-    if (applicationsTrendEmpty) applicationsTrendEmpty.hidden = false;
-    return;
-  }
-
-  if (applicationsTrendEmpty) applicationsTrendEmpty.hidden = true;
-
-  const width = 600;
-  const height = 180;
-  const left = 40;
-  const top = 20;
-  const chartW = 530;
-  const chartH = 120;
-  const bottom = top + chartH;
-  const series = {
-    media: [],
-    security: [],
-    volunteer: [],
-  };
-
-  const stepX = ordered.length > 1 ? chartW / (ordered.length - 1) : 0;
-  let maxVal = 1;
-
-  ordered.forEach(([day, counts], idx) => {
-    const x = left + idx * stepX;
-    ["media", "security", "volunteer"].forEach((team) => {
-      const v = counts[team] || 0;
-      if (v > maxVal) maxVal = v;
-      const y = bottom - (v / maxVal) * chartH;
-      series[team].push({ x, y, v, day: day.slice(5) });
-    });
   });
+}
 
-  const colorMap = {
-    media: "#4fd1c5",
-    security: "#f6ad55",
-    volunteer: "#9f7aea",
-  };
-
-  const buildPolyline = (points, color) => {
-    const coords = points.map((p) => `${Math.round(p.x)},${Math.round(p.y)}`).join(" ");
-    if (!coords) return "";
-    return `<polyline points="${coords}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>`;
-  };
-
-  const buildDots = (points, color) => points.map((p) => `
-    <circle cx="${Math.round(p.x)}" cy="${Math.round(p.y)}" r="3.8" fill="${color}"></circle>
-  `).join("");
-
-  const mediaLine = buildPolyline(series.media, colorMap.media);
-  const secLine = buildPolyline(series.security, colorMap.security);
-  const volLine = buildPolyline(series.volunteer, colorMap.volunteer);
-
-  const xLabels = ordered.map(([day], idx) => {
-    const x = left + idx * stepX;
-    return `<text x="${Math.round(x)}" y="${bottom + 14}" text-anchor="middle" font-size="10" fill="#9eb0a3">${day.slice(5)}</text>`;
-  }).join("");
-
-  const allDots = [
-    buildDots(series.media, colorMap.media),
-    buildDots(series.security, colorMap.security),
-    buildDots(series.volunteer, colorMap.volunteer),
-  ].join("");
-
-  applicationsTrendChart.innerHTML = `
-    <rect x="0" y="0" width="${width}" height="${height}" rx="12" fill="rgba(8,14,10,0.7)"></rect>
-    <line x1="${left}" y1="${bottom}" x2="${left + chartW}" y2="${bottom}" stroke="rgba(213,180,101,0.35)" stroke-width="1"></line>
-    ${mediaLine}
-    ${secLine}
-    ${volLine}
-    ${allDots}
-    ${xLabels}
-    <rect x="${left}" y="${top - 12}" width="180" height="18" rx="9" fill="rgba(5,10,7,0.8)" stroke="rgba(213,180,101,0.3)" stroke-width="1"></rect>
-    <circle cx="${left + 12}" cy="${top - 3}" r="4" fill="${colorMap.media}"></circle>
-    <text x="${left + 20}" y="${top}" font-size="10" fill="#e2f0e6">Media</text>
-    <circle cx="${left + 70}" cy="${top - 3}" r="4" fill="${colorMap.security}"></circle>
-    <text x="${left + 78}" y="${top}" font-size="10" fill="#e2f0e6">Security</text>
-    <circle cx="${left + 138}" cy="${top - 3}" r="4" fill="${colorMap.volunteer}"></circle>
-    <text x="${left + 146}" y="${top}" font-size="10" fill="#e2f0e6">Volunteer</text>
-  `;
+const refreshTeamStatus = async () => {
+  try {
+    const response = await fetch(`${API_BASE}/site-settings`, { method: "GET", cache: "no-store" });
+    if (!response.ok) return;
+    const payload = await response.json();
+    if (payload && payload.settings) {
+      applyTeamStatus(payload.settings);
+    }
+  } catch {
+    // keep current state when fetch fails
+  }
 };
 
-renderApplicationsTrend();
+window.addEventListener("storage", (event) => {
+  if (event.key === "imperium_site_settings") {
+    refreshTeamStatus();
+  }
+});
+
+window.addEventListener("imperium:site-settings-updated", (event) => {
+  const settings = event && event.detail ? event.detail.settings : null;
+  if (settings) {
+    applyTeamStatus(settings);
+  }
+});
+
+setTimeout(refreshTeamStatus, 220);
 
 logoutBtn.addEventListener("click", () => {
   logoutBtn.classList.add("is-loading");

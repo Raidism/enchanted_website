@@ -3,6 +3,9 @@ const gatePassword = document.getElementById("gatePassword");
 const gateMessage = document.getElementById("gateMessage");
 const gateButton = document.getElementById("gateButton");
 const lockoutHint = document.getElementById("lockoutHint");
+const mobileGateKeypad = document.getElementById("mobileGateKeypad");
+const gateKeypadDisplay = document.getElementById("gateKeypadDisplay");
+const keypadSubmitBtn = document.getElementById("keypadSubmitBtn");
 
 const FAILED_ATTEMPTS_KEY = "imperium_gate_failed_attempts";
 const LOCKOUT_UNTIL_KEY = "imperium_gate_lockout_until";
@@ -15,6 +18,62 @@ const getFailedAttempts = () => Number(localStorage.getItem(FAILED_ATTEMPTS_KEY)
 const setFailedAttempts = (count) => localStorage.setItem(FAILED_ATTEMPTS_KEY, String(Math.max(0, count)));
 const getLockoutUntil = () => Number(localStorage.getItem(LOCKOUT_UNTIL_KEY) || 0);
 const setLockoutUntil = (value) => localStorage.setItem(LOCKOUT_UNTIL_KEY, String(value));
+
+const isMobileDevice = () => {
+  const coarse = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+  const ua = String(navigator.userAgent || "");
+  return coarse || /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+};
+
+const renderKeypadMask = () => {
+  if (!gateKeypadDisplay) return;
+  const count = String(gatePassword.value || "").length;
+  gateKeypadDisplay.textContent = count ? "•".repeat(Math.min(count, 12)) : "••••";
+};
+
+const initMobileKeypad = () => {
+  if (!mobileGateKeypad || !gatePassword) return;
+  if (!isMobileDevice()) {
+    mobileGateKeypad.hidden = true;
+    gatePassword.style.display = "";
+    if (gateButton) gateButton.style.display = "";
+    return;
+  }
+
+  mobileGateKeypad.hidden = false;
+  gatePassword.style.display = "none";
+  if (gateButton) gateButton.style.display = "none";
+  gatePassword.setAttribute("inputmode", "numeric");
+  gatePassword.setAttribute("pattern", "[0-9]*");
+  gatePassword.setAttribute("readonly", "readonly");
+
+  mobileGateKeypad.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLButtonElement)) return;
+
+    const key = target.getAttribute("data-key");
+    const action = target.getAttribute("data-action");
+
+    if (key && /^\d$/.test(key)) {
+      gatePassword.value = `${gatePassword.value}${key}`.slice(0, 16);
+      renderKeypadMask();
+      return;
+    }
+
+    if (action === "clear") {
+      gatePassword.value = "";
+      renderKeypadMask();
+      return;
+    }
+
+    if (action === "back") {
+      gatePassword.value = gatePassword.value.slice(0, -1);
+      renderKeypadMask();
+    }
+  });
+
+  renderKeypadMask();
+};
 
 const clearLockout = () => {
   localStorage.removeItem(LOCKOUT_UNTIL_KEY);
@@ -41,12 +100,14 @@ const isLockedOut = () => {
 const renderLockoutState = () => {
   if (!isLockedOut()) {
     gateButton.disabled = false;
+    if (keypadSubmitBtn) keypadSubmitBtn.disabled = false;
     lockoutHint.hidden = true;
     return;
   }
 
   const remaining = getLockoutUntil() - Date.now();
   gateButton.disabled = false;
+  if (keypadSubmitBtn) keypadSubmitBtn.disabled = false;
   gateMessage.classList.remove("success");
   gateMessage.classList.add("error");
   gateMessage.textContent = "Too many wrong attempts. You can still try the correct password now.";
@@ -74,6 +135,7 @@ const verifyGatePassword = async (password) => {
 };
 
 renderLockoutState();
+initMobileKeypad();
 
 gateForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -89,6 +151,7 @@ gateForm.addEventListener("submit", async (event) => {
   }
 
   gateButton.disabled = true;
+  if (keypadSubmitBtn) keypadSubmitBtn.disabled = true;
   gateMessage.classList.remove("success", "error");
   gateMessage.textContent = "Checking password...";
 
@@ -131,6 +194,8 @@ gateForm.addEventListener("submit", async (event) => {
   } finally {
     if (!isLockedOut()) {
       gateButton.disabled = false;
+      if (keypadSubmitBtn) keypadSubmitBtn.disabled = false;
     }
+    renderKeypadMask();
   }
 });

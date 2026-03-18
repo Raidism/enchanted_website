@@ -129,6 +129,81 @@ h1 {
   box-shadow: 0 0 0 3px rgba(213, 180, 101, 0.2);
 }
 
+.gate-keypad {
+  margin-top: 0.25rem;
+  border: 1px solid rgba(213, 180, 101, 0.28);
+  border-radius: 14px;
+  padding: 0.7rem;
+  background: linear-gradient(160deg, rgba(10, 16, 13, 0.95), rgba(8, 12, 10, 0.95));
+}
+
+.gate-keypad-label {
+  margin: 0 0 0.45rem;
+  font-size: 0.78rem;
+  color: rgba(240, 218, 160, 0.86);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.gate-keypad-display {
+  min-height: 2.1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(77, 139, 99, 0.42);
+  background: rgba(6, 10, 8, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+  font-family: "Cinzel", serif;
+  letter-spacing: 0.2em;
+  color: #dfeadf;
+}
+
+.gate-keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.gate-key {
+  border: 1px solid rgba(213, 180, 101, 0.35);
+  border-radius: 10px;
+  padding: 0.58rem 0.45rem;
+  background: linear-gradient(155deg, rgba(18, 30, 22, 0.95), rgba(10, 18, 13, 0.95));
+  color: #eef7f0;
+  font-weight: 700;
+  font-size: 0.96rem;
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.2s ease;
+}
+
+.gate-key:active {
+  transform: scale(0.97);
+}
+
+.gate-key--muted {
+  color: #d9cb9b;
+}
+
+.gate-keypad-submit {
+  margin-top: 0.62rem;
+  border: none;
+  border-radius: 10px;
+  width: 100%;
+  padding: 0.68rem 0.9rem;
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  color: #0a130d;
+  background: linear-gradient(120deg, #8ecfa0, #d5b465);
+}
+
+.gate-keypad-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .gate-message {
   min-height: 1.35rem;
   margin: 0;
@@ -170,3 +245,4 @@ h1 {
   color: var(--danger);
   font-weight: 700;
 }
+

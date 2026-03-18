@@ -43,6 +43,8 @@ const getSiteSettings = () => {
 
 const siteSettings = getSiteSettings();
 const siteAnnouncement = document.getElementById("siteAnnouncement");
+const joinHeading = document.getElementById("joinHeading");
+const joinIntro = document.getElementById("joinIntro");
 
 const applyAnnouncementFromSettings = (settings) => {
   if (!siteAnnouncement) return;
@@ -55,6 +57,18 @@ const applyAnnouncementFromSettings = (settings) => {
 
   siteAnnouncement.hidden = false;
   siteAnnouncement.textContent = text;
+};
+
+const applyJoinStateFromSettings = (settings) => {
+  if (!joinHeading || !joinIntro) return;
+  const isOpen = Boolean(settings && settings.teamApplicationsOpen);
+  if (isOpen) {
+    joinHeading.textContent = "Team Recruitment Is Open";
+    joinIntro.textContent = "Choose Volunteer, Media, or Security and submit your application directly. The countdown remains visible for timeline clarity.";
+  } else {
+    joinHeading.textContent = "Team Recruitment Is Currently Closed";
+    joinIntro.textContent = "Applications are temporarily paused. The countdown and page content remain visible until the next opening.";
+  }
 };
 
 const formatCompactCount = (value) => {
@@ -215,7 +229,9 @@ window.addEventListener("storage", (event) => {
     } catch {
       nextSettings = null;
     }
-    applyAnnouncementFromSettings(nextSettings || getSiteSettings());
+    const resolved = nextSettings || getSiteSettings();
+    applyAnnouncementFromSettings(resolved);
+    applyJoinStateFromSettings(resolved);
   }
 });
 
@@ -223,6 +239,7 @@ window.addEventListener("imperium:site-settings-updated", (event) => {
   const detailSettings = event && event.detail && event.detail.settings ? event.detail.settings : getSiteSettings();
   scheduleInstagramSync();
   applyAnnouncementFromSettings(detailSettings);
+  applyJoinStateFromSettings(detailSettings);
 });
 
 const parsedLaunchDate = new Date(siteSettings.launchDate);
@@ -317,6 +334,7 @@ if (launchHint) {
     ? `Applications are currently open.${conferenceDateText}`
     : `Launch target can be adjusted anytime by the organizing team.${conferenceDateText}`;
 }
+applyJoinStateFromSettings(siteSettings);
 
 const SECRETARIAT_KEY = "imperium_secretariat";
 const readSecretariat = () => {

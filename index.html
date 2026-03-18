@@ -88,13 +88,25 @@
 
     <section id="join" class="section container reveal">
       <p class="eyebrow">Applications</p>
-      <h2>Team Recruitment Is Open</h2>
-      <p class="section-intro">Choose Volunteer, Media, or Security and submit your application directly.</p>
+      <h2 id="joinHeading">Team Recruitment Is Open</h2>
+      <p id="joinIntro" class="section-intro">Choose Volunteer, Media, or Security and submit your application directly. The countdown remains visible for timeline clarity.</p>
 
-      <div class="launch-grid launch-grid--single">
+      <div class="launch-grid">
+        <article class="launch-card reveal pop-card">
+          <h3 id="launchHeading">Applications Open In ⏳</h3>
+          <div id="countdown" class="countdown" aria-live="polite">
+            <div class="count-item"><span id="countDays">00</span><small>Days</small></div>
+            <div class="count-item"><span id="countHours">00</span><small>Hours</small></div>
+            <div class="count-item"><span id="countMinutes">00</span><small>Minutes</small></div>
+            <div class="count-item"><span id="countSeconds">00</span><small>Seconds</small></div>
+          </div>
+          <p id="launchHint" class="muted">Launch target can be adjusted anytime by the organizing team.</p>
+        </article>
+
         <article class="launch-card reveal pop-card">
           <h3>Apply For Teams Only 📝</h3>
-          <p class="muted">Volunteer, Media, and Security applications are live now.</p>
+          <p class="muted">Volunteer, Media, and Security applications are managed in one dedicated portal.</p>
+          <a class="cta" href="/apply">Apply For Teams</a>
         </article>
       </div>
     </section>

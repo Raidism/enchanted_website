@@ -27,6 +27,26 @@
         <label for="gatePassword">Password</label>
         <input id="gatePassword" name="gatePassword" type="password" autocomplete="current-password" required />
 
+        <div id="mobileGateKeypad" class="gate-keypad" hidden>
+          <p class="gate-keypad-label">Tap numbers to enter password</p>
+          <div class="gate-keypad-display" id="gateKeypadDisplay" aria-live="polite">••••</div>
+          <div class="gate-keypad-grid" role="group" aria-label="Numeric keypad">
+            <button type="button" class="gate-key" data-key="1">1</button>
+            <button type="button" class="gate-key" data-key="2">2</button>
+            <button type="button" class="gate-key" data-key="3">3</button>
+            <button type="button" class="gate-key" data-key="4">4</button>
+            <button type="button" class="gate-key" data-key="5">5</button>
+            <button type="button" class="gate-key" data-key="6">6</button>
+            <button type="button" class="gate-key" data-key="7">7</button>
+            <button type="button" class="gate-key" data-key="8">8</button>
+            <button type="button" class="gate-key" data-key="9">9</button>
+            <button type="button" class="gate-key gate-key--muted" data-action="clear">Clear</button>
+            <button type="button" class="gate-key" data-key="0">0</button>
+            <button type="button" class="gate-key gate-key--muted" data-action="back">⌫</button>
+          </div>
+          <button id="keypadSubmitBtn" type="submit" class="gate-keypad-submit">Enter</button>
+        </div>
+
         <p id="gateMessage" class="gate-message" aria-live="polite"></p>
         <button id="gateButton" type="submit">Continue to Portal</button>
       </form>
