@@ -231,14 +231,21 @@ const launchDate = Number.isNaN(parsedLaunchDate.getTime())
   : parsedLaunchDate;
 
 const heroApply = document.getElementById("heroApplyBtn");
-if (heroApply && typeof gsap !== "undefined") {
-  gsap.from(heroApply, {
-    opacity: 0,
-    scale: 0.94,
-    duration: 0.42,
-    ease: "power2.out",
-    delay: 0.08,
-  });
+if (heroApply) {
+  heroApply.hidden = false;
+  heroApply.style.display = "inline-flex";
+  heroApply.style.visibility = "visible";
+  heroApply.style.opacity = "1";
+
+  if (typeof gsap !== "undefined") {
+    gsap.from(heroApply, {
+      opacity: 0,
+      scale: 0.94,
+      duration: 0.42,
+      ease: "power2.out",
+      delay: 0.08,
+    });
+  }
 }
 
 const showUpdateAppliedNotice = () => {

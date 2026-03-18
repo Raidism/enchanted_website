@@ -937,6 +937,13 @@ h3 {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+#heroApplyBtn {
+  display: inline-flex;
+  visibility: visible;
+  opacity: 1;
 }
 
 .cta-ghost {
@@ -1857,6 +1864,7 @@ body[data-theme="light"] .road-node-line {
   pointer-events: none;
   display: grid;
   place-items: center;
+  padding: 1rem;
   background:
     radial-gradient(circle at 50% 78%, rgba(79, 209, 197, 0.28), transparent 45%),
     linear-gradient(165deg, rgba(5, 9, 7, 0.93), rgba(5, 8, 6, 0.98));
@@ -1869,7 +1877,9 @@ body[data-theme="light"] .road-node-line {
 }
 
 .apply-redirect-card {
-  width: min(560px, 92vw);
+  width: min(560px, 100%);
+  max-height: 90dvh;
+  overflow: auto;
   border-radius: 22px;
   border: 1px solid rgba(213, 180, 101, 0.34);
   background:
@@ -1887,8 +1897,8 @@ body[data-theme="light"] .road-node-line {
 }
 
 .apply-redirect-overlay.is-volunteer .apply-redirect-card {
-  width: min(720px, 95vw);
-  min-height: min(380px, 72vh);
+  width: min(660px, 100%);
+  min-height: min(360px, 74vh);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -2495,13 +2505,13 @@ body.gsap-enhanced .value-card:hover {
   }
 
   .apply-redirect-card {
-    width: 94vw;
+    width: 100%;
     padding: 1.05rem 0.9rem;
     border-radius: 16px;
   }
 
   .apply-redirect-overlay.is-volunteer .apply-redirect-card {
-    width: 96vw;
+    width: 100%;
     min-height: 64vh;
   }
 

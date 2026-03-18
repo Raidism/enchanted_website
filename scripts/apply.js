@@ -48,6 +48,7 @@
     }
 
     overlay.classList.toggle("is-volunteer", isVolunteer);
+    overlay.hidden = false;
     overlay.classList.add("is-active");
     overlay.setAttribute("aria-hidden", "false");
   };
@@ -56,6 +57,7 @@
     if (!overlay) return;
     overlay.classList.remove("is-active", "is-volunteer");
     overlay.setAttribute("aria-hidden", "true");
+    overlay.hidden = true;
   };
 
   const animateCardSelection = (card, button, team) => {
@@ -63,10 +65,10 @@
     const isVolunteer = team === "volunteer";
 
     gsap.to(card, {
-      scale: isVolunteer ? 1.12 : 1.04,
-      y: isVolunteer ? -8 : -3,
+      scale: isVolunteer ? 1.02 : 1.01,
+      y: isVolunteer ? -3 : -2,
       boxShadow: isVolunteer
-        ? "0 30px 80px rgba(79, 209, 197, 0.35), 0 0 0 1px rgba(240, 218, 160, 0.35)"
+        ? "0 20px 54px rgba(79, 209, 197, 0.3), 0 0 0 1px rgba(240, 218, 160, 0.3)"
         : "0 20px 56px rgba(213, 180, 101, 0.28)",
       duration: 0.42,
       ease: "power3.out",
@@ -82,9 +84,8 @@
 
     if (pageMain) {
       gsap.to(pageMain, {
-        opacity: isVolunteer ? 0.45 : 0.62,
-        filter: isVolunteer ? "blur(2px)" : "blur(1px)",
-        duration: 0.35,
+        opacity: 0.82,
+        duration: 0.25,
         ease: "power2.out",
       });
     }
@@ -143,7 +144,6 @@
         });
         if (pageMain) {
           pageMain.style.opacity = "";
-          pageMain.style.filter = "";
         }
       }, 4000);
     });
