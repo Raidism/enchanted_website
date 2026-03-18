@@ -1096,7 +1096,7 @@ h1::after {
   line-height: 1.6;
   font-weight: 500;
   transition: color var(--transition-slow) ease;
-  max-width: 88%;
+  max-width: 100%;
 }
 
 .stats-grid {
@@ -1145,7 +1145,7 @@ h1::after {
     0 12px 32px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.07),
     0 0 24px rgba(213, 180, 101, 0.12);
-  transform: translateY(-6px);
+  transform: translateY(-3px);
 }
 
 .stat-card h3 {
@@ -1174,7 +1174,7 @@ h1::after {
 }
 
 .stat-card:hover p {
-  transform: scale(1.08);
+  transform: scale(1.03);
 }
 
 .stat-card::after {
@@ -3946,6 +3946,16 @@ body.lite-motion .stat-card {
     grid-template-columns: 1fr;
   }
 
+  .stat-card:hover,
+  .table-card:hover,
+  .app-card:hover {
+    transform: none;
+  }
+
+  .stat-card:hover p {
+    transform: none;
+  }
+
   .team-dashboard-header {
     flex-direction: column;
     gap: 1.5rem;
@@ -4185,6 +4195,7 @@ body.lite-motion .stat-card {
   }
 }
 
+@media (max-width: 480px) {
   .metric-value {
     font-size: 1.4rem;
   }
