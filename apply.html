@@ -35,33 +35,71 @@
 
   <main class="container apply-main">
     <section class="section apply-section">
-      <p class="eyebrow">Team Applications</p>
-      <h2>What would you like to apply for?</h2>
-      <p class="section-intro">
-        Choose the team that matches your strengths. After you pick, we will redirect you to a short Google Form to complete your application.
-      </p>
+      <div class="apply-header">
+        <p class="eyebrow">Team Applications</p>
+        <h1 class="apply-title">Join Our Team</h1>
+        <p class="apply-subtitle">
+          Choose the team that matches your strengths. After selection, you'll complete a quick application on Google Forms.
+        </p>
+      </div>
 
-      <div class="launch-grid apply-launch-grid">
-        <article class="value-card pop-card apply-card" data-team="volunteer">
-          <h3>Volunteer Team 🤝</h3>
-          <p>Help run the conference on the ground – registration, committee support, and smooth logistics during all days.</p>
-          <button type="button" class="cta" data-team-cta>Apply as Volunteer</button>
+      <div class="apply-cards-container">
+        <!-- Volunteer Team Card -->
+        <article class="apply-team-card volunteer-card pop-card reveal" data-team="volunteer">
+          <div class="apply-card-header">
+            <span class="apply-card-icon">🤝</span>
+            <h2 class="apply-card-title">Volunteer Team</h2>
+          </div>
+          <p class="apply-card-description">
+            Help run the conference on the ground. Manage registration, support committees, coordinate logistics, and ensure smooth operations across all conference days.
+          </p>
+          <ul class="apply-card-features">
+            <li>Conference logistics & coordination</li>
+            <li>Delegate registration & support</li>
+            <li>Committee room management</li>
+            <li>Event day coordination</li>
+          </ul>
+          <button type="button" class="apply-card-btn" data-team-cta>Apply as Volunteer</button>
         </article>
 
-        <article class="value-card pop-card apply-card" data-team="media">
-          <h3>Media Team 📸</h3>
-          <p>Capture the story of Imperium MUN – photos, short videos, social posts, and creative coverage across the event.</p>
-          <button type="button" class="cta" data-team-cta>Apply as Media</button>
+        <!-- Media Team Card -->
+        <article class="apply-team-card media-card pop-card reveal" data-team="media">
+          <div class="apply-card-header">
+            <span class="apply-card-icon">📸</span>
+            <h2 class="apply-card-title">Media Team</h2>
+          </div>
+          <p class="apply-card-description">
+            Capture Imperium MUN's story through photography, videography, and social media. Create compelling content that showcases the conference to our community.
+          </p>
+          <ul class="apply-card-features">
+            <li>Photography & videography</li>
+            <li>Social media content creation</li>
+            <li>Event highlights & coverage</li>
+            <li>Creative storytelling</li>
+          </ul>
+          <button type="button" class="apply-card-btn" data-team-cta>Apply as Media</button>
         </article>
 
-        <article class="value-card pop-card apply-card" data-team="security">
-          <h3>Security Team 🛡️</h3>
-          <p>Support delegate safety and order – coordinate access, room checks, and help keep the venue professional.</p>
-          <button type="button" class="cta" data-team-cta>Apply as Security</button>
+        <!-- Security Team Card -->
+        <article class="apply-team-card security-card pop-card reveal" data-team="security">
+          <div class="apply-card-header">
+            <span class="apply-card-icon">🛡️</span>
+            <h2 class="apply-card-title">Security Team</h2>
+          </div>
+          <p class="apply-card-description">
+            Support delegate safety and maintain professional order. Coordinate access control, conduct room checks, manage crowd flow, and ensure venue security protocols.
+          </p>
+          <ul class="apply-card-features">
+            <li>Access control & coordination</li>
+            <li>Venue security protocols</li>
+            <li>Delegate safety assurance</li>
+            <li>Professional order maintenance</li>
+          </ul>
+          <button type="button" class="apply-card-btn" data-team-cta>Apply as Security</button>
         </article>
       </div>
 
-      <p id="applyStatusMessage" class="muted apply-status" aria-live="polite"></p>
+      <p id="applyStatusMessage" class="apply-status-message" aria-live="polite"></p>
     </section>
   </main>
 

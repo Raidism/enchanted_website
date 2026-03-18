@@ -2674,3 +2674,326 @@ body.gsap-enhanced .value-card:hover {
     transform: none;
   }
 }
+
+/* ── Apply Page Modern Design ──────────────────────────────── */
+
+.apply-main {
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+.apply-section {
+  padding: 0 !important;
+}
+
+.apply-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.apply-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--gold-soft);
+  margin: 1rem 0 0.5rem;
+  font-family: "Cinzel", serif;
+}
+
+.apply-subtitle {
+  font-size: 1.05rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 1rem 0 0;
+  max-width: 65ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.apply-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 2.5rem;
+}
+
+.apply-team-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  padding: 2rem;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  transition: 
+    transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1),
+    border-color 0.28s ease,
+    box-shadow 0.28s ease,
+    background 0.35s ease;
+  box-shadow: 
+    inset 0 1px 0 var(--glass-highlight),
+    0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.apply-team-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold-soft), transparent);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.apply-team-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(213, 180, 101, 0.45);
+  box-shadow: 
+    inset 0 1px 0 var(--glass-highlight),
+    0 20px 50px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(213, 180, 101, 0.15);
+}
+
+.apply-team-card:hover::before {
+  opacity: 1;
+}
+
+.volunteer-card {
+  background: 
+    linear-gradient(135deg, rgba(79, 209, 197, 0.12), rgba(79, 209, 197, 0.04) 40%),
+    linear-gradient(160deg, var(--panel), var(--panel-2));
+}
+
+.volunteer-card:hover {
+  border-color: rgba(79, 209, 197, 0.55);
+  box-shadow: 
+    inset 0 1px 0 var(--glass-highlight),
+    0 20px 50px rgba(0, 0, 0, 0.3),
+    0 0 40px rgba(79, 209, 197, 0.2);
+}
+
+.media-card {
+  background: 
+    linear-gradient(135deg, rgba(213, 180, 101, 0.14), rgba(213, 180, 101, 0.06) 40%),
+    linear-gradient(160deg, var(--panel), var(--panel-2));
+}
+
+.media-card:hover {
+  border-color: rgba(213, 180, 101, 0.55);
+  box-shadow: 
+    inset 0 1px 0 var(--glass-highlight),
+    0 20px 50px rgba(0, 0, 0, 0.3),
+    0 0 40px rgba(213, 180, 101, 0.2);
+}
+
+.security-card {
+  background: 
+    linear-gradient(135deg, rgba(142, 207, 160, 0.12), rgba(142, 207, 160, 0.04) 40%),
+    linear-gradient(160deg, var(--panel), var(--panel-2));
+}
+
+.security-card:hover {
+  border-color: rgba(142, 207, 160, 0.55);
+  box-shadow: 
+    inset 0 1px 0 var(--glass-highlight),
+    0 20px 50px rgba(0, 0, 0, 0.3),
+    0 0 40px rgba(142, 207, 160, 0.2);
+}
+
+.apply-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.apply-card-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+}
+
+.apply-card-title {
+  font-family: "Cinzel", serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.apply-card-description {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  margin: 0 0 1.25rem;
+  flex-grow: 1;
+}
+
+.apply-card-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.apply-card-features li {
+  color: var(--muted-soft);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+}
+
+.apply-card-features li::before {
+  content: "✓";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background: rgba(142, 207, 160, 0.15);
+  color: #8ecfa0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.apply-card-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--gold-soft), var(--gold) 60%, #c49d40);
+  color: #0d120f;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: 
+    transform 0.2s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+  min-height: 44px;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.apply-card-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -130%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transition: left 0.55s ease;
+}
+
+.apply-card-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(213, 180, 101, 0.3);
+}
+
+.apply-card-btn:hover::before {
+  left: 130%;
+}
+
+.apply-card-btn:active {
+  transform: translateY(0);
+}
+
+.apply-status-message {
+  min-height: 1.2rem;
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #f2aaaa;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.apply-status-message:not(:empty) {
+  opacity: 1;
+}
+
+.apply-status-message.success {
+  color: #9ce0b1;
+}
+
+/* Responsive Apply Page */
+@media (max-width: 1024px) {
+  .apply-cards-container {
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .apply-header {
+    margin-bottom: 2rem;
+  }
+
+  .apply-title {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+  }
+
+  .apply-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .apply-cards-container {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    margin-top: 1.8rem;
+  }
+
+  .apply-team-card {
+    padding: 1.5rem;
+  }
+
+  .apply-card-icon {
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: 1.8rem;
+  }
+
+  .apply-card-title {
+    font-size: 1.15rem;
+  }
+
+  .apply-card-description {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .apply-card-btn {
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+    min-height: 42px;
+  }
+
+  .apply-card-features li {
+    font-size: 0.85rem;
+  }
+}

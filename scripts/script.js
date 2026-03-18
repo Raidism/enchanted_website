@@ -100,6 +100,17 @@ const applyTeamRecruitmentCtaFromSettings = (settings) => {
     }
   }
 
+  // Hide countdown card when applications are open
+  const countdownCardBlock = document.getElementById("countdownCardBlock");
+  if (countdownCardBlock) {
+    countdownCardBlock.hidden = isOpen;
+    if (isOpen) {
+      countdownCardBlock.style.display = 'none';
+    } else {
+      countdownCardBlock.style.display = '';
+    }
+  }
+
   if (joinApplyBtn) {
     joinApplyBtn.textContent = isOpen ? "Apply For Teams" : "Find out when applications open";
     joinApplyBtn.setAttribute("href", heroHref);

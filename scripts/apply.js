@@ -32,7 +32,7 @@
     security: "https://forms.gle/CkhK5mvSkA5Rbanp6",
   };
 
-  const applyCards = document.querySelectorAll(".apply-card");
+  const applyCards = document.querySelectorAll(".apply-team-card");
   const forceRevealVisible = () => {
     applyCards.forEach((card) => {
       card.classList.add("show");
