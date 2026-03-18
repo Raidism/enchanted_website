@@ -49,12 +49,25 @@ const teamAppsCard = document.getElementById("teamAppsCard");
 const teamAppsStatus = document.getElementById("teamAppsStatus");
 const teamAppsPlaceholder = document.getElementById("teamAppsPlaceholder");
 const teamAppsActive = document.querySelector(".team-apps-buttons") ? document.getElementById("teamAppsActive") : null;
+const TEAM_LINKS = {
+  security: "https://docs.google.com/forms/d/e/1FAIpQLSfrLZhVXPsgatwY1Z8tJWD6hEOjjKV1pgsFmb4CzriU0L9w7w/viewform?usp=header",
+  media: "https://docs.google.com/forms/d/e/1FAIpQLSdKxP_oa4nUAn496celU3lgHEgun1yyEZxtKH74cAirlDPuNg/viewform?usp=header",
+  volunteer: "https://docs.google.com/forms/d/e/1FAIpQLScwVL7U5YXXfua9w4qjaHA7oEIRHGRH9b5yjQXNUp8h3OfyoQ/viewform?usp=header",
+};
+
+if (teamAppsStatus) {
+  teamAppsStatus.classList.toggle("is-open", teamAppsOpen);
+  teamAppsStatus.classList.toggle("is-closed", !teamAppsOpen);
+}
+
+if (teamAppsCard) {
+  teamAppsCard.classList.toggle("team-apps-card-open", teamAppsOpen);
+}
 
 if (teamAppsOpen && teamAppsActive) {
-  if (teamAppsStatus) teamAppsStatus.textContent = "Open ✅";
-  if (teamAppsStatus) teamAppsStatus.style.color = "#4fd1c5";
+  if (teamAppsStatus) teamAppsStatus.textContent = "Open";
   if (teamAppsPlaceholder) teamAppsPlaceholder.style.display = "none";
-  teamAppsActive.style.display = "block";
+  teamAppsActive.hidden = false;
 
   // Smooth animation for team app buttons
   const buttons = teamAppsActive.querySelectorAll("a[data-team]");
@@ -76,38 +89,42 @@ if (teamAppsOpen && teamAppsActive) {
     });
   }
 
-  const LINKS = {
-    security: "https://docs.google.com/forms/d/e/1FAIpQLSfrLZhVXPsgatwY1Z8tJWD6hEOjjKV1pgsFmb4CzriU0L9w7w/viewform?usp=header",
-    media: "https://docs.google.com/forms/d/e/1FAIpQLSdKxP_oa4nUAn496celU3lgHEgun1yyEZxtKH74cAirlDPuNg/viewform?usp=header",
-    volunteer: "https://docs.google.com/forms/d/e/1FAIpQLScwVL7U5YXXfua9w4qjaHA7oEIRHGRH9b5yjQXNUp8h3OfyoQ/viewform?usp=header",
-  };
-
   buttons.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       const team = btn.getAttribute("data-team");
-      const url = LINKS[team];
+      const url = TEAM_LINKS[team];
       if (url) {
         if (window.ImperiumTracker && window.ImperiumTracker.trackEvent) {
           window.ImperiumTracker.trackEvent("team_application_click", team);
         }
-        // Animate button feedback before opening link
+
+        buttons.forEach((item) => item.classList.add("is-disabled"));
+
+        const navigate = () => {
+          window.location.assign(url);
+        };
+
         if (typeof gsap !== "undefined") {
           gsap.to(btn, {
             scale: 0.95,
             duration: 0.1,
             ease: "power2.in",
             onComplete: () => {
-              window.open(url, "_blank");
+              btn.classList.add("is-selected");
               gsap.to(btn, { scale: 1.05, duration: 0.2, ease: "power2.out" });
+              setTimeout(navigate, team === "volunteer" ? 320 : 180);
             },
           });
         } else {
-          window.open(url, "_blank");
+          navigate();
         }
       }
     });
   });
+} else {
+  if (teamAppsStatus) teamAppsStatus.textContent = "Closed";
+  if (teamAppsActive) teamAppsActive.hidden = true;
 }
 
 const welcomeText = document.getElementById("welcomeText");

@@ -3,113 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Early Access | Imperium MUN</title>
-  <meta name="description" content="Imperium MUN early access waitlist dashboard." />
-  <link rel="icon" type="image/jpeg" href="assets/imperium mun logo.jpg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/dashboard.css" />
+  <title>Redirecting | Imperium MUN</title>
+  <meta http-equiv="refresh" content="0; url=/applications" />
+  <script>
+    window.location.replace('/applications');
+  </script>
 </head>
 <body>
-  <header class="dash-header">
-    <div class="header-inner">
-      <a class="brand" href="/">IMPERIUM MUN</a>
-      <div class="header-actions">
-        <a href="/dashboard">Analytics</a>
-        <a href="/ops" data-admin-link>Ops Center</a>
-        <a href="#early-access">Early Access</a>
-        <a href="/applications">Applications</a>
-        <a href="/settings" data-admin-link>Settings</a>
-        <button id="logoutBtn" type="button">Logout</button>
-      </div>
-    </div>
-  </header>
-
-  <main class="dash-main">
-    <div class="page-mini-hero profile-pending" id="pageMiniHero" aria-label="Profile briefing">
-      <div class="pmh-photo-ring" aria-hidden="true">
-        <img id="pmhPhoto" src="assets/imperium mun logo.jpg" alt="" class="pmh-photo" loading="eager" decoding="async" />
-      </div>
-      <div class="pmh-text">
-        <p class="pmh-eyebrow">IMPERIUM MUN PORTAL</p>
-        <h2 class="pmh-name" id="pmhName"></h2>
-        <p class="pmh-role" id="pmhRole"></p>
-      </div>
-    </div>
-
-    <p id="welcomeText" hidden></p>
-
-    <section id="early-access" class="section">
-      <h1>Early Access Submissions</h1>
-      <p id="accessNotice" class="sub">Manage and review pre-launch entries.</p>
-
-      <div class="stats-grid">
-        <article class="stat-card">
-          <h3>Total Entries</h3>
-          <p id="waitlistTotal">0</p>
-        </article>
-        <article class="stat-card">
-          <h3>Delegate Interest</h3>
-          <p id="delegateCount">0</p>
-        </article>
-        <article class="stat-card">
-          <h3>Team Roles Interest</h3>
-          <p id="teamRoleCount">0</p>
-        </article>
-      </div>
-
-      <div class="table-card">
-        <h2>Early Access Trend</h2>
-        <p id="waitlistTrendEmpty" class="sub">No trend data yet.</p>
-        <svg id="waitlistTrendChart" class="ops-growth-chart" viewBox="0 0 600 180" aria-label="Early access trend chart"></svg>
-      </div>
-
-      <div class="table-card">
-        <h2>Recent Early Access Entries</h2>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Joined</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>School</th>
-                <th>Interest</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="waitlistTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="table-card">
-        <h2>Recently Deleted Backup</h2>
-        <p class="sub">Use restore if an entry was deleted by mistake.</p>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Deleted</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>School</th>
-                <th>Interest</th>
-                <th>Restore</th>
-              </tr>
-            </thead>
-            <tbody id="deletedWaitlistBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script defer src="scripts/tracker.js"></script>
-  <script defer src="scripts/auth.js"></script>
-  <script defer src="scripts/waitlist.js"></script>
+  <p>Redirecting to Applications...</p>
 </body>
 </html>

@@ -28,7 +28,6 @@
       <div class="header-actions">
         <a href="/dashboard">Analytics</a>
         <a href="/ops" data-admin-link>Ops Center</a>
-        <a href="/waitlist">Early Access</a>
         <a href="#applications">Applications</a>
         <a href="/settings" data-admin-link>Settings</a>
         <button id="logoutBtn" type="button">Logout</button>
@@ -52,7 +51,7 @@
 
     <section id="applications" class="section">
       <h1>Applications</h1>
-      <p class="sub">Dedicated applications workspace — expanding soon.</p>
+      <p class="sub">Track application interest and route candidates to active forms.</p>
 
       <div class="table-card">
         <h2>Applications Traffic Trend</h2>
@@ -63,25 +62,25 @@
       <div class="apps-grid">
         <article class="app-card">
           <h3>Chair Applications</h3>
-          <p class="app-status">Coming Soon</p>
-          <div class="placeholder-box">No chair applications submitted yet.</div>
+          <p class="app-status">Closed</p>
+          <div class="placeholder-box">Chair applications are currently unavailable.</div>
         </article>
         <article class="app-card">
           <h3>Delegate Applications</h3>
-          <p class="app-status">Coming Soon</p>
-          <div class="placeholder-box">No delegate applications submitted yet.</div>
+          <p class="app-status">Closed</p>
+          <div class="placeholder-box">Delegate applications are currently unavailable.</div>
         </article>
         <article class="app-card" id="teamAppsCard">
           <h3>Teams Applications</h3>
-          <p class="app-status" id="teamAppsStatus">Coming Soon</p>
-          <div class="placeholder-box" id="teamAppsPlaceholder">No teams applications submitted yet.</div>
+          <p class="app-status" id="teamAppsStatus">Closed</p>
+          <div class="placeholder-box" id="teamAppsPlaceholder">Team recruitment is currently paused.</div>
           
-          <div id="teamAppsActive" style="display: none; padding-top: 1rem;">
-            <p style="margin-bottom: 1rem; font-size: 0.9rem; opacity: 0.8;">Select a role to apply for:</p>
-            <div class="team-apps-buttons" style="display: flex; flex-direction: column; gap: 0.5rem;">
-              <a href="#" data-team="security" class="action-btn" style="text-align: center; justify-content: center;">Security Team 🛡️</a>
-              <a href="#" data-team="media" class="action-btn" style="text-align: center; justify-content: center;">Media Team 📸</a>
-              <a href="#" data-team="volunteer" class="action-btn" style="text-align: center; justify-content: center;">Volunteer Team 🤝</a>
+          <div id="teamAppsActive" class="team-apps-active" hidden>
+            <p class="team-apps-intro">Select a role to apply for:</p>
+            <div class="team-apps-buttons">
+              <a href="#" data-team="security" class="team-apps-link">Security Team 🛡️</a>
+              <a href="#" data-team="media" class="team-apps-link">Media Team 📸</a>
+              <a href="#" data-team="volunteer" class="team-apps-link">Volunteer Team 🤝</a>
             </div>
           </div>
         </article>

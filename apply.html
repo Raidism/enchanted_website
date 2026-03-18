@@ -28,31 +28,20 @@
   </div>
 
   <header class="site-header">
-    <div class="container nav-wrap">
+    <div class="container nav-wrap apply-nav-wrap">
       <a class="brand" href="/">IMPERIUM MUN</a>
-      <div class="nav-actions">
-        <nav>
-          <ul class="nav-links">
-            <li><a href="/">Home</a></li>
-          </ul>
-        </nav>
-        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch theme" aria-pressed="false" title="Toggle theme">
-          <span class="theme-icon sun" aria-hidden="true">☀</span>
-          <span class="theme-icon moon" aria-hidden="true">☾</span>
-        </button>
-      </div>
     </div>
   </header>
 
-  <main class="container" style="padding: 3.5rem 0 4rem;">
-    <section class="section" style="padding-top: 1rem; padding-bottom: 0;">
+  <main class="container apply-main">
+    <section class="section apply-section">
       <p class="eyebrow">Team Applications</p>
       <h2>What would you like to apply for?</h2>
       <p class="section-intro">
         Choose the team that matches your strengths. After you pick, we will redirect you to a short Google Form to complete your application.
       </p>
 
-      <div class="launch-grid" style="padding-inline: 0; grid-template-columns: repeat(3, minmax(0, 1fr));">
+      <div class="launch-grid apply-launch-grid">
         <article class="value-card reveal pop-card apply-card" data-team="volunteer">
           <h3>Volunteer Team 🤝</h3>
           <p>Help run the conference on the ground – registration, committee support, and smooth logistics during all days.</p>
@@ -72,7 +61,7 @@
         </article>
       </div>
 
-      <p id="applyStatusMessage" class="muted" style="margin-top: 1.1rem; min-height: 1.2em;" aria-live="polite"></p>
+      <p id="applyStatusMessage" class="muted apply-status" aria-live="polite"></p>
     </section>
   </main>
 
@@ -88,9 +77,21 @@
     <p class="main-credit">Made with love by the IT Team (<a class="credit-link" href="/contact">Adham</a>) ❤️</p>
   </footer>
 
+  <div id="applyRedirectOverlay" class="apply-redirect-overlay" aria-hidden="true">
+    <div class="apply-redirect-card" role="status" aria-live="polite" aria-atomic="true">
+      <p id="applyRedirectTeam" class="apply-redirect-team">Volunteer Team</p>
+      <h3 id="applyRedirectTitle" class="apply-redirect-title">Preparing your application space...</h3>
+      <p id="applyRedirectMessage" class="apply-redirect-message">Redirecting in a moment.</p>
+      <div class="apply-redirect-loader" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="scripts/tracker.js"></script>
-  <script defer src="scripts/script.js"></script>
   <script defer src="scripts/apply.js"></script>
 </body>
 </html>

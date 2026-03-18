@@ -230,40 +230,15 @@ const launchDate = Number.isNaN(parsedLaunchDate.getTime())
   ? new Date(fallbackSiteSettings.launchDate)
   : parsedLaunchDate;
 
-if (String(siteSettings.teamApplicationsOpen || "false") === "true") {
-  const heroWaitlist = document.getElementById("heroWaitlistBtn");
-  const heroApply = document.getElementById("heroApplyBtn");
-  const accessSec = document.getElementById("join");
-  
-  if (heroWaitlist) {
-    heroWaitlist.style.display = "none";
-  }
-  if (heroApply) {
-    heroApply.style.display = "inline-flex";
-    heroApply.textContent = "Apply Now for Teams 📝";
-    if (typeof gsap !== "undefined") {
-      gsap.from(heroApply, {
-        opacity: 0,
-        scale: 0.92,
-        duration: 0.4,
-        ease: "power2.out",
-      });
-    }
-  }
-  
-  if (accessSec) {
-    const heading = accessSec.querySelector("h2");
-    if (heading) heading.textContent = "Applications Now Open! 📝";
-    
-    // Hide countdown if apps are open
-    const cd = document.querySelector(".launch-grid");
-    if (cd) cd.hidden = true;
-    
-    const intro = accessSec.querySelector(".section-intro");
-    if (intro) {
-      intro.innerHTML = `<a href="/applications" class="cta" style="margin-top:1rem;">Go to Applications Portal &rarr;</a>`;
-    }
-  }
+const heroApply = document.getElementById("heroApplyBtn");
+if (heroApply && typeof gsap !== "undefined") {
+  gsap.from(heroApply, {
+    opacity: 0,
+    scale: 0.94,
+    duration: 0.42,
+    ease: "power2.out",
+    delay: 0.08,
+  });
 }
 
 const showUpdateAppliedNotice = () => {

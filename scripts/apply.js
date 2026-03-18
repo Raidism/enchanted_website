@@ -4,115 +4,7 @@
     yearSpan.textContent = new Date().getFullYear();
   }
 
-  const themeToggle = document.getElementById("themeToggle");
-  const themeStorageKey = "imperium-theme";
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let isThemeAnimating = false;
-
-  const setTheme = (theme, withAnimation = false) => {
-    document.body.setAttribute("data-theme", theme);
-    try {
-      localStorage.setItem(themeStorageKey, theme);
-    } catch {
-      // ignore
-    }
-    if (!themeToggle) return;
-    const nextTheme = theme === "dark" ? "light" : "dark";
-    themeToggle.setAttribute("aria-label", `Switch to ${nextTheme} theme`);
-    themeToggle.setAttribute("aria-pressed", String(theme === "light"));
-    if (withAnimation) {
-      themeToggle.classList.remove("is-animating");
-      void themeToggle.offsetWidth;
-      themeToggle.classList.add("is-animating");
-    }
-  };
-
-  const storedTheme = (typeof localStorage !== "undefined" && localStorage.getItem(themeStorageKey)) || null;
-  const initialTheme = storedTheme === "light" || storedTheme === "dark" ? storedTheme : "dark";
-  setTheme(initialTheme);
-
-  const animateThemeWipe = ({ layerTheme, fromRadius, toRadius, originX, originY }) => {
-    const layer = document.createElement("div");
-    layer.className = "theme-wipe-layer";
-    layer.setAttribute("data-theme", layerTheme);
-    document.body.appendChild(layer);
-
-    return new Promise((resolve) => {
-      const animation = layer.animate(
-        [
-          { clipPath: `circle(${fromRadius}px at ${originX}px ${originY}px)` },
-          { clipPath: `circle(${toRadius}px at ${originX}px ${originY}px)` },
-        ],
-        {
-          duration: 620,
-          easing: "cubic-bezier(0.22, 0.9, 0.28, 1)",
-          fill: "forwards",
-        }
-      );
-
-      animation.onfinish = () => {
-        layer.remove();
-        resolve();
-      };
-      animation.oncancel = () => {
-        layer.remove();
-        resolve();
-      };
-    });
-  };
-
-  if (themeToggle) {
-    themeToggle.addEventListener("click", async (event) => {
-      if (isThemeAnimating) return;
-      const currentTheme = document.body.getAttribute("data-theme") || "dark";
-      const nextTheme = currentTheme === "dark" ? "light" : "dark";
-
-      if (prefersReducedMotion) {
-        setTheme(nextTheme, true);
-        return;
-      }
-
-      const rect = themeToggle.getBoundingClientRect();
-      const originX = typeof event.clientX === "number" && event.clientX > 0
-        ? event.clientX
-        : rect.left + rect.width / 2;
-      const originY = typeof event.clientY === "number" && event.clientY > 0
-        ? event.clientY
-        : rect.top + rect.height / 2;
-
-      const farX = Math.max(originX, window.innerWidth - originX);
-      const farY = Math.max(originY, window.innerHeight - originY);
-      const maxRadius = Math.hypot(farX, farY);
-
-      isThemeAnimating = true;
-      themeToggle.disabled = true;
-
-      try {
-        if (nextTheme === "light") {
-          setTheme("light", true);
-          await animateThemeWipe({
-            layerTheme: "light",
-            fromRadius: 0,
-            toRadius: maxRadius,
-            originX,
-            originY,
-          });
-        } else {
-          setTheme("dark", true);
-          await animateThemeWipe({
-            layerTheme: "light",
-            fromRadius: maxRadius,
-            toRadius: 0,
-            originX,
-            originY,
-          });
-        }
-      } finally {
-        themeToggle.disabled = false;
-        isThemeAnimating = false;
-      }
-    });
-  }
 
   const statusEl = document.getElementById("applyStatusMessage");
   const setStatus = (text) => {
@@ -120,11 +12,85 @@
     statusEl.textContent = text || "";
   };
 
+  const overlay = document.getElementById("applyRedirectOverlay");
+  const overlayTeam = document.getElementById("applyRedirectTeam");
+  const overlayTitle = document.getElementById("applyRedirectTitle");
+  const overlayMessage = document.getElementById("applyRedirectMessage");
+  const pageMain = document.querySelector("main.apply-main");
+
+  const TEAM_TITLES = {
+    volunteer: "Volunteer Team",
+    media: "Media Team",
+    security: "Security Team",
+  };
+
   const LINKS = {
     volunteer: "https://forms.gle/zPm8ZHr6VGuTsRBF6",
     media: "https://forms.gle/YwM59JFdP2LFyfu6A",
     security: "https://forms.gle/CkhK5mvSkA5Rbanp6",
   };
+
+  const showRedirectOverlay = (team) => {
+    if (!overlay) return;
+    const teamTitle = TEAM_TITLES[team] || "Team Application";
+    const isVolunteer = team === "volunteer";
+
+    if (overlayTeam) overlayTeam.textContent = teamTitle;
+    if (overlayTitle) {
+      overlayTitle.textContent = isVolunteer
+        ? "Redirecting you to the application space"
+        : "Preparing your application space...";
+    }
+    if (overlayMessage) {
+      overlayMessage.textContent = isVolunteer
+        ? "Launching volunteer application in this page."
+        : `Launching ${teamTitle.toLowerCase()} application in this page.`;
+    }
+
+    overlay.classList.toggle("is-volunteer", isVolunteer);
+    overlay.classList.add("is-active");
+    overlay.setAttribute("aria-hidden", "false");
+  };
+
+  const hideRedirectOverlay = () => {
+    if (!overlay) return;
+    overlay.classList.remove("is-active", "is-volunteer");
+    overlay.setAttribute("aria-hidden", "true");
+  };
+
+  const animateCardSelection = (card, button, team) => {
+    if (typeof gsap === "undefined" || prefersReducedMotion) return;
+    const isVolunteer = team === "volunteer";
+
+    gsap.to(card, {
+      scale: isVolunteer ? 1.12 : 1.04,
+      y: isVolunteer ? -8 : -3,
+      boxShadow: isVolunteer
+        ? "0 30px 80px rgba(79, 209, 197, 0.35), 0 0 0 1px rgba(240, 218, 160, 0.35)"
+        : "0 20px 56px rgba(213, 180, 101, 0.28)",
+      duration: 0.42,
+      ease: "power3.out",
+    });
+
+    gsap.to(button, {
+      scale: 0.94,
+      duration: 0.12,
+      ease: "power2.in",
+      yoyo: true,
+      repeat: 1,
+    });
+
+    if (pageMain) {
+      gsap.to(pageMain, {
+        opacity: isVolunteer ? 0.45 : 0.62,
+        filter: isVolunteer ? "blur(2px)" : "blur(1px)",
+        duration: 0.35,
+        ease: "power2.out",
+      });
+    }
+  };
+
+  let redirectInProgress = false;
 
   const applyCards = document.querySelectorAll(".apply-card");
   applyCards.forEach((card) => {
@@ -134,31 +100,52 @@
 
     button.addEventListener("click", (event) => {
       event.preventDefault();
+      if (redirectInProgress) return;
+
       const url = LINKS[team];
       if (!url) {
         setStatus("Application form for this team is not configured yet.");
         return;
       }
 
-      setStatus("Redirecting you to the forms page now…");
+      redirectInProgress = true;
+      applyCards.forEach((item) => {
+        const cta = item.querySelector('[data-team-cta]');
+        if (cta) cta.disabled = true;
+      });
+
+      setStatus(`Logging click and preparing ${TEAM_TITLES[team] || "team"} form...`);
 
       if (window.ImperiumTracker && typeof window.ImperiumTracker.trackEvent === "function") {
         window.ImperiumTracker.trackEvent("team_application_click", team);
       }
 
-      if (typeof gsap !== "undefined") {
-        gsap.to(button, {
-          scale: 0.96,
-          duration: 0.12,
-          ease: "power2.in",
-          onComplete: () => {
-            window.open(url, "_blank", "noopener");
-            gsap.to(button, { scale: 1.02, duration: 0.18, ease: "power2.out" });
-          },
+      card.classList.add("is-selected");
+      animateCardSelection(card, button, team);
+      showRedirectOverlay(team);
+
+      const redirectDelay = team === "volunteer" ? 1350 : 760;
+
+      window.setTimeout(() => {
+        window.location.assign(url);
+      }, redirectDelay);
+
+      // If navigation is blocked, recover UI.
+      window.setTimeout(() => {
+        if (document.visibilityState === "hidden") return;
+        redirectInProgress = false;
+        hideRedirectOverlay();
+        setStatus("Redirect could not start. Please try again.");
+        applyCards.forEach((item) => {
+          item.classList.remove("is-selected");
+          const cta = item.querySelector('[data-team-cta]');
+          if (cta) cta.disabled = false;
         });
-      } else {
-        window.open(url, "_blank", "noopener");
-      }
+        if (pageMain) {
+          pageMain.style.opacity = "";
+          pageMain.style.filter = "";
+        }
+      }, 4000);
     });
   });
 })();
