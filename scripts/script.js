@@ -46,6 +46,7 @@ const siteAnnouncement = document.getElementById("siteAnnouncement");
 const joinHeading = document.getElementById("joinHeading");
 const joinIntro = document.getElementById("joinIntro");
 const heroApplyBtn = document.getElementById("heroApplyBtn");
+const teamAppsLiveBadge = document.getElementById("teamApplicationsLiveBadge");
 const joinApplyBtn = document.getElementById("joinApplyBtn");
 const joinApplyCardTitle = document.getElementById("joinApplyCardTitle");
 const joinApplyCardText = document.getElementById("joinApplyCardText");
@@ -88,6 +89,14 @@ const applyTeamRecruitmentCtaFromSettings = (settings) => {
     heroApplyBtn.style.removeProperty("opacity");
     heroApplyBtn.textContent = heroLabel;
     heroApplyBtn.setAttribute("href", heroHref);
+  }
+
+  if (teamAppsLiveBadge) {
+    if (isOpen) {
+      teamAppsLiveBadge.style.display = "";
+    } else {
+      teamAppsLiveBadge.style.display = "none";
+    }
   }
 
   const applyCardBlock = document.getElementById("applyCardBlock");

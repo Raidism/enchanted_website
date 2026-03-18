@@ -63,7 +63,7 @@
 
     const teamOpen = Boolean(settings && settings.teamApplicationsOpen);
     if (teamOpen) {
-      setStatus("Team applications are open. Choose your team below.");
+      setStatus("");
       const fallbackBtn = document.getElementById("applyEarlyAccessBtn");
       if (fallbackBtn && fallbackBtn.parentElement) {
         fallbackBtn.parentElement.remove();
