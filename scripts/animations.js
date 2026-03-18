@@ -1,4 +1,56 @@
 (function initImperiumAnimations() {
+  const setupFaqCards = () => {
+    const cards = Array.from(document.querySelectorAll(".faq-card"));
+    if (!cards.length) return;
+
+    let currentCard = null;
+
+    const flipCard = (card) => {
+      if (currentCard && currentCard !== card) {
+        currentCard.classList.remove("flipped");
+        currentCard.setAttribute("aria-pressed", "false");
+      }
+      card.classList.add("flipped");
+      card.setAttribute("aria-pressed", "true");
+      currentCard = card;
+    };
+
+    const unflipCard = (card) => {
+      card.classList.remove("flipped");
+      card.setAttribute("aria-pressed", "false");
+      if (currentCard === card) currentCard = null;
+    };
+
+    cards.forEach((card) => {
+      if (card.dataset.faqBound === "true") return;
+      card.dataset.faqBound = "true";
+
+      card.addEventListener("click", () => {
+        card.classList.contains("flipped") ? unflipCard(card) : flipCard(card);
+      });
+
+      card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          card.classList.contains("flipped") ? unflipCard(card) : flipCard(card);
+        }
+      });
+
+      if (typeof IntersectionObserver !== "undefined") {
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (!entry.isIntersecting) unflipCard(card);
+          },
+          { threshold: 0 }
+        );
+        observer.observe(card);
+      }
+    });
+  };
+
+  // FAQ flip must work even when GSAP is unavailable or animations are reduced.
+  setupFaqCards();
+
   if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") {
     document.querySelectorAll(".reveal").forEach((el) => el.classList.add("show"));
     return;
@@ -249,46 +301,6 @@
         onComplete: () => { window.location.href = destination.pathname + destination.search + destination.hash; },
       });
     });
-  });
-
-  const cards = Array.from(document.querySelectorAll(".faq-card"));
-  let currentCard = null;
-
-  const flipCard = (card) => {
-    if (currentCard && currentCard !== card) {
-      currentCard.classList.remove("flipped");
-      currentCard.setAttribute("aria-pressed", "false");
-    }
-    card.classList.add("flipped");
-    card.setAttribute("aria-pressed", "true");
-    currentCard = card;
-  };
-
-  const unflipCard = (card) => {
-    card.classList.remove("flipped");
-    card.setAttribute("aria-pressed", "false");
-    if (currentCard === card) currentCard = null;
-  };
-
-  cards.forEach((card) => {
-    card.addEventListener("click", () => {
-      card.classList.contains("flipped") ? unflipCard(card) : flipCard(card);
-    });
-
-    card.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        card.classList.contains("flipped") ? unflipCard(card) : flipCard(card);
-      }
-    });
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) unflipCard(card);
-      },
-      { threshold: 0 }
-    );
-    observer.observe(card);
   });
 
   if (document.fonts && document.fonts.ready) {
