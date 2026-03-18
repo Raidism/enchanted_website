@@ -41,10 +41,15 @@ const getSiteSettings = () => {
   return fallbackSiteSettings;
 };
 
-const siteSettings = getSiteSettings();
+const siteSettings = { ...getSiteSettings() };
 const siteAnnouncement = document.getElementById("siteAnnouncement");
 const joinHeading = document.getElementById("joinHeading");
 const joinIntro = document.getElementById("joinIntro");
+const heroApplyBtn = document.getElementById("heroApplyBtn");
+const joinApplyBtn = document.getElementById("joinApplyBtn");
+const joinApplyCardTitle = document.getElementById("joinApplyCardTitle");
+const joinApplyCardText = document.getElementById("joinApplyCardText");
+const earlyAccessWrap = document.getElementById("earlyAccessWrap");
 
 const applyAnnouncementFromSettings = (settings) => {
   if (!siteAnnouncement) return;
@@ -69,6 +74,59 @@ const applyJoinStateFromSettings = (settings) => {
     joinHeading.textContent = "Team Recruitment Is Currently Closed";
     joinIntro.textContent = "Applications are temporarily paused. The countdown and page content remain visible until the next opening.";
   }
+};
+
+const applyTeamRecruitmentCtaFromSettings = (settings) => {
+  const isOpen = Boolean(settings && settings.teamApplicationsOpen);
+  const heroLabel = isOpen ? "Apply Now for Teams 📝" : "Join Early Access 🔔";
+  const heroHref = isOpen ? "/apply" : "#join";
+
+  if (heroApplyBtn) {
+    heroApplyBtn.textContent = heroLabel;
+    heroApplyBtn.setAttribute("href", heroHref);
+  }
+
+  if (joinApplyBtn) {
+    joinApplyBtn.textContent = isOpen ? "Apply For Teams" : "Join Early Access";
+    joinApplyBtn.setAttribute("href", heroHref);
+    joinApplyBtn.hidden = !isOpen;
+  }
+
+  if (earlyAccessWrap) {
+    earlyAccessWrap.hidden = isOpen;
+  }
+
+  if (joinApplyCardTitle) {
+    joinApplyCardTitle.textContent = isOpen ? "Apply For Teams Only 📝" : "Join Early Access 🔔";
+  }
+
+  if (joinApplyCardText) {
+    joinApplyCardText.textContent = isOpen
+      ? "Volunteer, Media, and Security applications are managed in one dedicated portal."
+      : "Team recruiting is closed right now. Join early access and we will notify you first when applications reopen.";
+  }
+};
+
+let launchDate = new Date(siteSettings.launchDate);
+if (Number.isNaN(launchDate.getTime())) {
+  launchDate = new Date(fallbackSiteSettings.launchDate);
+}
+
+const hydrateDynamicSettings = (nextSettings) => {
+  const merged = {
+    ...fallbackSiteSettings,
+    ...(nextSettings || {}),
+  };
+  Object.assign(siteSettings, merged);
+
+  const parsedLaunchDate = new Date(siteSettings.launchDate);
+  launchDate = Number.isNaN(parsedLaunchDate.getTime())
+    ? new Date(fallbackSiteSettings.launchDate)
+    : parsedLaunchDate;
+
+  applyAnnouncementFromSettings(siteSettings);
+  applyJoinStateFromSettings(siteSettings);
+  applyTeamRecruitmentCtaFromSettings(siteSettings);
 };
 
 const formatCompactCount = (value) => {
@@ -230,22 +288,27 @@ window.addEventListener("storage", (event) => {
       nextSettings = null;
     }
     const resolved = nextSettings || getSiteSettings();
-    applyAnnouncementFromSettings(resolved);
-    applyJoinStateFromSettings(resolved);
+    hydrateDynamicSettings(resolved);
   }
 });
 
 window.addEventListener("imperium:site-settings-updated", (event) => {
   const detailSettings = event && event.detail && event.detail.settings ? event.detail.settings : getSiteSettings();
   scheduleInstagramSync();
-  applyAnnouncementFromSettings(detailSettings);
-  applyJoinStateFromSettings(detailSettings);
+  hydrateDynamicSettings(detailSettings);
 });
 
-const parsedLaunchDate = new Date(siteSettings.launchDate);
-const launchDate = Number.isNaN(parsedLaunchDate.getTime())
-  ? new Date(fallbackSiteSettings.launchDate)
-  : parsedLaunchDate;
+const refreshSiteSettingsFromServer = async () => {
+  try {
+    const response = await fetch(`${API_BASE}/site-settings`, { method: "GET", cache: "no-store" });
+    if (!response.ok) return;
+    const payload = await response.json();
+    if (!payload || !payload.settings) return;
+    hydrateDynamicSettings(payload.settings);
+  } catch {
+    // Keep local settings when server refresh fails.
+  }
+};
 
 const heroApply = document.getElementById("heroApplyBtn");
 if (heroApply) {
@@ -334,7 +397,9 @@ if (launchHint) {
     ? `Applications are currently open.${conferenceDateText}`
     : `Launch target can be adjusted anytime by the organizing team.${conferenceDateText}`;
 }
-applyJoinStateFromSettings(siteSettings);
+hydrateDynamicSettings(siteSettings);
+refreshSiteSettingsFromServer();
+setInterval(refreshSiteSettingsFromServer, 20000);
 
 const SECRETARIAT_KEY = "imperium_secretariat";
 const readSecretariat = () => {

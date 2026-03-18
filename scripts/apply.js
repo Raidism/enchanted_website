@@ -12,6 +12,8 @@
     statusEl.textContent = text || "";
   };
 
+  const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+
   const overlay = document.getElementById("applyRedirectOverlay");
   const overlayTeam = document.getElementById("applyRedirectTeam");
   const overlayTitle = document.getElementById("applyRedirectTitle");
@@ -28,6 +30,64 @@
     volunteer: "https://forms.gle/zPm8ZHr6VGuTsRBF6",
     media: "https://forms.gle/YwM59JFdP2LFyfu6A",
     security: "https://forms.gle/CkhK5mvSkA5Rbanp6",
+  };
+
+  const applyCards = document.querySelectorAll(".apply-card");
+  const forceRevealVisible = () => {
+    applyCards.forEach((card) => {
+      card.classList.add("show");
+      card.style.opacity = "1";
+      card.style.transform = "none";
+    });
+  };
+
+  const applyOpenState = async () => {
+    let settings = null;
+    try {
+      if (window.ImperiumAuth && typeof window.ImperiumAuth.getSiteSettings === "function") {
+        settings = window.ImperiumAuth.getSiteSettings();
+      }
+    } catch {
+      settings = null;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/site-settings`, { method: "GET", cache: "no-store" });
+      if (response.ok) {
+        const payload = await response.json();
+        if (payload && payload.settings) settings = payload.settings;
+      }
+    } catch {
+      // Keep cached settings when refresh fails.
+    }
+
+    const teamOpen = Boolean(settings && settings.teamApplicationsOpen);
+    if (teamOpen) {
+      setStatus("Team applications are open. Choose your team below.");
+      const fallbackBtn = document.getElementById("applyEarlyAccessBtn");
+      if (fallbackBtn && fallbackBtn.parentElement) {
+        fallbackBtn.parentElement.remove();
+      }
+      applyCards.forEach((card) => {
+        card.hidden = false;
+        const cta = card.querySelector("[data-team-cta]");
+        if (cta) cta.disabled = false;
+      });
+      return;
+    }
+
+    setStatus("Team recruitment is currently closed. Join early access and we will notify you first when applications reopen.");
+    applyCards.forEach((card) => {
+      card.hidden = true;
+    });
+
+    if (!document.getElementById("applyEarlyAccessBtn")) {
+      const holder = document.createElement("div");
+      holder.className = "apply-early-access-wrap";
+      holder.innerHTML = '<a id="applyEarlyAccessBtn" class="cta" href="/#join">Join Early Access 🔔</a>';
+      const section = document.querySelector(".apply-section");
+      if (section) section.appendChild(holder);
+    }
   };
 
   const showRedirectOverlay = (team) => {
@@ -93,7 +153,19 @@
 
   let redirectInProgress = false;
 
-  const applyCards = document.querySelectorAll(".apply-card");
+  forceRevealVisible();
+  applyOpenState();
+
+  window.addEventListener("storage", (event) => {
+    if (event.key === "imperium_site_settings") {
+      applyOpenState();
+    }
+  });
+
+  window.addEventListener("imperium:site-settings-updated", () => {
+    applyOpenState();
+  });
+
   applyCards.forEach((card) => {
     const team = card.getAttribute("data-team");
     const button = card.querySelector('[data-team-cta]');

@@ -1068,6 +1068,12 @@ app.get("/api/instagram", async (req, res) => {
 });
 
 const requireAccessGate = (req, res, next) => {
+  const activeSession = getSession(req);
+  if (activeSession) {
+    setAccessGateCookie(res);
+    return next();
+  }
+
   const token = req.cookies && req.cookies[ACCESS_GATE_COOKIE];
   if (!verifySignedToken(token)) {
     clearAccessGateCookie(res);
@@ -1083,6 +1089,16 @@ Object.entries(LEGACY_PAGE_REDIRECTS).forEach(([legacyPath, cleanPath]) => {
 });
 
 Object.entries(PAGE_ROUTE_FILES).forEach(([routePath, fileName]) => {
+  if (routePath === "/access") {
+    app.get(routePath, (req, res) => {
+      if (getSession(req)) {
+        return res.redirect(302, "/dashboard");
+      }
+      return res.sendFile(path.join(__dirname, "..", fileName));
+    });
+    return;
+  }
+
   if (routePath === "/portal") {
     app.get(routePath, requireAccessGate, (_req, res) => {
       res.sendFile(path.join(__dirname, "..", fileName));

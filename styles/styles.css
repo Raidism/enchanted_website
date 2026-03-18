@@ -1039,6 +1039,12 @@ h3 {
   min-height: 1.2em;
 }
 
+.apply-early-access-wrap {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
 .launch-card,
 .value-card,
 .roadmap-card,

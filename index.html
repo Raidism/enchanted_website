@@ -104,9 +104,32 @@
         </article>
 
         <article class="launch-card reveal pop-card">
-          <h3>Apply For Teams Only 📝</h3>
-          <p class="muted">Volunteer, Media, and Security applications are managed in one dedicated portal.</p>
-          <a class="cta" href="/apply">Apply For Teams</a>
+          <h3 id="joinApplyCardTitle">Apply For Teams Only 📝</h3>
+          <p id="joinApplyCardText" class="muted">Volunteer, Media, and Security applications are managed in one dedicated portal.</p>
+          <a id="joinApplyBtn" class="cta" href="/apply">Apply For Teams</a>
+          <div id="earlyAccessWrap" hidden>
+            <p class="muted">Early access signups: <span id="waitlistCount">0</span></p>
+            <form id="waitlistForm" class="waitlist-form" novalidate>
+              <label for="waitlistName">Full Name</label>
+              <input id="waitlistName" name="waitlistName" type="text" autocomplete="name" required />
+
+              <label for="waitlistEmail">Email</label>
+              <input id="waitlistEmail" name="waitlistEmail" type="email" autocomplete="email" required />
+
+              <label for="waitlistSchool">School</label>
+              <input id="waitlistSchool" name="waitlistSchool" type="text" required />
+
+              <label for="waitlistRole">Role Interest</label>
+              <select id="waitlistRole" name="waitlistRole" required>
+                <option value="delegate">Delegate</option>
+                <option value="chair">Chair</option>
+                <option value="staff">Staff</option>
+              </select>
+
+              <button type="submit">Reserve Early Access 🔔</button>
+            </form>
+            <p id="waitlistMessage" class="muted" aria-live="polite"></p>
+          </div>
         </article>
       </div>
     </section>
