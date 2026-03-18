@@ -58,11 +58,19 @@
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const isTouchDevice = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+  const userAgent = String(navigator.userAgent || "").toLowerCase();
+  const isIOS = /iphone|ipod|ipad/.test(userAgent)
+    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isInAppBrowser = /instagram|fbav|fban|line\//.test(userAgent)
+    || /twitter|snapchat|pinterest|; wv\)|\bwv\b|webview/.test(userAgent);
+  const isPhoneViewport = window.matchMedia("(max-width: 900px)").matches;
   const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   const effectiveType = String(connection && connection.effectiveType ? connection.effectiveType : "").toLowerCase();
   const isConstrainedNetwork = Boolean(connection && connection.saveData) || /(^|[^a-z])2g|3g([^a-z]|$)/.test(effectiveType);
+  const shouldUseLiteMotion = (isTouchDevice && isPhoneViewport) || (isIOS && isInAppBrowser);
 
-  if (prefersReducedMotion || isConstrainedNetwork) {
+  if (prefersReducedMotion || isConstrainedNetwork || shouldUseLiteMotion) {
+    document.body.classList.add("mobile-reveal-lite");
     document.querySelectorAll(".reveal").forEach((el) => el.classList.add("show"));
     return;
   }
@@ -272,6 +280,7 @@
 
   let isPageTransitioning = false;
   document.querySelectorAll("a[href]").forEach((link) => {
+    if (shouldUseLiteMotion) return;
     const href = link.getAttribute("href") || "";
     const target = (link.getAttribute("target") || "").toLowerCase();
     if (!href || href.startsWith("#") || href.startsWith("http") || href.startsWith("//") || href.startsWith("mailto") || href.startsWith("tel") || href.startsWith("javascript:") || target === "_blank" || link.hasAttribute("download")) {
