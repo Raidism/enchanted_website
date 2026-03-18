@@ -28,16 +28,28 @@ const _appRoleLabels = {
 const _APP_PROFILE_FALLBACKS = {
   admin: {
     name: "Adham / Head of IT",
-    photo: "assets/imperium mun logo.jpg",
+    photo: "/assets/imperium mun logo.jpg",
   },
   joumohd08: {
     name: "Joumana Mohamed",
-    photo: "assets/Joumana Mohamed .png",
+    photo: "/assets/Joumana Mohamed .png",
   },
 };
 const _appProfileFallback = _APP_PROFILE_FALLBACKS[_appProfileKey] || {};
 const _appDisplayName = String(_appProfileFallback.name || currentUser.name || currentUser.username || "User");
-const _appProfilePhoto = String(_appProfileFallback.photo || currentUser.photo || "assets/imperium mun logo.jpg");
+const normalizeAssetPath = (value, fallback) => {
+  const candidate = String(value || fallback || "").trim();
+  if (!candidate) return String(fallback || "");
+  if (/^(https?:)?\/\//i.test(candidate) || candidate.startsWith("data:") || candidate.startsWith("/")) {
+    return candidate;
+  }
+  return `/${candidate.replace(/^\/+/, "")}`;
+};
+
+const _appProfilePhoto = normalizeAssetPath(
+  _appProfileFallback.photo || currentUser.photo,
+  "/assets/imperium mun logo.jpg",
+);
 const _appRoleLabel = _appRoleLabels[_appProfileKey] || (currentUser.role === "admin" ? "Admin" : "Member");
 
 const _aPmhPhoto = document.getElementById("pmhPhoto");
