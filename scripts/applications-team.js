@@ -213,16 +213,16 @@ const renderTrend = (orderedDays) => {
     ${dots("security", 2.4)}
     ${dots("volunteer", 2.4)}
     ${labels}
-    <g transform="translate(${padLeft}, ${padTop - 18})">
-      <rect x="0" y="0" width="260" height="22" rx="6" fill="rgba(5,10,7,0.85)" stroke="rgba(213,180,101,0.3)" stroke-width="1"></rect>
-      <circle cx="10" cy="11" r="3" fill="${colors.total}"></circle>
-      <text x="18" y="14" font-size="10" fill="#e2f0e6" font-weight="600">Total</text>
-      <circle cx="70" cy="11" r="3" fill="${colors.media}"></circle>
-      <text x="78" y="14" font-size="10" fill="#e2f0e6" font-weight="600">Media</text>
-      <circle cx="136" cy="11" r="3" fill="${colors.security}"></circle>
-      <text x="144" y="14" font-size="10" fill="#e2f0e6" font-weight="600">Security</text>
-      <circle cx="213" cy="11" r="3" fill="${colors.volunteer}"></circle>
-      <text x="221" y="14" font-size="10" fill="#e2f0e6" font-weight="600">Volunteer</text>
+    <g transform="translate(${padLeft}, ${height - padBottom + 6})">
+      <rect x="0" y="0" width="620" height="28" rx="8" fill="rgba(5,10,7,0.88)" stroke="rgba(213,180,101,0.35)" stroke-width="1.5"></rect>
+      <circle cx="20" cy="14" r="4" fill="${colors.total}"></circle>
+      <text x="30" y="18" font-size="12" fill="#e2f0e6" font-weight="600">Total</text>
+      <circle cx="170" cy="14" r="4" fill="${colors.media}"></circle>
+      <text x="180" y="18" font-size="12" fill="#e2f0e6" font-weight="600">Media</text>
+      <circle cx="320" cy="14" r="4" fill="${colors.security}"></circle>
+      <text x="330" y="18" font-size="12" fill="#e2f0e6" font-weight="600">Security</text>
+      <circle cx="470" cy="14" r="4" fill="${colors.volunteer}"></circle>
+      <text x="480" y="18" font-size="12" fill="#e2f0e6" font-weight="600">Volunteer</text>
     </g>
   `;
 };
