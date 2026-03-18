@@ -4,6 +4,14 @@ if (!currentUser) {
   throw new Error("No active session");
 }
 
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+const effectiveType = String(connection && connection.effectiveType ? connection.effectiveType : "").toLowerCase();
+const constrainedNetwork = Boolean(connection && connection.saveData) || /(^|[^a-z])2g|3g([^a-z]|$)/.test(effectiveType);
+if (prefersReducedMotion || constrainedNetwork) {
+  document.body.classList.add("lite-motion");
+}
+
 const siteSettings = window.ImperiumAuth.getSiteSettings();
 if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
   window.location.href = "/maintenance";
@@ -44,6 +52,12 @@ if (_aPmhHero) { _aPmhHero.classList.remove("profile-pending"); _aPmhHero.classL
 
 const teamAppsStatusNotice = document.getElementById("teamAppsStatusNotice");
 const teamAppsBtn = document.getElementById("teamAppsBtn");
+const appsAnalyticsStatus = document.getElementById("appsAnalyticsStatus");
+const appsMetricTotalClicks = document.getElementById("appsMetricTotalClicks");
+const appsMetricUniqueIps = document.getElementById("appsMetricUniqueIps");
+const appsMetricTopTeam = document.getElementById("appsMetricTopTeam");
+const appsTrendEmpty = document.getElementById("appsTrendEmpty");
+const appsTrendChart = document.getElementById("appsTrendChart");
 
 const logoutBtn   = document.getElementById("logoutBtn");
 const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
@@ -73,6 +87,119 @@ const applyTeamStatus = (settings) => {
   if (teamAppsBtn) {
     teamAppsBtn.classList.toggle("is-open", isOpen);
     teamAppsBtn.classList.toggle("is-closed", !isOpen);
+  }
+};
+
+const toShortDay = (isoDay) => String(isoDay || "").slice(5);
+
+const renderAppsTrend = (orderedDays) => {
+  if (!appsTrendChart) return;
+
+  if (!orderedDays.length) {
+    appsTrendChart.innerHTML = "";
+    if (appsTrendEmpty) appsTrendEmpty.hidden = false;
+    return;
+  }
+
+  if (appsTrendEmpty) appsTrendEmpty.hidden = true;
+
+  const width = 760;
+  const height = 240;
+  const left = 44;
+  const top = 22;
+  const chartW = 688;
+  const chartH = 162;
+  const bottom = top + chartH;
+  const stepX = orderedDays.length > 1 ? chartW / (orderedDays.length - 1) : 0;
+
+  let maxVal = 1;
+  orderedDays.forEach(([, row]) => {
+    maxVal = Math.max(maxVal, Number(row.total || 0));
+  });
+
+  const points = orderedDays.map(([day, row], idx) => {
+    const x = left + (idx * stepX);
+    const value = Number(row.total || 0);
+    const y = bottom - ((value / maxVal) * chartH);
+    return { x, y, value, day: toShortDay(day) };
+  });
+
+  const linePoints = points.map((p) => `${Math.round(p.x)},${Math.round(p.y)}`).join(" ");
+  const labels = points.map((p) => `
+    <text x="${Math.round(p.x)}" y="${bottom + 16}" text-anchor="middle" font-size="10" fill="#9eb0a3">${p.day}</text>
+  `).join("");
+  const dots = points.map((p) => `
+    <circle cx="${Math.round(p.x)}" cy="${Math.round(p.y)}" r="3.2" fill="#4fd1c5"></circle>
+  `).join("");
+
+  appsTrendChart.innerHTML = `
+    <rect x="0" y="0" width="${width}" height="${height}" rx="14" fill="rgba(8,14,10,0.7)"></rect>
+    <line x1="${left}" y1="${bottom}" x2="${left + chartW}" y2="${bottom}" stroke="rgba(213,180,101,0.35)" stroke-width="1"></line>
+    <polyline points="${linePoints}" fill="none" stroke="#4fd1c5" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+    ${dots}
+    ${labels}
+  `;
+};
+
+const renderApplicationsAnalytics = async () => {
+  if (!appsTrendChart) return;
+
+  try {
+    const response = await fetch(`${API_BASE}/analytics/clicks`, { method: "GET", cache: "no-store" });
+    if (!response.ok) {
+      throw new Error("analytics unavailable");
+    }
+
+    const payload = await response.json();
+    const clicks = payload && Array.isArray(payload.clicks) ? payload.clicks : [];
+    const teamEvents = clicks.filter((entry) => String(entry.event || "") === "team_application_click");
+
+    const byTeam = { volunteer: 0, media: 0, security: 0 };
+    const ipSet = new Set();
+    const byDay = {};
+
+    teamEvents.forEach((entry) => {
+      const label = String(entry.label || "").toLowerCase();
+      if (!Object.prototype.hasOwnProperty.call(byTeam, label)) {
+        return;
+      }
+
+      byTeam[label] += 1;
+
+      const ip = String(entry.ip || "").trim();
+      if (ip) ipSet.add(ip);
+
+      const ts = new Date(String(entry.timestamp || ""));
+      if (!Number.isNaN(ts.getTime())) {
+        const day = ts.toISOString().slice(0, 10);
+        if (!byDay[day]) byDay[day] = { total: 0 };
+        byDay[day].total += 1;
+      }
+    });
+
+    const total = byTeam.volunteer + byTeam.media + byTeam.security;
+    const topTeam = Object.entries(byTeam).sort((a, b) => b[1] - a[1])[0] || ["none", 0];
+    const topTeamLabel = topTeam[1] > 0 ? `${topTeam[0].charAt(0).toUpperCase()}${topTeam[0].slice(1)} (${topTeam[1]})` : "None";
+
+    if (appsMetricTotalClicks) appsMetricTotalClicks.textContent = String(total);
+    if (appsMetricUniqueIps) appsMetricUniqueIps.textContent = String(ipSet.size);
+    if (appsMetricTopTeam) appsMetricTopTeam.textContent = topTeamLabel;
+    if (appsAnalyticsStatus) {
+      appsAnalyticsStatus.textContent = total > 0
+        ? "Live team-click activity for the last 14 days."
+        : "No team click activity yet.";
+    }
+
+    const orderedDays = Object.entries(byDay)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .slice(-14);
+
+    renderAppsTrend(orderedDays);
+  } catch {
+    if (appsAnalyticsStatus) {
+      appsAnalyticsStatus.textContent = "Could not load analytics right now.";
+    }
+    renderAppsTrend([]);
   }
 };
 
@@ -113,6 +240,7 @@ window.addEventListener("imperium:site-settings-updated", (event) => {
 });
 
 setTimeout(refreshTeamStatus, 220);
+setTimeout(renderApplicationsAnalytics, 260);
 
 logoutBtn.addEventListener("click", () => {
   logoutBtn.classList.add("is-loading");
@@ -150,13 +278,14 @@ logoutBtn.addEventListener("click", () => {
 (function initAppGSAP() {
   if (typeof gsap === "undefined") return;
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const useLiteMotion = prefersReduced || document.body.classList.contains("lite-motion");
 
   document.body.style.opacity = "0";
   requestAnimationFrame(() => {
     gsap.to(document.body, { opacity: 1, duration: 0.55, ease: "power2.out" });
   });
 
-  if (!prefersReduced) {
+  if (!useLiteMotion) {
     const header  = document.querySelector(".dash-header");
     const hero    = document.getElementById("pageMiniHero");
     const section = document.querySelector(".dash-main > .section");

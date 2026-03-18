@@ -938,12 +938,27 @@ h3 {
   gap: 0.75rem;
   flex-wrap: wrap;
   align-items: center;
+  width: 100%;
 }
 
 #heroApplyBtn {
   display: inline-flex;
   visibility: visible;
   opacity: 1;
+}
+
+.hero-cta-row .cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  flex: 1 1 270px;
+  white-space: normal;
+  text-align: center;
+}
+
+.hero-cta-row .cta-ghost {
+  flex: 1 1 230px;
 }
 
 .cta-ghost {

@@ -51,13 +51,13 @@
 
     <section id="applications" class="section">
       <h1>Applications</h1>
-      <p class="sub">Choose an application workspace.</p>
+      <p class="sub">Choose an application workspace and monitor live activity.</p>
 
       <div class="apps-launcher-card table-card">
         <p id="teamAppsStatusNotice" class="sub apps-status-notice">Team Applications: Checking status...</p>
         <div class="apps-launcher-grid" role="group" aria-label="Applications launcher buttons">
           <button id="chairAppsBtn" type="button" class="apps-launch-btn is-disabled" disabled aria-disabled="true">
-            <span class="apps-launch-title">Share Applications</span>
+            <span class="apps-launch-title">Chair Applications</span>
             <span class="apps-launch-sub">Not available yet</span>
           </button>
           <button id="delegateAppsBtn" type="button" class="apps-launch-btn is-disabled" disabled aria-disabled="true">
@@ -66,8 +66,33 @@
           </button>
           <a id="teamAppsBtn" href="/applications/team" class="apps-launch-btn apps-launch-btn--team">
             <span class="apps-launch-title">Team Applications</span>
-            <span class="apps-launch-sub">Open workspace</span>
+            <span class="apps-launch-sub">Open workspace analytics</span>
           </a>
+        </div>
+      </div>
+
+      <div class="table-card apps-analytics-card">
+        <div class="apps-analytics-head">
+          <h2>Applications Analytics</h2>
+          <p class="sub" id="appsAnalyticsStatus">Loading click activity...</p>
+        </div>
+        <div class="apps-analytics-grid">
+          <article class="apps-metric-card">
+            <p class="apps-metric-label">Total Team Clicks</p>
+            <p class="apps-metric-value" id="appsMetricTotalClicks">0</p>
+          </article>
+          <article class="apps-metric-card">
+            <p class="apps-metric-label">Unique IPs</p>
+            <p class="apps-metric-value" id="appsMetricUniqueIps">0</p>
+          </article>
+          <article class="apps-metric-card">
+            <p class="apps-metric-label">Top Team</p>
+            <p class="apps-metric-value" id="appsMetricTopTeam">None</p>
+          </article>
+        </div>
+        <div class="apps-chart-card">
+          <p id="appsTrendEmpty" class="sub">No recent click activity yet.</p>
+          <svg id="appsTrendChart" class="ops-growth-chart" viewBox="0 0 760 240" aria-label="Applications activity trend chart"></svg>
         </div>
       </div>
     </section>

@@ -4,6 +4,14 @@ if (!currentUser) {
   throw new Error("No active session");
 }
 
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+const effectiveType = String(connection && connection.effectiveType ? connection.effectiveType : "").toLowerCase();
+const constrainedNetwork = Boolean(connection && connection.saveData) || /(^|[^a-z])2g|3g([^a-z]|$)/.test(effectiveType);
+if (prefersReducedMotion || constrainedNetwork) {
+  document.body.classList.add("lite-motion");
+}
+
 const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
 
 window.ImperiumAuth.heartbeat();

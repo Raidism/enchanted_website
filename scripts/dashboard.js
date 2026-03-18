@@ -4,6 +4,14 @@ if (!currentUser) {
   throw new Error("No active session");
 }
 
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+const effectiveType = String(connection && connection.effectiveType ? connection.effectiveType : "").toLowerCase();
+const constrainedNetwork = Boolean(connection && connection.saveData) || /(^|[^a-z])2g|3g([^a-z]|$)/.test(effectiveType);
+if (prefersReducedMotion || constrainedNetwork) {
+  document.body.classList.add("lite-motion");
+}
+
 const siteSettings = window.ImperiumAuth.getSiteSettings();
 if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
   window.location.href = "/maintenance";
@@ -967,6 +975,11 @@ startRefreshIntervals();
   const el = document.getElementById("totalLines");
   if (!el) return;
 
+  if (!isMainAdmin) {
+    el.textContent = "—";
+    return;
+  }
+
   const files = [
     "index.html", "styles.css", "script.js", "tracker.js", "auth.js",
     "dashboard.html", "dashboard.css", "dashboard.js",
@@ -997,6 +1010,7 @@ startRefreshIntervals();
 (function initDashGSAP() {
   if (typeof gsap === "undefined") return;
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const useLiteMotion = prefersReduced || document.body.classList.contains("lite-motion");
 
   // Fade body in on load
   document.body.style.opacity = "0";
@@ -1004,7 +1018,7 @@ startRefreshIntervals();
     gsap.to(document.body, { opacity: 1, duration: 0.55, ease: "power2.out" });
   });
 
-  if (!prefersReduced) {
+  if (!useLiteMotion) {
     const header      = document.querySelector(".dash-header");
     const hero        = document.getElementById("dashWelcomeHero");
     const noteSection = document.getElementById("submitNoteSection");

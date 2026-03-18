@@ -82,6 +82,10 @@ const applyTeamRecruitmentCtaFromSettings = (settings) => {
   const heroHref = isOpen ? "/apply" : "#join";
 
   if (heroApplyBtn) {
+    heroApplyBtn.hidden = false;
+    heroApplyBtn.style.removeProperty("display");
+    heroApplyBtn.style.removeProperty("visibility");
+    heroApplyBtn.style.removeProperty("opacity");
     heroApplyBtn.textContent = heroLabel;
     heroApplyBtn.setAttribute("href", heroHref);
   }
@@ -321,19 +325,6 @@ const refreshSiteSettingsFromServer = async () => {
 const heroApply = document.getElementById("heroApplyBtn");
 if (heroApply) {
   heroApply.hidden = false;
-  heroApply.style.display = "inline-flex";
-  heroApply.style.visibility = "visible";
-  heroApply.style.opacity = "1";
-
-  if (typeof gsap !== "undefined") {
-    gsap.from(heroApply, {
-      opacity: 0,
-      scale: 0.94,
-      duration: 0.42,
-      ease: "power2.out",
-      delay: 0.08,
-    });
-  }
 }
 
 const showUpdateAppliedNotice = () => {
