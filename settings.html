@@ -43,26 +43,26 @@
     <section id="settings" class="section">
       <h1>Settings & Access Control</h1>
       <p class="sub">View credentials, monitor online users, force logout sessions, and inspect login history.</p>
-      <div class="settings-quick-actions" style="margin-bottom: 2rem;">
+      <div class="settings-quick-actions settings-quick-actions--spaced">
         <button id="reopenOnboardingBtn" type="button" class="mini-btn">Replay Onboarding</button>
-        <p id="reopenOnboardingMessage" class="sub" aria-live="polite" style="margin-top: 0.5rem;"></p>
+        <p id="reopenOnboardingMessage" class="sub settings-quick-message" aria-live="polite"></p>
       </div>
 
       <div class="admin-grid">
         <article class="table-card">
           <h3>Application Controls</h3>
           <p class="sub">Manage public recruitment phases.</p>
-          <div style="display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0;">
-            <div>
-              <p style="margin: 0 0 0.5rem 0; font-weight: 500;">Team Applications Status</p>
-              <p id="appsTeamStatusDisplay" style="margin: 0; font-size: 0.9rem; opacity: 0.8;">Closed</p>
+          <div class="team-app-controls" role="group" aria-label="Team application controls">
+            <div class="team-app-status-wrap">
+              <p class="team-app-status-label">Team Applications Status</p>
+              <p id="appsTeamStatusDisplay" class="team-app-status is-closed">Closed</p>
             </div>
-            <div style="display: flex; gap: 0.75rem; margin-left: auto;">
-              <button id="appsTeamOpenBtn" type="button" class="action-btn" style="background: #4fd1c5;">Open Recruiting</button>
-              <button id="appsTeamCloseBtn" type="button" class="action-btn" style="background: #888;">Close Recruiting</button>
+            <div class="team-app-actions">
+              <button id="appsTeamOpenBtn" type="button" class="team-app-btn team-app-btn--open">Open Recruiting</button>
+              <button id="appsTeamCloseBtn" type="button" class="team-app-btn team-app-btn--close">Close Recruiting</button>
             </div>
           </div>
-          <p class="sub" style="font-size: 0.85rem; margin-top: 0.5rem;">
+          <p class="sub team-app-help-text">
             When opened, "Join Early Access" on the main page becomes "Apply Now" with team recruitment options.
           </p>
           <p id="appsTeamMessage" class="form-message" aria-live="polite"></p>

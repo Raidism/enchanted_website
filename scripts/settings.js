@@ -246,8 +246,13 @@ const renderTeamAppsButtons = () => {
     const isOpen = Boolean(current.teamApplicationsOpen);
     if (statusDisplay) {
       statusDisplay.textContent = isOpen ? "🟢 Open for Recruiting" : "🔴 Closed";
-      statusDisplay.style.color = isOpen ? "#4fd1c5" : "#888";
+      statusDisplay.classList.toggle("is-open", isOpen);
+      statusDisplay.classList.toggle("is-closed", !isOpen);
     }
+    openBtn.classList.toggle("is-active", isOpen);
+    closeBtn.classList.toggle("is-active", !isOpen);
+    openBtn.setAttribute("aria-pressed", String(isOpen));
+    closeBtn.setAttribute("aria-pressed", String(!isOpen));
   };
 
   updateDisplay();

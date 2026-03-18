@@ -363,6 +363,141 @@ body::after {
   flex-wrap: wrap;
 }
 
+.settings-quick-actions--spaced {
+  margin-bottom: 2rem;
+}
+
+.settings-quick-message {
+  margin-top: 0.5rem;
+}
+
+.team-app-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.25rem 0 0.9rem;
+  padding: 0.95rem;
+  border-radius: 14px;
+  border: 1px solid rgba(213, 180, 101, 0.18);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(77, 139, 99, 0.12), transparent 55%),
+    linear-gradient(165deg, rgba(14, 22, 17, 0.9), rgba(9, 15, 11, 0.88));
+}
+
+.team-app-status-wrap {
+  min-width: 0;
+}
+
+.team-app-status-label {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.team-app-status {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.66rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.team-app-status::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.team-app-status.is-open {
+  color: #a7eec7;
+  border-color: rgba(79, 209, 197, 0.45);
+  background: rgba(79, 209, 197, 0.12);
+}
+
+.team-app-status.is-open::before {
+  background: #4fd1c5;
+  box-shadow: 0 0 10px rgba(79, 209, 197, 0.7);
+}
+
+.team-app-status.is-closed {
+  color: #d8b0b0;
+  border-color: rgba(216, 124, 124, 0.4);
+  background: rgba(149, 74, 74, 0.16);
+}
+
+.team-app-status.is-closed::before {
+  background: #df6f6f;
+  box-shadow: 0 0 9px rgba(223, 111, 111, 0.68);
+}
+
+.team-app-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.team-app-btn {
+  border-radius: 11px;
+  border: 1px solid transparent;
+  min-height: 2.2rem;
+  padding: 0.48rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #ecf8f2;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, border-color 0.2s ease;
+}
+
+.team-app-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.team-app-btn:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+}
+
+.team-app-btn.is-active {
+  box-shadow: 0 0 0 2px rgba(240, 218, 160, 0.28), 0 10px 22px rgba(0, 0, 0, 0.28);
+  filter: saturate(1.12);
+}
+
+.team-app-btn--open {
+  color: #092218;
+  border-color: rgba(79, 209, 197, 0.65);
+  background: linear-gradient(140deg, #9df2e3, #4fd1c5 56%, #2f9f97);
+}
+
+.team-app-btn--open:hover:not(:disabled) {
+  box-shadow: 0 10px 24px rgba(79, 209, 197, 0.28);
+}
+
+.team-app-btn--close {
+  border-color: rgba(221, 128, 128, 0.62);
+  background: linear-gradient(155deg, rgba(95, 34, 34, 0.95), rgba(54, 18, 18, 0.95));
+  color: #ffd7d7;
+}
+
+.team-app-btn--close:hover:not(:disabled) {
+  box-shadow: 0 10px 24px rgba(188, 80, 80, 0.25);
+}
+
+.team-app-help-text {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
 .profile-pending {
   opacity: 0;
   visibility: hidden;
@@ -1408,6 +1543,18 @@ tbody tr.row-leave {
   .apps-grid {
     grid-template-columns: 1fr;
   }
+
+  .team-app-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+  }
+
+  .team-app-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 560px) {
@@ -1496,6 +1643,14 @@ tbody tr.row-leave {
     min-width: 1.9rem;
     height: 1.9rem;
     font-size: 0.78rem;
+  }
+
+  .team-app-actions {
+    flex-direction: column;
+  }
+
+  .team-app-btn {
+    width: 100%;
   }
 }
 
