@@ -76,7 +76,7 @@
       return;
     }
 
-    setStatus("Team recruitment is currently closed. Join early access and we will notify you first when applications reopen.");
+    setStatus("Team recruitment is currently closed. Keep an eye on the countdown timer for when applications reopen.");
     applyCards.forEach((card) => {
       card.hidden = true;
     });
@@ -84,7 +84,7 @@
     if (!document.getElementById("applyEarlyAccessBtn")) {
       const holder = document.createElement("div");
       holder.className = "apply-early-access-wrap";
-      holder.innerHTML = '<a id="applyEarlyAccessBtn" class="cta" href="/#join">Join Early Access 🔔</a>';
+      holder.innerHTML = '<a id="applyEarlyAccessBtn" class="cta" href="/#countdown">Check Countdown ⏳</a>';
       const section = document.querySelector(".apply-section");
       if (section) section.appendChild(holder);
     }

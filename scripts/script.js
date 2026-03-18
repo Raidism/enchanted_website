@@ -78,7 +78,7 @@ const applyJoinStateFromSettings = (settings) => {
 
 const applyTeamRecruitmentCtaFromSettings = (settings) => {
   const isOpen = Boolean(settings && settings.teamApplicationsOpen);
-  const heroLabel = isOpen ? "Apply Now for Teams 📝" : "Join Early Access 🔔";
+  const heroLabel = isOpen ? "Apply Now for Teams 📝" : "Find out when applications open ⏳";
   const heroHref = isOpen ? "/apply" : "#join";
 
   if (heroApplyBtn) {
@@ -86,24 +86,32 @@ const applyTeamRecruitmentCtaFromSettings = (settings) => {
     heroApplyBtn.setAttribute("href", heroHref);
   }
 
+  const applyCardBlock = document.getElementById("applyCardBlock");
+  if (applyCardBlock) {
+    applyCardBlock.hidden = !isOpen;
+    if (!isOpen) {
+      applyCardBlock.style.display = 'none';
+    } else {
+      applyCardBlock.style.display = '';
+    }
+  }
+
   if (joinApplyBtn) {
-    joinApplyBtn.textContent = isOpen ? "Apply For Teams" : "Join Early Access";
+    joinApplyBtn.textContent = isOpen ? "Apply For Teams" : "Find out when applications open";
     joinApplyBtn.setAttribute("href", heroHref);
     joinApplyBtn.hidden = !isOpen;
   }
 
   if (earlyAccessWrap) {
-    earlyAccessWrap.hidden = isOpen;
+    earlyAccessWrap.hidden = true; // Waitlist taken out since user said take that away entirely
   }
 
   if (joinApplyCardTitle) {
-    joinApplyCardTitle.textContent = isOpen ? "Apply For Teams Only 📝" : "Join Early Access 🔔";
+    joinApplyCardTitle.textContent = "Apply For Teams Only 📝";
   }
 
   if (joinApplyCardText) {
-    joinApplyCardText.textContent = isOpen
-      ? "Volunteer, Media, and Security applications are managed in one dedicated portal."
-      : "Team recruiting is closed right now. Join early access and we will notify you first when applications reopen.";
+    joinApplyCardText.textContent = "Volunteer, Media, and Security applications are managed in one dedicated portal.";
   }
 };
 
