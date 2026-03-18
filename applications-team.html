@@ -37,68 +37,107 @@
       </div>
     </div>
 
-    <section id="teamApplications" class="section">
-      <h1>Team Applications</h1>
-      <p id="teamApplicationsNotice" class="sub">Review incoming team applications and click traffic.</p>
+        <section id="teamApplications" class="section">
+      <div class="team-dash-header">
+        <div class="tdh-title">
+          <h1>Team Applications Analytics</h1>
+          <p class="sub">Monitor application click traffic, conversion trends, and engagement.</p>
+        </div>
+        <div id="teamApplicationsNotice" class="td-status-banner loading">Loading status...</div>
+      </div>
 
-      <div class="apps-launcher-card table-card team-forms-launcher">
-        <h2>Team Form Workspaces</h2>
-        <p class="sub">Open and review each live Google Form quickly.</p>
-        <div class="apps-launcher-grid" role="group" aria-label="Team form links">
-          <a href="https://forms.gle/AyDvjdU37rn2L98GA" target="_blank" rel="noopener noreferrer" class="apps-launch-btn apps-launch-btn--team-form">
-          <span class="apps-launch-title">Media Applications</span>
-          <span class="apps-launch-sub">View in Google Forms</span>
-        </a>
-          <a href="https://forms.gle/bZL3meH9Mfaj2Zz66" target="_blank" rel="noopener noreferrer" class="apps-launch-btn apps-launch-btn--team-form">
-          <span class="apps-launch-title">Security Applications</span>
-          <span class="apps-launch-sub">View in Google Forms</span>
-        </a>
-          <a href="https://forms.gle/WRPNc177MNwcm8899" target="_blank" rel="noopener noreferrer" class="apps-launch-btn apps-launch-btn--team-form">
-          <span class="apps-launch-title">Volunteer Applications</span>
-          <span class="apps-launch-sub">View in Google Forms</span>
-        </a>
+      <div class="td-cards-grid">
+        <div class="td-card media-card">
+          <div class="td-card-top">
+            <div class="td-icon">📸</div>
+            <div class="td-titles">
+              <h3>Media Team</h3>
+              <p class="td-subtitle">Applications</p>
+            </div>
+          </div>
+          <div class="td-card-middle">
+            <p class="td-big-stat" id="teamMediaCount">0</p>
+            <span class="td-trend" id="teamMediaTrend" title="Compared to previous period">+0%</span>
+          </div>
+          <a href="https://forms.gle/AyDvjdU37rn2L98GA" target="_blank" rel="noopener noreferrer" class="td-launch-btn">Review Forms <span>↗</span></a>
+        </div>
+
+        <div class="td-card security-card">
+          <div class="td-card-top">
+            <div class="td-icon">🛡️</div>
+            <div class="td-titles">
+              <h3>Security Team</h3>
+              <p class="td-subtitle">Applications</p>
+            </div>
+          </div>
+          <div class="td-card-middle">
+            <p class="td-big-stat" id="teamSecurityCount">0</p>
+            <span class="td-trend" id="teamSecurityTrend" title="Compared to previous period">+0%</span>
+          </div>
+          <a href="https://forms.gle/bZL3meH9Mfaj2Zz66" target="_blank" rel="noopener noreferrer" class="td-launch-btn">Review Forms <span>↗</span></a>
+        </div>
+
+        <div class="td-card volunteer-card">
+          <div class="td-card-top">
+            <div class="td-icon">🤝</div>
+            <div class="td-titles">
+              <h3>Volunteer Team</h3>
+              <p class="td-subtitle">Applications</p>
+            </div>
+          </div>
+          <div class="td-card-middle">
+            <p class="td-big-stat" id="teamVolunteerCount">0</p>
+            <span class="td-trend" id="teamVolunteerTrend" title="Compared to previous period">+0%</span>
+          </div>
+          <a href="https://forms.gle/WRPNc177MNwcm8899" target="_blank" rel="noopener noreferrer" class="td-launch-btn">Review Forms <span>↗</span></a>
         </div>
       </div>
 
-      <div class="table-card team-analytics-intro">
-        <h2>Click Analytics</h2>
-        <p class="sub">Monitor how many times application links have been clicked.</p>
-      </div>
+      <div class="td-meta-grid">
+        <div class="td-chart-panel table-card">
+          <div class="td-panel-header">
+            <div class="td-ph-left">
+              <h2 style="margin:0">Applications Trend</h2>
+            </div>
+            <div class="td-panel-actions">
+              <span class="tooltip-icon" title="Daily unique form clicks across all teams.">ℹ</span>
+            </div>
+          </div>
+          <p id="teamTrendEmpty" class="sub">No click activity yet.</p>
+          <div class="td-chart-wrapper">
+             <svg id="teamTrendChart" class="ops-growth-chart" viewBox="0 0 760 220" aria-label="Team applications trend chart"></svg>
+          </div>
+        </div>
 
-      <div class="team-app-summary-row">
-        <article class="stat-card">
-          <h3>Media Clicks</h3>
-          <p id="teamMediaCount">0</p>
-        </article>
-        <article class="stat-card">
-          <h3>Security Clicks</h3>
-          <p id="teamSecurityCount">0</p>
-        </article>
-        <article class="stat-card">
-          <h3>Volunteer Clicks</h3>
-          <p id="teamVolunteerCount">0</p>
-        </article>
-      </div>
+        <div class="td-side-stats">
+          <article class="td-stat-box">
+            <div class="td-sb-icon">👥</div>
+            <div class="td-sb-info">
+              <h3 style="margin:0">Active Unique Visitors</h3>
+              <p class="td-sb-sub" title="Total isolated IP addresses accessing the forms">Unique IPs applied</p>
+            </div>
+            <p id="teamUniqueIps" class="td-sb-val">0</p>
+          </article>
+          
+          <article class="td-stat-box">
+            <div class="td-sb-icon">👆</div>
+            <div class="td-sb-info">
+              <h3 style="margin:0">Total Clicks</h3>
+              <p class="td-sb-sub" title="Sum of all applications clicks across teams">Overall Engagement</p>
+            </div>
+            <p id="teamTotalClicks" class="td-sb-val">0</p>
+          </article>
 
-      <div class="team-app-meta-row">
-        <article class="table-card">
-          <h3>Total Clicks</h3>
-          <p id="teamTotalClicks" class="team-app-meta-value">0</p>
-        </article>
-        <article class="table-card">
-          <h3>Unique IPs</h3>
-          <p id="teamUniqueIps" class="team-app-meta-value">0</p>
-        </article>
-        <article class="table-card">
-          <h3>Devices</h3>
-          <p id="teamTopDevice" class="team-app-meta-value">Unknown</p>
-        </article>
-      </div>
-
-      <div class="table-card">
-        <h2>Applications Trend</h2>
-        <p id="teamTrendEmpty" class="sub">No click activity yet.</p>
-        <svg id="teamTrendChart" class="ops-growth-chart" viewBox="0 0 760 240" aria-label="Team applications trend chart"></svg>
+          <article class="table-card td-devices-panel">
+            <div class="td-panel-header">
+              <h3 style="margin:0">Device Breakdown</h3>
+              <span class="tooltip-icon" title="Top operating systems used to apply">ℹ</span>
+            </div>
+            <div id="deviceBreakdownList" class="td-device-list">
+              <p class="sub" style="margin-top:0.5rem">Loading...</p>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
   </main>

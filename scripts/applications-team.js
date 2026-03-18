@@ -26,6 +26,10 @@ const _appRoleLabels = {
   joumohd08: "Head of HR",
 };
 const _APP_PROFILE_FALLBACKS = {
+  admin: {
+    name: "Adham / Head of IT",
+    photo: "assets/imperium mun logo.jpg",
+  },
   joumohd08: {
     name: "Joumana Mohamed",
     photo: "assets/Joumana Mohamed .png",
@@ -244,9 +248,27 @@ const renderDashboard = async () => {
   if (teamTotalClicks) teamTotalClicks.textContent = String(total);
   if (teamUniqueIps) teamUniqueIps.textContent = String(ipSet.size);
 
-  const topDevice = Object.entries(deviceMap).sort((a, b) => b[1] - a[1])[0];
-  if (teamTopDevice) {
-    teamTopDevice.textContent = topDevice ? `${topDevice[0]} (${topDevice[1]})` : "Unknown";
+  const deviceBreakdownList = document.getElementById("deviceBreakdownList");
+  if (deviceBreakdownList) {
+    if (Object.keys(deviceMap).length === 0) {
+      deviceBreakdownList.innerHTML = '<p class="sub">No data available.</p>';
+    } else {
+      const topDevices = Object.entries(deviceMap).sort((a, b) => b[1] - a[1]);
+      let deviceHTML = "";
+      topDevices.forEach(([device, count]) => {
+        const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
+        deviceHTML += `
+          <div class="td-device-item">
+            <span>${device}</span>
+            <div class="td-device-bar-wrap">
+              <div class="td-device-bar" style="width: ${percentage}%"></div>
+            </div>
+            <span class="td-device-count" title="${percentage}% of total">${count}</span>
+          </div>
+        `;
+      });
+      deviceBreakdownList.innerHTML = deviceHTML;
+    }
   }
 
   const orderedDays = Object.entries(byDay)
