@@ -878,6 +878,7 @@ h3 {
   position: relative;
   overflow: hidden;
   transition: color 0.35s ease, background 0.35s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  touch-action: manipulation;
 }
 
 .cta::before {
@@ -2293,7 +2294,7 @@ body.gsap-enhanced .value-card:hover {
 }
 
 .cta:active {
-  transform: translateY(0);
+  transform: scale(0.96) translateY(0);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
@@ -2897,6 +2898,7 @@ body.gsap-enhanced .value-card:hover {
   min-height: 44px;
   width: 100%;
   white-space: nowrap;
+  touch-action: manipulation;
 }
 
 .apply-card-btn::before {
@@ -2920,7 +2922,7 @@ body.gsap-enhanced .value-card:hover {
 }
 
 .apply-card-btn:active {
-  transform: translateY(0);
+  transform: scale(0.95) translateY(0);
 }
 
 .apply-status-message {
@@ -2969,7 +2971,7 @@ body.gsap-enhanced .value-card:hover {
   }
 
   .apply-team-card {
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
 
   .apply-card-icon {

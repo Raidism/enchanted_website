@@ -27,9 +27,9 @@
   };
 
   const LINKS = {
-    volunteer: "https://forms.gle/zPm8ZHr6VGuTsRBF6",
-    media: "https://forms.gle/YwM59JFdP2LFyfu6A",
-    security: "https://forms.gle/CkhK5mvSkA5Rbanp6",
+    volunteer: "https://forms.gle/WRPNc177MNwcm8899",
+    media: "https://forms.gle/AyDvjdU37rn2L98GA",
+    security: "https://forms.gle/bZL3meH9Mfaj2Zz66",
   };
 
   const applyCards = document.querySelectorAll(".apply-team-card");
@@ -197,7 +197,7 @@
       animateCardSelection(card, button, team);
       showRedirectOverlay(team);
 
-      const redirectDelay = team === "volunteer" ? 1350 : 760;
+      const redirectDelay = 350; // Use a short delay so mobile browsers don't block the redirect and the animation has time to be seen
 
       window.setTimeout(() => {
         window.location.assign(url);
