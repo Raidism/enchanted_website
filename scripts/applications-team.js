@@ -73,11 +73,14 @@ const teamApplicationsNotice = document.getElementById("teamApplicationsNotice")
 const teamMediaCount = document.getElementById("teamMediaCount");
 const teamSecurityCount = document.getElementById("teamSecurityCount");
 const teamVolunteerCount = document.getElementById("teamVolunteerCount");
+const teamMediaTrend = document.getElementById("teamMediaTrend");
+const teamSecurityTrend = document.getElementById("teamSecurityTrend");
+const teamVolunteerTrend = document.getElementById("teamVolunteerTrend");
 const teamTotalClicks = document.getElementById("teamTotalClicks");
 const teamUniqueIps = document.getElementById("teamUniqueIps");
-const teamTopDevice = document.getElementById("teamTopDevice");
 const teamTrendEmpty = document.getElementById("teamTrendEmpty");
 const teamTrendChart = document.getElementById("teamTrendChart");
+const deviceBreakdownList = document.getElementById("deviceBreakdownList");
 const logoutBtn = document.getElementById("logoutBtn");
 
 const fetchSiteSettings = async () => {
@@ -105,20 +108,20 @@ const renderTrend = (orderedDays) => {
 
   if (!orderedDays.length) {
     teamTrendChart.innerHTML = "";
-    if (teamTrendEmpty) teamTrendEmpty.hidden = false;
+    if (teamTrendEmpty) teamTrendEmpty.style.display = "block";
     return;
   }
 
-  if (teamTrendEmpty) teamTrendEmpty.hidden = true;
+  if (teamTrendEmpty) teamTrendEmpty.style.display = "none";
 
-  const width = 760;
-  const height = 240;
-  const left = 46;
-  const top = 24;
-  const chartW = 680;
-  const chartH = 160;
-  const bottom = top + chartH;
-  const stepX = orderedDays.length > 1 ? chartW / (orderedDays.length - 1) : 0;
+  const width = 800;
+  const height = 280;
+  const padLeft = 50;
+  const padRight = 30;
+  const padTop = 30;
+  const padBottom = 40;
+  const chartW = width - padLeft - padRight;
+  const chartH = height - padTop - padBottom;
 
   let maxVal = 1;
   orderedDays.forEach(([, row]) => {
@@ -136,10 +139,10 @@ const renderTrend = (orderedDays) => {
   };
 
   orderedDays.forEach(([day, row], idx) => {
-    const x = left + idx * stepX;
+    const x = padLeft + (idx / Math.max(1, orderedDays.length - 1)) * chartW;
     Object.keys(pointsBySeries).forEach((series) => {
       const raw = Number(row[series] || 0);
-      const y = bottom - (raw / maxVal) * chartH;
+      const y = padTop + chartH - (raw / maxVal) * chartH;
       pointsBySeries[series].push({ x, y, value: raw, day: asShortDate(day) });
     });
   });
@@ -151,40 +154,64 @@ const renderTrend = (orderedDays) => {
     total: "#d5b465",
   };
 
-  const polyline = (series, strokeWidth = 3) => {
-    const coords = pointsBySeries[series].map((p) => `${Math.round(p.x)},${Math.round(p.y)}`).join(" ");
-    return `<polyline points="${coords}" fill="none" stroke="${colors[series]}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"></polyline>`;
+  const polyline = (series, strokeWidth = 2.5) => {
+    const coords = pointsBySeries[series].map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+    return `<polyline points="${coords}" fill="none" stroke="${colors[series]}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"></polyline>`;
   };
 
-  const dots = (series, radius = 3.4) => pointsBySeries[series].map((p) => `
-    <circle cx="${Math.round(p.x)}" cy="${Math.round(p.y)}" r="${radius}" fill="${colors[series]}"></circle>
+  const dots = (series, radius = 2.5) => 
+    pointsBySeries[series].map((p, idx) => `
+    <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${radius}" fill="${colors[series]}" opacity="0.8"></circle>
   `).join("");
 
-  const labels = pointsBySeries.total.map((p) => `
-    <text x="${Math.round(p.x)}" y="${bottom + 16}" text-anchor="middle" font-size="10" fill="#9eb0a3">${p.day}</text>
-  `).join("");
+  const labels = pointsBySeries.total.map((p, idx) => {
+    if (orderedDays.length > 7 && idx % Math.ceil(orderedDays.length / 7) !== 0) return "";
+    return `<text x="${p.x.toFixed(1)}" y="${(padTop + chartH + 20)}" text-anchor="middle" font-size="11" fill="#9eb0a3">${p.day}</text>`;
+  }).join("");
+
+  const gridLines = [];
+  for (let i = 0; i <= 4; i++) {
+    const y = padTop + (i / 4) * chartH;
+    gridLines.push(`<line x1="${padLeft}" y1="${y}" x2="${width - padRight}" y2="${y}" stroke="rgba(213,180,101,0.1)" stroke-width="1" stroke-dasharray="2,2"></line>`);
+  }
 
   teamTrendChart.innerHTML = `
-    <rect x="0" y="0" width="${width}" height="${height}" rx="14" fill="rgba(8,14,10,0.7)"></rect>
-    <line x1="${left}" y1="${bottom}" x2="${left + chartW}" y2="${bottom}" stroke="rgba(213,180,101,0.35)" stroke-width="1"></line>
-    ${polyline("total", 3.4)}
-    ${polyline("media", 2.6)}
-    ${polyline("security", 2.6)}
-    ${polyline("volunteer", 2.6)}
-    ${dots("total", 3.6)}
-    ${dots("media", 2.8)}
-    ${dots("security", 2.8)}
-    ${dots("volunteer", 2.8)}
+    <defs>
+      <linearGradient id="chartGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#4fd1c5;stop-opacity:0.15" />
+        <stop offset="100%" style="stop-color:#4fd1c5;stop-opacity:0" />
+      </linearGradient>
+      <linearGradient id="chartGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#f6ad55;stop-opacity:0.15" />
+        <stop offset="100%" style="stop-color:#f6ad55;stop-opacity:0" />
+      </linearGradient>
+      <linearGradient id="chartGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#9f7aea;stop-opacity:0.15" />
+        <stop offset="100%" style="stop-color:#9f7aea;stop-opacity:0" />
+      </linearGradient>
+    </defs>
+    ${gridLines.join("")}
+    <line x1="${padLeft}" y1="${padTop + chartH}" x2="${width - padRight}" y2="${padTop + chartH}" stroke="rgba(213,180,101,0.3)" stroke-width="1.5"></line>
+    ${polyline("total", 3)}
+    ${polyline("media", 2.2)}
+    ${polyline("security", 2.2)}
+    ${polyline("volunteer", 2.2)}
+    ${dots("total", 3.2)}
+    ${dots("media", 2.4)}
+    ${dots("security", 2.4)}
+    ${dots("volunteer", 2.4)}
     ${labels}
-    <rect x="${left}" y="${top - 14}" width="280" height="18" rx="9" fill="rgba(5,10,7,0.82)" stroke="rgba(213,180,101,0.3)" stroke-width="1"></rect>
-    <circle cx="${left + 10}" cy="${top - 5}" r="4" fill="${colors.total}"></circle>
-    <text x="${left + 18}" y="${top - 1}" font-size="10" fill="#e2f0e6">Total</text>
-    <circle cx="${left + 70}" cy="${top - 5}" r="4" fill="${colors.media}"></circle>
-    <text x="${left + 78}" y="${top - 1}" font-size="10" fill="#e2f0e6">Media</text>
-    <circle cx="${left + 126}" cy="${top - 5}" r="4" fill="${colors.security}"></circle>
-    <text x="${left + 134}" y="${top - 1}" font-size="10" fill="#e2f0e6">Security</text>
-    <circle cx="${left + 196}" cy="${top - 5}" r="4" fill="${colors.volunteer}"></circle>
-    <text x="${left + 204}" y="${top - 1}" font-size="10" fill="#e2f0e6">Volunteer</text>
+    <g transform="translate(${padLeft}, ${padTop - 18})">
+      <rect x="0" y="0" width="260" height="22" rx="6" fill="rgba(5,10,7,0.85)" stroke="rgba(213,180,101,0.3)" stroke-width="1"></rect>
+      <circle cx="10" cy="11" r="3" fill="${colors.total}"></circle>
+      <text x="18" y="14" font-size="10" fill="#e2f0e6" font-weight="600">Total</text>
+      <circle cx="70" cy="11" r="3" fill="${colors.media}"></circle>
+      <text x="78" y="14" font-size="10" fill="#e2f0e6" font-weight="600">Media</text>
+      <circle cx="136" cy="11" r="3" fill="${colors.security}"></circle>
+      <text x="144" y="14" font-size="10" fill="#e2f0e6" font-weight="600">Security</text>
+      <circle cx="213" cy="11" r="3" fill="${colors.volunteer}"></circle>
+      <text x="221" y="14" font-size="10" fill="#e2f0e6" font-weight="600">Volunteer</text>
+    </g>
   `;
 };
 
@@ -198,11 +225,12 @@ const renderDashboard = async () => {
 
   const isOpen = Boolean(settings.teamApplicationsOpen);
   if (teamApplicationsNotice) {
-    teamApplicationsNotice.textContent = isOpen
+    const statusContent = isOpen
       ? "Team Applications are currently OPEN for recruiting."
       : "Team Applications are currently CLOSED.";
-    teamApplicationsNotice.classList.toggle("success", isOpen);
-    teamApplicationsNotice.classList.toggle("error", !isOpen);
+    teamApplicationsNotice.innerHTML = `<span class="status-dot"></span><span>${statusContent}</span>`;
+    teamApplicationsNotice.classList.remove("loading", "success", "error");
+    teamApplicationsNotice.classList.add(isOpen ? "success" : "error");
   }
 
   let clicks = [];
@@ -240,30 +268,60 @@ const renderDashboard = async () => {
     deviceMap[device] = (deviceMap[device] || 0) + 1;
   });
 
+  // Calculate trends (comparing recent 7 days to previous 7 days)
+  const orderedDayEntries = Object.entries(byDay).sort((a, b) => a[0].localeCompare(b[0]));
+  const calculateTrend = (team) => {
+    if (orderedDayEntries.length < 14) return 0;
+    const recent7 = orderedDayEntries.slice(-7).reduce((sum, [, row]) => sum + (row[team] || 0), 0);
+    const previous7 = orderedDayEntries.slice(-14, -7).reduce((sum, [, row]) => sum + (row[team] || 0), 0);
+    if (previous7 === 0) return recent7 > 0 ? 100 : 0;
+    return Math.round(((recent7 - previous7) / previous7) * 100);
+  };
+
+  const trendMedia = calculateTrend("media");
+  const trendSecurity = calculateTrend("security");
+  const trendVolunteer = calculateTrend("volunteer");
+
+  // Update counts
   if (teamMediaCount) teamMediaCount.textContent = String(countByTeam.media);
   if (teamSecurityCount) teamSecurityCount.textContent = String(countByTeam.security);
   if (teamVolunteerCount) teamVolunteerCount.textContent = String(countByTeam.volunteer);
+
+  // Update trends
+  const formatTrend = (value) => {
+    if (value > 0) return `↑ +${value}%`;
+    if (value < 0) return `↓ ${value}%`;
+    return "→ 0%";
+  };
+
+  if (teamMediaTrend) teamMediaTrend.textContent = formatTrend(trendMedia);
+  if (teamSecurityTrend) teamSecurityTrend.textContent = formatTrend(trendSecurity);
+  if (teamVolunteerTrend) teamVolunteerTrend.textContent = formatTrend(trendVolunteer);
 
   const total = countByTeam.media + countByTeam.security + countByTeam.volunteer;
   if (teamTotalClicks) teamTotalClicks.textContent = String(total);
   if (teamUniqueIps) teamUniqueIps.textContent = String(ipSet.size);
 
-  const deviceBreakdownList = document.getElementById("deviceBreakdownList");
+  // Render device breakdown
   if (deviceBreakdownList) {
     if (Object.keys(deviceMap).length === 0) {
-      deviceBreakdownList.innerHTML = '<p class="sub">No data available.</p>';
+      deviceBreakdownList.innerHTML = '<p class="no-data-message">No device data available.</p>';
     } else {
       const topDevices = Object.entries(deviceMap).sort((a, b) => b[1] - a[1]);
       let deviceHTML = "";
       topDevices.forEach(([device, count]) => {
         const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
         deviceHTML += `
-          <div class="td-device-item">
-            <span>${device}</span>
-            <div class="td-device-bar-wrap">
-              <div class="td-device-bar" style="width: ${percentage}%"></div>
+          <div class="device-item">
+            <div>
+              <span class="device-name">${device}</span>
+              <div class="device-bar-container">
+                <div class="device-bar">
+                  <div class="device-bar-fill" style="width: ${percentage}%"></div>
+                </div>
+                <span class="device-count">${count}</span>
+              </div>
             </div>
-            <span class="td-device-count" title="${percentage}% of total">${count}</span>
           </div>
         `;
       });
@@ -271,10 +329,7 @@ const renderDashboard = async () => {
     }
   }
 
-  const orderedDays = Object.entries(byDay)
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .slice(-14);
-
+  const orderedDays = orderedDayEntries.slice(-14);
   renderTrend(orderedDays);
 };
 

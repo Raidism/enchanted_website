@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Team Applications | Imperium MUN</title>
   <meta name="description" content="Team applications analytics workspace for Imperium MUN." />
-  <link rel="icon" type="image/jpeg" href="/assets/imperium mun logo.jpg" />
+  <link rel="icon" type="image/jpeg" href="assets/imperium mun logo.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles/dashboard.css" />
+  <link rel="stylesheet" href="styles/dashboard.css" />
 </head>
 <body>
   <header class="dash-header">
@@ -37,114 +37,177 @@
       </div>
     </div>
 
-        <section id="teamApplications" class="section">
-      <div class="team-dash-header">
-        <div class="tdh-title">
-          <h1>Team Applications Analytics</h1>
-          <p class="sub">Monitor application click traffic, conversion trends, and engagement.</p>
+    <section id="teamApplications" class="section team-apps-container">
+      <div class="team-dashboard-header">
+        <div class="tdh-left">
+          <h1>Team Applications</h1>
+          <p class="tdh-subtitle">Application engagement analytics & real-time metrics</p>
         </div>
-        <div id="teamApplicationsNotice" class="td-status-banner loading">Loading status...</div>
+        <div id="teamApplicationsNotice" class="td-status-banner loading">
+          <span class="status-dot"></span>
+          <span>Loading status...</span>
+        </div>
       </div>
 
-      <div class="td-cards-grid">
-        <div class="td-card media-card">
-          <div class="td-card-top">
-            <div class="td-icon">📸</div>
-            <div class="td-titles">
+      <!-- Team Application Cards -->
+      <div class="apps-metrics-grid">
+        <div class="app-metric-card media-app">
+          <div class="app-card-header">
+            <span class="app-icon">📸</span>
+            <div class="app-header-text">
               <h3>Media Team</h3>
-              <p class="td-subtitle">Applications</p>
+              <p class="app-subtitle">Form Applications</p>
             </div>
           </div>
-          <div class="td-card-middle">
-            <p class="td-big-stat" id="teamMediaCount">0</p>
-            <span class="td-trend" id="teamMediaTrend" title="Compared to previous period">+0%</span>
+          <div class="app-stat-section">
+            <div class="stat-primary">
+              <span class="stat-value" id="teamMediaCount">0</span>
+              <span class="stat-label">Total Clicks</span>
+            </div>
+            <div class="stat-spark">
+              <span class="trend-badge" id="teamMediaTrend">↑ +0%</span>
+              <small>vs previous</small>
+            </div>
           </div>
-          <a href="https://forms.gle/AyDvjdU37rn2L98GA" target="_blank" rel="noopener noreferrer" class="td-launch-btn">Review Forms <span>↗</span></a>
+          <a href="https://forms.gle/AyDvjdU37rn2L98GA" target="_blank" rel="noopener noreferrer" class="app-action-btn">
+            <span>Review Applications</span>
+            <span class="arrow">↗</span>
+          </a>
         </div>
 
-        <div class="td-card security-card">
-          <div class="td-card-top">
-            <div class="td-icon">🛡️</div>
-            <div class="td-titles">
+        <div class="app-metric-card security-app">
+          <div class="app-card-header">
+            <span class="app-icon">🛡️</span>
+            <div class="app-header-text">
               <h3>Security Team</h3>
-              <p class="td-subtitle">Applications</p>
+              <p class="app-subtitle">Form Applications</p>
             </div>
           </div>
-          <div class="td-card-middle">
-            <p class="td-big-stat" id="teamSecurityCount">0</p>
-            <span class="td-trend" id="teamSecurityTrend" title="Compared to previous period">+0%</span>
+          <div class="app-stat-section">
+            <div class="stat-primary">
+              <span class="stat-value" id="teamSecurityCount">0</span>
+              <span class="stat-label">Total Clicks</span>
+            </div>
+            <div class="stat-spark">
+              <span class="trend-badge" id="teamSecurityTrend">↑ +0%</span>
+              <small>vs previous</small>
+            </div>
           </div>
-          <a href="https://forms.gle/bZL3meH9Mfaj2Zz66" target="_blank" rel="noopener noreferrer" class="td-launch-btn">Review Forms <span>↗</span></a>
+          <a href="https://forms.gle/bZL3meH9Mfaj2Zz66" target="_blank" rel="noopener noreferrer" class="app-action-btn">
+            <span>Review Applications</span>
+            <span class="arrow">↗</span>
+          </a>
         </div>
 
-        <div class="td-card volunteer-card">
-          <div class="td-card-top">
-            <div class="td-icon">🤝</div>
-            <div class="td-titles">
+        <div class="app-metric-card volunteer-app">
+          <div class="app-card-header">
+            <span class="app-icon">🤝</span>
+            <div class="app-header-text">
               <h3>Volunteer Team</h3>
-              <p class="td-subtitle">Applications</p>
+              <p class="app-subtitle">Form Applications</p>
             </div>
           </div>
-          <div class="td-card-middle">
-            <p class="td-big-stat" id="teamVolunteerCount">0</p>
-            <span class="td-trend" id="teamVolunteerTrend" title="Compared to previous period">+0%</span>
+          <div class="app-stat-section">
+            <div class="stat-primary">
+              <span class="stat-value" id="teamVolunteerCount">0</span>
+              <span class="stat-label">Total Clicks</span>
+            </div>
+            <div class="stat-spark">
+              <span class="trend-badge" id="teamVolunteerTrend">↑ +0%</span>
+              <small>vs previous</small>
+            </div>
           </div>
-          <a href="https://forms.gle/WRPNc177MNwcm8899" target="_blank" rel="noopener noreferrer" class="td-launch-btn">Review Forms <span>↗</span></a>
+          <a href="https://forms.gle/WRPNc177MNwcm8899" target="_blank" rel="noopener noreferrer" class="app-action-btn">
+            <span>Review Applications</span>
+            <span class="arrow">↗</span>
+          </a>
         </div>
       </div>
 
-      <div class="td-meta-grid">
-        <div class="td-chart-panel table-card">
-          <div class="td-panel-header">
-            <div class="td-ph-left">
-              <h2 style="margin:0">Applications Trend</h2>
-            </div>
-            <div class="td-panel-actions">
-              <span class="tooltip-icon" title="Daily unique form clicks across all teams.">ℹ</span>
-            </div>
+      <!-- Main Analytics Grid -->
+      <div class="analytics-grid">
+        <!-- Trend Chart -->
+        <div class="analytics-card trend-card">
+          <div class="card-header">
+            <h2>Applications Trend</h2>
+            <button class="info-tooltip" title="14-day rolling chart of daily clicks across all teams">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <text x="12" y="15" text-anchor="middle" font-size="14" fill="currentColor">i</text>
+              </svg>
+            </button>
           </div>
-          <p id="teamTrendEmpty" class="sub">No click activity yet.</p>
-          <div class="td-chart-wrapper">
-             <svg id="teamTrendChart" class="ops-growth-chart" viewBox="0 0 760 220" aria-label="Team applications trend chart"></svg>
+          <p id="teamTrendEmpty" class="no-data-message">No click activity yet.</p>
+          <div class="chart-container">
+            <svg id="teamTrendChart" class="trend-chart" viewBox="0 0 800 280" preserveAspectRatio="xMidYMid meet" aria-label="Team applications trend chart"></svg>
           </div>
         </div>
 
-        <div class="td-side-stats">
-          <article class="td-stat-box">
-            <div class="td-sb-icon">👥</div>
-            <div class="td-sb-info">
-              <h3 style="margin:0">Active Unique Visitors</h3>
-              <p class="td-sb-sub" title="Total isolated IP addresses accessing the forms">Unique IPs applied</p>
+        <!-- Engagement Metrics -->
+        <div class="engagement-metrics">
+          <!-- Unique IPs Card -->
+          <div class="metric-card small">
+            <div class="metric-header">
+              <span class="metric-icon">👥</span>
+              <button class="info-tooltip" title="Total unique IP addresses that clicked landing pages">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <text x="12" y="15" text-anchor="middle" font-size="12" fill="currentColor">i</text>
+                </svg>
+              </button>
             </div>
-            <p id="teamUniqueIps" class="td-sb-val">0</p>
-          </article>
-          
-          <article class="td-stat-box">
-            <div class="td-sb-icon">👆</div>
-            <div class="td-sb-info">
-              <h3 style="margin:0">Total Clicks</h3>
-              <p class="td-sb-sub" title="Sum of all applications clicks across teams">Overall Engagement</p>
+            <h3 class="metric-title">Unique Visitors</h3>
+            <p class="metric-sublabel">Active IPs</p>
+            <div class="metric-value-wrapper">
+              <span class="metric-value" id="teamUniqueIps">0</span>
             </div>
-            <p id="teamTotalClicks" class="td-sb-val">0</p>
-          </article>
+          </div>
 
-          <article class="table-card td-devices-panel">
-            <div class="td-panel-header">
-              <h3 style="margin:0">Device Breakdown</h3>
-              <span class="tooltip-icon" title="Top operating systems used to apply">ℹ</span>
+          <!-- Total Clicks Card -->
+          <div class="metric-card small">
+            <div class="metric-header">
+              <span class="metric-icon">👆</span>
+              <button class="info-tooltip" title="Total form clicks across all teams">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <text x="12" y="15" text-anchor="middle" font-size="12" fill="currentColor">i</text>
+                </svg>
+              </button>
             </div>
-            <div id="deviceBreakdownList" class="td-device-list">
-              <p class="sub" style="margin-top:0.5rem">Loading...</p>
+            <h3 class="metric-title">Total Clicks</h3>
+            <p class="metric-sublabel">Overall engagement</p>
+            <div class="metric-value-wrapper">
+              <span class="metric-value" id="teamTotalClicks">0</span>
             </div>
-          </article>
+          </div>
+
+          <!-- Devices Chart -->
+          <div class="metric-card device-breakdown">
+            <div class="metric-header">
+              <h3 class="metric-title">Device Breakdown</h3>
+              <button class="info-tooltip" title="Distribution of device types used to access forms">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <text x="12" y="15" text-anchor="middle" font-size="12" fill="currentColor">i</text>
+                </svg>
+              </button>
+            </div>
+            <div id="deviceBreakdownList" class="device-list">
+              <div class="loading-skeleton">
+                <div class="skeleton-bar"></div>
+                <div class="skeleton-bar"></div>
+                <div class="skeleton-bar"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script defer src="/scripts/tracker.js"></script>
-  <script defer src="/scripts/auth.js"></script>
-  <script defer src="/scripts/applications-team.js"></script>
+  <script defer src="scripts/tracker.js"></script>
+  <script defer src="scripts/auth.js"></script>
+  <script defer src="scripts/applications-team.js"></script>
 </body>
 </html>
