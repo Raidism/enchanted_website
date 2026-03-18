@@ -335,6 +335,7 @@ const renderHistory = () => {
   const makeBtn = (label, page, disabled = false, active = false) => {
     const btn = document.createElement("button");
     btn.type = "button";
+    btn.className = "page-btn";
     btn.textContent = label;
     btn.disabled = disabled;
     if (active) {
