@@ -126,12 +126,12 @@ const renderTrend = (orderedDays) => {
 
   if (teamTrendEmpty) teamTrendEmpty.style.display = "none";
 
-  const width = 800;
-  const height = 280;
-  const padLeft = 50;
-  const padRight = 30;
-  const padTop = 30;
-  const padBottom = 40;
+  const width = 1100;
+  const height = 380;
+  const padLeft = 70;
+  const padRight = 50;
+  const padTop = 40;
+  const padBottom = 60;
   const chartW = width - padLeft - padRight;
   const chartH = height - padTop - padBottom;
 
@@ -213,18 +213,32 @@ const renderTrend = (orderedDays) => {
     ${dots("security", 2.4)}
     ${dots("volunteer", 2.4)}
     ${labels}
-    <g transform="translate(${padLeft}, ${height - padBottom + 6})">
-      <rect x="0" y="0" width="620" height="28" rx="8" fill="rgba(5,10,7,0.88)" stroke="rgba(213,180,101,0.35)" stroke-width="1.5"></rect>
-      <circle cx="20" cy="14" r="4" fill="${colors.total}"></circle>
-      <text x="30" y="18" font-size="12" fill="#e2f0e6" font-weight="600">Total</text>
-      <circle cx="170" cy="14" r="4" fill="${colors.media}"></circle>
-      <text x="180" y="18" font-size="12" fill="#e2f0e6" font-weight="600">Media</text>
-      <circle cx="320" cy="14" r="4" fill="${colors.security}"></circle>
-      <text x="330" y="18" font-size="12" fill="#e2f0e6" font-weight="600">Security</text>
-      <circle cx="470" cy="14" r="4" fill="${colors.volunteer}"></circle>
-      <text x="480" y="18" font-size="12" fill="#e2f0e6" font-weight="600">Volunteer</text>
-    </g>
   `;
+
+  // Render legend separately as HTML
+  const chartLegendContainer = document.getElementById("chartLegend");
+  if (chartLegendContainer) {
+    chartLegendContainer.innerHTML = `
+      <div class="legend-items">
+        <div class="legend-item">
+          <span class="legend-dot" style="background-color: ${colors.total}"></span>
+          <span class="legend-label">Total</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background-color: ${colors.media}"></span>
+          <span class="legend-label">Media</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background-color: ${colors.security}"></span>
+          <span class="legend-label">Security</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background-color: ${colors.volunteer}"></span>
+          <span class="legend-label">Volunteer</span>
+        </div>
+      </div>
+    `;
+  }
 };
 
 const renderDashboard = async () => {
