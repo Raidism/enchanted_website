@@ -295,6 +295,7 @@ body::after {
   color: #e8f0e9;
   line-height: 1.15;
   transition: color var(--transition-slow) ease;
+}
 
 .dwh-name {
   background: linear-gradient(110deg, #8ecfa0 0%, #d5b465 50%, #f0daa0 100%);
