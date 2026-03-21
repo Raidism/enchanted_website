@@ -52,11 +52,17 @@ const joinApplyCardTitle = document.getElementById("joinApplyCardTitle");
 const joinApplyCardText = document.getElementById("joinApplyCardText");
 const earlyAccessWrap = document.getElementById("earlyAccessWrap");
 const navAccessItem = document.getElementById("navAccessItem");
+const navApplyItem = document.getElementById("navApplyItem");
 
-const applyAccessNavVisibilityFromSettings = (settings) => {
-  if (!navAccessItem) return;
-  const shouldShow = Boolean(settings && settings.applicationsOpen);
-  navAccessItem.hidden = !shouldShow;
+const applyMainNavVisibilityFromSettings = (settings) => {
+  if (navAccessItem) {
+    navAccessItem.hidden = false;
+  }
+
+  if (navApplyItem) {
+    const shouldShowApply = Boolean(settings && settings.teamApplicationsOpen);
+    navApplyItem.hidden = !shouldShowApply;
+  }
 };
 
 const applyAnnouncementFromSettings = (settings) => {
@@ -177,7 +183,7 @@ const hydrateDynamicSettings = (nextSettings) => {
   applyAnnouncementFromSettings(siteSettings);
   applyJoinStateFromSettings(siteSettings);
   applyTeamRecruitmentCtaFromSettings(siteSettings);
-  applyAccessNavVisibilityFromSettings(siteSettings);
+  applyMainNavVisibilityFromSettings(siteSettings);
 };
 
 const formatCompactCount = (value) => {
