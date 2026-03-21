@@ -9,6 +9,8 @@ const { readJson, writeJson } = require("./store");
 
 const app = express();
 app.use(useragent.express());
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
 const PORT = Number(process.env.PORT || 8080);
 const SESSION_COOKIE = "imperium_sid";
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
@@ -19,6 +21,16 @@ const ACCESS_GATE_LOCKOUT_MS = 10 * 60 * 1000;
 const ACCESS_GATE_PASSWORD = "1001";
 const ACCESS_GATE_SECRET = String(process.env.ACCESS_GATE_SECRET || process.env.SESSION_SECRET || "imperium-access-secret");
 const ACCESS_GATE_PASSWORD_HASH = crypto.createHash("sha256").update(ACCESS_GATE_PASSWORD).digest("hex");
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX_PUBLIC_WRITES = 80;
+const RATE_LIMIT_MAX_WAITLIST_WRITES = 24;
+const RATE_LIMIT_MAX_LOGIN_ATTEMPTS = 18;
+const RATE_LIMIT_MAX_ACCESS_GATE_ATTEMPTS = 25;
+const STATIC_SHORT_CACHE_SECONDS = 60 * 60;
+const STATIC_LONG_CACHE_SECONDS = 60 * 60 * 24 * 7;
+const SITE_SETTINGS_CACHE_MS = 10 * 1000;
+const DEPLOY_STATUS_CACHE_MS = 5 * 1000;
+const INSTAGRAM_CACHE_MS = 45 * 1000;
 
 const PAGE_ROUTE_FILES = {
   "/": "index.html",
@@ -58,6 +70,10 @@ const MAINTENANCE_BYPASS_ROUTES = new Set([
 ]);
 
 const accessGateAttempts = new Map();
+const requestRateBuckets = new Map();
+let cachedSiteSettingsPayload = null;
+let cachedDeployStatusPayload = null;
+let cachedInstagramPayload = null;
 
 const defaultSiteSettings = {
   maintenanceMode: false,
@@ -368,6 +384,64 @@ const getClientIpFromHeaders = (headers = {}) => {
   return "Unknown";
 };
 
+const getRequestIp = (req) => {
+  const candidate = String(getClientIpFromHeaders(req && req.headers ? req.headers : {}) || "").trim();
+  if (candidate) return candidate;
+  return String(req && req.ip ? req.ip : "unknown").trim() || "unknown";
+};
+
+const createRateLimit = ({ keyPrefix, windowMs, maxRequests }) => (req, res, next) => {
+  const now = Date.now();
+  const bucketKey = `${keyPrefix}:${getRequestIp(req)}`;
+  const record = requestRateBuckets.get(bucketKey);
+
+  if (!record || now >= record.resetAt) {
+    requestRateBuckets.set(bucketKey, {
+      count: 1,
+      resetAt: now + windowMs,
+    });
+    return next();
+  }
+
+  if (record.count >= maxRequests) {
+    const retryAfterSeconds = Math.max(1, Math.ceil((record.resetAt - now) / 1000));
+    res.setHeader("Retry-After", String(retryAfterSeconds));
+    return res.status(429).json({
+      success: false,
+      message: "Too many requests. Please try again shortly.",
+      retryAfterSeconds,
+    });
+  }
+
+  record.count += 1;
+  requestRateBuckets.set(bucketKey, record);
+  return next();
+};
+
+const publicWriteRateLimit = createRateLimit({
+  keyPrefix: "public-write",
+  windowMs: RATE_LIMIT_WINDOW_MS,
+  maxRequests: RATE_LIMIT_MAX_PUBLIC_WRITES,
+});
+
+const waitlistWriteRateLimit = createRateLimit({
+  keyPrefix: "waitlist-write",
+  windowMs: RATE_LIMIT_WINDOW_MS,
+  maxRequests: RATE_LIMIT_MAX_WAITLIST_WRITES,
+});
+
+const loginRateLimit = createRateLimit({
+  keyPrefix: "auth-login",
+  windowMs: RATE_LIMIT_WINDOW_MS,
+  maxRequests: RATE_LIMIT_MAX_LOGIN_ATTEMPTS,
+});
+
+const accessGateRateLimit = createRateLimit({
+  keyPrefix: "access-gate",
+  windowMs: RATE_LIMIT_WINDOW_MS,
+  maxRequests: RATE_LIMIT_MAX_ACCESS_GATE_ATTEMPTS,
+});
+
 const normalizeWaitlistEntry = (entry) => ({
   id: String(entry.id || `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`),
   name: String(entry.name || "").trim(),
@@ -388,6 +462,35 @@ const readCount = (value) => {
   const numeric = Number(value);
   if (!Number.isFinite(numeric) || numeric < 0) return null;
   return Math.floor(numeric);
+};
+
+const toCountryFlag = (countryCode) => {
+  const normalized = String(countryCode || "").trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(normalized)) {
+    return "🌐";
+  }
+  return String.fromCodePoint(...[...normalized].map((char) => 127397 + char.charCodeAt(0)));
+};
+
+const inferGeoFromIp = (ipRaw) => {
+  const ip = String(ipRaw || "").trim();
+  if (!ip || ip === "Unknown") {
+    return { country: "Unknown", countryCode: "--", flag: "🌐" };
+  }
+
+  const cleanIp = ip.startsWith("::ffff:") ? ip.slice(7) : ip;
+  const lookup = geoip.lookup(cleanIp);
+  if (!lookup) {
+    return { country: "Unknown", countryCode: "--", flag: "🌐" };
+  }
+
+  const countryCode = String(lookup.country || "--").toUpperCase();
+  const country = String(lookup.country || "Unknown");
+  return {
+    country,
+    countryCode,
+    flag: toCountryFlag(countryCode),
+  };
 };
 
 const normalizeInstagramStats = (raw) => {
@@ -470,6 +573,16 @@ ensureSeedData();
 
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+
+  if (String(req.path || "").startsWith("/api/")) {
+    res.setHeader("Cache-Control", "no-store, max-age=0");
+  }
+
+  return next();
+});
 
 app.use((req, res, next) => {
   if (String(req.path || "").startsWith("/api/")) {
@@ -505,7 +618,7 @@ app.get("/api/health", (_req, res) => {
   res.json({ success: true, status: "ok", time: nowIso() });
 });
 
-app.post("/api/access-gate/verify", (req, res) => {
+app.post("/api/access-gate/verify", accessGateRateLimit, (req, res) => {
   const ip = getClientIpFromHeaders(req.headers);
   const record = accessGateAttempts.get(ip) || { failedAttempts: 0, lockoutUntil: 0 };
 
@@ -553,7 +666,7 @@ app.post("/api/access-gate/verify", (req, res) => {
   }
 });
 
-app.post("/api/auth/login", (req, res) => {
+app.post("/api/auth/login", loginRateLimit, (req, res) => {
   const usernameInput = String(req.body && req.body.username ? req.body.username : "").trim();
   const passwordInput = String(req.body && req.body.password ? req.body.password : "");
 
@@ -775,7 +888,7 @@ app.get("/api/sessions/active", requireAuth, requireAdmin, (_req, res) => {
   res.json({ success: true, activeUsers: map });
 });
 
-app.post("/api/analytics/track", (req, res) => {
+app.post("/api/analytics/track", publicWriteRateLimit, (req, res) => {
   const { event, label } = req.body || {};
   if (!event) return res.json({ success: false });
 
@@ -811,11 +924,35 @@ app.get("/api/analytics/clicks", requireAuth, requireAdmin, (_req, res) => {
 });
 
 app.get("/api/site-settings", (_req, res) => {
-  res.json({ success: true, settings: readSettings() });
+  const now = Date.now();
+  if (cachedSiteSettingsPayload && now < cachedSiteSettingsPayload.expiresAt) {
+    res.setHeader("Cache-Control", "public, max-age=5, stale-while-revalidate=30");
+    return res.json(cachedSiteSettingsPayload.payload);
+  }
+
+  const payload = { success: true, settings: readSettings() };
+  cachedSiteSettingsPayload = {
+    payload,
+    expiresAt: now + SITE_SETTINGS_CACHE_MS,
+  };
+  res.setHeader("Cache-Control", "public, max-age=5, stale-while-revalidate=30");
+  return res.json(payload);
 });
 
 app.get("/api/deploy-status", (_req, res) => {
-  res.json({ success: true, status: readDeployStatus() });
+  const now = Date.now();
+  if (cachedDeployStatusPayload && now < cachedDeployStatusPayload.expiresAt) {
+    res.setHeader("Cache-Control", "public, max-age=3, stale-while-revalidate=20");
+    return res.json(cachedDeployStatusPayload.payload);
+  }
+
+  const payload = { success: true, status: readDeployStatus() };
+  cachedDeployStatusPayload = {
+    payload,
+    expiresAt: now + DEPLOY_STATUS_CACHE_MS,
+  };
+  res.setHeader("Cache-Control", "public, max-age=3, stale-while-revalidate=20");
+  return res.json(payload);
 });
 
 app.put("/api/site-settings", requireAuth, requireAdmin, (req, res) => {
@@ -848,6 +985,9 @@ app.put("/api/site-settings", requireAuth, requireAdmin, (req, res) => {
   next.instagramFollowing = normalizeCount(next.instagramFollowing, defaultSiteSettings.instagramFollowing);
 
   writeSettings(next);
+  cachedSiteSettingsPayload = null;
+  cachedDeployStatusPayload = null;
+  cachedInstagramPayload = null;
   return res.json({ success: true, message: "Site settings updated.", settings: next });
 });
 
@@ -855,7 +995,7 @@ app.get("/api/waitlist", (_req, res) => {
   res.json({ success: true, entries: readWaitlist(), deletedEntries: readDeletedWaitlist() });
 });
 
-app.post("/api/waitlist", (req, res) => {
+app.post("/api/waitlist", waitlistWriteRateLimit, (req, res) => {
   const action = String(req.body && req.body.action ? req.body.action : "create").trim();
   const reviewedBy = String(req.body && req.body.reviewedBy ? req.body.reviewedBy : "").trim();
 
@@ -998,20 +1138,24 @@ app.get("/api/analytics", (req, res) => {
   res.json({ success: true, logs });
 });
 
-app.post("/api/analytics", (req, res) => {
+app.post("/api/analytics", publicWriteRateLimit, (req, res) => {
   const action = String(req.body && req.body.action ? req.body.action : "track").trim();
   if (action !== "track") {
     return res.status(400).json({ success: false, message: "Unsupported action." });
   }
 
   const entry = req.body && req.body.entry && typeof req.body.entry === "object" ? req.body.entry : {};
+  const ip = getRequestIp(req);
+  const inferredGeo = inferGeoFromIp(ip);
+  const countryInput = String(entry.country || "").trim();
+  const countryCodeInput = String(entry.countryCode || "").trim().toUpperCase();
   const normalized = {
     timestamp: String(entry.timestamp || nowIso()),
     path: String(entry.path || "index.html"),
-    ip: getClientIpFromHeaders(req.headers),
-    country: String(entry.country || "Unknown"),
-    countryCode: String(entry.countryCode || "--"),
-    flag: String(entry.flag || "🌐"),
+    ip,
+    country: countryInput || inferredGeo.country,
+    countryCode: countryCodeInput || inferredGeo.countryCode,
+    flag: String(entry.flag || toCountryFlag(countryCodeInput) || inferredGeo.flag),
     device: String(entry.device || "Unknown"),
     userAgent: String(entry.userAgent || "Unknown"),
   };
@@ -1026,10 +1170,16 @@ app.post("/api/analytics", (req, res) => {
 app.get("/api/instagram", async (req, res) => {
   const username = String(req.query && req.query.username ? req.query.username : "imperiummun26").trim().replace(/^@+/, "").toLowerCase();
   const settings = readSettings();
+  const now = Date.now();
+
+  if (cachedInstagramPayload && cachedInstagramPayload.username === username && now < cachedInstagramPayload.expiresAt) {
+    res.setHeader("Cache-Control", "public, max-age=20, stale-while-revalidate=60");
+    return res.json(cachedInstagramPayload.payload);
+  }
 
   try {
     if (settings.instagramStatsSource === "manual") {
-      return res.json({
+      const manualPayload = {
         success: true,
         stale: false,
         source: "manual",
@@ -1039,19 +1189,33 @@ app.get("/api/instagram", async (req, res) => {
         username,
         profileUrl: `https://www.instagram.com/${username}/`,
         fetchedAt: nowIso(),
-      });
+      };
+      cachedInstagramPayload = {
+        username,
+        payload: manualPayload,
+        expiresAt: now + INSTAGRAM_CACHE_MS,
+      };
+      res.setHeader("Cache-Control", "public, max-age=20, stale-while-revalidate=60");
+      return res.json(manualPayload);
     }
 
     const stats = await getInstagramLiveStats(username);
-    return res.json({
+    const livePayload = {
       success: true,
       ...stats,
       username,
       profileUrl: `https://www.instagram.com/${username}/`,
       fetchedAt: nowIso(),
-    });
+    };
+    cachedInstagramPayload = {
+      username,
+      payload: livePayload,
+      expiresAt: now + INSTAGRAM_CACHE_MS,
+    };
+    res.setHeader("Cache-Control", "public, max-age=20, stale-while-revalidate=60");
+    return res.json(livePayload);
   } catch (error) {
-    return res.status(500).json({
+    const fallbackPayload = {
       success: false,
       message: "Server error while fetching Instagram stats.",
       error: String(error && error.message ? error.message : error),
@@ -1063,7 +1227,13 @@ app.get("/api/instagram", async (req, res) => {
       username,
       profileUrl: `https://www.instagram.com/${username}/`,
       fetchedAt: nowIso(),
-    });
+    };
+    cachedInstagramPayload = {
+      username,
+      payload: fallbackPayload,
+      expiresAt: now + Math.min(INSTAGRAM_CACHE_MS, 20 * 1000),
+    };
+    return res.status(500).json(fallbackPayload);
   }
 });
 
@@ -1111,7 +1281,23 @@ Object.entries(PAGE_ROUTE_FILES).forEach(([routePath, fileName]) => {
   });
 });
 
-app.use(express.static(path.join(__dirname, "..")));
+app.use(express.static(path.join(__dirname, ".."), {
+  setHeaders: (res, filePath) => {
+    const lower = String(filePath || "").toLowerCase();
+
+    if (lower.endsWith(".html")) {
+      res.setHeader("Cache-Control", "no-store, max-age=0");
+      return;
+    }
+
+    if (lower.includes(`${path.sep}assets${path.sep}`)) {
+      res.setHeader("Cache-Control", `public, max-age=${STATIC_LONG_CACHE_SECONDS}, stale-while-revalidate=86400`);
+      return;
+    }
+
+    res.setHeader("Cache-Control", `public, max-age=${STATIC_SHORT_CACHE_SECONDS}, stale-while-revalidate=3600`);
+  },
+}));
 
 app.get("*", (req, res) => {
   if (String(req.path || "").startsWith("/api/")) {

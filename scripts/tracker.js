@@ -8,45 +8,10 @@
   const isConstrainedNetwork = Boolean(connection && connection.saveData) || /(^|[^a-z])2g|3g([^a-z]|$)/.test(effectiveType);
   let lastTracked = { path: "", timestamp: 0 };
 
-  const flagFromCode = (code) => {
-    const normalized = String(code || "").trim().toUpperCase();
-    if (!/^[A-Z]{2}$/.test(normalized)) {
-      return "🌐";
-    }
-
-    return String.fromCodePoint(...[...normalized].map((char) => 127397 + char.charCodeAt(0)));
-  };
-
-  const normalizeGeo = ({ ip, country, countryCode }) => {
-    const safeIp = String(ip || "").trim() || "Unknown";
-    const safeCountry = String(country || "").trim() || "Unknown";
-    const safeCode = String(countryCode || "").trim().toUpperCase() || "--";
-
-    return {
-      ip: safeIp,
-      country: safeCountry,
-      countryCode: safeCode,
-      flag: flagFromCode(safeCode),
-    };
-  };
-
-  const fetchJsonWithTimeout = async (url, timeoutMs) => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), timeoutMs);
-    try {
-      const response = await fetch(url, { signal: controller.signal });
-      if (!response.ok) {
-        throw new Error(`Geo lookup failed (${response.status})`);
-      }
-      return response.json();
-    } finally {
-      clearTimeout(timeout);
-    }
-  };
-
   const detectDevice = () => {
     const ua = navigator.userAgent;
     const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+    const isInApp = /Instagram|FBAN|FBAV|Line\//i.test(ua);
 
     let browser = "Unknown";
     if (/Edg\//.test(ua)) browser = "Edge";
@@ -54,59 +19,18 @@
     else if (/Safari\//.test(ua) && !/Chrome\//.test(ua)) browser = "Safari";
     else if (/Firefox\//.test(ua)) browser = "Firefox";
 
-    return `${isMobile ? "Mobile" : "Desktop"} • ${browser}`;
+    return `${isMobile ? "Mobile" : "Desktop"} • ${browser}${isInApp ? " • In-App" : ""}`;
   };
 
-  const fetchGeo = async () => {
-    if (isConstrainedNetwork) {
-      return {
-        ip: "Unknown",
-        country: "Unknown",
-        countryCode: "--",
-        flag: "🌐",
-      };
+  const shouldTrack = () => {
+    const dnt = String(navigator.doNotTrack || window.doNotTrack || "").trim();
+    if (dnt === "1" || dnt.toLowerCase() === "yes") {
+      return false;
     }
-
-    try {
-      const providers = [
-        async () => {
-          const data = await fetchJsonWithTimeout("https://ipapi.co/json/", 1600);
-          return normalizeGeo({
-            ip: data.ip,
-            country: data.country_name,
-            countryCode: data.country_code,
-          });
-        },
-        async () => {
-          const data = await fetchJsonWithTimeout("https://ipwho.is/", 1600);
-          return normalizeGeo({
-            ip: data.ip,
-            country: data.country,
-            countryCode: data.country_code,
-          });
-        },
-      ];
-
-      for (const provider of providers) {
-        try {
-          const geo = await provider();
-          if (String(geo.ip || "").toLowerCase() !== "unknown") {
-            return geo;
-          }
-        } catch {
-          // Try next provider.
-        }
-      }
-
-      throw new Error("All geo providers failed");
-    } catch {
-      return {
-        ip: "Unknown",
-        country: "Unknown",
-        countryCode: "--",
-        flag: "🌐",
-      };
+    if (document.visibilityState === "hidden") {
+      return false;
     }
+    return true;
   };
 
   const trackView = async () => {
@@ -133,30 +57,20 @@
       return;
     }
 
-    const geo = await fetchGeo();
     const entry = {
       timestamp: new Date().toISOString(),
       path,
-      ip: geo.ip,
-      country: geo.country,
-      countryCode: geo.countryCode,
-      flag: geo.flag,
+      ip: "Unknown",
+      country: "Unknown",
+      countryCode: "--",
+      flag: "🌐",
       device: detectDevice(),
+      language: String(navigator.language || ""),
+      timezone: String((Intl.DateTimeFormat && Intl.DateTimeFormat().resolvedOptions().timeZone) || ""),
       userAgent: navigator.userAgent,
     };
 
-    const analyticsPayload = JSON.stringify({
-      action: "track",
-      entry,
-    });
-
-    try {
-      fetch(TRACK_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ event: "view", label: path }),
-      }).catch(() => {});
-    } catch {}
+    const analyticsPayload = JSON.stringify({ action: "track", entry });
 
     if (navigator.sendBeacon) {
       const blob = new Blob([analyticsPayload], { type: "application/json" });
@@ -178,6 +92,10 @@
   };
 
   const scheduleTrack = () => {
+    if (!shouldTrack()) {
+      return;
+    }
+
     const run = () => {
       trackView().catch(() => {
         // Ignore tracking errors.

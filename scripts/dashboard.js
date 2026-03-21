@@ -271,6 +271,7 @@ const renderInstagramStatsPanel = () => {
 
       if (instagramStatsMessage) {
         instagramStatsMessage.classList.toggle("success", result.success);
+        instagramStatsMessage.classList.toggle("error", !result.success);
         instagramStatsMessage.textContent = result.success
           ? "Instagram snapshot settings saved."
           : result.message;
@@ -548,12 +549,14 @@ const showLogoutTransition = () => {
   }
 };
 
-logoutBtn.addEventListener("click", () => {
-  logoutBtn.classList.add("is-loading");
-  logoutBtn.disabled = true;
-  showLogoutTransition();
-  // redirect is handled inside showLogoutTransition via GSAP or setTimeout fallback
-});
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    logoutBtn.classList.add("is-loading");
+    logoutBtn.disabled = true;
+    showLogoutTransition();
+    // redirect is handled inside showLogoutTransition via GSAP or setTimeout fallback
+  });
+}
 
 const fetchViewLogsRemote = async () => {
   const response = await fetch(ANALYTICS_API_URL, { method: "GET", cache: "no-store" });
@@ -755,24 +758,31 @@ const renderAdminPanel = () => {
 
   if (adminPanel) adminPanel.hidden = false;
 
-  const activeUsers = window.ImperiumAuth.getActiveUsers();
-  const entries = Object.values(activeUsers);
-
-  activeUsersList.innerHTML = "";
-  if (entries.length === 0) {
-    const li = document.createElement("li");
-    li.textContent = "No active sessions.";
-    activeUsersList.appendChild(li);
-  } else {
-    entries.sort((a, b) => String(b.lastSeenAt || "").localeCompare(String(a.lastSeenAt || "")));
-    entries.forEach((entry) => {
-      const li = document.createElement("li");
-      li.textContent = `${entry.username} (${entry.role}) • last seen ${formatDateTime(entry.lastSeenAt)}`;
-      activeUsersList.appendChild(li);
-    });
+  const hasLegacyAdminWidgets = Boolean(activeUsersList || addUserForm || siteSettingsForm || userAccessList);
+  if (!hasLegacyAdminWidgets) {
+    return;
   }
 
-  if (!isAddUserHandlerBound) {
+  if (activeUsersList) {
+    const activeUsers = window.ImperiumAuth.getActiveUsers();
+    const entries = Object.values(activeUsers);
+
+    activeUsersList.innerHTML = "";
+    if (entries.length === 0) {
+      const li = document.createElement("li");
+      li.textContent = "No active sessions.";
+      activeUsersList.appendChild(li);
+    } else {
+      entries.sort((a, b) => String(b.lastSeenAt || "").localeCompare(String(a.lastSeenAt || "")));
+      entries.forEach((entry) => {
+        const li = document.createElement("li");
+        li.textContent = `${entry.username} (${entry.role}) • last seen ${formatDateTime(entry.lastSeenAt)}`;
+        activeUsersList.appendChild(li);
+      });
+    }
+  }
+
+  if (addUserForm && addUserMessage && !isAddUserHandlerBound) {
     addUserForm.addEventListener("submit", (event) => {
       event.preventDefault();
 
@@ -965,6 +975,7 @@ window.addEventListener("storage", (event) => {
   if (["imperium_view_logs", "imperium_active_users", "imperium_users", "imperium_site_settings"].includes(event.key || "")) {
     renderAnalytics();
     renderAdminPanel();
+    renderInstagramStatsPanel();
   }
 });
 

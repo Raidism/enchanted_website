@@ -13,6 +13,7 @@
   };
 
   const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+  const SETTINGS_REQUEST_TIMEOUT_MS = 5000;
 
   const overlay = document.getElementById("applyRedirectOverlay");
   const overlayTeam = document.getElementById("applyRedirectTeam");
@@ -53,7 +54,15 @@
     }
 
     try {
-      const response = await fetch(`${API_BASE}/site-settings`, { method: "GET", cache: "no-store" });
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), SETTINGS_REQUEST_TIMEOUT_MS);
+      const response = await fetch(`${API_BASE}/site-settings`, {
+        method: "GET",
+        cache: "no-store",
+        signal: controller.signal,
+      }).finally(() => {
+        window.clearTimeout(timeout);
+      });
       if (response.ok) {
         const payload = await response.json();
         if (payload && payload.settings) settings = payload.settings;
@@ -191,10 +200,34 @@
       animateCardSelection(card, button, team);
       showRedirectOverlay(team);
 
-      const redirectDelay = 350; // Use a short delay so mobile browsers don't block the redirect and the animation has time to be seen
+      const redirectDelay = 350; // Keep a tiny delay so animation is visible before leaving.
+
+      const launchExternalUrl = () => {
+        // In-app browsers can block location.assign intermittently, so fallback to multiple navigation methods.
+        try {
+          window.location.assign(url);
+        } catch {
+          // Continue to fallback below.
+        }
+
+        try {
+          const bridgeLink = document.createElement("a");
+          bridgeLink.href = url;
+          bridgeLink.rel = "noopener noreferrer";
+          bridgeLink.style.position = "absolute";
+          bridgeLink.style.left = "-9999px";
+          document.body.appendChild(bridgeLink);
+          bridgeLink.click();
+          bridgeLink.remove();
+        } catch {
+          // Continue to final fallback.
+        }
+
+        window.location.href = url;
+      };
 
       window.setTimeout(() => {
-        window.location.assign(url);
+        launchExternalUrl();
       }, redirectDelay);
 
       // If navigation is blocked, recover UI.

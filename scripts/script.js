@@ -259,7 +259,7 @@ const applyInstagramStats = (stats) => {
   if (allZero) {
     setInstagramStatus("Instagram sync delayed. Showing fallback numbers.", "stale");
   } else if (isManual) {
-    setInstagramStatus("Live Instagram stats synced.", "live");
+    setInstagramStatus("Manual Instagram snapshot loaded from dashboard.", "live");
   } else if (isStale) {
     setInstagramStatus("Instagram sync delayed. Showing fallback numbers.", "stale");
   } else {
@@ -298,19 +298,6 @@ const scheduleInstagramSync = () => {
   const manualStats = getManualInstagramStats();
   if (manualStats) {
     applyInstagramStats(manualStats);
-    return;
-  }
-
-  if (_isConstrainedNetwork) {
-    const settings = getSiteSettings();
-    applyInstagramStats({
-      followers: Number(settings.instagramFollowers) || fallbackSiteSettings.instagramFollowers,
-      posts: Number(settings.instagramPosts) || fallbackSiteSettings.instagramPosts,
-      following: Number(settings.instagramFollowing) || fallbackSiteSettings.instagramFollowing,
-      stale: true,
-      source: "fallback",
-    });
-    setInstagramStatus("Weak network mode: showing cached Instagram stats.", "stale");
     return;
   }
 
