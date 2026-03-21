@@ -1067,6 +1067,80 @@ h3 {
   justify-content: center;
 }
 
+.closed-roles-container {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.team-roles-card {
+  padding: 1.35rem 1.2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(213, 180, 101, 0.3);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.team-role-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.7rem;
+}
+
+.team-role-icon {
+  width: 2.1rem;
+  height: 2.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(213, 180, 101, 0.24);
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.team-role-title {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.team-role-description {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.team-role-features {
+  list-style: none;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.42rem;
+}
+
+.team-role-features li {
+  font-size: 0.84rem;
+  color: var(--muted-soft);
+  padding-left: 1rem;
+  position: relative;
+  line-height: 1.45;
+}
+
+.team-role-features li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--gold-soft);
+}
+
 .launch-card,
 .value-card,
 .roadmap-card,
@@ -2982,6 +3056,10 @@ body.gsap-enhanced .value-card:hover {
 
 /* Responsive Apply Page */
 @media (max-width: 1024px) {
+  .closed-roles-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .apply-cards-container {
     grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
     gap: 1.5rem;
@@ -3001,6 +3079,15 @@ body.gsap-enhanced .value-card:hover {
 
   .apply-header {
     margin-bottom: 2rem;
+  }
+
+  .closed-roles-container {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .team-roles-card {
+    padding: 1.05rem;
   }
 
   .apply-title {
