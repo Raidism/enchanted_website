@@ -53,6 +53,7 @@ const instagramStatsSourceInput = document.getElementById("instagramStatsSource"
 const instagramFollowersInput = document.getElementById("instagramFollowersInput");
 const instagramPostsInput = document.getElementById("instagramPostsInput");
 const instagramFollowingInput = document.getElementById("instagramFollowingInput");
+const instagramStatsSaveBtn = document.getElementById("instagramStatsSaveBtn");
 const instagramStatsMessage = document.getElementById("instagramStatsMessage");
 // legacy spotlight IDs no longer in DOM
 const userSpotlightPhoto = null;
@@ -254,33 +255,85 @@ const renderInstagramStatsPanel = () => {
   }
 
   if (!isInstagramStatsHandlerBound) {
-    instagramStatsForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-
+    const saveInstagramSnapshot = async () => {
       const source = String((instagramStatsSourceInput && instagramStatsSourceInput.value) || "live").trim().toLowerCase();
       const followers = normalizeCount(instagramFollowersInput && instagramFollowersInput.value, defaultFollowers);
       const posts = normalizeCount(instagramPostsInput && instagramPostsInput.value, defaultPosts);
       const following = normalizeCount(instagramFollowingInput && instagramFollowingInput.value, defaultFollowing);
 
-      const result = window.ImperiumAuth.updateSiteSettings(currentUser, {
+      const payload = {
         instagramStatsSource: source === "manual" ? "manual" : "live",
         instagramFollowers: followers,
         instagramPosts: posts,
         instagramFollowing: following,
-      });
+      };
 
+      if (instagramStatsSaveBtn) instagramStatsSaveBtn.disabled = true;
+      if (instagramStatsMessage) {
+        instagramStatsMessage.classList.remove("success", "error");
+        instagramStatsMessage.textContent = "Saving Instagram snapshot...";
+      }
+
+      let result = window.ImperiumAuth.updateSiteSettings(currentUser, payload);
+
+      // Fallback path for environments where the auth helper request can fail silently.
+      if (!result.success) {
+        try {
+          const response = await fetch(`${API_BASE}/site-settings`, {
+            method: "PUT",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+            cache: "no-store",
+          });
+
+          const body = await response.json().catch(() => null);
+          result = {
+            success: response.ok && Boolean(body && body.success),
+            message: String((body && body.message) || (response.ok ? "Site settings updated." : "Failed to update site settings.")),
+            settings: body && body.settings ? body.settings : null,
+          };
+
+          if (result.success && result.settings) {
+            try {
+              localStorage.setItem("imperium_site_settings", JSON.stringify(result.settings));
+              window.dispatchEvent(new CustomEvent("imperium:site-settings-updated", { detail: { settings: result.settings } }));
+            } catch {
+              // Ignore local broadcast failures.
+            }
+          }
+        } catch {
+          // Keep original failure message.
+        }
+      }
+
+      if (instagramStatsSaveBtn) instagramStatsSaveBtn.disabled = false;
       if (instagramStatsMessage) {
         instagramStatsMessage.classList.toggle("success", result.success);
         instagramStatsMessage.classList.toggle("error", !result.success);
         instagramStatsMessage.textContent = result.success
           ? "Instagram snapshot settings saved."
-          : result.message;
+          : String(result.message || "Could not save Instagram snapshot.");
       }
 
       if (result.success) {
         renderInstagramStatsPanel();
       }
+    };
+
+    instagramStatsForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      saveInstagramSnapshot();
     });
+
+    if (instagramStatsSaveBtn) {
+      instagramStatsSaveBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        saveInstagramSnapshot();
+      });
+    }
 
     isInstagramStatsHandlerBound = true;
   }
