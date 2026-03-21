@@ -1003,7 +1003,13 @@ h3 {
 }
 
 .apply-nav-wrap {
-  justify-content: center;
+  justify-content: space-between;
+}
+
+.apply-access-link {
+  min-height: 38px;
+  padding: 0.5rem 1rem;
+  font-size: 0.88rem;
 }
 
 .apply-main {
@@ -2925,6 +2931,37 @@ body.gsap-enhanced .value-card:hover {
   transform: scale(0.95) translateY(0);
 }
 
+.apply-roles-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.apply-role-mini-card {
+  border: 1px solid rgba(213, 180, 101, 0.28);
+  border-radius: 14px;
+  padding: 1rem 1rem 0.95rem;
+  background:
+    linear-gradient(140deg, rgba(213, 180, 101, 0.11), rgba(213, 180, 101, 0.03) 42%),
+    linear-gradient(160deg, rgba(13, 19, 15, 0.92), rgba(9, 14, 11, 0.94));
+  box-shadow: inset 0 1px 0 var(--glass-highlight), 0 10px 26px rgba(0, 0, 0, 0.22);
+}
+
+.apply-role-mini-title {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  font-size: 1rem;
+  color: var(--gold-soft);
+}
+
+.apply-role-mini-description {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
 .apply-status-message {
   min-height: 1.2rem;
   margin-top: 1.5rem;
@@ -2952,6 +2989,16 @@ body.gsap-enhanced .value-card:hover {
 }
 
 @media (max-width: 640px) {
+  .apply-nav-wrap {
+    gap: 0.65rem;
+  }
+
+  .apply-access-link {
+    min-height: 34px;
+    padding: 0.4rem 0.82rem;
+    font-size: 0.83rem;
+  }
+
   .apply-header {
     margin-bottom: 2rem;
   }
@@ -2997,5 +3044,11 @@ body.gsap-enhanced .value-card:hover {
 
   .apply-card-features li {
     font-size: 0.85rem;
+  }
+
+  .apply-roles-preview {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
   }
 }

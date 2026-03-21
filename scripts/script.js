@@ -116,14 +116,25 @@ const applyTeamRecruitmentCtaFromSettings = (settings) => {
     }
   }
 
-  // Hide countdown card when applications are open
+  // Toggle countdown card vs closed roles when applications status changes
   const countdownCardBlock = document.getElementById("countdownCardBlock");
+  const closedRolesBlock = document.getElementById("closedRolesBlock");
+  
   if (countdownCardBlock) {
-    countdownCardBlock.hidden = isOpen;
+    countdownCardBlock.hidden = !isOpen;
     if (isOpen) {
-      countdownCardBlock.style.display = 'none';
-    } else {
       countdownCardBlock.style.display = '';
+    } else {
+      countdownCardBlock.style.display = 'none';
+    }
+  }
+
+  if (closedRolesBlock) {
+    closedRolesBlock.hidden = isOpen;
+    if (isOpen) {
+      closedRolesBlock.style.display = 'none';
+    } else {
+      closedRolesBlock.style.display = '';
     }
   }
 

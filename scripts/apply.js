@@ -19,6 +19,7 @@
   const overlayTitle = document.getElementById("applyRedirectTitle");
   const overlayMessage = document.getElementById("applyRedirectMessage");
   const pageMain = document.querySelector("main.apply-main");
+  const closedRolesPreview = document.getElementById("applyClosedRolesPreview");
 
   const TEAM_TITLES = {
     volunteer: "Volunteer Team",
@@ -64,10 +65,7 @@
     const teamOpen = Boolean(settings && settings.teamApplicationsOpen);
     if (teamOpen) {
       setStatus("");
-      const fallbackBtn = document.getElementById("applyEarlyAccessBtn");
-      if (fallbackBtn && fallbackBtn.parentElement) {
-        fallbackBtn.parentElement.remove();
-      }
+      if (closedRolesPreview) closedRolesPreview.hidden = true;
       applyCards.forEach((card) => {
         card.hidden = false;
         const cta = card.querySelector("[data-team-cta]");
@@ -76,18 +74,14 @@
       return;
     }
 
-    setStatus("Team recruitment is currently closed. Keep an eye on the countdown timer for when applications reopen.");
+    setStatus("Team recruitment is currently closed. Explore the team roles below while applications are paused.");
     applyCards.forEach((card) => {
       card.hidden = true;
+      const cta = card.querySelector("[data-team-cta]");
+      if (cta) cta.disabled = true;
     });
 
-    if (!document.getElementById("applyEarlyAccessBtn")) {
-      const holder = document.createElement("div");
-      holder.className = "apply-early-access-wrap";
-      holder.innerHTML = '<a id="applyEarlyAccessBtn" class="cta" href="/#countdown">Check Countdown ⏳</a>';
-      const section = document.querySelector(".apply-section");
-      if (section) section.appendChild(holder);
-    }
+    if (closedRolesPreview) closedRolesPreview.hidden = false;
   };
 
   const showRedirectOverlay = (team) => {
