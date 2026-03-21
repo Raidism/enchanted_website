@@ -83,10 +83,10 @@ const applyJoinStateFromSettings = (settings) => {
   const isOpen = Boolean(settings && settings.teamApplicationsOpen);
   if (isOpen) {
     joinHeading.textContent = "Team Recruitment Is Open";
-    joinIntro.textContent = "Choose Volunteer, Media, or Security and submit your application directly. The countdown remains visible for timeline clarity.";
+    joinIntro.textContent = "Choose Volunteer, Media, or Security and submit your application directly.";
   } else {
     joinHeading.textContent = "Team Recruitment Is Currently Closed";
-    joinIntro.textContent = "Applications are temporarily paused. The countdown and page content remain visible until the next opening.";
+    joinIntro.textContent = "Applications are temporarily paused. Team role details remain visible until the next opening.";
   }
 };
 
@@ -122,26 +122,18 @@ const applyTeamRecruitmentCtaFromSettings = (settings) => {
     }
   }
 
-  // Toggle countdown card vs closed roles when applications status changes
+  // Keep role cards visible in this section and hide the countdown timer card.
   const countdownCardBlock = document.getElementById("countdownCardBlock");
   const closedRolesBlock = document.getElementById("closedRolesBlock");
-  
+
   if (countdownCardBlock) {
-    countdownCardBlock.hidden = !isOpen;
-    if (isOpen) {
-      countdownCardBlock.style.display = '';
-    } else {
-      countdownCardBlock.style.display = 'none';
-    }
+    countdownCardBlock.hidden = true;
+    countdownCardBlock.style.display = 'none';
   }
 
   if (closedRolesBlock) {
-    closedRolesBlock.hidden = isOpen;
-    if (isOpen) {
-      closedRolesBlock.style.display = 'none';
-    } else {
-      closedRolesBlock.style.display = '';
-    }
+    closedRolesBlock.hidden = false;
+    closedRolesBlock.style.display = '';
   }
 
   if (joinApplyBtn) {
