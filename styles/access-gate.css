@@ -166,6 +166,17 @@ h1 {
   gap: 0.45rem;
 }
 
+.gate-keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin: 1.2rem 0 0.8rem 0;
+  width: 100%;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .gate-key {
   border: 1px solid rgba(213, 180, 101, 0.35);
   border-radius: 10px;
@@ -176,14 +187,17 @@ h1 {
   font-size: 0.96rem;
   cursor: pointer;
   transition: transform 0.14s ease, box-shadow 0.2s ease;
+  touch-action: manipulation;
+  user-select: none;
+  min-width: 0;
+  outline: none;
 }
 
-.gate-key:active {
-  transform: scale(0.97);
-}
-
-.gate-key--muted {
-  color: #d9cb9b;
+.gate-key:active, .gate-key:focus {
+  background: var(--green, #4d8b63);
+  color: #fff;
+  box-shadow: 0 2px 16px rgba(77,139,99,0.22);
+  outline: 2px solid var(--gold, #d5b465);
 }
 
 .gate-keypad-submit {
@@ -245,4 +259,57 @@ h1 {
   color: var(--danger);
   font-weight: 700;
 }
+
+/* --- Improved Mobile Keypad Styles --- */
+.gate-keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin: 1.2rem 0 0.8rem 0;
+  width: 100%;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.gate-key {
+  border: 1px solid rgba(213, 180, 101, 0.35);
+  border-radius: 16px;
+  padding: 1.05rem 0;
+  background: linear-gradient(155deg, rgba(18, 30, 22, 0.95), rgba(10, 18, 13, 0.95));
+  color: #eef7f0;
+  font-weight: 700;
+  font-size: 16px; /* Prevent iOS zoom */
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.2s ease;
+  touch-action: manipulation;
+  user-select: none;
+  min-width: 0;
+  outline: none;
+}
+.gate-keypad-label {
+  font-size: 1.08rem;
+  color: var(--muted);
+  margin-bottom: 0.7rem;
+  text-align: center;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.gate-keypad-display {
+  min-height: 2.1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(77, 139, 99, 0.42);
+  background: rgba(6, 10, 8, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.9rem;
+  font-family: 'Inter', monospace, sans-serif;
+  letter-spacing: 0.22em;
+  color: #dfeadf;
+  font-size: 1.7rem;
+  text-align: center;
+  user-select: none;
+}
+/* --- End Improved Mobile Keypad Styles --- */
 

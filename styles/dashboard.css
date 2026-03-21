@@ -3073,7 +3073,7 @@ body.lite-motion .stat-card {
 
 .user-action-btn:hover {
   border-color: rgba(213, 180, 101, 0.5);
-  background: linear-gradient(145deg, rgba(20, 28, 23, 0.9), rgba(12, 18, 14, 1));
+  background: linear-gradient(145deg, rgba(20, 28, 23, 0.9), rgba(12, 18, 14, 0.95));
   color: #d8e8dc;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(213, 180, 101, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -3978,6 +3978,7 @@ body.lite-motion .stat-card {
 
   .stat-card {
     padding: 1.2rem;
+    gap: 0.6rem;
   }
 
   .stat-value {
@@ -4000,6 +4001,7 @@ body.lite-motion .stat-card {
     min-width: 2rem;
     height: 2rem;
     padding: 0 0.55rem;
+    font-size: 0.8rem;
   }
 }
 
@@ -4142,108 +4144,57 @@ body.lite-motion .stat-card {
   }
 }
 
-@media (max-width: 560px) {
+/* --- Mobile improvements for analytics page --- */
+@media (max-width: 700px) {
+  .dash-welcome-hero, .dwh-photo-col, .dwh-text-col {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    gap: 1.2rem;
+  }
+  .dash-welcome-hero {
+    padding: 1.2rem 0.2rem 1.5rem 0.2rem;
+    min-height: unset;
+  }
+  .dwh-photo-ring, .dwh-photo {
+    width: 84px !important;
+    height: 84px !important;
+    margin: 0 auto 0.7rem auto !important;
+  }
+  .dwh-eyebrow, .dwh-welcome-line, .dwh-role, .dwh-briefing {
+    font-size: 1rem !important;
+    text-align: center !important;
+  }
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    gap: 1.1rem !important;
   }
-
   .stat-card {
-    padding: 0.9rem;
+    padding: 1.1rem 0.7rem !important;
+    font-size: 1rem !important;
+    min-width: 0 !important;
+    width: 100% !important;
   }
-
-  .stat-value {
-    font-size: 1.3rem;
+  .table-card {
+    padding: 1.1rem 0.7rem !important;
+    font-size: 0.98rem !important;
+    width: 100% !important;
+    overflow-x: auto;
   }
-
-  .stat-label {
-    font-size: 0.75rem;
+  .instagram-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.7rem !important;
   }
-
-  table {
-    font-size: 0.85rem;
+  .header-inner, .header-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.7rem !important;
   }
-
-  th, td {
-    padding: 0.6rem 0.65rem;
-  }
-
-  .legend-items {
-    flex-direction: column;
-    gap: 0.8rem;
-  }
-
-  .legend-item {
-    padding: 0.4rem 0.7rem;
-    font-size: 0.8rem;
-  }
-
-  button,
-  .btn,
-  input[type="button"],
-  input[type="submit"],
-  input[type="reset"],
-  .page-btn,
-  .user-action-btn,
-  .app-action-btn {
-    padding: 0.45rem 0.75rem;
-    font-size: 0.75rem;
-  }
-
-  .page-btn {
-    min-width: 1.8rem;
-    height: 1.8rem;
+  .header-actions a, .header-actions button {
+    width: 100% !important;
+    font-size: 1.05rem !important;
+    padding: 0.7rem 0 !important;
   }
 }
-
-@media (max-width: 480px) {
-  .metric-value {
-    font-size: 1.4rem;
-  }
-
-  .analytics-card {
-    padding: 1rem;
-  }
-
-  .chart-container {
-    min-height: 240px;
-  }
-
-  .trend-chart {
-    min-height: 240px;
-  }
-
-  .legend-items {
-    gap: 0.8rem;
-  }
-
-  .legend-item {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.85rem;
-  }
-
-  .legend-dot {
-    width: 8px;
-    height: 8px;
-  }
-
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .card-header h2 {
-    font-size: 1.05rem;
-  }
-
-  .device-item {
-    gap: 0.5rem;
-  }
-
-  .device-bar-container {
-    gap: 0.4rem;
-  }
-
-  .device-count {
-    text-align: left;
-  }
-}
+/* --- End mobile improvements --- */
