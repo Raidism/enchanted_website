@@ -742,53 +742,66 @@ const renderVisitsPagination = (totalRows, totalPages) => {
 };
 
 const renderAnalytics = async () => {
-  const logs = await getAnalyticsLogs();
-  const ipSet = new Set(logs.map((item) => item.ip).filter((value) => !isUnknownValue(value)));
-  const countrySet = new Set(logs.map((item) => item.country).filter((value) => !isUnknownValue(value)));
+  try {
+    const logs = await getAnalyticsLogs();
+    const ipSet = new Set(logs.map((item) => item.ip).filter((value) => !isUnknownValue(value)));
+    const countrySet = new Set(logs.map((item) => item.country).filter((value) => !isUnknownValue(value)));
 
-  totalViews.textContent = String(logs.length);
-  uniqueIps.textContent = String(ipSet.size);
-  uniqueCountries.textContent = String(countrySet.size);
+    totalViews.textContent = String(logs.length);
+    uniqueIps.textContent = String(ipSet.size);
+    uniqueCountries.textContent = String(countrySet.size);
 
-  const totalPages = Math.max(1, Math.ceil(logs.length / VISITS_PER_PAGE));
-  currentVisitPage = Math.min(currentVisitPage, totalPages);
+    const totalPages = Math.max(1, Math.ceil(logs.length / VISITS_PER_PAGE));
+    currentVisitPage = Math.min(currentVisitPage, totalPages);
 
-  const startIndex = (currentVisitPage - 1) * VISITS_PER_PAGE;
-  const endIndex = startIndex + VISITS_PER_PAGE;
-  const rows = logs.slice(startIndex, endIndex);
-  visitsTableBody.innerHTML = "";
+    const startIndex = (currentVisitPage - 1) * VISITS_PER_PAGE;
+    const endIndex = startIndex + VISITS_PER_PAGE;
+    const rows = logs.slice(startIndex, endIndex);
+    visitsTableBody.innerHTML = "";
 
-  if (rows.length === 0) {
-    const emptyRow = document.createElement("tr");
-    emptyRow.innerHTML = '<td colspan="5">No analytics yet.</td>';
-    visitsTableBody.appendChild(emptyRow);
-    visitsPagination.innerHTML = "";
-    return;
+    if (rows.length === 0) {
+      const emptyRow = document.createElement("tr");
+      emptyRow.innerHTML = '<td colspan="5">No analytics yet.</td>';
+      visitsTableBody.appendChild(emptyRow);
+      visitsPagination.innerHTML = "";
+      return;
+    }
+
+    rows.forEach((item) => {
+      const row = document.createElement("tr");
+
+      const rawIp = String(item.ip || "Unknown");
+      const rawCountry = String(item.country || "Unknown");
+      const ipValue = isAdmin ? rawIp : maskValue(rawIp);
+      const countryValue = isAdmin
+        ? `${item.flag || "🌐"} ${rawCountry}`
+        : maskValue(rawCountry);
+      const deviceValue = isAdmin ? `${deviceEmoji(item.device)} ${String(item.device || "Unknown")}` : maskValue(item.device);
+      const pageValue = isAdmin ? `📄 ${pageLabel(item.path)}` : maskValue(item.path);
+
+      row.innerHTML = `
+        <td>${formatDateTime(item.timestamp)}</td>
+        <td>${ipValue}</td>
+        <td>${countryValue}</td>
+        <td>${deviceValue}</td>
+        <td>${pageValue}</td>
+      `;
+      visitsTableBody.appendChild(row);
+    });
+
+    renderVisitsPagination(logs.length, totalPages);
+  } catch (err) {
+    // Show error in analytics section
+    if (visitsTableBody) {
+      visitsTableBody.innerHTML = `<tr><td colspan="5" style="color:#f87171;font-weight:bold;">Failed to load analytics: ${err && err.message ? err.message : 'Unknown error'}</td></tr>`;
+    }
+    if (totalViews) totalViews.textContent = "—";
+    if (uniqueIps) uniqueIps.textContent = "—";
+    if (uniqueCountries) uniqueCountries.textContent = "—";
+    if (visitsPagination) visitsPagination.innerHTML = "";
+    // Optionally log to console for devs
+    console.error("Analytics dashboard error:", err);
   }
-
-  rows.forEach((item) => {
-    const row = document.createElement("tr");
-
-    const rawIp = String(item.ip || "Unknown");
-    const rawCountry = String(item.country || "Unknown");
-    const ipValue = isAdmin ? rawIp : maskValue(rawIp);
-    const countryValue = isAdmin
-      ? `${item.flag || "🌐"} ${rawCountry}`
-      : maskValue(rawCountry);
-    const deviceValue = isAdmin ? `${deviceEmoji(item.device)} ${String(item.device || "Unknown")}` : maskValue(item.device);
-    const pageValue = isAdmin ? `📄 ${pageLabel(item.path)}` : maskValue(item.path);
-
-    row.innerHTML = `
-      <td>${formatDateTime(item.timestamp)}</td>
-      <td>${ipValue}</td>
-      <td>${countryValue}</td>
-      <td>${deviceValue}</td>
-      <td>${pageValue}</td>
-    `;
-    visitsTableBody.appendChild(row);
-  });
-
-  renderVisitsPagination(logs.length, totalPages);
 };
 
 const renderAdminPanel = () => {
