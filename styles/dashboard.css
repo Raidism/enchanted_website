@@ -1,3 +1,5 @@
+/* Fallback: always show body if JS/GSAP fails */
+body { opacity: 1 !important; }
 :root {
   --bg: #070b08;
   --panel: #101813;

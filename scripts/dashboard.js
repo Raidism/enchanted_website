@@ -1084,7 +1084,12 @@ startRefreshIntervals();
   }
 })();
 // ═══════════════════════════════════════════════════════════════
+
+// GSAP animation with fallback to always show body
 (function initDashGSAP() {
+  // Always start visible (CSS fallback)
+  document.body.style.opacity = "1";
+
   if (typeof gsap === "undefined") return;
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const useLiteMotion = prefersReduced || document.body.classList.contains("lite-motion");
@@ -1094,6 +1099,13 @@ startRefreshIntervals();
   requestAnimationFrame(() => {
     gsap.to(document.body, { opacity: 1, duration: 0.55, ease: "power2.out" });
   });
+
+  // Fallback: forcibly show after 1s if still hidden
+  setTimeout(() => {
+    if (parseFloat(getComputedStyle(document.body).opacity) < 0.99) {
+      document.body.style.opacity = "1";
+    }
+  }, 1000);
 
   if (!useLiteMotion) {
     const header      = document.querySelector(".dash-header");
