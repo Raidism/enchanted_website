@@ -19,48 +19,100 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles/dashboard.css" />
+  <link rel="stylesheet" href="/styles/admin-v2.css" />
 </head>
 <body>
-  <header class="dash-header">
-    <div class="header-inner">
-      <a class="brand" href="/">IMPERIUM MUN</a>
-      <div class="header-actions">
-        <a href="/dashboard">Analytics</a>
-        <a href="/ops" data-admin-link>Ops Center</a>
-        <a href="/applications">Applications</a>
-        <a href="/settings" data-admin-link>Settings</a>
-        <button id="logoutBtn" type="button">Logout</button>
+
+  <!-- Mobile sidebar backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- ── Sidebar ──────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+    <a class="sidebar-brand" href="/">
+      <img src="/assets/imperium mun logo.jpg" alt="Imperium MUN" class="sidebar-brand-logo" />
+      <div>
+        <div class="sidebar-brand-text">Imperium MUN</div>
+        <div class="sidebar-brand-sub">Admin Portal</div>
       </div>
+    </a>
+
+    <div class="sidebar-section-label">Navigation</div>
+
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Analytics
+      </a>
+      <a href="/ops" class="nav-item" data-admin-link>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Ops Center
+      </a>
+      <a href="/applications" class="nav-item active" aria-current="page">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Applications
+      </a>
+      <a href="/settings" class="nav-item" data-admin-link>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <img id="pmhPhoto" src="/assets/imperium mun logo.jpg" alt="User" class="sidebar-user-avatar" loading="eager" />
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="pmhName">Loading…</div>
+          <div class="sidebar-user-role" id="pmhRole">Member</div>
+        </div>
+      </div>
+      <button id="logoutBtn" type="button">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
     </div>
-  </header>
+  </aside>
 
-  <main class="dash-main">
-    <div class="page-mini-hero profile-pending" id="pageMiniHero" aria-label="Profile briefing">
-      <div class="pmh-photo-ring" aria-hidden="true">
-        <img id="pmhPhoto" src="assets/imperium mun logo.jpg" alt="" class="pmh-photo" loading="eager" decoding="async" />
+  <!-- ── Main content ──────────────────────────────────────────── -->
+  <div class="main-content">
+
+    <header class="topbar" role="banner">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="topbar-title">
+          <span>Imperium MUN</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="breadcrumb-sep"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="breadcrumb-current">Applications</span>
+        </div>
       </div>
-      <div class="pmh-text">
-        <p class="pmh-eyebrow">IMPERIUM MUN PORTAL</p>
-        <h2 class="pmh-name" id="pmhName"></h2>
-        <p class="pmh-role" id="pmhRole"></p>
+      <div class="topbar-right">
+        <div class="topbar-status">
+          <div class="status-dot"></div>
+          <span>System Live</span>
+        </div>
       </div>
-    </div>
+    </header>
 
-    <p id="welcomeText" hidden></p>
+    <div class="page-content" role="main" id="pageMiniHero">
 
-    <section id="applications" class="section">
-      <h1>Applications</h1>
-      <p class="sub">Choose an application workspace and monitor live activity.</p>
+      <div class="section-header">
+        <p class="section-eyebrow">Recruitment Portal</p>
+        <h1 class="section-title">Applications</h1>
+        <p class="section-desc">Choose an application workspace and monitor live activity.</p>
+      </div>
 
-      <div class="apps-launcher-card table-card">
-        <p id="teamAppsStatusNotice" class="sub apps-status-notice">Team Applications: Checking status...</p>
+      <!-- Launcher card -->
+      <article class="table-card" style="margin-bottom:var(--s6)">
+        <p id="teamAppsStatusNotice" class="sub" style="margin-bottom:var(--s4)">Team Applications: Checking status…</p>
         <div class="apps-launcher-grid" role="group" aria-label="Applications launcher buttons">
-          <button id="chairAppsBtn" type="button" class="apps-launch-btn is-disabled" disabled aria-disabled="true">
+          <button id="chairAppsBtn" type="button" class="apps-launch-btn" disabled aria-disabled="true">
             <span class="apps-launch-title">Chair Applications</span>
             <span class="apps-launch-sub">Not available yet</span>
           </button>
-          <button id="delegateAppsBtn" type="button" class="apps-launch-btn is-disabled" disabled aria-disabled="true">
+          <button id="delegateAppsBtn" type="button" class="apps-launch-btn" disabled aria-disabled="true">
             <span class="apps-launch-title">Delegate Applications</span>
             <span class="apps-launch-sub">Not available yet</span>
           </button>
@@ -69,38 +121,57 @@
             <span class="apps-launch-sub">Open workspace analytics</span>
           </a>
         </div>
-      </div>
+      </article>
 
-      <div class="table-card apps-analytics-card">
-        <div class="apps-analytics-head">
-          <h2>Applications Analytics</h2>
-          <p class="sub" id="appsAnalyticsStatus">Loading click activity...</p>
+      <!-- Analytics card -->
+      <article class="table-card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:var(--s3);margin-bottom:var(--s5)">
+          <div>
+            <h3>Applications Analytics</h3>
+            <p class="sub" id="appsAnalyticsStatus">Loading click activity…</p>
+          </div>
         </div>
-        <div class="apps-analytics-grid">
-          <article class="apps-metric-card">
-            <p class="apps-metric-label">Total Team Clicks</p>
-            <p class="apps-metric-value" id="appsMetricTotalClicks">0</p>
-          </article>
-          <article class="apps-metric-card">
-            <p class="apps-metric-label">Unique IPs</p>
-            <p class="apps-metric-value" id="appsMetricUniqueIps">0</p>
-          </article>
-          <article class="apps-metric-card">
-            <p class="apps-metric-label">Top Team</p>
-            <p class="apps-metric-value" id="appsMetricTopTeam">None</p>
-          </article>
+
+        <div class="apps-analytics-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--s4);margin-bottom:var(--s5)">
+          <div class="metric-card">
+            <p class="metric-label">Total Team Clicks</p>
+            <p class="metric-value" id="appsMetricTotalClicks">0</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-label">Unique IPs</p>
+            <p class="metric-value" id="appsMetricUniqueIps">0</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-label">Top Team</p>
+            <p class="metric-value" id="appsMetricTopTeam">None</p>
+          </div>
         </div>
-        <div class="apps-chart-card">
-          <p id="appsTrendEmpty" class="sub">No recent click activity yet.</p>
+
+        <div class="chart-wrap">
+          <p id="appsTrendEmpty" class="sub" style="text-align:center;padding:var(--s6) 0">No recent click activity yet.</p>
           <svg id="appsTrendChart" class="ops-growth-chart" viewBox="0 0 760 240" aria-label="Applications activity trend chart"></svg>
         </div>
-      </div>
-    </section>
-  </main>
+      </article>
+
+    </div><!-- /page-content -->
+  </div><!-- /main-content -->
 
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="/scripts/tracker.js"></script>
   <script defer src="/scripts/auth.js"></script>
   <script defer src="/scripts/applications.js"></script>
+
+  <script>
+    (function () {
+      var toggle   = document.getElementById('sidebarToggle');
+      var sidebar  = document.getElementById('sidebar');
+      var backdrop = document.getElementById('sidebarBackdrop');
+      function openSidebar()  { sidebar.classList.add('open');  backdrop.classList.add('open'); toggle.setAttribute('aria-expanded','true');  document.body.style.overflow='hidden'; }
+      function closeSidebar() { sidebar.classList.remove('open'); backdrop.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+      if (toggle)   toggle.addEventListener('click', function(){ sidebar.classList.contains('open') ? closeSidebar() : openSidebar(); });
+      if (backdrop) backdrop.addEventListener('click', closeSidebar);
+      document.addEventListener('keydown', function(e){ if (e.key==='Escape') closeSidebar(); });
+    })();
+  </script>
 </body>
 </html>

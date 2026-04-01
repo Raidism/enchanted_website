@@ -51,6 +51,7 @@ html {
   --text:    #e2e8e2;
   --text-2:  #8a9a90;
   --text-3:  #4a5550;
+  --text-muted: var(--text-2);
 
   /* Borders */
   --border:    rgba(255,255,255,0.06);
@@ -1810,4 +1811,75 @@ body.dash-visibility-failsafe .stat-card {
 .it-note-resolve:hover {
   background: rgba(34,194,102,0.2);
   box-shadow: 0 0 8px rgba(34,194,102,0.2);
+}
+
+/* ─── Applications Launcher ──────────────────────────────────────── */
+.apps-launcher-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--s4);
+}
+.apps-launch-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s2);
+  padding: var(--s5) var(--s5);
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+  transition: all var(--base);
+}
+.apps-launch-btn:hover:not(:disabled) {
+  border-color: var(--gold-border);
+  background: var(--surface-2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+.apps-launch-btn:disabled,
+.apps-launch-btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.apps-launch-btn--team {
+  border-color: var(--gold-border);
+  background: linear-gradient(135deg, rgba(192,149,72,0.12) 0%, rgba(192,149,72,0.04) 100%);
+}
+.apps-launch-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.apps-launch-sub {
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+/* ─── Metric cards ───────────────────────────────────────────────── */
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--s5) var(--s5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.metric-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+}
+.metric-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  font-family: "Cinzel", serif;
+  letter-spacing: -0.02em;
 }
