@@ -1190,17 +1190,20 @@ ul.simple-list li strong, ol.simple-list li strong {
 }
 
 /* ─── Lock glass overlay ────────────────────────────────────────── */
+/* Hidden by default — only shown for locked sections (non-admin users). */
 .lock-glass {
   position: absolute;  inset: 0;
   background: rgba(7,9,12,0.7);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   border-radius: inherit;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   z-index: 10;
 }
+/* JS adds .is-locked to [data-admin-lock] for non-admins only */
+[data-admin-lock].is-locked .lock-glass { display: flex; }
 .lock-glass-inner {
   text-align: center;
   padding: var(--s6);
@@ -1882,4 +1885,182 @@ body.dash-visibility-failsafe .stat-card {
   color: var(--text);
   font-family: "Cinzel", serif;
   letter-spacing: -0.02em;
+}
+
+/* ─── Applications status badge ─────────────────────────────────── */
+.apps-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+}
+.apps-status-badge .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.apps-status-badge.loading { background: var(--amber-dim); color: var(--amber-text); border-color: rgba(245,158,11,0.25); }
+.apps-status-badge.success { background: var(--green-dim); color: var(--green-text); border-color: rgba(34,194,102,0.25); }
+.apps-status-badge.error   { background: var(--red-dim);   color: var(--red-text);   border-color: rgba(239,68,68,0.25); }
+
+/* ─── Team Application Cards ─────────────────────────────────────── */
+.team-app-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--s5);
+  margin-bottom: var(--s7);
+}
+.team-app-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--s5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  transition: border-color var(--base), transform var(--base);
+}
+.team-app-card:hover { border-color: var(--border-2); transform: translateY(-2px); }
+.team-app-card--media    { border-top: 3px solid #4fd1c5; }
+.team-app-card--security { border-top: 3px solid #f6ad55; }
+.team-app-card--volunteer{ border-top: 3px solid #9f7aea; }
+.tac-header {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+.tac-icon { font-size: 22px; flex-shrink: 0; }
+.tac-title { font-size: 14px; font-weight: 700; color: var(--text); margin: 0; }
+.tac-sub   { font-size: 11px; color: var(--text-2); margin: 0; }
+.tac-body  { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s3); }
+.tac-stat  { display: flex; flex-direction: column; gap: 2px; }
+.tac-value { font-size: 28px; font-weight: 700; font-family: "Cinzel", serif; color: var(--text); line-height: 1; }
+.tac-label { font-size: 10px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.08em; }
+.tac-trend {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: var(--green-dim);
+  color: var(--green-text);
+  border: 1px solid rgba(34,194,102,0.2);
+  white-space: nowrap;
+  self-align: flex-end;
+}
+.tac-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s3) var(--s4);
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-md);
+  color: var(--text-2);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all var(--fast);
+}
+.tac-action:hover {
+  background: var(--gold-dim);
+  border-color: var(--gold-border);
+  color: var(--gold-hi);
+  transform: translateX(2px);
+}
+
+/* ─── Team Analytics Layout ──────────────────────────────────────── */
+.team-analytics-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: var(--s6);
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .team-analytics-layout { grid-template-columns: 1fr; }
+}
+.team-chart-card { overflow: hidden; }
+.team-trend-chart {
+  width: 100%;
+  height: auto;
+  max-height: 280px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+.team-metrics-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+/* ─── Chart legend ───────────────────────────────────────────────── */
+.chart-legend { }
+.legend-items {
+  display: flex;
+  align-items: center;
+  gap: var(--s5);
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  font-size: 11px;
+  color: var(--text-2);
+}
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-label { font-weight: 500; }
+
+/* ─── Device breakdown list ──────────────────────────────────────── */
+.device-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2);
+  margin-bottom: var(--s3);
+}
+.device-name {
+  font-size: 11px;
+  color: var(--text-2);
+  margin-bottom: 3px;
+  display: block;
+}
+.device-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+}
+.device-bar-container {
+  background: var(--surface);
+  border-radius: 4px;
+  height: 5px;
+  width: 100%;
+  overflow: hidden;
+  margin-top: 3px;
+}
+.device-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--green));
+  border-radius: 4px;
+  transition: width var(--base);
+}
+.no-data-message { font-size: 12px; color: var(--text-2); }
+.device-skeleton { display: flex; flex-direction: column; gap: var(--s3); }
+.device-bar-loading {
+  height: 10px;
+  width: 80%;
+  background: var(--surface-3);
+  border-radius: 4px;
+  animation: shimmer 1.5s ease-in-out infinite alternate;
+}
+@keyframes shimmer {
+  from { opacity: 0.4; }
+  to   { opacity: 0.8; }
 }

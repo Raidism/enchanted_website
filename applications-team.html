@@ -9,206 +9,231 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles/dashboard.css" />
+  <link rel="stylesheet" href="/styles/admin-v2.css" />
 </head>
 <body>
-  <header class="dash-header">
-    <div class="header-inner">
-      <a class="brand" href="/">IMPERIUM MUN</a>
-      <div class="header-actions">
-        <a href="/dashboard">Analytics</a>
-        <a href="/ops" data-admin-link>Ops Center</a>
-        <a href="/applications">Applications</a>
-        <a href="/settings" data-admin-link>Settings</a>
-        <button id="logoutBtn" type="button">Logout</button>
+
+  <!-- Mobile sidebar backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- ── Sidebar ──────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+    <a class="sidebar-brand" href="/">
+      <img src="/assets/imperium mun logo.jpg" alt="Imperium MUN" class="sidebar-brand-logo" />
+      <div>
+        <div class="sidebar-brand-text">Imperium MUN</div>
+        <div class="sidebar-brand-sub">Admin Portal</div>
       </div>
+    </a>
+
+    <div class="sidebar-section-label">Navigation</div>
+
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Analytics
+      </a>
+      <a href="/ops" class="nav-item" data-admin-link>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Ops Center
+      </a>
+      <a href="/applications" class="nav-item active" aria-current="page">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Applications
+      </a>
+      <a href="/settings" class="nav-item" data-admin-link>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <img id="pmhPhoto" src="/assets/imperium mun logo.jpg" alt="User" class="sidebar-user-avatar" loading="eager" />
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="pmhName">Loading…</div>
+          <div class="sidebar-user-role" id="pmhRole">Member</div>
+        </div>
+      </div>
+      <button id="logoutBtn" type="button">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
     </div>
-  </header>
+  </aside>
 
-  <main class="dash-main">
-    <div class="page-mini-hero profile-pending" id="pageMiniHero" aria-label="Profile briefing">
-      <div class="pmh-photo-ring" aria-hidden="true">
-        <img id="pmhPhoto" src="/assets/imperium mun logo.jpg" alt="" class="pmh-photo" loading="eager" decoding="async" />
-      </div>
-      <div class="pmh-text">
-        <p class="pmh-eyebrow">IMPERIUM MUN PORTAL</p>
-        <h2 class="pmh-name" id="pmhName"></h2>
-        <p class="pmh-role" id="pmhRole"></p>
-      </div>
-    </div>
+  <!-- ── Main content ──────────────────────────────────────────── -->
+  <div class="main-content">
 
-    <section id="teamApplications" class="section team-apps-container">
-      <div class="team-dashboard-header">
-        <div class="tdh-left">
-          <h1>Team Applications</h1>
-          <p class="tdh-subtitle">Application engagement analytics & real-time metrics</p>
-        </div>
-        <div id="teamApplicationsNotice" class="td-status-banner loading">
-          <span class="status-dot"></span>
-          <span>Loading status...</span>
+    <header class="topbar" role="banner">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="topbar-title">
+          <span>Imperium MUN</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="breadcrumb-sep"><polyline points="9 18 15 12 9 6"/></svg>
+          <a href="/applications" style="color:var(--text-2);text-decoration:none;transition:color var(--fast)" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-2)'">Applications</a>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="breadcrumb-sep"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="breadcrumb-current">Team Applications</span>
         </div>
       </div>
+      <div class="topbar-right">
+        <div class="topbar-status">
+          <div class="status-dot"></div>
+          <span>Live Analytics</span>
+        </div>
+      </div>
+    </header>
 
-      <!-- Team Application Cards -->
-      <div class="apps-metrics-grid">
-        <div class="app-metric-card media-app">
-          <div class="app-card-header">
-            <span class="app-icon">📸</span>
-            <div class="app-header-text">
-              <h3>Media Team</h3>
-              <p class="app-subtitle">Form Applications</p>
+    <div class="page-content" id="pageMiniHero" role="main">
+
+      <!-- Section header -->
+      <div class="section-header">
+        <p class="section-eyebrow">Recruitment Portal</p>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:var(--s3);margin-bottom:var(--s3)">
+          <h1 class="section-title" style="margin-bottom:0">Team Applications</h1>
+          <div id="teamApplicationsNotice" class="apps-status-badge loading">
+            <span class="status-dot"></span>
+            <span>Checking status…</span>
+          </div>
+        </div>
+        <p class="section-desc">Application engagement analytics &amp; real-time team metrics.</p>
+      </div>
+
+      <a href="/applications" style="display:inline-flex;align-items:center;gap:var(--s2);font-size:12px;color:var(--text-2);text-decoration:none;margin-bottom:var(--s6);border:1px solid var(--border);border-radius:var(--r-md);padding:var(--s2) var(--s4);transition:all var(--fast)" onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--border-2)'" onmouseout="this.style.color='var(--text-2)';this.style.borderColor='var(--border)'">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Applications
+      </a>
+
+      <!-- ── Team Cards ──────────────────────────────────────────── -->
+      <div class="team-app-cards-grid">
+
+        <article class="team-app-card team-app-card--media">
+          <div class="tac-header">
+            <span class="tac-icon">📸</span>
+            <div>
+              <h3 class="tac-title">Media Team</h3>
+              <p class="tac-sub">Form Applications</p>
             </div>
           </div>
-          <div class="app-stat-section">
-            <div class="stat-primary">
-              <span class="stat-value" id="teamMediaCount">0</span>
-              <span class="stat-label">Total Clicks</span>
+          <div class="tac-body">
+            <div class="tac-stat">
+              <span class="tac-value" id="teamMediaCount">0</span>
+              <span class="tac-label">Total Clicks</span>
             </div>
-            <div class="stat-spark">
-              <span class="trend-badge" id="teamMediaTrend">↑ +0%</span>
-              <small>vs previous</small>
-            </div>
+            <span class="tac-trend" id="teamMediaTrend">↑ +0%</span>
           </div>
-          <a href="https://forms.gle/AyDvjdU37rn2L98GA" target="_blank" rel="noopener noreferrer" class="app-action-btn">
-            <span>Review Applications</span>
-            <span class="arrow">↗</span>
+          <a href="https://forms.gle/AyDvjdU37rn2L98GA" target="_blank" rel="noopener noreferrer" class="tac-action">
+            Review Applications <span aria-hidden="true">↗</span>
           </a>
-        </div>
+        </article>
 
-        <div class="app-metric-card security-app">
-          <div class="app-card-header">
-            <span class="app-icon">🛡️</span>
-            <div class="app-header-text">
-              <h3>Security Team</h3>
-              <p class="app-subtitle">Form Applications</p>
+        <article class="team-app-card team-app-card--security">
+          <div class="tac-header">
+            <span class="tac-icon">🛡️</span>
+            <div>
+              <h3 class="tac-title">Security Team</h3>
+              <p class="tac-sub">Form Applications</p>
             </div>
           </div>
-          <div class="app-stat-section">
-            <div class="stat-primary">
-              <span class="stat-value" id="teamSecurityCount">0</span>
-              <span class="stat-label">Total Clicks</span>
+          <div class="tac-body">
+            <div class="tac-stat">
+              <span class="tac-value" id="teamSecurityCount">0</span>
+              <span class="tac-label">Total Clicks</span>
             </div>
-            <div class="stat-spark">
-              <span class="trend-badge" id="teamSecurityTrend">↑ +0%</span>
-              <small>vs previous</small>
-            </div>
+            <span class="tac-trend" id="teamSecurityTrend">↑ +0%</span>
           </div>
-          <a href="https://forms.gle/bZL3meH9Mfaj2Zz66" target="_blank" rel="noopener noreferrer" class="app-action-btn">
-            <span>Review Applications</span>
-            <span class="arrow">↗</span>
+          <a href="https://forms.gle/bZL3meH9Mfaj2Zz66" target="_blank" rel="noopener noreferrer" class="tac-action">
+            Review Applications <span aria-hidden="true">↗</span>
           </a>
-        </div>
+        </article>
 
-        <div class="app-metric-card volunteer-app">
-          <div class="app-card-header">
-            <span class="app-icon">🤝</span>
-            <div class="app-header-text">
-              <h3>Volunteer Team</h3>
-              <p class="app-subtitle">Form Applications</p>
+        <article class="team-app-card team-app-card--volunteer">
+          <div class="tac-header">
+            <span class="tac-icon">🤝</span>
+            <div>
+              <h3 class="tac-title">Volunteer Team</h3>
+              <p class="tac-sub">Form Applications</p>
             </div>
           </div>
-          <div class="app-stat-section">
-            <div class="stat-primary">
-              <span class="stat-value" id="teamVolunteerCount">0</span>
-              <span class="stat-label">Total Clicks</span>
+          <div class="tac-body">
+            <div class="tac-stat">
+              <span class="tac-value" id="teamVolunteerCount">0</span>
+              <span class="tac-label">Total Clicks</span>
             </div>
-            <div class="stat-spark">
-              <span class="trend-badge" id="teamVolunteerTrend">↑ +0%</span>
-              <small>vs previous</small>
-            </div>
+            <span class="tac-trend" id="teamVolunteerTrend">↑ +0%</span>
           </div>
-          <a href="https://forms.gle/WRPNc177MNwcm8899" target="_blank" rel="noopener noreferrer" class="app-action-btn">
-            <span>Review Applications</span>
-            <span class="arrow">↗</span>
+          <a href="https://forms.gle/WRPNc177MNwcm8899" target="_blank" rel="noopener noreferrer" class="tac-action">
+            Review Applications <span aria-hidden="true">↗</span>
           </a>
-        </div>
+        </article>
+
       </div>
 
-      <!-- Main Analytics Grid -->
-      <div class="analytics-grid">
-        <!-- Trend Chart -->
-        <div class="analytics-card trend-card">
-          <div class="card-header">
-            <h2>Applications Trend</h2>
-            <button class="info-tooltip" title="14-day rolling chart of daily clicks across all teams">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <text x="12" y="15" text-anchor="middle" font-size="14" fill="currentColor">i</text>
-              </svg>
-            </button>
-          </div>
-          <p id="teamTrendEmpty" class="no-data-message">No click activity yet.</p>
-          <div class="chart-container">
-            <svg id="teamTrendChart" class="trend-chart" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet" aria-label="Team applications trend chart"></svg>
-          </div>
-          <div id="chartLegend" class="chart-legend"></div>
-        </div>
+      <!-- ── Analytics Grid ─────────────────────────────────────── -->
+      <div class="team-analytics-layout">
 
-        <!-- Engagement Metrics -->
-        <div class="engagement-metrics">
-          <!-- Unique IPs Card -->
-          <div class="metric-card small">
-            <div class="metric-header">
-              <span class="metric-icon">👥</span>
-              <button class="info-tooltip" title="Total unique IP addresses that clicked landing pages">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <text x="12" y="15" text-anchor="middle" font-size="12" fill="currentColor">i</text>
-                </svg>
-              </button>
-            </div>
-            <h3 class="metric-title">Unique Visitors</h3>
-            <p class="metric-sublabel">Active IPs</p>
-            <div class="metric-value-wrapper">
-              <span class="metric-value" id="teamUniqueIps">0</span>
-            </div>
+        <!-- Trend chart -->
+        <article class="table-card team-chart-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s4)">
+            <h3>Applications Trend</h3>
+            <span class="sub" style="font-size:10px;text-transform:uppercase;letter-spacing:.08em">14-day rolling</span>
           </div>
+          <p id="teamTrendEmpty" class="sub" style="text-align:center;padding:var(--s6) 0">No click activity yet.</p>
+          <svg id="teamTrendChart" class="team-trend-chart" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet" aria-label="Team applications trend chart"></svg>
+          <div id="chartLegend" class="chart-legend" style="margin-top:var(--s4)"></div>
+        </article>
 
-          <!-- Total Clicks Card -->
-          <div class="metric-card small">
-            <div class="metric-header">
-              <span class="metric-icon">👆</span>
-              <button class="info-tooltip" title="Total form clicks across all teams">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <text x="12" y="15" text-anchor="middle" font-size="12" fill="currentColor">i</text>
-                </svg>
-              </button>
-            </div>
-            <h3 class="metric-title">Total Clicks</h3>
-            <p class="metric-sublabel">Overall engagement</p>
-            <div class="metric-value-wrapper">
-              <span class="metric-value" id="teamTotalClicks">0</span>
-            </div>
-          </div>
+        <!-- Metrics column -->
+        <div class="team-metrics-col">
+          <article class="metric-card">
+            <p class="metric-label">Unique Visitors</p>
+            <p class="metric-value" id="teamUniqueIps">0</p>
+            <p class="sub" style="font-size:10px;margin-top:var(--s1)">Unique IPs tracked</p>
+          </article>
 
-          <!-- Devices Chart -->
-          <div class="metric-card device-breakdown">
-            <div class="metric-header">
-              <h3 class="metric-title">Device Breakdown</h3>
-              <button class="info-tooltip" title="Distribution of device types used to access forms">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <text x="12" y="15" text-anchor="middle" font-size="12" fill="currentColor">i</text>
-                </svg>
-              </button>
-            </div>
-            <div id="deviceBreakdownList" class="device-list">
-              <div class="loading-skeleton">
-                <div class="skeleton-bar"></div>
-                <div class="skeleton-bar"></div>
-                <div class="skeleton-bar"></div>
+          <article class="metric-card">
+            <p class="metric-label">Total Clicks</p>
+            <p class="metric-value" id="teamTotalClicks">0</p>
+            <p class="sub" style="font-size:10px;margin-top:var(--s1)">Across all teams</p>
+          </article>
+
+          <article class="table-card" style="flex:1;min-height:0">
+            <h3 style="font-size:13px;margin-bottom:var(--s3)">Device Breakdown</h3>
+            <div id="deviceBreakdownList">
+              <div class="device-skeleton">
+                <div class="device-bar-loading"></div>
+                <div class="device-bar-loading" style="width:65%"></div>
+                <div class="device-bar-loading" style="width:42%"></div>
               </div>
             </div>
-          </div>
+          </article>
         </div>
-      </div>
-    </section>
-  </main>
+
+      </div><!-- /team-analytics-layout -->
+
+    </div><!-- /page-content -->
+  </div><!-- /main-content -->
 
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="/scripts/tracker.js"></script>
   <script defer src="/scripts/auth.js"></script>
   <script defer src="/scripts/applications-team.js"></script>
+
+  <script>
+    (function () {
+      var toggle   = document.getElementById('sidebarToggle');
+      var sidebar  = document.getElementById('sidebar');
+      var backdrop = document.getElementById('sidebarBackdrop');
+      function openSidebar()  { sidebar.classList.add('open');  backdrop.classList.add('open'); toggle.setAttribute('aria-expanded','true');  document.body.style.overflow='hidden'; }
+      function closeSidebar() { sidebar.classList.remove('open'); backdrop.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+      if (toggle)   toggle.addEventListener('click', function(){ sidebar.classList.contains('open') ? closeSidebar() : openSidebar(); });
+      if (backdrop) backdrop.addEventListener('click', closeSidebar);
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeSidebar(); });
+    })();
+  </script>
 </body>
 </html>

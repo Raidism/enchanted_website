@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Access Portal | Imperium MUN</title>
-  <meta name="description" content="Imperium MUN access portal." />
+  <title>Sign In | Imperium MUN</title>
+  <meta name="description" content="Sign in to Imperium MUN admin workspace." />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Imperium MUN" />
-  <meta property="og:title" content="Access Portal | Imperium MUN" />
-  <meta property="og:description" content="Secure access portal for Imperium MUN internal workspace." />
+  <meta property="og:title" content="Sign In | Imperium MUN" />
+  <meta property="og:description" content="Secure sign-in for Imperium MUN internal workspace." />
   <meta property="og:image" content="assets/imperium mun logo.jpg" />
   <meta property="og:image:alt" content="Imperium MUN official logo" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Access Portal | Imperium MUN" />
+  <meta name="twitter:title" content="Sign In | Imperium MUN" />
   <meta name="twitter:description" content="Secure access portal for Imperium MUN internal workspace." />
   <meta name="twitter:image" content="assets/imperium mun logo.jpg" />
   <link rel="icon" type="image/jpeg" href="assets/imperium mun logo.jpg" />
@@ -23,43 +23,76 @@
 </head>
 <body>
   <div class="security-grid" aria-hidden="true"></div>
-  <header class="portal-header">
-    <a class="brand" href="/">IMPERIUM MUN</a>
-    <a class="back-home" href="/">Back to Website</a>
-  </header>
 
-  <main class="access-main">
-    <div class="access-layout">
-      <section class="access-card">
-        <div class="portal-logo-wrap" aria-hidden="true">
-          <img src="assets/imperium mun logo.jpg" alt="Imperium logo" class="portal-logo" loading="eager" decoding="async" />
-        </div>
-        <h1>Access Portal</h1>
-        <p class="subtitle">Secure login for Imperium MUN internal workspace.</p>
+  <div class="access-shell">
 
-        <form id="loginForm" class="login-form" novalidate>
-          <label for="username">Username</label>
-          <input id="username" name="username" type="text" autocomplete="username" required />
+    <!-- ── Left: Login Panel ─────────────────────────────── -->
+    <section class="login-panel" aria-label="Sign in to Imperium MUN">
+      <div class="login-panel-inner">
 
-          <label for="password">Password</label>
-          <div class="password-wrap">
-            <input id="password" name="password" type="password" autocomplete="current-password" required />
-            <button id="holdToViewBtn" type="button" class="hold-view" aria-label="Hold to show password" title="Hold to show password">
-              👁
-            </button>
+        <a class="login-brand" href="/">
+          <div class="portal-logo-wrap" style="width:38px;height:38px;margin:0;flex-shrink:0">
+            <img src="assets/imperium mun logo.jpg" alt="Imperium MUN" class="portal-logo" loading="eager" decoding="async" />
           </div>
-          <p id="capsLockIndicator" class="caps-indicator" aria-live="polite">Caps Lock is ON</p>
+          <div>
+            <div class="login-brand-text">Imperium MUN</div>
+            <div class="login-brand-sub">Admin Portal</div>
+          </div>
+        </a>
 
-          <p id="loginMessage" class="login-message" aria-live="polite"></p>
-          <button id="loginBtn" type="submit">Login</button>
-        </form>
+        <div class="login-card">
+          <div class="scan-lines" aria-hidden="true"></div>
+          <div class="login-card-head">
+            <h1 class="login-title">Welcome back</h1>
+            <p class="login-subtitle">Sign in to your workspace.</p>
+          </div>
 
-        <div class="scan-lines" aria-hidden="true"></div>
-      </section>
+          <form id="loginForm" novalidate>
 
-      <aside class="adham-side" aria-label="Team access panel">
-        <div class="access-team-section">
-          <p class="access-team-title">🔐 Authorized Personnel</p>
+            <div class="login-field">
+              <label class="login-label" for="username">Username</label>
+              <div class="login-input-wrap">
+                <svg class="login-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input id="username" name="username" type="text" autocomplete="username" required placeholder="Enter your username" />
+              </div>
+            </div>
+
+            <div class="login-field">
+              <label class="login-label" for="password">Password</label>
+              <div class="login-input-wrap password-wrap">
+                <svg class="login-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Enter your password" />
+                <button id="holdToViewBtn" type="button" class="hold-view" aria-label="Hold to show password" title="Hold to show password">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <p id="capsLockIndicator" class="caps-indicator" aria-live="polite">⚠️ Caps Lock is ON</p>
+            <p id="loginMessage" class="login-message" aria-live="polite"></p>
+
+            <button id="loginBtn" type="submit" class="login-submit-btn">
+              Sign In
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+
+          </form>
+        </div>
+
+        <div class="login-footer-row">
+          <a href="/" class="login-back-link">← Back to website</a>
+          <p class="login-footer-credit">Made with ❤️ by <a href="/contact">Adham</a></p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Right: Info Panel ──────────────────────────────── -->
+    <aside class="info-panel" aria-label="Team access panel">
+      <div class="info-panel-inner">
+
+        <div class="info-badges-section">
+          <p class="info-section-title">🔐 Authorized Personnel</p>
           <div class="access-role-grid">
             <div class="access-role-badge badge-admin">
               <span class="role-abbr">ADM</span>
@@ -78,19 +111,20 @@
               <span class="role-label">Deputy SG</span>
             </div>
           </div>
-          <p class="access-team-note">Sessions are encrypted and auto‑expire after 24 hours.</p>
+          <p class="access-team-note info-section-note">Sessions are encrypted and auto‑expire after 24 hours.</p>
         </div>
+
         <div id="adhamBurstTarget" class="adham-photo-wrap" role="button" tabindex="0" aria-label="Activate fire ring effect">
           <img src="assets/adham pic.jpg" alt="Adham" class="adham-photo" loading="lazy" decoding="async" draggable="false" />
           <img src="assets/Secretariat frame.png" alt="" class="adham-frame" loading="lazy" decoding="async" aria-hidden="true" draggable="false" />
           <div id="adhamFireLayer" class="adham-fire-layer" aria-hidden="true"></div>
         </div>
         <p class="adham-caption">Tough IT guy right there.</p>
-      </aside>
-    </div>
-  </main>
 
-  <footer class="portal-footer">Made with love by the IT Team (<a class="credit-link" href="/contact">Adham</a>) ❤️</footer>
+      </div>
+    </aside>
+
+  </div><!-- /access-shell -->
 
   <aside id="cookieBanner" class="cookie-banner" hidden>
     <p>We use essential cookies/local storage to keep your login active for up to 1 day.</p>
