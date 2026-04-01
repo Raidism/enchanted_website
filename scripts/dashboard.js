@@ -1103,6 +1103,30 @@ startRefreshIntervals();
 
 const forceDashboardVisibility = () => {
   document.body.style.opacity = "1";
+  document.body.style.filter = "none";
+
+  const isTransparentValue = (value) => {
+    const normalized = String(value || "").trim().toLowerCase();
+    return normalized === "transparent"
+      || normalized === "rgba(0, 0, 0, 0)"
+      || normalized === "rgba(0,0,0,0)"
+      || normalized === "hsla(0, 0%, 0%, 0)";
+  };
+
+  const shouldEnableTextFailsafe = () => {
+    const probes = document.querySelectorAll(
+      ".dash-header a, .dash-main h1, .dash-main h2, .dash-main .sub, .dash-main td"
+    );
+    let transparentHits = 0;
+    probes.forEach((node) => {
+      const styles = getComputedStyle(node);
+      const fill = styles.getPropertyValue("-webkit-text-fill-color");
+      if (isTransparentValue(styles.color) || isTransparentValue(fill)) {
+        transparentHits += 1;
+      }
+    });
+    return transparentHits >= 2;
+  };
 
   const visibilityTargets = document.querySelectorAll(
     ".dash-header, #dashWelcomeHero, .dash-main > .section, .stat-card, .table-card"
@@ -1116,7 +1140,17 @@ const forceDashboardVisibility = () => {
     if (parseFloat(computed.opacity) < 0.99) {
       element.style.opacity = "1";
     }
+    if (computed.filter && computed.filter !== "none") {
+      element.style.filter = "none";
+    }
+    if (computed.transform && computed.transform !== "none") {
+      element.style.transform = "none";
+    }
   });
+
+  if (shouldEnableTextFailsafe()) {
+    document.body.classList.add("dash-visibility-failsafe");
+  }
 };
 
 window.addEventListener("pageshow", () => {
@@ -1127,8 +1161,13 @@ window.addEventListener("pageshow", () => {
 (function initDashGSAP() {
   // Always start visible (CSS fallback)
   document.body.style.opacity = "1";
+  requestAnimationFrame(forceDashboardVisibility);
+  setTimeout(forceDashboardVisibility, 350);
 
-  if (typeof gsap === "undefined") return;
+  if (typeof gsap === "undefined") {
+    setTimeout(forceDashboardVisibility, 1300);
+    return;
+  }
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const useLiteMotion = prefersReduced || document.body.classList.contains("lite-motion");
 
@@ -1147,6 +1186,7 @@ window.addEventListener("pageshow", () => {
 
   // Hard fallback: recover from any stuck hidden state after entrance animations.
   setTimeout(forceDashboardVisibility, 1300);
+  setTimeout(forceDashboardVisibility, 2600);
 
   if (!useLiteMotion) {
     const header      = document.querySelector(".dash-header");

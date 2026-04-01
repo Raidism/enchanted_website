@@ -88,6 +88,35 @@ body {
   will-change: scroll-position;
 }
 
+/* Emergency fallback for rare cases where content renders transparent/invisible. */
+body.dash-visibility-failsafe .dash-header,
+body.dash-visibility-failsafe #dashWelcomeHero,
+body.dash-visibility-failsafe .dash-main > .section,
+body.dash-visibility-failsafe .stat-card,
+body.dash-visibility-failsafe .table-card {
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+body.dash-visibility-failsafe .dash-header a,
+body.dash-visibility-failsafe .dash-header button,
+body.dash-visibility-failsafe .dash-main h1,
+body.dash-visibility-failsafe .dash-main h2,
+body.dash-visibility-failsafe .dash-main h3,
+body.dash-visibility-failsafe .dash-main p,
+body.dash-visibility-failsafe .dash-main td,
+body.dash-visibility-failsafe .dash-main th,
+body.dash-visibility-failsafe .dash-main label,
+body.dash-visibility-failsafe .dash-main .sub,
+body.dash-visibility-failsafe .dash-main .switch-text,
+body.dash-visibility-failsafe .dash-main .lock-glass-inner,
+body.dash-visibility-failsafe .dash-main .instagram-stats-form input,
+body.dash-visibility-failsafe .dash-main .instagram-stats-form select {
+  -webkit-text-fill-color: currentColor !important;
+}
+
 body::before,
 body::after {
   content: "";
