@@ -4,6 +4,11 @@ if (!currentUser) {
   throw new Error("No active session");
 }
 
+const escapeHtml = (str) => {
+  const s = String(str ?? "");
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+};
+
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 const effectiveType = String(connection && connection.effectiveType ? connection.effectiveType : "").toLowerCase();
@@ -325,9 +330,16 @@ const renderDashboard = async () => {
     return "→ 0%";
   };
 
-  if (teamMediaTrend) teamMediaTrend.textContent = formatTrend(trendMedia);
-  if (teamSecurityTrend) teamSecurityTrend.textContent = formatTrend(trendSecurity);
-  if (teamVolunteerTrend) teamVolunteerTrend.textContent = formatTrend(trendVolunteer);
+  const applyTrend = (el, value) => {
+    if (!el) return;
+    el.textContent = formatTrend(value);
+    el.classList.remove("tac-trend--down", "tac-trend--neutral");
+    if (value < 0) el.classList.add("tac-trend--down");
+    else if (value === 0) el.classList.add("tac-trend--neutral");
+  };
+  applyTrend(teamMediaTrend, trendMedia);
+  applyTrend(teamSecurityTrend, trendSecurity);
+  applyTrend(teamVolunteerTrend, trendVolunteer);
 
   const total = countByTeam.media + countByTeam.security + countByTeam.volunteer;
   if (teamTotalClicks) teamTotalClicks.textContent = String(total);
@@ -344,15 +356,13 @@ const renderDashboard = async () => {
         const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
         deviceHTML += `
           <div class="device-item">
-            <div>
-              <span class="device-name">${device}</span>
+            <div style="flex:1;min-width:0">
+              <span class="device-name">${escapeHtml(device)}</span>
               <div class="device-bar-container">
-                <div class="device-bar">
-                  <div class="device-bar-fill" style="width: ${percentage}%"></div>
-                </div>
-                <span class="device-count">${count}</span>
+                <div class="device-bar" style="width:${percentage}%"></div>
               </div>
             </div>
+            <span class="device-count">${count}</span>
           </div>
         `;
       });

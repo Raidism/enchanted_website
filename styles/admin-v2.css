@@ -1947,8 +1947,10 @@ body.dash-visibility-failsafe .stat-card {
   color: var(--green-text);
   border: 1px solid rgba(34,194,102,0.2);
   white-space: nowrap;
-  self-align: flex-end;
+  align-self: flex-end;
 }
+.tac-trend--down    { background: var(--red-dim);   color: var(--red-text);   border-color: rgba(239,68,68,0.2); }
+.tac-trend--neutral { background: var(--surface-3); color: var(--text-2);     border-color: var(--border); }
 .tac-action {
   display: flex;
   align-items: center;
