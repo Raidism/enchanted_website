@@ -145,11 +145,21 @@ git reset --hard "$REMOTE/$BRANCH"
 set_deploy_status "true" "syncing" "45" "Applying repository update..." "" "" "" ""
 
 echo "==> Restoring data files (ensuring persistence against git resets)"
-# Copy back any data files that might have been deleted by git reset (e.g. if they were untracked in this update)
+# Restore only files that are missing after reset.
+# This avoids overwriting fresh GitHub updates (for example users.json/account changes).
 if [[ -d "$BACKUP_DIR" ]]; then
   mkdir -p "$APP_DIR/server/data"
-  cp -r "$BACKUP_DIR/"* "$APP_DIR/server/data/" 2>/dev/null || true
-  echo "Data restored from $BACKUP_DIR"
+  shopt -s nullglob
+  for source_file in "$BACKUP_DIR"/*; do
+    file_name="$(basename "$source_file")"
+    target_file="$APP_DIR/server/data/$file_name"
+    if [[ ! -e "$target_file" ]]; then
+      cp -a "$source_file" "$target_file"
+      echo "Restored missing data file: $file_name"
+    fi
+  done
+  shopt -u nullglob
+  echo "Data restore complete (missing files only)."
 fi
 
 echo "==> Installing dependencies"

@@ -85,6 +85,7 @@ const WELCOME_NAMES = {
   omaralhomran: "Omar Alhomran",
   yamendalegend: "YAMEN ELATTAL",
   joumohd08: "Joumana Mohamed",
+  y72n_e: "Yassin elnaggar",
 };
 
 const ADMIN_PROFILE_PRESETS = {
@@ -122,6 +123,11 @@ const ADMIN_PROFILE_PRESETS = {
     photo: "assets/Joumana Mohamed .png",
     caption: "Welcome back, Joumana Mohamed (Head of HR).",
     alt: "Joumana profile",
+  },
+  y72n_e: {
+    photo: "assets/Yassin elnaggar.jpg",
+    caption: "Welcome back, Yassin elnaggar (Head of HR).",
+    alt: "Yassin profile",
   },
 };
 
@@ -161,12 +167,22 @@ const USER_SPOTLIGHT_PRESETS = {
     role: "Head of HR",
     photo: "assets/Joumana Mohamed .png",
   },
+  y72n_e: {
+    name: "Yassin elnaggar",
+    role: "Head of HR",
+    photo: "assets/Yassin elnaggar.jpg",
+  },
 };
 
 const DASHBOARD_PROFILE_FALLBACKS = {
   joumohd08: {
     name: "Joumana Mohamed",
     photo: "assets/Joumana Mohamed .png",
+    role: "Head of HR",
+  },
+  y72n_e: {
+    name: "Yassin elnaggar",
+    photo: "assets/Yassin elnaggar.jpg",
     role: "Head of HR",
   },
 };

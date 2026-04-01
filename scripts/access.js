@@ -48,6 +48,11 @@ const SPECIAL_WELCOME_USERS = {
     title: "Welcome, Joumana Mohamed",
     message: "Head of HR access granted. Loading your dashboard...",
   },
+  y72n_e: {
+    photo: "assets/Yassin elnaggar.jpg",
+    title: "Welcome, Yassin elnaggar",
+    message: "Head of HR access granted. Loading your dashboard...",
+  },
 };
 
 const currentUser = window.ImperiumAuth.getCurrentUser();

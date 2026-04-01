@@ -73,6 +73,10 @@ const PROFILE_FALLBACKS = {
     name: "Joumana Mohamed",
     photo: "assets/Joumana Mohamed .png",
   },
+  y72n_e: {
+    name: "Yassin elnaggar",
+    photo: "assets/Yassin elnaggar.jpg",
+  },
 };
 const profileFallback = PROFILE_FALLBACKS[String(currentUser.username || "").trim().toLowerCase()] || {};
 const displayName = profileFallback.name || currentUser.name || currentUser.username;

@@ -32,6 +32,10 @@
       name: "Joumana Mohamed",
       photo: "assets/Joumana Mohamed .png",
     },
+    y72n_e: {
+      name: "Yassin elnaggar",
+      photo: "assets/Yassin elnaggar.jpg",
+    },
   };
 
   const applyUserFallbackProfile = (user) => {

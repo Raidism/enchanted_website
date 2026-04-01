@@ -24,6 +24,7 @@ const _appRoleLabels = {
   ahmadph: "Secretary General",
   toleenkmedia: "Head of Media",
   joumohd08: "Head of HR",
+  y72n_e: "Head of HR",
 };
 const _APP_PROFILE_FALLBACKS = {
   admin: {
@@ -33,6 +34,10 @@ const _APP_PROFILE_FALLBACKS = {
   joumohd08: {
     name: "Joumana Mohamed",
     photo: "/assets/Joumana Mohamed .png",
+  },
+  y72n_e: {
+    name: "Yassin elnaggar",
+    photo: "/assets/Yassin elnaggar.jpg",
   },
 };
 const _appProfileFallback = _APP_PROFILE_FALLBACKS[_appProfileKey] || {};

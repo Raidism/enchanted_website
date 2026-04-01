@@ -44,11 +44,16 @@ const _ROLE_LABELS = {
   toleenkmedia:   "Head of Media",
   omaralhomran:   "Head of DA",
   joumohd08:      "Head of HR",
+  y72n_e:         "Head of HR",
 };
 const _PROFILE_FALLBACKS = {
   joumohd08: {
     name: "Joumana Mohamed",
     photo: "assets/Joumana Mohamed .png",
+  },
+  y72n_e: {
+    name: "Yassin elnaggar",
+    photo: "assets/Yassin elnaggar.jpg",
   },
 };
 const _profileFallback = _PROFILE_FALLBACKS[_profileKey] || {};

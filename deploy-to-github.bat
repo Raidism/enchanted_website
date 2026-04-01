@@ -25,7 +25,8 @@ if "%commit_msg%"=="" (
   exit /b 1
 )
 
-git add .
+git add -A
+git add -f server/data/*.json 2>nul
 git commit -m "%commit_msg%"
 if errorlevel 1 (
   echo.

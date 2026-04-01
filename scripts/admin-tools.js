@@ -14,6 +14,10 @@
       name: "Joumana Mohamed",
       photo: "assets/Joumana Mohamed .png",
     },
+    y72n_e: {
+      name: "Yassin elnaggar",
+      photo: "assets/Yassin elnaggar.jpg",
+    },
   };
   const profileFallback = PROFILE_FALLBACKS[profileKey] || {};
   const profileDisplayName = String(profileFallback.name || currentUser.name || currentUser.username || "User");
