@@ -15,7 +15,14 @@ const LOCKOUT_UNTIL_KEY = "imperium_lockout_until";
 const COOKIE_CONSENT_KEY = "imperium_cookie_consent";
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 10 * 60 * 1000;
-const DEFAULT_LOGIN_BUTTON_TEXT = "login";
+// Capture original button HTML once so we can restore SVG after loading state
+const LOGIN_BTN_ORIGINAL_HTML = loginBtn ? loginBtn.innerHTML : "Sign In";
+const resetLoginBtn = () => {
+  if (!loginBtn) return;
+  loginBtn.classList.remove("is-loading");
+  loginBtn.disabled = false;
+  loginBtn.innerHTML = LOGIN_BTN_ORIGINAL_HTML;
+};
 const MAIN_ADMIN_USERNAME = "admin";
 const SPECIAL_WELCOME_USERS = {
   "ln-obidat": {
@@ -159,16 +166,14 @@ const isLockedOut = () => {
 const renderLockoutState = () => {
   if (!isLockedOut()) {
     if (!loginBtn.classList.contains("is-loading")) {
-      loginBtn.textContent = DEFAULT_LOGIN_BUTTON_TEXT;
+      resetLoginBtn();
     }
     loginBtn.disabled = false;
     return;
   }
 
   const remaining = getLockoutUntil() - Date.now();
-  loginBtn.classList.remove("is-loading");
-  loginBtn.disabled = false;
-  loginBtn.textContent = DEFAULT_LOGIN_BUTTON_TEXT;
+  resetLoginBtn();
   loginMessage.classList.remove("success");
   loginMessage.textContent = `Too many wrong attempts. Try again in ${formatRemaining(remaining)}. If the password is correct, you can still log in now.`;
 };
@@ -408,18 +413,16 @@ if (passwordInput) {
 
   // ── Entrance timeline
   if (!prefersReduced) {
-    const header    = document.querySelector(".portal-header");
-    const card      = document.querySelector(".access-card");
-    const sidebar   = document.querySelector(".adham-side");
+    const card      = document.querySelector(".login-card");
+    const sidebar   = document.querySelector(".info-panel");
     const logoWrap  = document.querySelector(".portal-logo-wrap");
-    const h1El      = document.querySelector(".access-card h1");
-    const subtitleEl = document.querySelector(".access-card .subtitle");
-    const formRows  = document.querySelectorAll(".login-form label, .login-form input, .login-form .password-wrap, .login-form .login-message, .login-form button");
+    const h1El      = document.querySelector(".login-title");
+    const subtitleEl = document.querySelector(".login-subtitle");
+    const formRows  = document.querySelectorAll("#loginForm .login-label, #loginForm input, #loginForm .password-wrap, .login-message, #loginForm .login-submit-btn");
     const roleBadges = document.querySelectorAll(".access-role-badge");
 
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    if (header)     tl.from(header,    { y: -28, opacity: 0, duration: 0.6 }, 0);
     if (card)       tl.from(card,      { y: 36, opacity: 0, scale: 0.96, duration: 0.82, ease: "power4.out" }, 0.15);
     if (sidebar)    tl.from(sidebar,   { x: 32, opacity: 0, duration: 0.72 }, 0.3);
     if (logoWrap)   tl.from(logoWrap,  { scale: 0.72, opacity: 0, duration: 0.7, ease: "back.out(1.6)" }, 0.35);
@@ -446,7 +449,7 @@ if (passwordInput) {
   }
 
   // ── Page exit: fade before navigating home
-  const backLink = document.querySelector(".back-home");
+  const backLink = document.querySelector(".login-back-link");
   if (backLink) {
     backLink.addEventListener("click", (e) => {
       if (e.metaKey || e.ctrlKey) return;
@@ -471,9 +474,7 @@ loginForm.addEventListener("submit", (event) => {
     const lockoutBypass = window.ImperiumAuth.login(username, password);
     if (lockoutBypass.success) {
       clearLockout();
-      loginBtn.classList.remove("is-loading");
-      loginBtn.disabled = false;
-      loginBtn.textContent = DEFAULT_LOGIN_BUTTON_TEXT;
+      resetLoginBtn();
       loginMessage.classList.add("success");
       loginMessage.textContent = "dont be dum next time. Access granted. Redirecting...";
 
@@ -481,7 +482,7 @@ loginForm.addEventListener("submit", (event) => {
       return;
     }
 
-    loginBtn.textContent = DEFAULT_LOGIN_BUTTON_TEXT;
+    resetLoginBtn();
     renderLockoutState();
     return;
   }
@@ -504,17 +505,14 @@ loginForm.addEventListener("submit", (event) => {
       const failedAttempts = getFailedAttempts() + 1;
       setFailedAttempts(failedAttempts);
 
-      loginBtn.classList.remove("is-loading");
+      resetLoginBtn();
 
       if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
         setLockoutUntil(Date.now() + LOCKOUT_DURATION_MS);
-        loginBtn.textContent = DEFAULT_LOGIN_BUTTON_TEXT;
         renderLockoutState();
         return;
       }
 
-      loginBtn.disabled = false;
-      loginBtn.textContent = DEFAULT_LOGIN_BUTTON_TEXT;
       loginMessage.classList.remove("success");
       loginMessage.textContent = `${result.message} (${MAX_FAILED_ATTEMPTS - failedAttempts} attempts left before lockout.)`;
       return;

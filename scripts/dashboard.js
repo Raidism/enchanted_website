@@ -4,6 +4,14 @@ if (!currentUser) {
   throw new Error("No active session");
 }
 
+const escapeHtml = (unsafe) =>
+  String(unsafe ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 const effectiveType = String(connection && connection.effectiveType ? connection.effectiveType : "").toLowerCase();
@@ -788,12 +796,12 @@ const renderAnalytics = async () => {
 
       const rawIp = String(item.ip || "Unknown");
       const rawCountry = String(item.country || "Unknown");
-      const ipValue = isAdmin ? rawIp : maskValue(rawIp);
+      const ipValue = isAdmin ? escapeHtml(rawIp) : maskValue(rawIp);
       const countryValue = isAdmin
-        ? `${item.flag || "🌐"} ${rawCountry}`
+        ? `${item.flag || "🌐"} ${escapeHtml(rawCountry)}`
         : maskValue(rawCountry);
-      const deviceValue = isAdmin ? `${deviceEmoji(item.device)} ${String(item.device || "Unknown")}` : maskValue(item.device);
-      const pageValue = isAdmin ? `📄 ${pageLabel(item.path)}` : maskValue(item.path);
+      const deviceValue = isAdmin ? `${deviceEmoji(item.device)} ${escapeHtml(String(item.device || "Unknown"))}` : maskValue(item.device);
+      const pageValue = isAdmin ? `📄 ${escapeHtml(pageLabel(item.path))}` : maskValue(item.path);
 
       row.innerHTML = `
         <td>${formatDateTime(item.timestamp)}</td>
@@ -945,7 +953,7 @@ const renderAdminPanel = () => {
       const li = document.createElement("li");
       const status = user.disabled ? "Disabled" : "Active";
       const photoSrc = user.photo || "assets/imperium mun logo.jpg";
-      const photoHtml = `<img src="${photoSrc}" alt="${user.name || user.username}" class="uac-photo" loading="lazy" decoding="async" />`;
+      const photoHtml = `<img src="${escapeHtml(photoSrc)}" alt="${escapeHtml(user.name || user.username)}" class="uac-photo" loading="lazy" decoding="async" />`;
       const isActiveSelf = String(user.username || "").toLowerCase() === String(currentUser.username || "").toLowerCase();
       const isOnline = Object.keys(activeUsers).some((k) => k.toLowerCase() === String(user.username || "").toLowerCase());
 
@@ -953,17 +961,17 @@ const renderAdminPanel = () => {
       li.innerHTML = `
         ${photoHtml}
         <div class="uac-info">
-          <p class="uac-name">${user.name || "—"} ${isOnline ? '<span class="uac-online-dot" title="Currently online"></span>' : ""}</p>
-          <p class="uac-detail"><span class="uac-label">Username:</span> ${user.username}</p>
-          <p class="uac-detail"><span class="uac-label">Password:</span> ${user.password}</p>
-          <p class="uac-detail"><span class="uac-label">Role:</span> ${user.role}</p>
-          <p class="uac-detail"><span class="uac-label">Status:</span> ${status}</p>
+          <p class="uac-name">${escapeHtml(user.name || "—")} ${isOnline ? '<span class="uac-online-dot" title="Currently online"></span>' : ""}</p>
+          <p class="uac-detail"><span class="uac-label">Username:</span> ${escapeHtml(user.username)}</p>
+          <p class="uac-detail"><span class="uac-label">Password:</span> ${escapeHtml(user.password)}</p>
+          <p class="uac-detail"><span class="uac-label">Role:</span> ${escapeHtml(user.role)}</p>
+          <p class="uac-detail"><span class="uac-label">Status:</span> ${escapeHtml(status)}</p>
         </div>
         <div class="uac-actions">
-          <button class="mini-btn" data-user="${user.username}" data-disabled="${user.disabled ? "1" : "0"}" data-action="toggle" type="button" ${user.username === "admin" ? "disabled" : ""}>
+          <button class="mini-btn" data-user="${escapeHtml(user.username)}" data-disabled="${user.disabled ? "1" : "0"}" data-action="toggle" type="button" ${user.username === "admin" ? "disabled" : ""}>
             ${user.disabled ? "Enable" : "Disable"}
           </button>
-          <button class="mini-btn mini-btn--danger" data-user="${user.username}" data-action="force-logout" type="button" ${(!isOnline || isActiveSelf) ? "disabled" : ""} title="End this user's session">
+          <button class="mini-btn mini-btn--danger" data-user="${escapeHtml(user.username)}" data-action="force-logout" type="button" ${(!isOnline || isActiveSelf) ? "disabled" : ""} title="End this user's session">
             Force Logout
           </button>
         </div>

@@ -62,9 +62,9 @@
       overlay.innerHTML = `
         <div class="logout-card">
           <div class="logout-photo-ring">
-            <img src="${photoSrc}" alt="" class="logout-photo" />
+            <img src="${escapeHtml(photoSrc)}" alt="" class="logout-photo" />
           </div>
-          <p class="logout-name">${displayName}</p>
+          <p class="logout-name">${escapeHtml(displayName)}</p>
           <p class="logout-msg">Goodbye. See you next time.</p>
           <p class="logout-msg" style="font-size:.8rem;opacity:.4;margin-top:.1rem">Securing session…</p>
         </div>
@@ -159,6 +159,14 @@
     return d.toLocaleString();
   };
 
+  const escapeHtml = (unsafe) =>
+    String(unsafe ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
   const roleLabel = (value) => {
     const key = String(value || "").trim().toLowerCase();
     const labels = {
@@ -170,7 +178,7 @@
       partnerships: "Partnerships",
       "sponsors-partnerships": "Partnerships",
     };
-    return labels[key] || (value || "Unknown");
+    return labels[key] || escapeHtml(value || "Unknown");
   };
 
   const readLocal = (key, fallback) => {
@@ -244,7 +252,7 @@
 
     rows.slice(0, 30).forEach((item) => {
       const li = document.createElement("li");
-      li.innerHTML = `<strong>${item.actor}</strong> — ${item.message}<div class="ops-note">${formatDateTime(item.at)}</div>`;
+      li.innerHTML = `<strong>${escapeHtml(item.actor)}</strong> — ${escapeHtml(item.message)}<div class="ops-note">${escapeHtml(formatDateTime(item.at))}</div>`;
       activityLogList.appendChild(li);
     });
   };
@@ -311,8 +319,8 @@
     const interests = [...new Set(waitlistRows.map((r) => String(r.role || "delegate").trim()).filter(Boolean))]
       .sort((a, b) => a.localeCompare(b));
 
-    eaSchoolFilter.innerHTML = '<option value="all">All Schools</option>' + schools.map((s) => `<option value="${s.replace(/"/g, "&quot;")}">${s}</option>`).join("");
-    eaInterestFilter.innerHTML = '<option value="all">All Interests</option>' + interests.map((r) => `<option value="${r}">${roleLabel(r)}</option>`).join("");
+    eaSchoolFilter.innerHTML = '<option value="all">All Schools</option>' + schools.map((s) => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
+    eaInterestFilter.innerHTML = '<option value="all">All Interests</option>' + interests.map((r) => `<option value="${escapeHtml(r)}">${roleLabel(r)}</option>`).join("");
 
     eaSchoolFilter.value = schools.includes(schoolValue) ? schoolValue : "all";
     eaInterestFilter.value = interests.includes(interestValue) ? interestValue : "all";
@@ -441,17 +449,17 @@
 
     rows.slice(0, 500).forEach((row) => {
       const tr = document.createElement("tr");
-      const notifiedText = row.notified ? `Yes (${formatDateTime(row.notifiedAt)})` : "No";
+      const notifiedText = row.notified ? `Yes (${escapeHtml(formatDateTime(row.notifiedAt))})` : "No";
       tr.innerHTML = `
-        <td>${formatDateTime(row.addedAt)}</td>
-        <td>${String(row.name || "Unknown")}</td>
-        <td>${String(row.email || "Unknown")}</td>
-        <td>${String(row.school || "Unknown")}</td>
+        <td>${escapeHtml(formatDateTime(row.addedAt))}</td>
+        <td>${escapeHtml(String(row.name || "Unknown"))}</td>
+        <td>${escapeHtml(String(row.email || "Unknown"))}</td>
+        <td>${escapeHtml(String(row.school || "Unknown"))}</td>
         <td>${roleLabel(row.role)}</td>
         <td>${notifiedText}</td>
         <td>
-          <button type="button" data-action="toggle-notified" data-id="${String(row.id || "")}">${row.notified ? "Unmark" : "Mark"}</button>
-          <button type="button" data-action="delete" data-id="${String(row.id || "")}">Delete</button>
+          <button type="button" data-action="toggle-notified" data-id="${escapeHtml(String(row.id || ""))}">${row.notified ? "Unmark" : "Mark"}</button>
+          <button type="button" data-action="delete" data-id="${escapeHtml(String(row.id || ""))}">Delete</button>
         </td>
       `;
       eaTableBody.appendChild(tr);
@@ -526,7 +534,7 @@
 
     rows.slice(0, 20).forEach((item) => {
       const li = document.createElement("li");
-      li.innerHTML = `<strong>${item.title}</strong><div>${item.body}</div><div class="ops-note">${formatDateTime(item.createdAt)} by ${item.author}</div>`;
+      li.innerHTML = `<strong>${escapeHtml(item.title)}</strong><div>${escapeHtml(item.body)}</div><div class="ops-note">${escapeHtml(formatDateTime(item.createdAt))} by ${escapeHtml(item.author)}</div>`;
 
       const actions = document.createElement("div");
       actions.className = "ops-item-actions";
@@ -597,7 +605,8 @@
 
     rows.forEach((member, index) => {
       const li = document.createElement("li");
-      li.innerHTML = `<strong>${member.name}</strong><div>${member.title}</div><div class="ops-note">${member.description}</div>`;
+      li.innerHTML = `<strong>${escapeHtml(member.name)}</strong><div>${escapeHtml(member.title)}</div><div class="ops-note">${escapeHtml(member.description)}</div>`;
+
 
       const actions = document.createElement("div");
       actions.className = "ops-item-actions";

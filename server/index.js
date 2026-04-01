@@ -593,6 +593,19 @@ app.use(cookieParser());
 app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader(
+    "Content-Security-Policy",
+    [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com",
+      "font-src 'self' https://fonts.gstatic.com",
+      "img-src 'self' data: blob:",
+      "connect-src 'self'",
+      "frame-ancestors 'none'",
+    ].join("; ")
+  );
 
   if (String(req.path || "").startsWith("/api/")) {
     res.setHeader("Cache-Control", "no-store, max-age=0");
@@ -909,14 +922,19 @@ app.post("/api/analytics/track", publicWriteRateLimit, (req, res) => {
   const { event, label } = req.body || {};
   if (!event) return res.json({ success: false });
 
+  // Validate field types and lengths to prevent log injection
+  const safeEvent = String(event).substring(0, 50);
+  const safeLabel = String(label || "").substring(0, 100);
+  if (!safeEvent) return res.json({ success: false });
+
   const clicks = readAnalytics();
   const entry = {
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     timestamp: nowIso(),
-    event: String(event).substring(0, 50),
-    label: String(label || "").substring(0, 100),
-    ip: String(req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0],
-    userAgent: req.useragent ? req.useragent.source : "unknown",
+    event: safeEvent,
+    label: safeLabel,
+    ip: String(req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim().substring(0, 64),
+    userAgent: String(req.useragent ? req.useragent.source : "unknown").substring(0, 256),
   };
   
   if (req.useragent) {
@@ -1120,6 +1138,10 @@ app.post("/api/waitlist", waitlistWriteRateLimit, (req, res) => {
     return res.status(400).json({ success: false, message: "Missing required fields." });
   }
 
+  if (name.length > 120 || school.length > 160 || role.length > 40) {
+    return res.status(400).json({ success: false, message: "One or more fields exceed maximum allowed length." });
+  }
+
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ success: false, message: "Invalid email format." });
   }
@@ -1168,13 +1190,13 @@ app.post("/api/analytics", publicWriteRateLimit, (req, res) => {
   const countryCodeInput = String(entry.countryCode || "").trim().toUpperCase();
   const normalized = {
     timestamp: String(entry.timestamp || nowIso()),
-    path: String(entry.path || "index.html"),
+    path: String(entry.path || "index.html").substring(0, 200),
     ip,
-    country: countryInput || inferredGeo.country,
-    countryCode: countryCodeInput || inferredGeo.countryCode,
-    flag: String(entry.flag || toCountryFlag(countryCodeInput) || inferredGeo.flag),
-    device: String(entry.device || "Unknown"),
-    userAgent: String(entry.userAgent || "Unknown"),
+    country: String(countryInput || inferredGeo.country).substring(0, 80),
+    countryCode: String(countryCodeInput || inferredGeo.countryCode).substring(0, 4),
+    flag: String(entry.flag || toCountryFlag(countryCodeInput) || inferredGeo.flag).substring(0, 8),
+    device: String(entry.device || "Unknown").substring(0, 64),
+    userAgent: String(entry.userAgent || "Unknown").substring(0, 256),
   };
 
   const logs = readAnalytics();
