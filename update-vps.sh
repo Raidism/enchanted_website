@@ -28,6 +28,7 @@ if [[ ! -d "$APP_DIR/.git" ]]; then
 fi
 
 cd "$APP_DIR"
+PRE_RESET_HEAD="$(git rev-parse --verify HEAD 2>/dev/null || true)"
 
 BACKUP_ROOT="$APP_DIR/server"
 BACKUP_DIR="$BACKUP_ROOT/data_backup_$(date +"%Y-%m-%d_%H-%M-%S")"
@@ -163,12 +164,29 @@ if [[ -d "$BACKUP_DIR" ]]; then
 fi
 
 echo "==> Installing dependencies"
-if [[ -f package-lock.json ]]; then
-  npm ci --silent
-else
-  npm install --silent
+set_deploy_status "true" "installing" "65" "Checking dependency changes..." "" "" "" ""
+
+NEEDS_INSTALL="true"
+if [[ -n "$PRE_RESET_HEAD" && -d node_modules ]]; then
+  DEPS_CHANGED="$(git diff --name-only "$PRE_RESET_HEAD" HEAD -- package.json package-lock.json 2>/dev/null || true)"
+  if [[ -z "$DEPS_CHANGED" ]]; then
+    NEEDS_INSTALL="false"
+  fi
 fi
-set_deploy_status "true" "installing" "70" "Installing dependencies..." "" "" "" ""
+
+if [[ "$NEEDS_INSTALL" == "true" ]]; then
+  echo "==> Dependency update needed (this can take 1-3 minutes)"
+  set_deploy_status "true" "installing" "70" "Installing dependencies (npm)..." "" "" "" ""
+  if [[ -f package-lock.json ]]; then
+    npm ci --no-audit --no-fund --prefer-offline
+  else
+    npm install --no-audit --no-fund --prefer-offline
+  fi
+  echo "==> Dependency install complete"
+else
+  echo "==> Dependencies unchanged and node_modules exists; skipping npm install"
+  set_deploy_status "true" "installing" "70" "Dependencies unchanged, install skipped." "" "" "" ""
+fi
 
 if [[ "$DO_RESTART" == "true" ]]; then
   if command -v pm2 >/dev/null 2>&1; then

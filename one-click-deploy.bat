@@ -68,6 +68,7 @@ set "BRANCH=main"
 set "VPS_HOST=172.86.116.90"
 set "VPS_USER=root"
 set "VPS_PASS=M5rhND71jMJh7j"
+set "VPS_HOST_KEY=ssh-ed25519 255 SHA256:wFIoRvMb8W3VQNK0C9v4A7NFo8QbAaDHBFqcd5wQPrk"
 set "VPS_APP_DIR=~/imperium_website"
 set "PM2_APP=imperium_website"
 
@@ -87,7 +88,7 @@ if errorlevel 2 (
 )
 
 if errorlevel 1 (
-  for /f %%I in ('powershell -NoProfile -Command "(Get-Date).ToString('yyyy-MM-dd HH:mm:ss')"') do set "STAMP=%%I"
+  for /f "delims=" %%I in ('powershell -NoProfile -Command "(Get-Date).ToString('yyyy-MM-dd_HH-mm-ss')"') do set "STAMP=%%I"
   set "COMMIT_MSG=Auto deploy !STAMP!"
   echo Creating commit: !COMMIT_MSG!
   git commit -m "!COMMIT_MSG!"
@@ -109,8 +110,9 @@ if errorlevel 1 (
 
 echo.
 echo Running VPS deploy...
+echo This step can take 1-3 minutes when dependencies are updated.
 set "REMOTE_CMD=cd %VPS_APP_DIR% && chmod +x update-vps.sh && APP_DIR=%VPS_APP_DIR% BRANCH=%BRANCH% REMOTE=%REMOTE% PM2_APP=%PM2_APP% ./update-vps.sh --restart"
-plink -ssh -l %VPS_USER% -pw %VPS_PASS% %VPS_HOST% "%REMOTE_CMD%"
+plink -ssh -batch -hostkey "%VPS_HOST_KEY%" -l %VPS_USER% -pw %VPS_PASS% %VPS_HOST% "%REMOTE_CMD%"
 if errorlevel 1 (
   echo ERROR: VPS deploy failed.
   exit /b 1
