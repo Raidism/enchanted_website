@@ -1085,6 +1085,28 @@ startRefreshIntervals();
 })();
 // ═══════════════════════════════════════════════════════════════
 
+const forceDashboardVisibility = () => {
+  document.body.style.opacity = "1";
+
+  const visibilityTargets = document.querySelectorAll(
+    ".dash-header, #dashWelcomeHero, .dash-main > .section, .stat-card, .table-card"
+  );
+
+  visibilityTargets.forEach((element) => {
+    const computed = getComputedStyle(element);
+    if (computed.visibility === "hidden") {
+      element.style.visibility = "visible";
+    }
+    if (parseFloat(computed.opacity) < 0.99) {
+      element.style.opacity = "1";
+    }
+  });
+};
+
+window.addEventListener("pageshow", () => {
+  requestAnimationFrame(forceDashboardVisibility);
+});
+
 // GSAP animation with fallback to always show body
 (function initDashGSAP() {
   // Always start visible (CSS fallback)
@@ -1106,6 +1128,9 @@ startRefreshIntervals();
       document.body.style.opacity = "1";
     }
   }, 1000);
+
+  // Hard fallback: recover from any stuck hidden state after entrance animations.
+  setTimeout(forceDashboardVisibility, 1300);
 
   if (!useLiteMotion) {
     const header      = document.querySelector(".dash-header");
