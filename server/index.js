@@ -202,15 +202,17 @@ const writeWaitlist = (rows) => writeJson("waitlist_entries", rows.slice(0, 3000
 const readDeletedWaitlist = () => readJson("waitlist_deleted", []);
 const writeDeletedWaitlist = (rows) => writeJson("waitlist_deleted", rows.slice(0, 500));
 
+const createSeedUser = (user) => ({
+  ...user,
+  passwordHash: bcrypt.hashSync(String(user.password), 10),
+  disabled: false,
+  onboardingCompleted: Boolean(user.onboardingCompleted),
+});
+
 const ensureSeedData = () => {
   const users = readUsers();
   if (!Array.isArray(users) || users.length === 0) {
-    const seeded = DEFAULT_USERS.map((u) => ({
-      ...u,
-      passwordHash: bcrypt.hashSync(String(u.password), 10),
-      disabled: false,
-      onboardingCompleted: Boolean(u.onboardingCompleted),
-    }));
+    const seeded = DEFAULT_USERS.map((u) => createSeedUser(u));
     writeUsers(seeded);
   } else {
     let changed = false;
@@ -223,6 +225,19 @@ const ensureSeedData = () => {
         ...u,
         onboardingCompleted: false,
       };
+    });
+
+    const existingUsernames = new Set(
+      normalizedUsers.map((u) => normalizeUsername(u.username))
+    );
+
+    DEFAULT_USERS.forEach((defaultUser) => {
+      const key = normalizeUsername(defaultUser.username);
+      if (!existingUsernames.has(key)) {
+        normalizedUsers.push(createSeedUser(defaultUser));
+        existingUsernames.add(key);
+        changed = true;
+      }
     });
 
     if (changed) {
