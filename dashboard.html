@@ -19,136 +19,291 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/dashboard.css" />
+  <link rel="stylesheet" href="styles/admin-v2.css" />
 </head>
 <body>
-  <header class="dash-header">
-    <div class="header-inner">
-      <a class="brand" href="/">IMPERIUM MUN</a>
-      <div class="header-actions">
-        <a href="#analytics">Analytics</a>
-        <a href="/ops" data-admin-link>Ops Center</a>
-        <a href="/applications">Applications</a>
-        <a href="/settings" data-admin-link>Settings</a>
-        <button id="logoutBtn" type="button">Logout</button>
+
+  <!-- Mobile sidebar backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- ── Sidebar ──────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+    <a class="sidebar-brand" href="/">
+      <img src="assets/imperium mun logo.jpg" alt="Imperium MUN" class="sidebar-brand-logo" />
+      <div>
+        <div class="sidebar-brand-text">Imperium MUN</div>
+        <div class="sidebar-brand-sub">Admin Portal</div>
       </div>
+    </a>
+
+    <div class="sidebar-section-label">Navigation</div>
+
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item active" aria-current="page">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Analytics
+      </a>
+      <a href="/ops" class="nav-item" data-admin-link>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Ops Center
+      </a>
+      <a href="/applications" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Applications
+      </a>
+      <a href="/settings" class="nav-item" data-admin-link>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <img id="sidebarUserPhoto" src="assets/imperium mun logo.jpg" alt="User" class="sidebar-user-avatar" loading="eager" />
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebarUserName">Loading…</div>
+          <div class="sidebar-user-role" id="sidebarUserRole">Member</div>
+        </div>
+      </div>
+      <button id="logoutBtn" type="button">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
     </div>
-  </header>
+  </aside>
 
-  <main class="dash-main">
-    <!-- Welcome Hero -->
-    <div class="dash-welcome-hero" id="dashWelcomeHero" aria-label="Welcome briefing">
-      <div class="dwh-photo-col" aria-hidden="true">
-        <div class="dwh-photo-ring">
-          <img id="dwhPhoto" src="assets/imperium mun logo.jpg" alt="" class="dwh-photo" loading="eager" decoding="async" />
+  <!-- ── Main content ──────────────────────────────────────────── -->
+  <div class="main-content">
+
+    <header class="topbar" role="banner">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="topbar-title">
+          <span>Imperium MUN</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="breadcrumb-sep"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="breadcrumb-current">Analytics</span>
         </div>
       </div>
-      <div class="dwh-text-col">
-        <p class="dwh-eyebrow">IMPERIUM&nbsp;MUN &mdash; SECURE&nbsp;PORTAL</p>
-        <h2 class="dwh-welcome-line" aria-live="polite">Welcome,&nbsp;<span class="dwh-name" id="dwhName"></span><span class="dwh-cursor" aria-hidden="true">█</span></h2>
-        <p class="dwh-role" id="dwhRole"></p>
-        <div class="dwh-briefing" id="dwhBriefing" aria-live="polite"></div>
+      <div class="topbar-right">
+        <div class="topbar-status">
+          <div class="status-dot"></div>
+          <span>Live Data</span>
+        </div>
       </div>
+    </header>
+
+    <div class="page-content" role="main">
+
+      <!-- ── Welcome Hero ──────────────────────────────────────── -->
+      <div class="dash-welcome-hero" id="dashWelcomeHero" aria-label="Welcome briefing">
+        <div class="dwh-photo-col" aria-hidden="true">
+          <div class="dwh-photo-ring">
+            <img id="dwhPhoto" src="assets/imperium mun logo.jpg" alt="" class="dwh-photo" loading="eager" decoding="async" />
+          </div>
+        </div>
+        <div class="dwh-text-col">
+          <p class="dwh-eyebrow">IMPERIUM&nbsp;MUN &mdash; SECURE&nbsp;PORTAL</p>
+          <h2 class="dwh-welcome-line" aria-live="polite">Welcome,&nbsp;<span class="dwh-name" id="dwhName"></span><span class="dwh-cursor" aria-hidden="true">█</span></h2>
+          <p class="dwh-role" id="dwhRole"></p>
+          <div class="dwh-briefing" id="dwhBriefing" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- ── IT / Staff Notes ──────────────────────────────────── -->
+      <section id="submitNoteSection" class="section" style="margin-bottom:2rem;">
+        <div class="section-header" style="margin-bottom:1.25rem;">
+          <p class="section-eyebrow">Internal Comms</p>
+          <h2 class="section-title" style="font-size:1.4rem;">Staff Notes</h2>
+          <p class="section-desc">Submit a note to the IT team. Admins can see and resolve pending notes.</p>
+        </div>
+
+        <div class="admin-grid" style="--cols:2;">
+          <!-- Submit note card (all users) -->
+          <article class="card">
+            <div class="card-header">
+              <h3 class="card-title">Submit a Note</h3>
+            </div>
+            <div class="card-body">
+              <form id="submitNoteForm" class="stack-form" novalidate>
+                <div class="form-group">
+                  <label for="noteMessage" class="form-label">Message</label>
+                  <textarea id="noteMessage" name="noteMessage" class="form-control" rows="4" placeholder="Describe the issue or request…" required></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="notePriority" class="form-label">Priority</label>
+                  <select id="notePriority" name="notePriority" class="form-control">
+                    <option value="normal">Normal</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Note</button>
+                <p id="submitNoteMessage" class="form-message" aria-live="polite" style="margin-top:.5rem;"></p>
+              </form>
+            </div>
+          </article>
+
+          <!-- Pending notes board (admin-only, rendered by dashboard.js if isAdmin) -->
+          <article class="card" data-admin-lock>
+            <div class="card-header">
+              <h3 class="card-title">Pending Notes</h3>
+              <span class="status-pill live" style="font-size:.7rem;">Admin Only</span>
+            </div>
+            <div class="card-body">
+              <p id="itNotesEmpty" class="form-message" aria-live="polite" style="color:var(--text-muted);">No pending notes.</p>
+              <ul id="itNotesList" class="simple-list" style="list-style:none;padding:0;margin:0;"></ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ── Analytics Section ─────────────────────────────────── -->
+      <section id="analytics" class="section">
+        <div class="section-header">
+          <p class="section-eyebrow">Website Metrics</p>
+          <h1 class="section-title">Analytics</h1>
+          <p class="section-desc">Members can view headline analytics. Restricted details are blurred and locked for higher-clearance roles.</p>
+        </div>
+
+        <!-- KPI Stats -->
+        <div class="stats-grid">
+          <article class="stat-card">
+            <h3>Total Views</h3>
+            <p id="totalViews">0</p>
+          </article>
+          <article class="stat-card">
+            <h3>Unique IPs</h3>
+            <p id="uniqueIps">0</p>
+          </article>
+          <article class="stat-card">
+            <h3>Countries</h3>
+            <p id="uniqueCountries">0</p>
+          </article>
+          <article class="stat-card">
+            <h3>Lines of Code</h3>
+            <p id="totalLines">&mdash;</p>
+          </article>
+        </div>
+
+        <!-- Instagram Snapshot Controls (admin-locked) -->
+        <div class="table-card" id="instagramStatsAdminCard" data-admin-lock style="position:relative;margin-bottom:var(--s6)">
+          <h3>Instagram Snapshot Controls</h3>
+          <p class="sub">Set a manual source to update homepage community stats instantly, or switch back to live sync.</p>
+
+          <form id="instagramStatsForm" class="instagram-stats-form" novalidate style="margin-top:var(--s4)">
+            <label for="instagramStatsSource">Data Source</label>
+            <select id="instagramStatsSource" name="instagramStatsSource">
+              <option value="live">Live (auto fetch)</option>
+              <option value="manual">Manual (dashboard controlled)</option>
+            </select>
+
+            <div class="instagram-stats-grid" style="margin-top:var(--s3)">
+              <div>
+                <label for="instagramFollowersInput">Followers</label>
+                <input id="instagramFollowersInput" name="instagramFollowersInput" type="number" min="0" step="1" value="487" required />
+              </div>
+              <div>
+                <label for="instagramPostsInput">Posts</label>
+                <input id="instagramPostsInput" name="instagramPostsInput" type="number" min="0" step="1" value="18" required />
+              </div>
+              <div>
+                <label for="instagramFollowingInput">Following</label>
+                <input id="instagramFollowingInput" name="instagramFollowingInput" type="number" min="0" step="1" value="4" required />
+              </div>
+            </div>
+
+            <div class="instagram-stats-actions" style="margin-top:var(--s4)">
+              <button id="instagramStatsSaveBtn" type="button" style="padding:var(--s3) var(--s5);background:linear-gradient(135deg,var(--gold) 0%,#a87e2e 100%);border:none;border-radius:var(--r-md);color:#08090c;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.12s">Save Instagram Snapshot</button>
+              <p id="instagramStatsMessage" class="sub" aria-live="polite"></p>
+            </div>
+          </form>
+
+          <div class="lock-glass" aria-hidden="true">
+            <div class="lock-glass-inner">
+              <div class="lock-icon">🔒</div>
+              <p>Restricted Controls</p>
+              <small>Only Admin, SG, USG, and DSG can edit Instagram snapshot controls.</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Visitors (admin-locked) -->
+        <div class="table-card" id="recentVisitorsCard" data-admin-lock style="position:relative">
+          <h3>Recent Visitors</h3>
+          <p class="sub" style="margin-bottom:var(--s4)">Live visitor log from the public website.</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>IP</th>
+                  <th>Country</th>
+                  <th>Device</th>
+                  <th>Page</th>
+                </tr>
+              </thead>
+              <tbody id="visitsTableBody"></tbody>
+            </table>
+          </div>
+          <div id="visitsPagination" class="pagination" aria-label="Recent visitors pagination"></div>
+
+          <div class="lock-glass" aria-hidden="true">
+            <div class="lock-glass-inner">
+              <div class="lock-icon">🔒</div>
+              <p>Restricted Data</p>
+              <small>Only Admin, SG, USG, and DSG can view detailed visitor logs.</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
+  </div>
 
-
-    <section id="analytics" class="section">
-      <h1>Website Analytics</h1>
-      <p class="sub">Members can view headline analytics. Restricted details are blurred and locked.</p>
-
-      <div class="stats-grid">
-        <article class="stat-card">
-          <h3>Total Views</h3>
-          <p id="totalViews">0</p>
-        </article>
-        <article class="stat-card">
-          <h3>Unique IPs</h3>
-          <p id="uniqueIps">0</p>
-        </article>
-        <article class="stat-card">
-          <h3>Countries</h3>
-          <p id="uniqueCountries">0</p>
-        </article>
-        <article class="stat-card">
-          <h3>Lines of Code</h3>
-          <p id="totalLines">&mdash;</p>
-        </article>
-      </div>
-
-      <div class="table-card" id="instagramStatsAdminCard" data-admin-lock>
-        <h2>Instagram Snapshot Controls</h2>
-        <p class="sub">Set a manual source to update homepage community stats instantly, or switch back to live sync.</p>
-        <form id="instagramStatsForm" class="instagram-stats-form" novalidate>
-          <label for="instagramStatsSource">Data Source</label>
-          <select id="instagramStatsSource" name="instagramStatsSource">
-            <option value="live">Live (auto fetch)</option>
-            <option value="manual">Manual (dashboard controlled)</option>
-          </select>
-
-          <div class="instagram-stats-grid">
-            <div>
-              <label for="instagramFollowersInput">Followers</label>
-              <input id="instagramFollowersInput" name="instagramFollowersInput" type="number" min="0" step="1" value="487" required />
-            </div>
-            <div>
-              <label for="instagramPostsInput">Posts</label>
-              <input id="instagramPostsInput" name="instagramPostsInput" type="number" min="0" step="1" value="18" required />
-            </div>
-            <div>
-              <label for="instagramFollowingInput">Following</label>
-              <input id="instagramFollowingInput" name="instagramFollowingInput" type="number" min="0" step="1" value="4" required />
-            </div>
-          </div>
-
-          <div class="instagram-stats-actions">
-            <button id="instagramStatsSaveBtn" type="button">Save Instagram Snapshot</button>
-            <p id="instagramStatsMessage" class="sub" aria-live="polite"></p>
-          </div>
-        </form>
-
-        <div class="lock-glass" aria-hidden="true">
-          <div class="lock-glass-inner">
-            <div class="lock-icon">🔒</div>
-            <p>Restricted Controls</p>
-            <small>Only Admin, SG, USG, and DSG can edit Instagram snapshot controls.</small>
-          </div>
-        </div>
-      </div>
-
-      <div class="table-card" id="recentVisitorsCard" data-admin-lock>
-        <h2>Recent Visitors</h2>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Time</th>
-                <th>IP</th>
-                <th>Country</th>
-                <th>Device</th>
-                <th>Page</th>
-              </tr>
-            </thead>
-            <tbody id="visitsTableBody"></tbody>
-          </table>
-        </div>
-        <div id="visitsPagination" class="pagination" aria-label="Recent visitors pagination"></div>
-
-        <div class="lock-glass" aria-hidden="true">
-          <div class="lock-glass-inner">
-            <div class="lock-icon">🔒</div>
-            <p>Restricted Data</p>
-            <small>Only Admin, SG, USG, and DSG can view detailed visitor logs.</small>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
+  <!-- Scripts -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="scripts/tracker.js"></script>
   <script defer src="scripts/auth.js"></script>
   <script defer src="scripts/onboarding.js"></script>
   <script defer src="scripts/dashboard.js"></script>
+
+  <script>
+    (function () {
+      var sidebar  = document.getElementById('sidebar');
+      var toggle   = document.getElementById('sidebarToggle');
+      var backdrop = document.getElementById('sidebarBackdrop');
+      function open()  { sidebar.classList.add('open'); backdrop.classList.add('open'); toggle.setAttribute('aria-expanded','true');  document.body.style.overflow='hidden'; }
+      function close() { sidebar.classList.remove('open'); backdrop.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+      if (toggle)   toggle.addEventListener('click', function() { sidebar.classList.contains('open') ? close() : open(); });
+      if (backdrop) backdrop.addEventListener('click', close);
+      window.addEventListener('resize', function() { if (window.innerWidth > 1024) close(); });
+
+      // Hover effects for Instagram save button
+      var saveBtn = document.getElementById('instagramStatsSaveBtn');
+      if (saveBtn) {
+        saveBtn.addEventListener('mouseenter', function() { saveBtn.style.background = 'linear-gradient(135deg,var(--gold-hi) 0%,var(--gold) 100%)'; saveBtn.style.boxShadow = '0 4px 16px var(--gold-glow)'; saveBtn.style.transform = 'translateY(-1px)'; });
+        saveBtn.addEventListener('mouseleave', function() { saveBtn.style.background = ''; saveBtn.style.boxShadow = ''; saveBtn.style.transform = ''; });
+      }
+
+      // Mirror welcome-hero values to sidebar after JS populates them
+      function syncSidebar() {
+        var photo = document.getElementById('dwhPhoto');
+        var name  = document.getElementById('dwhName');
+        var role  = document.getElementById('dwhRole');
+        var sp = document.getElementById('sidebarUserPhoto');
+        var sn = document.getElementById('sidebarUserName');
+        var sr = document.getElementById('sidebarUserRole');
+        if (photo && sp && photo.src && !photo.src.endsWith('imperium%20mun%20logo.jpg')) sp.src = photo.src;
+        if (name  && sn && name.textContent)  sn.textContent = name.textContent;
+        if (role  && sr && role.textContent)  sr.textContent = role.textContent;
+      }
+      setTimeout(syncSidebar, 800);
+      setTimeout(syncSidebar, 2000);
+    })();
+  </script>
 </body>
 </html>

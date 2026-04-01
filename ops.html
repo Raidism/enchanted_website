@@ -9,163 +9,511 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/dashboard.css" />
+  <link rel="stylesheet" href="styles/admin-v2.css" />
 </head>
 <body>
-  <header class="dash-header">
-    <div class="header-inner">
-      <a class="brand" href="/">IMPERIUM MUN</a>
-      <div class="header-actions">
-        <a href="/dashboard">Analytics</a>
-        <a href="#opsCenter">Ops Center</a>
-        <a href="/applications">Applications</a>
-        <a href="/settings">Settings</a>
-        <button id="logoutBtn" type="button">Logout</button>
+
+  <!-- Sidebar backdrop (mobile) -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- ── Sidebar ──────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+    <a class="sidebar-brand" href="/">
+      <img src="assets/imperium mun logo.jpg" alt="Imperium MUN" class="sidebar-brand-logo" />
+      <div>
+        <div class="sidebar-brand-text">Imperium MUN</div>
+        <div class="sidebar-brand-sub">Admin Portal</div>
       </div>
+    </a>
+
+    <div class="sidebar-section-label">Navigation</div>
+
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Analytics
+      </a>
+      <a href="/ops" class="nav-item active" aria-current="page">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Ops Center
+      </a>
+      <a href="/applications" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Applications
+      </a>
+      <a href="/settings" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <img id="pmhPhoto" src="assets/imperium mun logo.jpg" alt="User" class="sidebar-user-avatar" loading="eager" />
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="pmhName">Loading…</div>
+          <div class="sidebar-user-role" id="pmhRole">Admin</div>
+        </div>
+      </div>
+      <button id="logoutBtn" type="button">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
     </div>
-  </header>
+  </aside>
 
-  <main class="dash-main">
-    <div class="page-mini-hero profile-pending" id="pageMiniHero" aria-label="Profile briefing">
-      <div class="pmh-photo-ring" aria-hidden="true">
-        <img id="pmhPhoto" src="assets/imperium mun logo.jpg" alt="" class="pmh-photo" loading="eager" decoding="async" />
+  <!-- ── Main content ──────────────────────────────────────────── -->
+  <div class="main-content">
+
+    <header class="topbar" role="banner">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="topbar-title">
+          <span>Imperium MUN</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="breadcrumb-sep"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="breadcrumb-current">Ops Center</span>
+        </div>
       </div>
-      <div class="pmh-text">
-        <p class="pmh-eyebrow">IMPERIUM MUN PORTAL</p>
-        <h2 class="pmh-name" id="pmhName"></h2>
-        <p class="pmh-role" id="pmhRole"></p>
+      <div class="topbar-right">
+        <div class="topbar-status" id="topbarStatus">
+          <div class="status-dot"></div>
+          <span>System Live</span>
+        </div>
       </div>
+    </header>
+
+    <div class="page-content" role="main" id="pageMiniHero">
+
+      <section id="opsCenter" class="section admin-only" hidden>
+
+        <!-- Section header -->
+        <div class="section-header">
+          <p class="section-eyebrow">Pre-Launch Operations</p>
+          <h1 class="section-title">Ops Center</h1>
+          <p class="section-desc">Control launch settings, manage early access signups, publish content, and monitor real-time operations.</p>
+        </div>
+
+        <!-- KPI Row -->
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-label">Early Access</div>
+            <div class="kpi-value" id="eaLiveCount">—</div>
+            <div class="kpi-sub">Total signups</div>
+            <div class="kpi-icon">📋</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Site Status</div>
+            <div class="kpi-value" style="font-size:16px;padding-top:6px">
+              <span id="kpiSiteStatus" class="status-pill live"><span class="status-dot-sm"></span>Live</span>
+            </div>
+            <div class="kpi-sub">Public-facing</div>
+            <div class="kpi-icon">🌐</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Applications</div>
+            <div class="kpi-value" style="font-size:16px;padding-top:6px">
+              <span id="kpiAppsStatus" class="status-pill busy"><span class="status-dot-sm"></span>Closed</span>
+            </div>
+            <div class="kpi-sub">Registration portal</div>
+            <div class="kpi-icon">📩</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Announcements</div>
+            <div class="kpi-value" id="kpiAnnouncementCount">—</div>
+            <div class="kpi-sub">Published total</div>
+            <div class="kpi-icon">📢</div>
+          </div>
+        </div>
+
+        <!-- Tab nav -->
+        <div class="tab-nav" role="tablist" aria-label="Ops Center sections">
+          <button class="tab-btn active" role="tab" aria-selected="true" data-tab="site-control">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64A9 9 0 1 1 5.64 17.36"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+            Site Control
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="launch">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Launch Settings
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="content">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Content
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="waitlist">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Early Access
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="analytics">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Analytics
+          </button>
+        </div>
+
+        <!-- ─── TAB: Site Control ───────────────────────────────── -->
+        <div id="tab-site-control" class="tab-panel active" role="tabpanel">
+          <div class="admin-grid">
+
+            <article class="table-card maintenance-card-ops">
+              <h3>Site Availability Control</h3>
+              <p class="sub">Toggle maintenance mode instantly. Admins retain access while active.</p>
+
+              <div class="maintenance-status-row">
+                <span class="maintenance-status-label">Current Status</span>
+                <span id="maintenanceStatusBadge" class="maintenance-status-badge status-pill live">
+                  <span class="status-dot-sm"></span>Live
+                </span>
+              </div>
+
+              <form id="maintenanceOpsForm" class="stack-form" novalidate>
+                <label for="maintenanceModeToggle">Maintenance Mode</label>
+                <label class="switch-control" for="maintenanceModeToggle" style="display:flex;align-items:center;gap:12px;padding:6px 0">
+                  <input id="maintenanceModeToggle" name="maintenanceModeToggle" type="checkbox" />
+                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                  <span id="maintenanceModeText" class="switch-text">Live</span>
+                </label>
+
+                <label for="maintenanceMessageInput">Down Page Message</label>
+                <textarea id="maintenanceMessageInput" name="maintenanceMessageInput" rows="3" placeholder="We are updating the site and will be back shortly."></textarea>
+
+                <p id="maintenanceOpsMessage" class="form-message" aria-live="polite"></p>
+                <button type="submit">Apply Maintenance Settings</button>
+              </form>
+            </article>
+
+            <article class="table-card">
+              <h3>Quick Status Overview</h3>
+              <p class="sub">Live read of current system configuration.</p>
+
+              <div style="display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s3)">
+                <div class="switch-row">
+                  <div class="switch-row-info">
+                    <div class="switch-row-label">Countdown Timer</div>
+                    <div class="switch-row-desc">Homepage countdown visibility</div>
+                  </div>
+                  <span class="status-pill live" id="countdownQuickStatus"><span class="status-dot-sm"></span>On</span>
+                </div>
+                <div class="switch-row">
+                  <div class="switch-row-info">
+                    <div class="switch-row-label">Applications Portal</div>
+                    <div class="switch-row-desc">Public registration status</div>
+                  </div>
+                  <span class="status-pill busy" id="appsQuickStatus"><span class="status-dot-sm"></span>Closed</span>
+                </div>
+                <div class="switch-row">
+                  <div class="switch-row-info">
+                    <div class="switch-row-label">Notify on Open</div>
+                    <div class="switch-row-desc">Email early access list</div>
+                  </div>
+                  <span class="status-pill" id="notifyQuickStatus" style="background:var(--surface-3);color:var(--text-2);border:1px solid var(--border)">—</span>
+                </div>
+              </div>
+
+              <p class="sub" style="margin-top:var(--s4)">
+                Change these in the <strong style="color:var(--gold)">Launch Settings</strong> tab.
+              </p>
+            </article>
+
+          </div>
+        </div>
+
+        <!-- ─── TAB: Launch Settings ───────────────────────────── -->
+        <div id="tab-launch" class="tab-panel" role="tabpanel">
+          <div class="admin-grid" style="grid-template-columns:1fr">
+            <article class="table-card">
+              <h3>Launch &amp; Event Settings</h3>
+              <p class="sub">Configure registration status, conference dates, location, and messaging.</p>
+
+              <form id="launchOpsForm" class="stack-form" novalidate style="margin-top:var(--s4)">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--s5)">
+                  <div>
+                    <label for="applicationsOpenToggle">Applications Status</label>
+                    <select id="applicationsOpenToggle" name="applicationsOpenToggle">
+                      <option value="closed">Closed</option>
+                      <option value="open">Open</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="countdownEnabledToggle">Countdown Timer</label>
+                    <select id="countdownEnabledToggle" name="countdownEnabledToggle">
+                      <option value="on">Enabled</option>
+                      <option value="off">Hidden</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="notifyAllOnOpenToggle">Notify Early List When Opening</label>
+                    <select id="notifyAllOnOpenToggle" name="notifyAllOnOpenToggle">
+                      <option value="off">No — don't notify</option>
+                      <option value="on">Yes — notify early access</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="launchDateOpsInput">Applications Opening Date</label>
+                    <input id="launchDateOpsInput" name="launchDateOpsInput" type="datetime-local" />
+                  </div>
+                  <div>
+                    <label for="conferenceDateInput">Conference Date</label>
+                    <input id="conferenceDateInput" name="conferenceDateInput" type="datetime-local" />
+                  </div>
+                  <div>
+                    <label for="locationTextInput">Location</label>
+                    <input id="locationTextInput" name="locationTextInput" type="text" placeholder="Riyadh, Saudi Arabia" />
+                  </div>
+                </div>
+
+                <label for="conferenceDescriptionInput">Conference Description</label>
+                <textarea id="conferenceDescriptionInput" name="conferenceDescriptionInput" rows="4" placeholder="Describe the conference for the public homepage."></textarea>
+
+                <p id="launchOpsMessage" class="form-message" aria-live="polite"></p>
+                <button type="submit">Save Launch Settings</button>
+              </form>
+            </article>
+          </div>
+        </div>
+
+        <!-- ─── TAB: Content ───────────────────────────────────── -->
+        <div id="tab-content" class="tab-panel" role="tabpanel">
+          <div class="admin-grid">
+
+            <article class="table-card">
+              <h3>Announcement System</h3>
+              <p class="sub">Publish announcements visible to early access students and staff.</p>
+
+              <form id="announcementForm" class="stack-form" novalidate style="margin-top:var(--s3)">
+                <label for="announcementTitleInput">Title</label>
+                <input id="announcementTitleInput" name="announcementTitleInput" type="text" required placeholder="e.g. Applications are now open!" />
+
+                <label for="announcementBodyInput">Announcement</label>
+                <textarea id="announcementBodyInput" name="announcementBodyInput" rows="3" required placeholder="Type your announcement here…"></textarea>
+
+                <label for="announcementSendToggle">Send to Early Access Students?</label>
+                <select id="announcementSendToggle" name="announcementSendToggle">
+                  <option value="off">No — save only</option>
+                  <option value="on">Yes — send notification</option>
+                </select>
+
+                <p id="announcementMessage" class="form-message" aria-live="polite"></p>
+                <div style="display:flex;gap:var(--s3);flex-wrap:wrap">
+                  <button type="submit">Publish Announcement</button>
+                  <button type="button" id="clearAnnouncementsBtn" style="background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.25)">Clear All</button>
+                </div>
+              </form>
+
+              <div style="margin-top:var(--s5)">
+                <p class="sub" style="margin-bottom:var(--s3)">Recent Announcements</p>
+                <ul id="announcementHistoryList" class="simple-list"></ul>
+              </div>
+            </article>
+
+            <article class="table-card">
+              <h3>Secretariat Management</h3>
+              <p class="sub">Add members to the Imperium secretariat team displayed on the website.</p>
+
+              <form id="secretariatForm" class="stack-form" novalidate style="margin-top:var(--s3)">
+                <label for="secNameInput">Full Name</label>
+                <input id="secNameInput" type="text" placeholder="e.g. Adham Al-Rashidi" />
+
+                <label for="secTitleInput">Title / Position</label>
+                <input id="secTitleInput" type="text" placeholder="e.g. Secretary General" />
+
+                <label for="secDescInput">Short Bio</label>
+                <textarea id="secDescInput" rows="3" placeholder="Brief description of their role…"></textarea>
+
+                <label for="secPhotoInput">Photo URL / Path</label>
+                <input id="secPhotoInput" type="text" placeholder="assets/your-photo.png" />
+
+                <button type="submit">Add to Secretariat</button>
+              </form>
+
+              <div style="margin-top:var(--s5)">
+                <p class="sub" style="margin-bottom:var(--s3)">Current Members</p>
+                <ul id="secretariatList" class="simple-list"></ul>
+              </div>
+            </article>
+
+          </div>
+        </div>
+
+        <!-- ─── TAB: Early Access ──────────────────────────────── -->
+        <div id="tab-waitlist" class="tab-panel" role="tabpanel">
+          <div class="admin-grid" style="grid-template-columns:1fr">
+            <article class="table-card">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s4);flex-wrap:wrap;margin-bottom:var(--s4)">
+                <div>
+                  <h3 style="display:flex;align-items:center;gap:var(--s2)">
+                    Early Access Signups
+                    <span class="nav-badge" id="eaLiveCount">0</span>
+                  </h3>
+                  <p class="sub">Manage all students who registered for early access.</p>
+                </div>
+                <div style="display:flex;gap:var(--s3);flex-wrap:wrap">
+                  <button id="eaExportBtn" type="button" style="background:var(--surface-3);border:1px solid var(--border-2);color:var(--text);padding:var(--s2) var(--s4);border-radius:var(--r-md);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:var(--s2)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Export CSV
+                  </button>
+                  <button id="eaNotifyAllBtn" type="button" style="background:var(--green-dim);border:1px solid rgba(34,194,102,0.25);color:var(--green-text);padding:var(--s2) var(--s4);border-radius:var(--r-md);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:var(--s2)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"/></svg>
+                    Notify All
+                  </button>
+                </div>
+              </div>
+
+              <!-- Filters -->
+              <div style="display:flex;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s4)">
+                <div style="position:relative;flex:1;min-width:200px">
+                  <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text-3);pointer-events:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input id="eaSearchInput" type="search" style="background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);color:var(--text);font-family:inherit;font-size:13px;padding:var(--s3) var(--s4) var(--s3) 34px;width:100%;outline:none;transition:border-color 0.12s,box-shadow 0.12s" placeholder="Search by name, email, or school…" autocomplete="off" />
+                </div>
+                <select id="eaSchoolFilter" style="background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);color:var(--text);font-family:inherit;font-size:13px;padding:var(--s3) 32px var(--s3) var(--s4);outline:none;min-width:140px;cursor:pointer;appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a9a90' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 10px center">
+                  <option value="all">All Schools</option>
+                </select>
+                <select id="eaInterestFilter" style="background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);color:var(--text);font-family:inherit;font-size:13px;padding:var(--s3) 32px var(--s3) var(--s4);outline:none;min-width:140px;cursor:pointer;appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a9a90' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 10px center">
+                  <option value="all">All Interests</option>
+                </select>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>School</th>
+                      <th>Interest</th>
+                      <th>Notified</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="eaTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- ─── TAB: Analytics ─────────────────────────────────── -->
+        <div id="tab-analytics" class="tab-panel" role="tabpanel">
+          <div class="admin-grid">
+
+            <article class="table-card">
+              <h3>Signup Analytics</h3>
+              <ul id="opsAnalyticsList" class="simple-list"></ul>
+              <div style="margin-top:var(--s5)">
+                <p class="sub" style="margin-bottom:var(--s3)">Growth Chart (last 10 days)</p>
+                <svg id="opsGrowthChart" class="ops-growth-chart" viewBox="0 0 600 180" aria-label="Daily signup growth chart"></svg>
+              </div>
+            </article>
+
+            <article class="table-card">
+              <h3>Activity Log</h3>
+              <ul id="activityLogList" class="simple-list"></ul>
+            </article>
+
+          </div>
+        </div>
+
+      </section>
+
     </div>
+  </div>
 
-    <section id="opsCenter" class="section admin-only" hidden>
-      <h1>Pre-Launch Ops Center</h1>
-      <p class="sub">Control launch settings, manage early access signups, and prepare conference operations.</p>
-
-      <div class="admin-grid">
-        <article class="table-card maintenance-card-ops">
-          <h3>Site Availability Control</h3>
-          <p class="sub">Use this switch to put the public site into maintenance mode instantly. Admins can still access control pages.</p>
-
-          <div class="maintenance-status-row">
-            <span class="maintenance-status-label">Current Status</span>
-            <span id="maintenanceStatusBadge" class="maintenance-status-badge">Live</span>
-          </div>
-
-          <form id="maintenanceOpsForm" class="stack-form" novalidate>
-            <label for="maintenanceModeToggle">Maintenance Mode</label>
-            <label class="switch-control" for="maintenanceModeToggle">
-              <input id="maintenanceModeToggle" name="maintenanceModeToggle" type="checkbox" />
-              <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-              <span id="maintenanceModeText" class="switch-text">Live</span>
-            </label>
-
-            <label for="maintenanceMessageInput">Down Page Message</label>
-            <textarea id="maintenanceMessageInput" name="maintenanceMessageInput" rows="3" placeholder="We are updating the site and will be back shortly."></textarea>
-
-            <p id="maintenanceOpsMessage" class="form-message" aria-live="polite"></p>
-            <button type="submit">Apply Maintenance Settings</button>
-          </form>
-        </article>
-
-        <article class="table-card">
-          <h3>Launch & Event Settings</h3>
-          <form id="launchOpsForm" class="stack-form" novalidate>
-            <label for="applicationsOpenToggle">Applications Status</label>
-            <select id="applicationsOpenToggle" name="applicationsOpenToggle">
-              <option value="closed">Closed</option>
-              <option value="open">Open</option>
-            </select>
-
-            <label for="launchDateOpsInput">Applications Opening Date</label>
-            <input id="launchDateOpsInput" name="launchDateOpsInput" type="datetime-local" />
-
-            <label for="conferenceDateInput">Conference Date</label>
-            <input id="conferenceDateInput" name="conferenceDateInput" type="datetime-local" />
-
-            <label for="locationTextInput">Location Text</label>
-            <input id="locationTextInput" name="locationTextInput" type="text" placeholder="Riyadh, Saudi Arabia" />
-
-            <label for="conferenceDescriptionInput">Conference Description</label>
-            <textarea id="conferenceDescriptionInput" name="conferenceDescriptionInput" rows="4" placeholder="Describe the conference."></textarea>
-
-            <label for="countdownEnabledToggle">Countdown Timer</label>
-            <select id="countdownEnabledToggle" name="countdownEnabledToggle">
-              <option value="on">Enabled</option>
-              <option value="off">Hidden</option>
-            </select>
-
-            <label for="notifyAllOnOpenToggle">Notify Early List When Opening</label>
-            <select id="notifyAllOnOpenToggle" name="notifyAllOnOpenToggle">
-              <option value="off">No</option>
-              <option value="on">Yes</option>
-            </select>
-
-            <p id="launchOpsMessage" class="form-message" aria-live="polite"></p>
-            <button type="submit">Save Launch Settings</button>
-          </form>
-        </article>
-
-        <article class="table-card">
-          <h3>Announcement System</h3>
-          <form id="announcementForm" class="stack-form" novalidate>
-            <label for="announcementTitleInput">Title</label>
-            <input id="announcementTitleInput" name="announcementTitleInput" type="text" required />
-
-            <label for="announcementBodyInput">Announcement</label>
-            <textarea id="announcementBodyInput" name="announcementBodyInput" rows="3" required></textarea>
-
-            <label for="announcementSendToggle">Send to Early Access Students</label>
-            <select id="announcementSendToggle" name="announcementSendToggle">
-              <option value="off">No</option>
-              <option value="on">Yes</option>
-            </select>
-
-            <p id="announcementMessage" class="form-message" aria-live="polite"></p>
-            <button type="submit">Publish Announcement</button>
-          </form>
-          <div class="ea-toolbar">
-            <button id="clearAnnouncementsBtn" type="button">Clear All Announcements</button>
-          </div>
-          <ul id="announcementHistoryList" class="simple-list"></ul>
-        </article>
-
-        <article class="table-card">
-          <h3>Secretariat Management</h3>
-          <form id="secretariatForm" class="stack-form" novalidate>
-            <label for="secNameInput">Name</label>
-            <input id="secNameInput" type="text" />
-
-            <label for="secTitleInput">Title</label>
-            <input id="secTitleInput" type="text" />
-
-            <label for="secDescInput">Description</label>
-            <textarea id="secDescInput" rows="3"></textarea>
-
-            <label for="secPhotoInput">Photo URL / Path</label>
-            <input id="secPhotoInput" type="text" placeholder="assets/your-photo.png" />
-
-            <button type="submit">Add Member</button>
-          </form>
-          <ul id="secretariatList" class="simple-list"></ul>
-        </article>
-
-        <article class="table-card">
-          <h3>Ops Analytics</h3>
-          <ul id="opsAnalyticsList" class="simple-list"></ul>
-          <svg id="opsGrowthChart" class="ops-growth-chart" viewBox="0 0 600 180" aria-label="Growth chart"></svg>
-        </article>
-
-        <article class="table-card">
-          <h3>Activity Log</h3>
-          <ul id="activityLogList" class="simple-list"></ul>
-        </article>
-      </div>
-    </section>
-  </main>
-
+  <!-- Scripts -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="scripts/tracker.js"></script>
   <script defer src="scripts/auth.js"></script>
   <script defer src="scripts/admin-tools.js"></script>
+
+  <script>
+    (function () {
+      // Sidebar toggle
+      const sidebar  = document.getElementById('sidebar');
+      const toggle   = document.getElementById('sidebarToggle');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      function openSidebar()  { sidebar.classList.add('open'); backdrop.classList.add('open'); toggle.setAttribute('aria-expanded','true');  document.body.style.overflow='hidden'; }
+      function closeSidebar() { sidebar.classList.remove('open'); backdrop.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+      if (toggle)   toggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+      if (backdrop) backdrop.addEventListener('click', closeSidebar);
+      window.addEventListener('resize', () => { if (window.innerWidth > 1024) closeSidebar(); });
+
+      // Tab switching
+      const tabNav = document.querySelector('.tab-nav');
+      if (tabNav) {
+        tabNav.addEventListener('click', function (e) {
+          const btn = e.target.closest('.tab-btn');
+          if (!btn) return;
+          const tabId = btn.getAttribute('data-tab');
+          if (!tabId) return;
+          tabNav.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+          btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+          const panel = document.getElementById('tab-' + tabId);
+          if (panel) panel.classList.add('active');
+        });
+      }
+
+      // KPI sync (runs after admin-tools.js populates the settings fields)
+      function syncQuickStatus() {
+        const mainBadge = document.getElementById('maintenanceStatusBadge');
+        const kpiSite   = document.getElementById('kpiSiteStatus');
+        if (mainBadge && kpiSite) {
+          const txt   = mainBadge.textContent.trim().toLowerCase();
+          const isMaint = txt.includes('mainten') || txt === 'down';
+          kpiSite.className = 'status-pill ' + (isMaint ? 'down' : 'live');
+          kpiSite.innerHTML = '<span class="status-dot-sm"></span>' + (isMaint ? 'Maintenance' : 'Live');
+          const topStatus = document.getElementById('topbarStatus');
+          if (topStatus && isMaint) topStatus.innerHTML = '<div class="status-dot" style="background:var(--amber);box-shadow:0 0 6px var(--amber)"></div><span>Maintenance</span>';
+          else if (topStatus && !isMaint) topStatus.innerHTML = '<div class="status-dot"></div><span>System Live</span>';
+        }
+        const appsToggle = document.getElementById('applicationsOpenToggle');
+        const kpiApps    = document.getElementById('kpiAppsStatus');
+        const appsQuick  = document.getElementById('appsQuickStatus');
+        if (appsToggle && kpiApps) {
+          const isOpen = appsToggle.value === 'open';
+          kpiApps.className = 'status-pill ' + (isOpen ? 'live' : 'busy');
+          kpiApps.innerHTML = '<span class="status-dot-sm"></span>' + (isOpen ? 'Open' : 'Closed');
+          if (appsQuick) { appsQuick.className = kpiApps.className; appsQuick.innerHTML = kpiApps.innerHTML; }
+        }
+        const cntToggle = document.getElementById('countdownEnabledToggle');
+        const cntQuick  = document.getElementById('countdownQuickStatus');
+        if (cntToggle && cntQuick) {
+          const isOn = cntToggle.value === 'on';
+          cntQuick.className = 'status-pill ' + (isOn ? 'live' : '');
+          cntQuick.style.cssText = isOn ? '' : 'background:var(--surface-3);color:var(--text-2);border:1px solid var(--border)';
+          cntQuick.innerHTML = '<span class="status-dot-sm"></span>' + (isOn ? 'Enabled' : 'Disabled');
+        }
+        const notifyToggle = document.getElementById('notifyAllOnOpenToggle');
+        const notifyQuick  = document.getElementById('notifyQuickStatus');
+        if (notifyToggle && notifyQuick) {
+          const isOn = notifyToggle.value === 'on';
+          notifyQuick.className = 'status-pill ' + (isOn ? 'live' : '');
+          notifyQuick.style.cssText = isOn ? '' : 'background:var(--surface-3);color:var(--text-2);border:1px solid var(--border)';
+          notifyQuick.innerHTML = '<span class="status-dot-sm"></span>' + (isOn ? 'Yes' : 'No');
+        }
+      }
+      setTimeout(syncQuickStatus, 700);
+      setTimeout(syncQuickStatus, 2000);
+      ['applicationsOpenToggle','countdownEnabledToggle','notifyAllOnOpenToggle'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', syncQuickStatus);
+      });
+
+      // Announcement KPI counter
+      const annList = document.getElementById('announcementHistoryList');
+      const annKpi  = document.getElementById('kpiAnnouncementCount');
+      if (annList && annKpi) {
+        new MutationObserver(() => { annKpi.textContent = annList.querySelectorAll('li').length || '0'; }).observe(annList, { childList: true });
+      }
+
+      // Focus styling for filter inputs
+      document.querySelectorAll('input[id="eaSearchInput"], select[id="eaSchoolFilter"], select[id="eaInterestFilter"]').forEach(el => {
+        el.addEventListener('focus', () => { el.style.borderColor = 'var(--gold)'; el.style.boxShadow = '0 0 0 3px var(--gold-glow)'; });
+        el.addEventListener('blur',  () => { el.style.borderColor = ''; el.style.boxShadow = ''; });
+      });
+    })();
+  </script>
 </body>
 </html>
