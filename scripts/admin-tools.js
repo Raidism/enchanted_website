@@ -32,7 +32,7 @@
   const pmhHero = document.getElementById("pageMiniHero");
   if (pmhPhoto) {
     pmhPhoto.src = profilePhotoSrc;
-    pmhPhoto.alt = profileDisplayName;
+    pmhPhoto.alt = "";
   }
   if (pmhName) pmhName.textContent = profileDisplayName;
   if (pmhRole) pmhRole.textContent = "Admin";

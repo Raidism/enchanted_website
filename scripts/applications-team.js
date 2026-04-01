@@ -68,7 +68,7 @@ const _aPmhRole = document.getElementById("pmhRole");
 const _aPmhHero = document.getElementById("pageMiniHero");
 if (_aPmhPhoto) {
   _aPmhPhoto.src = _appProfilePhoto;
-  _aPmhPhoto.alt = _appDisplayName;
+  _aPmhPhoto.alt = "";
 }
 if (_aPmhName) _aPmhName.textContent = _appDisplayName;
 if (_aPmhRole) _aPmhRole.textContent = _appRoleLabel;

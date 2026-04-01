@@ -50,7 +50,7 @@ const _aPmhPhoto = document.getElementById("pmhPhoto");
 const _aPmhName  = document.getElementById("pmhName");
 const _aPmhRole  = document.getElementById("pmhRole");
 const _aPmhHero  = document.getElementById("pageMiniHero");
-if (_aPmhPhoto) { _aPmhPhoto.src = _appProfilePhoto; _aPmhPhoto.alt = _appDisplayName; }
+if (_aPmhPhoto) { _aPmhPhoto.src = _appProfilePhoto; _aPmhPhoto.alt = ""; }
 if (_aPmhName) _aPmhName.textContent = _appDisplayName;
 if (_aPmhRole) _aPmhRole.textContent = _appRoleLabel;
 if (_aPmhHero) { _aPmhHero.classList.remove("profile-pending"); _aPmhHero.classList.add("profile-ready"); }

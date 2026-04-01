@@ -66,7 +66,7 @@ const _pmhPhoto = document.getElementById("pmhPhoto");
 const _pmhName  = document.getElementById("pmhName");
 const _pmhRole  = document.getElementById("pmhRole");
 const _pmhHero  = document.getElementById("pageMiniHero");
-if (_pmhPhoto) { _pmhPhoto.src = _profilePhoto; _pmhPhoto.alt = _displayName; }
+if (_pmhPhoto) { _pmhPhoto.src = _profilePhoto; _pmhPhoto.alt = ""; }
 if (_pmhName)  _pmhName.textContent  = _displayName;
 if (_pmhRole)  _pmhRole.textContent  = _roleLabel;
 if (_pmhHero) { _pmhHero.classList.remove("profile-pending"); _pmhHero.classList.add("profile-ready"); }

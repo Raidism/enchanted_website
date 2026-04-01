@@ -84,7 +84,7 @@ const displayPhoto = profileFallback.photo || currentUser.photo || "assets/imper
 
 if (pmhPhoto) {
   pmhPhoto.src = displayPhoto;
-  pmhPhoto.alt = displayName;
+  pmhPhoto.alt = "";
 }
 if (pmhName) pmhName.textContent = displayName;
 if (pmhRole) pmhRole.textContent = currentUser.role === "admin" ? "Admin" : "Member";
