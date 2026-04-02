@@ -40,7 +40,7 @@ const PAGE_ROUTE_FILES = {
   "/access": "access-gate.html",
   "/portal": "access.html",
   "/maintenance": "maintenance.html",
-  "/contact": "index.html",
+  "/contact": "contact-adham.html",
   "/dashboard": "dashboard.html",
   "/apply": "apply.html",
   "/applications": "applications.html",
