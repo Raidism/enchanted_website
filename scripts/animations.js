@@ -56,6 +56,11 @@
     const el = document.getElementById("heroTypewriter");
     if (!el) return;
 
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.textContent = "Diplomacy Starts Here";
+      return;
+    }
+
     const phrases = [
       "Diplomacy Starts Here",
       "Future Leaders Are Built Here",
@@ -68,8 +73,15 @@
     let charIdx = 0;
     let deleting = false;
     let tid = null;
+    let running = false;
+
+    const schedule = (delay) => {
+      clearTimeout(tid);
+      tid = setTimeout(tick, delay);
+    };
 
     const tick = () => {
+      if (!running) return;
       const phrase = phrases[phraseIdx];
       el.textContent = deleting
         ? phrase.substring(0, charIdx - 1)
@@ -93,18 +105,21 @@
         delay = deleting ? 38 + Math.random() * 18 : 68 + Math.random() * 28;
       }
 
-      tid = setTimeout(tick, delay);
+      schedule(delay);
     };
 
     // Start after entrance animation plays
-    tid = setTimeout(tick, 1100);
+    running = true;
+    schedule(1100);
 
     // Pause when tab is hidden to save CPU
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
+        running = false;
         clearTimeout(tid);
       } else {
-        tid = setTimeout(tick, 300);
+        running = true;
+        schedule(300);
       }
     });
   };
@@ -309,46 +324,7 @@
     });
   });
 
-  if (!isTouchDevice) {
-    document.querySelectorAll(".team-card, .stat-card, .launch-card, .value-card").forEach((card) => {
-      const qx = gsap.quickTo(card, "rotateY", { duration: 0.26, ease: "power2.out", overwrite: "auto" });
-      const qy = gsap.quickTo(card, "rotateX", { duration: 0.26, ease: "power2.out", overwrite: "auto" });
-      const qz = gsap.quickTo(card, "y", { duration: 0.26, ease: "power2.out", overwrite: "auto" });
-
-      card.addEventListener("mousemove", (event) => {
-        const rect = card.getBoundingClientRect();
-        const px = (event.clientX - rect.left) / rect.width - 0.5;
-        const py = (event.clientY - rect.top) / rect.height - 0.5;
-        qx(px * 6);
-        qy(-py * 4.5);
-        qz(-4);
-      });
-
-      card.addEventListener("mouseleave", () => {
-        qx(0);
-        qy(0);
-        qz(0);
-      });
-    });
-
-    document.querySelectorAll(".cta, .share-btn, .waitlist-form button").forEach((btn) => {
-      const quickX = gsap.quickTo(btn, "x", { duration: 0.22, ease: "power2.out", overwrite: "auto" });
-      const quickY = gsap.quickTo(btn, "y", { duration: 0.22, ease: "power2.out", overwrite: "auto" });
-
-      btn.addEventListener("mousemove", (event) => {
-        const rect = btn.getBoundingClientRect();
-        const x = (event.clientX - rect.left - rect.width / 2) * 0.04;
-        const y = (event.clientY - rect.top - rect.height / 2) * 0.03;
-        quickX(Math.max(-5, Math.min(5, x)));
-        quickY(Math.max(-4, Math.min(4, y)));
-      });
-
-      btn.addEventListener("mouseleave", () => {
-        quickX(0);
-        quickY(0);
-      });
-    });
-  }
+  // Deliberately keep hover interactions subtle and CSS-only for stability.
 
   const navAnchors = Array.from(document.querySelectorAll(".nav-links a[href^='#']"));
   const navSections = navAnchors
