@@ -147,6 +147,10 @@
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             Early Access
           </button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="questions">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Questions
+          </button>
           <button class="tab-btn" role="tab" aria-selected="false" data-tab="analytics">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             Analytics
@@ -367,10 +371,10 @@
                   <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text-3);pointer-events:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                   <input id="eaSearchInput" type="search" style="background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);color:var(--text);font-family:inherit;font-size:13px;padding:var(--s3) var(--s4) var(--s3) 34px;width:100%;outline:none;transition:border-color 0.12s,box-shadow 0.12s" placeholder="Search by name, email, or school…" autocomplete="off" />
                 </div>
-                <select id="eaSchoolFilter" style="background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);color:var(--text);font-family:inherit;font-size:13px;padding:var(--s3) 32px var(--s3) var(--s4);outline:none;min-width:140px;cursor:pointer;appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a9a90' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 10px center">
+                <select id="eaSchoolFilter" style="background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);color:var(--text);font-family:inherit;font-size:13px;padding:var(--s3) 32px var(--s3) var(--s4);outline:none;min-width:140px;cursor:pointer;appearance:none">
                   <option value="all">All Schools</option>
                 </select>
-                <select id="eaInterestFilter" style="background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);color:var(--text);font-family:inherit;font-size:13px;padding:var(--s3) 32px var(--s3) var(--s4);outline:none;min-width:140px;cursor:pointer;appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a9a90' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 10px center">
+                <select id="eaInterestFilter" style="background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);color:var(--text);font-family:inherit;font-size:13px;padding:var(--s3) 32px var(--s3) var(--s4);outline:none;min-width:140px;cursor:pointer;appearance:none">
                   <option value="all">All Interests</option>
                 </select>
               </div>
@@ -389,6 +393,62 @@
                     </tr>
                   </thead>
                   <tbody id="eaTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- ─── TAB: Questions ─────────────────────────────────── -->
+        <div id="tab-questions" class="tab-panel" role="tabpanel">
+          <div class="admin-grid" style="grid-template-columns:1fr">
+            <article class="table-card">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s4);flex-wrap:wrap;margin-bottom:var(--s4)">
+                <div>
+                  <h3 style="display:flex;align-items:center;gap:var(--s2)">
+                    Questions Inbox
+                    <span class="nav-badge" id="questionInboxCount">0</span>
+                  </h3>
+                  <p class="sub">Review public questions, save replies, and mark each thread by status.</p>
+                </div>
+                <div>
+                  <span class="status-pill" id="questionOpenCountPill" style="background:var(--surface-3);color:var(--text-2);border:1px solid var(--border)">Open: 0</span>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s4)">
+                <div style="position:relative;flex:1;min-width:220px">
+                  <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text-3);pointer-events:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input id="questionSearchInput" type="search" style="background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);color:var(--text);font-family:inherit;font-size:13px;padding:var(--s3) var(--s4) var(--s3) 34px;width:100%;outline:none;transition:border-color 0.12s,box-shadow 0.12s" placeholder="Search by name, email, or question text..." autocomplete="off" />
+                </div>
+                <select id="questionStatusFilter" style="background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);color:var(--text);font-family:inherit;font-size:13px;padding:var(--s3) 32px var(--s3) var(--s4);outline:none;min-width:160px;cursor:pointer;appearance:none">
+                  <option value="all">All Statuses</option>
+                  <option value="new">New</option>
+                  <option value="reviewing">Reviewing</option>
+                  <option value="replied">Replied</option>
+                  <option value="resolved">Resolved</option>
+                  <option value="spam">Spam</option>
+                </select>
+                <select id="questionIdentityFilter" style="background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);color:var(--text);font-family:inherit;font-size:13px;padding:var(--s3) 32px var(--s3) var(--s4);outline:none;min-width:160px;cursor:pointer;appearance:none">
+                  <option value="all">Named + Anonymous</option>
+                  <option value="named">Named Only</option>
+                  <option value="anonymous">Anonymous Only</option>
+                </select>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Sender</th>
+                      <th>Question</th>
+                      <th>Status</th>
+                      <th>Reply</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="questionTableBody"></tbody>
                 </table>
               </div>
             </article>
@@ -509,7 +569,7 @@
       }
 
       // Focus styling for filter inputs
-      document.querySelectorAll('input[id="eaSearchInput"], select[id="eaSchoolFilter"], select[id="eaInterestFilter"]').forEach(el => {
+      document.querySelectorAll('input[id="eaSearchInput"], select[id="eaSchoolFilter"], select[id="eaInterestFilter"], input[id="questionSearchInput"], select[id="questionStatusFilter"], select[id="questionIdentityFilter"]').forEach(el => {
         el.addEventListener('focus', () => { el.style.borderColor = 'var(--gold)'; el.style.boxShadow = '0 0 0 3px var(--gold-glow)'; });
         el.addEventListener('blur',  () => { el.style.borderColor = ''; el.style.boxShadow = ''; });
       });

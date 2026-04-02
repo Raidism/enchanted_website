@@ -24,8 +24,11 @@ const ACCESS_GATE_PASSWORD_HASH = crypto.createHash("sha256").update(ACCESS_GATE
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const RATE_LIMIT_MAX_PUBLIC_WRITES = 80;
 const RATE_LIMIT_MAX_WAITLIST_WRITES = 24;
+const RATE_LIMIT_MAX_QUESTION_WRITES = 8;
 const RATE_LIMIT_MAX_LOGIN_ATTEMPTS = 18;
 const RATE_LIMIT_MAX_ACCESS_GATE_ATTEMPTS = 25;
+const QUESTION_DUPLICATE_WINDOW_MS = 15 * 60 * 1000;
+const QUESTION_COOLDOWN_MS = 90 * 1000;
 const STATIC_SHORT_CACHE_SECONDS = 60 * 60;
 const STATIC_LONG_CACHE_SECONDS = 60 * 60 * 24 * 7;
 const SITE_SETTINGS_CACHE_MS = 10 * 1000;
@@ -202,6 +205,8 @@ const readWaitlist = () => readJson("waitlist_entries", []);
 const writeWaitlist = (rows) => writeJson("waitlist_entries", rows.slice(0, 3000));
 const readDeletedWaitlist = () => readJson("waitlist_deleted", []);
 const writeDeletedWaitlist = (rows) => writeJson("waitlist_deleted", rows.slice(0, 500));
+const readQuestions = () => readJson("questions", []);
+const writeQuestions = (rows) => writeJson("questions", rows.slice(0, 3000));
 
 const createSeedUser = (user) => ({
   ...user,
@@ -265,6 +270,10 @@ const ensureSeedData = () => {
 
   if (!Array.isArray(readDeletedWaitlist())) {
     writeDeletedWaitlist([]);
+  }
+
+  if (!Array.isArray(readQuestions())) {
+    writeQuestions([]);
   }
 
   // Ensure analytics log file exists in normalized array format.
@@ -448,6 +457,12 @@ const waitlistWriteRateLimit = createRateLimit({
   maxRequests: RATE_LIMIT_MAX_WAITLIST_WRITES,
 });
 
+const questionWriteRateLimit = createRateLimit({
+  keyPrefix: "question-write",
+  windowMs: RATE_LIMIT_WINDOW_MS,
+  maxRequests: RATE_LIMIT_MAX_QUESTION_WRITES,
+});
+
 const loginRateLimit = createRateLimit({
   keyPrefix: "auth-login",
   windowMs: RATE_LIMIT_WINDOW_MS,
@@ -474,7 +489,39 @@ const normalizeWaitlistEntry = (entry) => ({
   notifiedAt: String(entry.notifiedAt || ""),
 });
 
+const normalizeQuestionText = (value) => String(value || "").replace(/\s+/g, " ").trim();
+
+const normalizeQuestionEntry = (entry) => ({
+  id: String(entry.id || `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`),
+  name: String(entry.name || "").trim(),
+  email: String(entry.email || "").trim().toLowerCase(),
+  question: normalizeQuestionText(entry.question),
+  isAnonymous: Boolean(entry.isAnonymous),
+  status: String(entry.status || "new").trim().toLowerCase(),
+  replyText: normalizeQuestionText(entry.replyText),
+  createdAt: String(entry.createdAt || nowIso()),
+  updatedAt: String(entry.updatedAt || entry.createdAt || nowIso()),
+  repliedAt: String(entry.repliedAt || ""),
+  repliedBy: String(entry.repliedBy || "").trim(),
+  sourcePath: String(entry.sourcePath || "/").trim().slice(0, 120),
+  ip: String(entry.ip || "Unknown").trim().slice(0, 80),
+  userAgent: String(entry.userAgent || "Unknown").trim().slice(0, 280),
+});
+
 const VALID_STATUSES = new Set(["pending", "green", "red", "saved"]);
+const VALID_QUESTION_STATUSES = new Set(["new", "reviewing", "replied", "resolved", "spam"]);
+
+const getQuestionFingerprint = (value) => normalizeQuestionText(value).toLowerCase();
+
+const hasSpammyCharacterRun = (value) => /(.)\1{24,}/i.test(String(value || ""));
+
+const looksLikeQuestionSpam = (value) => {
+  const text = normalizeQuestionText(value);
+  if (!text) return false;
+  if (/(https?:\/\/|www\.)/i.test(text)) return true;
+  if (hasSpammyCharacterRun(text)) return true;
+  return false;
+};
 
 const readCount = (value) => {
   const numeric = Number(value);
@@ -1171,6 +1218,144 @@ app.post("/api/waitlist", waitlistWriteRateLimit, (req, res) => {
 
   writeWaitlist(entries);
   return res.json({ success: true, message: "Added to waitlist.", entries, deletedEntries });
+});
+
+app.get("/api/questions", requireAuth, requireAdmin, (_req, res) => {
+  const entries = readQuestions().map(normalizeQuestionEntry);
+  return res.json({ success: true, entries });
+});
+
+app.post("/api/questions", questionWriteRateLimit, (req, res) => {
+  const name = String(req.body && req.body.name ? req.body.name : "").trim();
+  const email = String(req.body && req.body.email ? req.body.email : "").trim().toLowerCase();
+  const question = normalizeQuestionText(req.body && req.body.question ? req.body.question : "");
+  const sourcePath = String(req.body && req.body.path ? req.body.path : "/").trim() || "/";
+  const isAnonymous = Boolean(req.body && req.body.isAnonymous);
+  const honeypot = String(req.body && req.body.website ? req.body.website : "").trim();
+
+  if (honeypot) {
+    return res.status(400).json({ success: false, message: "Submission rejected." });
+  }
+
+  if (!question) {
+    return res.status(400).json({ success: false, message: "Please enter your question." });
+  }
+
+  if (question.length < 12 || question.length > 1500) {
+    return res.status(400).json({ success: false, message: "Questions must be between 12 and 1500 characters." });
+  }
+
+  if (name.length > 80 || email.length > 160) {
+    return res.status(400).json({ success: false, message: "One or more fields exceed the allowed length." });
+  }
+
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ success: false, message: "Please enter a valid email address." });
+  }
+
+  if (looksLikeQuestionSpam(question)) {
+    return res.status(400).json({ success: false, message: "Please remove links or repeated spam text and try again." });
+  }
+
+  const ip = getRequestIp(req);
+  const userAgent = String(req.headers && req.headers["user-agent"] ? req.headers["user-agent"] : "Unknown");
+  const entries = readQuestions().map(normalizeQuestionEntry);
+  const now = Date.now();
+  const fingerprint = getQuestionFingerprint(question);
+
+  const recentFromSameIp = entries.find((entry) => {
+    const createdAtMs = new Date(String(entry.createdAt || "")).getTime();
+    return entry.ip === ip && Number.isFinite(createdAtMs) && now - createdAtMs < QUESTION_COOLDOWN_MS;
+  });
+
+  if (recentFromSameIp) {
+    return res.status(429).json({
+      success: false,
+      message: "Please wait a little before sending another question.",
+      retryAfterSeconds: Math.max(1, Math.ceil((QUESTION_COOLDOWN_MS - (now - new Date(recentFromSameIp.createdAt).getTime())) / 1000)),
+    });
+  }
+
+  const duplicate = entries.find((entry) => {
+    const createdAtMs = new Date(String(entry.createdAt || "")).getTime();
+    return entry.ip === ip
+      && getQuestionFingerprint(entry.question) === fingerprint
+      && Number.isFinite(createdAtMs)
+      && now - createdAtMs < QUESTION_DUPLICATE_WINDOW_MS;
+  });
+
+  if (duplicate) {
+    return res.status(409).json({ success: false, message: "That question was already submitted recently." });
+  }
+
+  const nextEntry = normalizeQuestionEntry({
+    id: `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`,
+    name: isAnonymous ? "" : name,
+    email: isAnonymous ? "" : email,
+    question,
+    isAnonymous: isAnonymous || (!name && !email),
+    status: "new",
+    replyText: "",
+    createdAt: nowIso(),
+    updatedAt: nowIso(),
+    repliedAt: "",
+    repliedBy: "",
+    sourcePath,
+    ip,
+    userAgent,
+  });
+
+  entries.unshift(nextEntry);
+  writeQuestions(entries);
+  return res.json({ success: true, message: "Question received.", entry: nextEntry });
+});
+
+app.patch("/api/questions/:id", requireAuth, requireAdmin, (req, res) => {
+  const id = String(req.params && req.params.id ? req.params.id : "").trim();
+  if (!id) {
+    return res.status(400).json({ success: false, message: "Question id is required." });
+  }
+
+  const entries = readQuestions().map(normalizeQuestionEntry);
+  const idx = entries.findIndex((entry) => entry.id === id);
+  if (idx === -1) {
+    return res.status(404).json({ success: false, message: "Question not found." });
+  }
+
+  const nextStatusRaw = String(req.body && req.body.status ? req.body.status : "").trim().toLowerCase();
+  const hasReplyText = Object.prototype.hasOwnProperty.call(req.body || {}, "replyText");
+  const nextReplyText = hasReplyText ? normalizeQuestionText(req.body && req.body.replyText ? req.body.replyText : "") : null;
+
+  if (nextStatusRaw && !VALID_QUESTION_STATUSES.has(nextStatusRaw)) {
+    return res.status(400).json({ success: false, message: "Invalid question status." });
+  }
+
+  if (hasReplyText && nextReplyText && nextReplyText.length > 1200) {
+    return res.status(400).json({ success: false, message: "Replies must stay under 1200 characters." });
+  }
+
+  const currentEntry = entries[idx];
+  const nextEntry = {
+    ...currentEntry,
+    updatedAt: nowIso(),
+  };
+
+  if (nextStatusRaw) {
+    nextEntry.status = nextStatusRaw;
+  }
+
+  if (hasReplyText) {
+    nextEntry.replyText = nextReplyText || "";
+    nextEntry.repliedAt = nextReplyText ? nowIso() : "";
+    nextEntry.repliedBy = nextReplyText ? String(req.auth.user.username || "").trim() : "";
+    if (nextReplyText && !nextStatusRaw) {
+      nextEntry.status = "replied";
+    }
+  }
+
+  entries[idx] = normalizeQuestionEntry(nextEntry);
+  writeQuestions(entries);
+  return res.json({ success: true, message: "Question updated.", entries });
 });
 
 app.get("/api/analytics", (req, res) => {

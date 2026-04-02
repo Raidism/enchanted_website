@@ -88,6 +88,8 @@
   const WAITLIST_KEY = "imperium_waitlist";
   const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
   const WAITLIST_API_URL = `${API_BASE}/waitlist`;
+  const QUESTIONS_API_URL = `${API_BASE}/questions`;
+  const QUESTIONS_KEY = "imperium_questions";
   const ANNOUNCEMENTS_KEY = "imperium_announcements";
   const SECRETARIAT_KEY = "imperium_secretariat";
   const ACTIVITY_KEY = "imperium_admin_activity";
@@ -99,6 +101,12 @@
   const eaLiveCount = document.getElementById("eaLiveCount");
   const eaExportBtn = document.getElementById("eaExportBtn");
   const eaNotifyAllBtn = document.getElementById("eaNotifyAllBtn");
+  const questionSearchInput = document.getElementById("questionSearchInput");
+  const questionStatusFilter = document.getElementById("questionStatusFilter");
+  const questionIdentityFilter = document.getElementById("questionIdentityFilter");
+  const questionTableBody = document.getElementById("questionTableBody");
+  const questionInboxCount = document.getElementById("questionInboxCount");
+  const questionOpenCountPill = document.getElementById("questionOpenCountPill");
 
   const launchOpsForm = document.getElementById("launchOpsForm");
   const applicationsOpenToggle = document.getElementById("applicationsOpenToggle");
@@ -136,6 +144,7 @@
   const activityLogList = document.getElementById("activityLogList");
 
   let waitlistRows = [];
+  let questionRows = [];
   let autoSaveTimer = null;
 
   const toDateTimeLocalValue = (isoValue) => {
@@ -179,6 +188,26 @@
       "sponsors-partnerships": "Partnerships",
     };
     return labels[key] || escapeHtml(value || "Unknown");
+  };
+
+  const questionStatusLabel = (value) => {
+    const key = String(value || "new").trim().toLowerCase();
+    const labels = {
+      new: "New",
+      reviewing: "Reviewing",
+      replied: "Replied",
+      resolved: "Resolved",
+      spam: "Spam",
+    };
+    return labels[key] || "New";
+  };
+
+  const questionStatusClass = (value) => {
+    const key = String(value || "new").trim().toLowerCase();
+    if (key === "resolved") return "live";
+    if (key === "spam") return "down";
+    if (key === "replied") return "live";
+    return key === "reviewing" ? "busy" : "busy";
   };
 
   const readLocal = (key, fallback) => {
@@ -272,6 +301,21 @@
     }
   };
 
+  const fetchQuestionRows = async () => {
+    try {
+      const response = await fetch(QUESTIONS_API_URL, { method: "GET", cache: "no-store" });
+      if (!response.ok) throw new Error("Failed");
+      const payload = await response.json();
+      if (!payload || !Array.isArray(payload.entries)) throw new Error("Invalid payload");
+      questionRows = payload.entries;
+      writeLocal(QUESTIONS_KEY, questionRows);
+      return questionRows;
+    } catch {
+      questionRows = readLocal(QUESTIONS_KEY, []);
+      return questionRows;
+    }
+  };
+
   const postWaitlistAction = async (payload) => {
     const response = await fetch(WAITLIST_API_URL, {
       method: "POST",
@@ -285,6 +329,23 @@
     if (Array.isArray(data.entries)) {
       waitlistRows = data.entries;
       writeLocal(WAITLIST_KEY, waitlistRows);
+    }
+    return data;
+  };
+
+  const patchQuestionEntry = async (id, payload) => {
+    const response = await fetch(`${QUESTIONS_API_URL}/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || "Question update failed.");
+    }
+    if (Array.isArray(data.entries)) {
+      questionRows = data.entries;
+      writeLocal(QUESTIONS_KEY, questionRows);
     }
     return data;
   };
@@ -305,6 +366,26 @@
       if (interest !== "all" && role !== interest) return false;
       if (!q) return true;
       return name.includes(q) || email.includes(q) || schoolLower.includes(q);
+    });
+  };
+
+  const getFilteredQuestionRows = () => {
+    const q = String(questionSearchInput && questionSearchInput.value || "").trim().toLowerCase();
+    const status = String(questionStatusFilter && questionStatusFilter.value || "all");
+    const identity = String(questionIdentityFilter && questionIdentityFilter.value || "all");
+
+    return questionRows.filter((row) => {
+      const isAnonymous = Boolean(row.isAnonymous) || (!row.name && !row.email);
+      const sender = String(row.name || "").toLowerCase();
+      const email = String(row.email || "").toLowerCase();
+      const question = String(row.question || "").toLowerCase();
+      const currentStatus = String(row.status || "new").toLowerCase();
+
+      if (status !== "all" && currentStatus !== status) return false;
+      if (identity === "named" && isAnonymous) return false;
+      if (identity === "anonymous" && !isAnonymous) return false;
+      if (!q) return true;
+      return sender.includes(q) || email.includes(q) || question.includes(q);
     });
   };
 
@@ -378,12 +459,17 @@
       .sort((a, b) => a[0].localeCompare(b[0]))
       .slice(-10);
 
+    const openQuestions = questionRows.filter((row) => !["resolved", "spam"].includes(String(row.status || "new").toLowerCase())).length;
+    const repliedQuestions = questionRows.filter((row) => String(row.status || "").toLowerCase() === "replied").length;
+
     [
       `Total early access signups: ${total}`,
       `Signups in last 24 hours: ${last24}`,
       `Most common schools: ${topSchools}`,
       `Interest distribution: ${interestDistribution}`,
       `Growth over time (last 7 days): ${growth}`,
+      `Questions needing attention: ${openQuestions}`,
+      `Questions replied to: ${repliedQuestions}`,
     ].forEach((line) => {
       const li = document.createElement("li");
       li.textContent = line;
@@ -463,6 +549,66 @@
         </td>
       `;
       eaTableBody.appendChild(tr);
+    });
+
+    renderOpsAnalytics();
+  };
+
+  const renderQuestionTable = () => {
+    if (!questionTableBody) return;
+
+    const rows = getFilteredQuestionRows()
+      .slice()
+      .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+
+    const openCount = questionRows.filter((row) => !["resolved", "spam"].includes(String(row.status || "new").toLowerCase())).length;
+    if (questionInboxCount) questionInboxCount.textContent = String(questionRows.length);
+    if (questionOpenCountPill) {
+      questionOpenCountPill.textContent = `Open: ${openCount}`;
+      questionOpenCountPill.className = `status-pill ${openCount ? "busy" : "live"}`;
+    }
+
+    questionTableBody.innerHTML = "";
+    if (!rows.length) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = '<td colspan="6">No questions match the current filter.</td>';
+      questionTableBody.appendChild(tr);
+      renderOpsAnalytics();
+      return;
+    }
+
+    rows.slice(0, 400).forEach((row) => {
+      const tr = document.createElement("tr");
+      const senderName = row.isAnonymous || (!row.name && !row.email) ? "Anonymous" : String(row.name || "Unnamed");
+      const senderMeta = row.isAnonymous
+        ? "No follow-up details"
+        : String(row.email || "No email provided");
+      const replyPreview = row.replyText
+        ? `${escapeHtml(String(row.replyText))}<div class="ops-note">${escapeHtml(`Saved by ${row.repliedBy || "admin"} on ${formatDateTime(row.repliedAt)}`)}</div>`
+        : '<span style="color:var(--text-3)">No reply saved</span>';
+
+      tr.innerHTML = `
+        <td>${escapeHtml(formatDateTime(row.createdAt))}</td>
+        <td>
+          <strong>${escapeHtml(senderName)}</strong>
+          <div class="ops-note">${escapeHtml(senderMeta)}</div>
+        </td>
+        <td>
+          <div style="max-width:340px;white-space:normal;line-height:1.6">${escapeHtml(String(row.question || ""))}</div>
+          <div class="ops-note">Source: ${escapeHtml(String(row.sourcePath || "/"))}</div>
+        </td>
+        <td><span class="status-pill ${questionStatusClass(row.status)}"><span class="status-dot-sm"></span>${escapeHtml(questionStatusLabel(row.status))}</span></td>
+        <td><div style="max-width:260px;white-space:normal;line-height:1.5">${replyPreview}</div></td>
+        <td>
+          <div class="ops-item-actions">
+            <button type="button" data-action="reply" data-id="${escapeHtml(String(row.id || ""))}">Reply</button>
+            <button type="button" data-action="set-status" data-id="${escapeHtml(String(row.id || ""))}" data-status="reviewing">Review</button>
+            <button type="button" data-action="set-status" data-id="${escapeHtml(String(row.id || ""))}" data-status="resolved">Resolve</button>
+            <button type="button" data-action="set-status" data-id="${escapeHtml(String(row.id || ""))}" data-status="spam">Spam</button>
+          </div>
+        </td>
+      `;
+      questionTableBody.appendChild(tr);
     });
 
     renderOpsAnalytics();
@@ -779,6 +925,9 @@
     if (eaSearchInput) eaSearchInput.addEventListener("input", renderWaitlistTable);
     if (eaSchoolFilter) eaSchoolFilter.addEventListener("change", renderWaitlistTable);
     if (eaInterestFilter) eaInterestFilter.addEventListener("change", renderWaitlistTable);
+    if (questionSearchInput) questionSearchInput.addEventListener("input", renderQuestionTable);
+    if (questionStatusFilter) questionStatusFilter.addEventListener("change", renderQuestionTable);
+    if (questionIdentityFilter) questionIdentityFilter.addEventListener("change", renderQuestionTable);
 
     if (eaExportBtn) eaExportBtn.addEventListener("click", exportRowsToCsv);
     if (eaNotifyAllBtn) eaNotifyAllBtn.addEventListener("click", () => {
@@ -812,6 +961,45 @@
           renderWaitlistTable();
         } catch (error) {
           showToast(String(error.message || "Update failed"), false);
+        } finally {
+          target.disabled = false;
+        }
+      });
+    }
+
+    if (questionTableBody) {
+      questionTableBody.addEventListener("click", async (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLButtonElement)) return;
+
+        const action = String(target.getAttribute("data-action") || "");
+        const id = String(target.getAttribute("data-id") || "");
+        if (!action || !id) return;
+
+        const row = questionRows.find((entry) => String(entry.id || "") === id);
+        if (!row) return;
+
+        target.disabled = true;
+        try {
+          if (action === "reply") {
+            const currentReply = String(row.replyText || "").trim();
+            const nextReply = window.prompt("Save reply for this question", currentReply);
+            if (nextReply === null) {
+              return;
+            }
+            await patchQuestionEntry(id, { replyText: nextReply, status: nextReply.trim() ? "replied" : "reviewing" });
+            logActivity(`Saved reply for question ${id}`);
+            showToast("Reply saved.", true);
+          } else if (action === "set-status") {
+            const status = String(target.getAttribute("data-status") || "").trim().toLowerCase();
+            if (!status) return;
+            await patchQuestionEntry(id, { status });
+            logActivity(`Marked question ${id} as ${status}`);
+            showToast(`Question marked ${status}.`, true);
+          }
+          renderQuestionTable();
+        } catch (error) {
+          showToast(String(error.message || "Question update failed."), false);
         } finally {
           target.disabled = false;
         }
@@ -932,11 +1120,12 @@
     }
 
     window.addEventListener("storage", (event) => {
-      if ([WAITLIST_KEY, ANNOUNCEMENTS_KEY, SECRETARIAT_KEY, ACTIVITY_KEY].includes(event.key || "")) {
+      if ([WAITLIST_KEY, QUESTIONS_KEY, ANNOUNCEMENTS_KEY, SECRETARIAT_KEY, ACTIVITY_KEY].includes(event.key || "")) {
         renderAnnouncements();
         renderSecretariat();
         renderActivityLog();
         fetchWaitlistRows().then(renderWaitlistTable);
+        fetchQuestionRows().then(renderQuestionTable);
       }
     });
   };
@@ -948,7 +1137,9 @@
     renderSecretariat();
     renderActivityLog();
     await fetchWaitlistRows();
+    await fetchQuestionRows();
     renderWaitlistTable();
+    renderQuestionTable();
     bindEvents();
   };
 

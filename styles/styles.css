@@ -332,6 +332,25 @@ section p.lead{font-size:1.06rem;line-height:1.8;color:var(--text-2);max-width:6
 .contact-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp-5);}
 .contact-card h3{color:var(--gold-soft);margin-bottom:0.5rem;}
 .contact-card p{color:var(--text-2);font-size:0.92rem;line-height:1.7;margin-bottom:var(--sp-3);}
+.contact-card--support{box-shadow:0 18px 40px rgba(0,0,0,0.18);}
+.contact-question-form{display:flex;flex-direction:column;gap:0.85rem;margin-top:var(--sp-3);}
+.contact-question-form label{font-size:0.82rem;font-weight:600;color:var(--text-2);margin-bottom:0.2rem;display:block;}
+.contact-form-split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.85rem;}
+.contact-question-form input,
+.contact-question-form textarea{width:100%;padding:0.8rem 0.95rem;border-radius:var(--r-md);border:1px solid var(--border-2);background:var(--surface-2);color:var(--text);font-size:0.92rem;font-family:inherit;transition:border-color 0.18s ease,box-shadow 0.18s ease;outline:none;}
+.contact-question-form textarea{resize:vertical;min-height:140px;line-height:1.65;}
+.contact-question-form input:focus,
+.contact-question-form textarea:focus{border-color:var(--border-gold);box-shadow:0 0 0 3px rgba(201,168,76,0.12);}
+.contact-anon-toggle{display:flex !important;align-items:center;gap:0.65rem;padding:0.75rem 0.9rem;border-radius:var(--r-md);border:1px solid var(--border);background:rgba(255,255,255,0.02);cursor:pointer;}
+.contact-anon-toggle input{width:16px;height:16px;accent-color:var(--gold-soft);margin:0;flex-shrink:0;}
+.contact-honeypot{position:absolute;left:-9999px;opacity:0;pointer-events:none;}
+.contact-form-footer{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:0.25rem;}
+.contact-form-note{margin:0;color:var(--text-3) !important;font-size:0.78rem !important;}
+.contact-form-message{min-height:1.2rem;margin:0;color:var(--text-2);font-size:0.84rem;}
+.contact-form-message.is-success{color:var(--green-soft);}
+.contact-form-message.is-error,
+.contact-copy-message--error{color:#f0a3a3 !important;}
+.contact-card--email .email-link{display:inline-flex;justify-content:center;}
 .contact-meta{display:flex;flex-direction:column;gap:0.6rem;margin-top:var(--sp-2);}
 .contact-meta-item{display:flex;align-items:center;gap:0.7rem;font-size:0.85rem;color:var(--text-2);}
 .contact-meta-icon{width:28px;height:28px;border-radius:var(--r-sm);background:var(--gold-dim);border:1px solid var(--border-gold);display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;color:var(--gold-soft);}
@@ -444,6 +463,9 @@ a.apply-card-btn,.apply-card-btn{display:inline-flex;align-items:center;justify-
   .about-stat-strip{grid-template-columns:repeat(2,minmax(0,1fr));}
   .faq-grid{grid-template-columns:1fr 1fr;}
   .countdown{grid-template-columns:repeat(4,1fr);}
+  .contact-form-split{grid-template-columns:1fr;}
+  .contact-form-footer{align-items:stretch;}
+  .contact-form-footer .cta{width:100%;justify-content:center;}
 }
 @media(max-width:480px){
   :root{--sp-8:3.5rem;}
@@ -457,6 +479,7 @@ a.apply-card-btn,.apply-card-btn{display:inline-flex;align-items:center;justify-
   .site-header{padding:0 var(--sp-2);}
   .section-label{font-size:0.70rem;}
   .hero-logo-card{width:min(300px,88vw);}
+  .contact-card{padding:1rem;}
 }
 
 /*  Card Icons (emoji in card headings)  */

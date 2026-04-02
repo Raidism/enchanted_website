@@ -94,6 +94,7 @@ const CANONICAL_SITE_URL = "https://imperiumun.com/";
 const SITE_SETTINGS_STORAGE_KEY = "imperium_site_settings";
 const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
 const WAITLIST_API_URL = `${API_BASE}/waitlist`;
+const QUESTIONS_API_URL = `${API_BASE}/questions`;
 const INSTAGRAM_API_URL = `${API_BASE}/instagram`;
 const INSTAGRAM_USERNAME = "imperiummun26";
 const _connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
@@ -1590,6 +1591,105 @@ const shareBtn = document.getElementById("shareBtn");
 const shareMessage = document.getElementById("shareMessage");
 const contactEmailLink = document.querySelector("#contact .email-link");
 const contactCopyMessage = document.getElementById("contactCopyMessage");
+const contactQuestionForm = document.getElementById("contactQuestionForm");
+const contactQuestionName = document.getElementById("contactQuestionName");
+const contactQuestionEmail = document.getElementById("contactQuestionEmail");
+const contactQuestionAnonymous = document.getElementById("contactQuestionAnonymous");
+const contactQuestionBody = document.getElementById("contactQuestionBody");
+const contactQuestionSubmit = document.getElementById("contactQuestionSubmit");
+const contactQuestionMessage = document.getElementById("contactQuestionMessage");
+const contactQuestionWebsite = document.getElementById("contactQuestionWebsite");
+
+if (contactQuestionForm) {
+  const setQuestionMessage = (text, isSuccess = false) => {
+    if (!contactQuestionMessage) {
+      return;
+    }
+
+    contactQuestionMessage.textContent = text;
+    contactQuestionMessage.classList.toggle("is-success", Boolean(text) && isSuccess);
+    contactQuestionMessage.classList.toggle("is-error", Boolean(text) && !isSuccess);
+  };
+
+  const syncAnonymousQuestionState = () => {
+    const isAnonymous = Boolean(contactQuestionAnonymous && contactQuestionAnonymous.checked);
+    if (contactQuestionName) {
+      contactQuestionName.disabled = isAnonymous;
+      if (isAnonymous) {
+        contactQuestionName.value = "";
+      }
+    }
+    if (contactQuestionEmail) {
+      contactQuestionEmail.disabled = isAnonymous;
+      if (isAnonymous) {
+        contactQuestionEmail.value = "";
+      }
+    }
+  };
+
+  syncAnonymousQuestionState();
+  if (contactQuestionAnonymous) {
+    contactQuestionAnonymous.addEventListener("change", syncAnonymousQuestionState);
+  }
+
+  contactQuestionForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const payload = {
+      name: String(contactQuestionName && contactQuestionName.value || "").trim(),
+      email: String(contactQuestionEmail && contactQuestionEmail.value || "").trim(),
+      question: String(contactQuestionBody && contactQuestionBody.value || "").trim(),
+      isAnonymous: Boolean(contactQuestionAnonymous && contactQuestionAnonymous.checked),
+      website: String(contactQuestionWebsite && contactQuestionWebsite.value || "").trim(),
+      path: window.location.pathname || "/",
+    };
+
+    if (!payload.question) {
+      setQuestionMessage("Please enter your question.");
+      return;
+    }
+
+    if (payload.question.length < 12) {
+      setQuestionMessage("Please add a little more detail so the team can help properly.");
+      return;
+    }
+
+    if (!payload.isAnonymous && payload.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
+      setQuestionMessage("Please enter a valid email address, or leave it blank.");
+      return;
+    }
+
+    setQuestionMessage("");
+    if (contactQuestionSubmit) {
+      contactQuestionSubmit.disabled = true;
+      contactQuestionSubmit.textContent = "Sending...";
+    }
+
+    try {
+      const response = await fetch(QUESTIONS_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Could not send your question right now.");
+      }
+
+      contactQuestionForm.reset();
+      syncAnonymousQuestionState();
+      setQuestionMessage("Question received. The organizing team will review it shortly.", true);
+    } catch (error) {
+      setQuestionMessage(String(error && error.message ? error.message : "Could not send your question right now."));
+    } finally {
+      if (contactQuestionSubmit) {
+        contactQuestionSubmit.disabled = false;
+        contactQuestionSubmit.textContent = "Send Question";
+      }
+    }
+  });
+}
 
 if (contactEmailLink) {
   let contactCopyTimer = null;

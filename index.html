@@ -422,11 +422,65 @@
         <h2>Get in Touch</h2>
         <p>Questions, partnerships, or school collaboration? Reach us below. We respond within 24 hours.</p>
       </div>
-      <div class="contact-card" style="max-width:520px;">
-        <h3>Email Us</h3>
-        <p>The fastest way to reach the organizing team directly.</p>
-        <a class="cta mt-3" href="mailto:imperiummum2026@gmail.com">imperiummum2026@gmail.com</a>
-        <p id="contactCopyMessage" class="text-muted mt-2" aria-live="polite"></p>
+      <div class="contact-grid">
+        <div class="contact-card contact-card--support">
+          <h3>Ask the Team</h3>
+          <p>Send a real question to the organizers. You can stay anonymous, or leave your name and email if you want a follow-up.</p>
+
+          <form id="contactQuestionForm" class="contact-question-form" novalidate>
+            <div class="contact-form-split">
+              <div>
+                <label for="contactQuestionName">Name</label>
+                <input id="contactQuestionName" name="name" type="text" maxlength="80" placeholder="Optional" autocomplete="name" />
+              </div>
+              <div>
+                <label for="contactQuestionEmail">Email</label>
+                <input id="contactQuestionEmail" name="email" type="email" maxlength="160" placeholder="Optional for follow-up" autocomplete="email" />
+              </div>
+            </div>
+
+            <label class="contact-anon-toggle" for="contactQuestionAnonymous">
+              <input id="contactQuestionAnonymous" name="isAnonymous" type="checkbox" />
+              <span>Submit anonymously</span>
+            </label>
+
+            <label for="contactQuestionBody">Question</label>
+            <textarea id="contactQuestionBody" name="question" rows="5" maxlength="1500" placeholder="Ask about committees, partnerships, school collaboration, logistics, or anything else."></textarea>
+
+            <div class="contact-honeypot" aria-hidden="true">
+              <label for="contactQuestionWebsite">Website</label>
+              <input id="contactQuestionWebsite" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <div class="contact-form-footer">
+              <button id="contactQuestionSubmit" class="cta" type="submit">Send Question</button>
+              <p class="contact-form-note">No links, no spam, one question at a time.</p>
+            </div>
+            <p id="contactQuestionMessage" class="contact-form-message" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <div class="contact-card contact-card--email">
+          <h3>Email Us</h3>
+          <p>The fastest direct route for urgent coordination, partnership requests, and official school communication.</p>
+          <a class="cta email-link mt-3" href="mailto:imperiummum2026@gmail.com">imperiummum2026@gmail.com</a>
+          <p id="contactCopyMessage" class="text-muted mt-2" aria-live="polite"></p>
+
+          <div class="contact-meta">
+            <div class="contact-meta-item">
+              <span class="contact-meta-icon">24h</span>
+              <span>Typical response window: within one day</span>
+            </div>
+            <div class="contact-meta-item">
+              <span class="contact-meta-icon">DM</span>
+              <span>For urgent matters, Instagram messages are also monitored</span>
+            </div>
+            <div class="contact-meta-item">
+              <span class="contact-meta-icon">HQ</span>
+              <span>Based in Riyadh and coordinating school outreach across the region</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </main>
