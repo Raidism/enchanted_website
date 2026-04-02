@@ -136,10 +136,6 @@ const joinHeading = document.getElementById("joinHeading");
 const joinIntro = document.getElementById("joinIntro");
 const heroApplyBtn = document.getElementById("heroApplyBtn");
 const teamAppsLiveBadge = document.getElementById("teamApplicationsLiveBadge");
-const joinApplyBtn = document.getElementById("joinApplyBtn");
-const joinApplyCardTitle = document.getElementById("joinApplyCardTitle");
-const joinApplyCardText = document.getElementById("joinApplyCardText");
-const earlyAccessWrap = document.getElementById("earlyAccessWrap");
 const navAccessItem = document.getElementById("navAccessItem");
 const navApplyItem = document.getElementById("navApplyItem");
 
@@ -172,7 +168,7 @@ const applyJoinStateFromSettings = (settings) => {
   const isOpen = Boolean(settings && settings.teamApplicationsOpen);
   if (isOpen) {
     joinHeading.textContent = "Team Recruitment Is Open";
-    joinIntro.textContent = "Choose Volunteer, Media, or Security and submit your application directly.";
+    joinIntro.textContent = "Explore the three teams below and apply through the dedicated team portal.";
   } else {
     joinHeading.textContent = "Team Recruitment Is Currently Closed";
     joinIntro.textContent = "Applications are temporarily paused. Team role details remain visible until the next opening.";
@@ -200,47 +196,11 @@ const applyTeamRecruitmentCtaFromSettings = (settings) => {
       teamAppsLiveBadge.style.display = "none";
     }
   }
-
-  const applyCardBlock = document.getElementById("applyCardBlock");
-  if (applyCardBlock) {
-    applyCardBlock.hidden = !isOpen;
-    if (!isOpen) {
-      applyCardBlock.style.display = 'none';
-    } else {
-      applyCardBlock.style.display = '';
-    }
-  }
-
-  // Keep role cards visible in this section and hide the countdown timer card.
-  const countdownCardBlock = document.getElementById("countdownCardBlock");
   const closedRolesBlock = document.getElementById("closedRolesBlock");
-
-  if (countdownCardBlock) {
-    countdownCardBlock.hidden = true;
-    countdownCardBlock.style.display = 'none';
-  }
 
   if (closedRolesBlock) {
     closedRolesBlock.hidden = false;
-    closedRolesBlock.style.display = '';
-  }
-
-  if (joinApplyBtn) {
-    joinApplyBtn.textContent = isOpen ? "Apply For Teams" : "Find out when applications open";
-    joinApplyBtn.setAttribute("href", heroHref);
-    joinApplyBtn.hidden = !isOpen;
-  }
-
-  if (earlyAccessWrap) {
-    earlyAccessWrap.hidden = true; // Waitlist taken out since user said take that away entirely
-  }
-
-  if (joinApplyCardTitle) {
-    joinApplyCardTitle.textContent = "Apply For Teams Only 📝";
-  }
-
-  if (joinApplyCardText) {
-    joinApplyCardText.textContent = "Volunteer, Media, and Security applications are managed in one dedicated portal.";
+    closedRolesBlock.style.display = "";
   }
 };
 

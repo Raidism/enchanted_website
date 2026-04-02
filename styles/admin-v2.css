@@ -1730,9 +1730,6 @@ body.dash-visibility-failsafe .stat-card {
 /* table-wrap legacy */
 .table-wrap { overflow-x: auto; }
 
-/* maintenance-card-ops */
-.maintenance-card-ops {}
-
 /* ─── Access gate CSS compat ─────────────────────────────────────── */
 .dash-header {
   display: none; /* Hidden in new layout - sidebar replaces it */
@@ -1905,43 +1902,98 @@ body.dash-visibility-failsafe .stat-card {
 .apps-status-badge.success { background: var(--green-dim); color: var(--green-text); border-color: rgba(34,194,102,0.25); }
 .apps-status-badge.error   { background: var(--red-dim);   color: var(--red-text);   border-color: rgba(239,68,68,0.25); }
 
+.applications-team-page .page-content {
+  max-width: 1380px;
+}
+
+.applications-team-page .section-header {
+  position: relative;
+  padding: var(--s7);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(201,168,76,0.12), transparent 30%),
+    linear-gradient(180deg, rgba(17,24,32,0.96), rgba(12,17,24,0.98));
+  box-shadow: 0 24px 58px rgba(0,0,0,0.26);
+}
+
+.applications-team-page .section-desc {
+  max-width: 70ch;
+  font-size: 14px;
+}
+
 /* ─── Team Application Cards ─────────────────────────────────────── */
 .team-app-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--s5);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s6);
   margin-bottom: var(--s7);
 }
 .team-app-card {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: var(--s5);
+  background:
+    radial-gradient(circle at top right, rgba(255,255,255,0.05), transparent 28%),
+    linear-gradient(180deg, rgba(17,24,32,0.98), rgba(12,17,24,0.98));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  padding: clamp(1.15rem, 2vw, 1.55rem);
   display: flex;
   flex-direction: column;
-  gap: var(--s4);
-  transition: border-color var(--base), transform var(--base);
+  gap: var(--s5);
+  transition: border-color var(--base), transform var(--base), box-shadow var(--base);
+  min-height: 100%;
+  box-shadow: 0 24px 54px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.03);
+  position: relative;
+  overflow: hidden;
 }
-.team-app-card:hover { border-color: var(--border-2); transform: translateY(-2px); }
-.team-app-card--media    { border-top: 3px solid #4fd1c5; }
-.team-app-card--security { border-top: 3px solid #f6ad55; }
-.team-app-card--volunteer{ border-top: 3px solid #9f7aea; }
+.team-app-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(201,168,76,0.06), transparent 45%);
+}
+.team-app-card:hover { border-color: var(--border-2); transform: translateY(-4px); box-shadow: 0 32px 72px rgba(0,0,0,0.3); }
+.team-app-card--media    { border-top: 4px solid #4fd1c5; }
+.team-app-card--security { border-top: 4px solid #f6ad55; }
+.team-app-card--volunteer{ border-top: 4px solid #9f7aea; }
 .tac-header {
   display: flex;
   align-items: center;
-  gap: var(--s3);
+  gap: var(--s4);
+  position: relative;
+  z-index: 1;
 }
-.tac-icon { font-size: 22px; flex-shrink: 0; }
-.tac-title { font-size: 14px; font-weight: 700; color: var(--text); margin: 0; }
-.tac-sub   { font-size: 11px; color: var(--text-2); margin: 0; }
-.tac-body  { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s3); }
+.tac-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.tac-title { font-size: 18px; font-weight: 700; color: var(--text); margin: 0; }
+.tac-sub   { font-size: 12px; color: var(--text-2); margin: 4px 0 0; line-height: 1.6; }
+.tac-description {
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--text-2);
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+.tac-body  { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s3); position: relative; z-index: 1; }
 .tac-stat  { display: flex; flex-direction: column; gap: 2px; }
-.tac-value { font-size: 28px; font-weight: 700; font-family: "Cinzel", serif; color: var(--text); line-height: 1; }
-.tac-label { font-size: 10px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.08em; }
+.tac-value { font-size: clamp(34px, 4vw, 46px); font-weight: 700; font-family: "Cinzel", serif; color: var(--text); line-height: 1; }
+.tac-label { font-size: 11px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.1em; }
 .tac-trend {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 5px 10px;
   border-radius: 20px;
   background: var(--green-dim);
   color: var(--green-text);
@@ -1955,15 +2007,18 @@ body.dash-visibility-failsafe .stat-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--s3) var(--s4);
+  padding: var(--s4) var(--s5);
   background: var(--surface);
   border: 1px solid var(--border-2);
-  border-radius: var(--r-md);
-  color: var(--text-2);
+  border-radius: 16px;
+  color: var(--text);
   text-decoration: none;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   transition: all var(--fast);
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
 }
 .tac-action:hover {
   background: var(--gold-dim);
@@ -1975,7 +2030,7 @@ body.dash-visibility-failsafe .stat-card {
 /* ─── Team Analytics Layout ──────────────────────────────────────── */
 .team-analytics-layout {
   display: grid;
-  grid-template-columns: 1fr 280px;
+  grid-template-columns: minmax(0, 1fr) 320px;
   gap: var(--s6);
   align-items: start;
 }
@@ -1986,9 +2041,9 @@ body.dash-visibility-failsafe .stat-card {
 .team-trend-chart {
   width: 100%;
   height: auto;
-  max-height: 280px;
-  border-radius: var(--r-md);
-  background: var(--surface);
+  max-height: 360px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(12,17,24,0.92), rgba(9,13,18,0.98));
 }
 .team-metrics-col {
   display: flex;
@@ -1996,8 +2051,42 @@ body.dash-visibility-failsafe .stat-card {
   gap: var(--s4);
 }
 
+.applications-team-page .metric-card,
+.applications-team-page .team-chart-card,
+.applications-team-page .team-metrics-col .table-card {
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(17,24,32,0.98), rgba(12,17,24,0.98));
+  box-shadow: 0 22px 50px rgba(0,0,0,0.22);
+}
+
+@media (max-width: 1180px) {
+  .team-app-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .applications-team-page .section-header {
+    padding: var(--s5);
+    border-radius: 20px;
+  }
+
+  .tac-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 28px;
+  }
+
+  .tac-title {
+    font-size: 16px;
+  }
+
+  .tac-action {
+    padding: var(--s3) var(--s4);
+  }
+}
+
 /* ─── Chart legend ───────────────────────────────────────────────── */
-.chart-legend { }
 .legend-items {
   display: flex;
   align-items: center;

@@ -117,48 +117,9 @@
       <div class="section-head">
         <span class="section-label">Applications</span>
         <h2 id="joinHeading">Team Recruitment Is Open</h2>
-        <p id="joinIntro">Choose Volunteer, Media, or Security and submit your application. The countdown stays visible for timeline clarity.</p>
+        <p id="joinIntro">Explore the three teams below and choose the role that fits your strengths best.</p>
       </div>
-
-      <div class="launch-grid">
-        <article class="launch-card reveal pop-card" id="countdownCardBlock">
-          <h3 id="launchHeading">Applications Open In</h3>
-          <div id="countdown" class="countdown" aria-live="polite">
-            <div class="count-item"><span id="countDays">00</span><small>Days</small></div>
-            <div class="count-item"><span id="countHours">00</span><small>Hours</small></div>
-            <div class="count-item"><span id="countMinutes">00</span><small>Minutes</small></div>
-            <div class="count-item"><span id="countSeconds">00</span><small>Seconds</small></div>
-          </div>
-          <p id="launchHint" class="text-muted">Launch target can be adjusted anytime by the organizing team.</p>
-        </article>
-
-        <article class="launch-card reveal pop-card" id="applyCardBlock">
-          <h3 id="joinApplyCardTitle">Apply For Teams</h3>
-          <p id="joinApplyCardText" class="text-dim">Volunteer, Media, and Security applications are managed in one dedicated portal.</p>
-          <a id="joinApplyBtn" class="cta mt-3" href="/apply">Apply for Teams</a>
-          <div id="earlyAccessWrap" hidden>
-            <p class="text-muted">Early access signups: <span id="waitlistCount">0</span></p>
-            <form id="waitlistForm" class="waitlist-form" novalidate>
-              <label for="waitlistName">Full Name</label>
-              <input id="waitlistName" name="waitlistName" type="text" autocomplete="name" required />
-              <label for="waitlistEmail">Email</label>
-              <input id="waitlistEmail" name="waitlistEmail" type="email" autocomplete="email" required />
-              <label for="waitlistSchool">School</label>
-              <input id="waitlistSchool" name="waitlistSchool" type="text" required />
-              <label for="waitlistRole">Role Interest</label>
-              <select id="waitlistRole" name="waitlistRole" required>
-                <option value="delegate">Delegate</option>
-                <option value="chair">Chair</option>
-                <option value="staff">Staff</option>
-              </select>
-              <button type="submit">Reserve Early Access</button>
-            </form>
-            <p id="waitlistMessage" class="text-muted" aria-live="polite"></p>
-          </div>
-        </article>
-      </div>
-
-      <div id="closedRolesBlock" class="closed-roles-container" hidden>
+      <div id="closedRolesBlock" class="closed-roles-container closed-roles-container--always-on">
         <article class="team-roles-card reveal pop-card">
           <div class="team-role-header">
             <span class="team-role-icon">🤝</span>
