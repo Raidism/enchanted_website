@@ -90,133 +90,193 @@
 
     <div class="page-content" id="pageMiniHero" role="main">
 
-      <!-- Section header -->
-      <div class="section-header">
-        <p class="section-eyebrow">Recruitment Portal</p>
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:var(--s3);margin-bottom:var(--s3)">
-          <h1 class="section-title" style="margin-bottom:0">Team Applications</h1>
-          <div id="teamApplicationsNotice" class="apps-status-badge loading">
-            <span class="status-dot"></span>
-            <span>Checking status…</span>
+      <!-- ── Dashboard Header ──────────────────────────────────── -->
+      <div class="ta-page-header">
+        <div class="ta-page-header-left">
+          <a href="/applications" class="ta-back-link">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            Applications
+          </a>
+          <div class="ta-title-row">
+            <div>
+              <h1 class="ta-page-title">Team Applications</h1>
+              <p class="ta-page-subtitle">Recruitment analytics · live traffic · team-by-team visibility</p>
+            </div>
+            <div id="teamApplicationsNotice" class="apps-status-badge loading">
+              <span class="status-dot"></span>
+              <span>Checking…</span>
+            </div>
           </div>
         </div>
-        <p class="section-desc">Application engagement analytics, live traffic patterns, and team-by-team recruitment visibility in one workspace.</p>
+        <div class="ta-page-header-right">
+          <div class="ta-last-updated">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Live data
+          </div>
+        </div>
       </div>
 
-      <a href="/applications" style="display:inline-flex;align-items:center;gap:var(--s2);font-size:12px;color:var(--text-2);text-decoration:none;margin-bottom:var(--s6);border:1px solid var(--border);border-radius:var(--r-md);padding:var(--s2) var(--s4);transition:all var(--fast)" onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--border-2)'" onmouseout="this.style.color='var(--text-2)';this.style.borderColor='var(--border)'">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-        Back to Applications
-      </a>
+      <!-- ── Global Stats Row ──────────────────────────────────── -->
+      <div class="ta-global-stats">
+        <div class="ta-stat-card">
+          <div class="ta-stat-icon ta-stat-icon--blue">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="ta-stat-body">
+            <span class="ta-stat-value" id="teamUniqueIps">—</span>
+            <span class="ta-stat-label">Unique Visitors</span>
+          </div>
+        </div>
+        <div class="ta-stat-card">
+          <div class="ta-stat-icon ta-stat-icon--gold">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="ta-stat-body">
+            <span class="ta-stat-value" id="teamTotalClicks">—</span>
+            <span class="ta-stat-label">Total Clicks</span>
+          </div>
+        </div>
+        <div class="ta-stat-card">
+          <div class="ta-stat-icon ta-stat-icon--green">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </div>
+          <div class="ta-stat-body">
+            <span class="ta-stat-value">3</span>
+            <span class="ta-stat-label">Active Teams</span>
+          </div>
+        </div>
+      </div>
 
-      <!-- ── Team Cards ──────────────────────────────────────────── -->
+      <!-- ── Team Cards ───────────────────────────────────────── -->
       <div class="team-app-cards-grid">
 
         <article class="team-app-card team-app-card--media">
+          <div class="tac-accent"></div>
           <div class="tac-header">
             <span class="tac-icon">📸</span>
-            <div>
+            <div class="tac-header-text">
               <h3 class="tac-title">Media Team</h3>
-              <p class="tac-sub">Storytelling, coverage, and content capture</p>
+              <p class="tac-sub">Storytelling · Coverage · Content</p>
             </div>
           </div>
-          <p class="tac-description">Track how much attention the media role is getting and jump straight into the incoming form pipeline.</p>
-          <div class="tac-body">
+          <div class="tac-metric-row">
             <div class="tac-stat">
-              <span class="tac-value" id="teamMediaCount">0</span>
-              <span class="tac-label">Application Clicks</span>
+              <span class="tac-value" id="teamMediaCount">—</span>
+              <span class="tac-label">Clicks</span>
             </div>
-            <span class="tac-trend" id="teamMediaTrend">↑ +0%</span>
+            <span class="tac-trend" id="teamMediaTrend">— %</span>
           </div>
-          <a href="https://forms.gle/AyDvjdU37rn2L98GA" target="_blank" rel="noopener noreferrer" class="tac-action">
-            Open Media Form <span aria-hidden="true">↗</span>
-          </a>
+          <div class="tac-actions">
+            <a href="https://forms.gle/AyDvjdU37rn2L98GA" target="_blank" rel="noopener noreferrer" class="tac-btn tac-btn--primary">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Open Form
+            </a>
+          </div>
         </article>
 
         <article class="team-app-card team-app-card--security">
+          <div class="tac-accent"></div>
           <div class="tac-header">
             <span class="tac-icon">🛡️</span>
-            <div>
+            <div class="tac-header-text">
               <h3 class="tac-title">Security Team</h3>
-              <p class="tac-sub">Access control, safety, and floor discipline</p>
+              <p class="tac-sub">Access Control · Safety · Discipline</p>
             </div>
           </div>
-          <p class="tac-description">Monitor demand for the security role and keep the review link immediately available for fast admin action.</p>
-          <div class="tac-body">
+          <div class="tac-metric-row">
             <div class="tac-stat">
-              <span class="tac-value" id="teamSecurityCount">0</span>
-              <span class="tac-label">Application Clicks</span>
+              <span class="tac-value" id="teamSecurityCount">—</span>
+              <span class="tac-label">Clicks</span>
             </div>
-            <span class="tac-trend" id="teamSecurityTrend">↑ +0%</span>
+            <span class="tac-trend" id="teamSecurityTrend">— %</span>
           </div>
-          <a href="https://forms.gle/bZL3meH9Mfaj2Zz66" target="_blank" rel="noopener noreferrer" class="tac-action">
-            Open Security Form <span aria-hidden="true">↗</span>
-          </a>
+          <div class="tac-actions">
+            <a href="https://forms.gle/bZL3meH9Mfaj2Zz66" target="_blank" rel="noopener noreferrer" class="tac-btn tac-btn--primary">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Open Form
+            </a>
+          </div>
         </article>
 
         <article class="team-app-card team-app-card--volunteer">
+          <div class="tac-accent"></div>
           <div class="tac-header">
             <span class="tac-icon">🤝</span>
-            <div>
+            <div class="tac-header-text">
               <h3 class="tac-title">Volunteer Team</h3>
-              <p class="tac-sub">Logistics, registration, and event operations</p>
+              <p class="tac-sub">Logistics · Registration · Operations</p>
             </div>
           </div>
-          <p class="tac-description">See how strongly operations roles are performing and move directly from analytics into the volunteer application form.</p>
-          <div class="tac-body">
+          <div class="tac-metric-row">
             <div class="tac-stat">
-              <span class="tac-value" id="teamVolunteerCount">0</span>
-              <span class="tac-label">Application Clicks</span>
+              <span class="tac-value" id="teamVolunteerCount">—</span>
+              <span class="tac-label">Clicks</span>
             </div>
-            <span class="tac-trend" id="teamVolunteerTrend">↑ +0%</span>
+            <span class="tac-trend" id="teamVolunteerTrend">— %</span>
           </div>
-          <a href="https://forms.gle/WRPNc177MNwcm8899" target="_blank" rel="noopener noreferrer" class="tac-action">
-            Open Volunteer Form <span aria-hidden="true">↗</span>
-          </a>
+          <div class="tac-actions">
+            <a href="https://forms.gle/WRPNc177MNwcm8899" target="_blank" rel="noopener noreferrer" class="tac-btn tac-btn--primary">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Open Form
+            </a>
+          </div>
         </article>
 
       </div>
 
-      <!-- ── Analytics Grid ─────────────────────────────────────── -->
-      <div class="team-analytics-layout">
+      <!-- ── Bottom Analytics ──────────────────────────────────── -->
+      <div class="ta-analytics-grid">
 
         <!-- Trend chart -->
-        <article class="table-card team-chart-card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s4)">
-            <h3>Applications Trend</h3>
-            <span class="sub" style="font-size:10px;text-transform:uppercase;letter-spacing:.08em">14-day rolling</span>
-          </div>
-          <p id="teamTrendEmpty" class="sub" style="text-align:center;padding:var(--s6) 0">No click activity yet.</p>
-          <svg id="teamTrendChart" class="team-trend-chart" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet" aria-label="Team applications trend chart"></svg>
-          <div id="chartLegend" class="chart-legend" style="margin-top:var(--s4)"></div>
-        </article>
-
-        <!-- Metrics column -->
-        <div class="team-metrics-col">
-          <article class="metric-card">
-            <p class="metric-label">Unique Visitors</p>
-            <p class="metric-value" id="teamUniqueIps">0</p>
-            <p class="sub" style="font-size:10px;margin-top:var(--s1)">Unique IPs tracked</p>
-          </article>
-
-          <article class="metric-card">
-            <p class="metric-label">Total Clicks</p>
-            <p class="metric-value" id="teamTotalClicks">0</p>
-            <p class="sub" style="font-size:10px;margin-top:var(--s1)">Across all teams</p>
-          </article>
-
-          <article class="table-card" style="flex:1;min-height:0">
-            <h3 style="font-size:13px;margin-bottom:var(--s3)">Device Breakdown</h3>
-            <div id="deviceBreakdownList">
-              <div class="device-skeleton">
-                <div class="device-bar-loading"></div>
-                <div class="device-bar-loading" style="width:65%"></div>
-                <div class="device-bar-loading" style="width:42%"></div>
+        <article class="ta-chart-card">
+          <div class="ta-card-header">
+            <div class="ta-card-header-left">
+              <div class="ta-card-icon-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <div>
+                <h3 class="ta-card-title">Applications Trend</h3>
+                <span class="ta-card-subtitle">14-day rolling window</span>
               </div>
             </div>
-          </article>
-        </div>
+            <div id="chartLegend" class="chart-legend"></div>
+          </div>
 
-      </div><!-- /team-analytics-layout -->
+          <div class="ta-chart-body">
+            <div id="teamTrendEmpty" class="ta-empty-state" hidden>
+              <div class="ta-empty-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <p class="ta-empty-title">No activity yet</p>
+              <p class="ta-empty-desc">Data will appear once applications start receiving clicks</p>
+            </div>
+            <svg id="teamTrendChart" class="team-trend-chart" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet" aria-label="Team applications trend chart"></svg>
+          </div>
+        </article>
+
+        <!-- Device breakdown -->
+        <article class="ta-device-card">
+          <div class="ta-card-header">
+            <div class="ta-card-header-left">
+              <div class="ta-card-icon-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              </div>
+              <div>
+                <h3 class="ta-card-title">Device Breakdown</h3>
+                <span class="ta-card-subtitle">By platform</span>
+              </div>
+            </div>
+          </div>
+          <div id="deviceBreakdownList" class="ta-device-list">
+            <div class="device-skeleton">
+              <div class="device-bar-loading"></div>
+              <div class="device-bar-loading" style="width:65%"></div>
+              <div class="device-bar-loading" style="width:42%"></div>
+            </div>
+          </div>
+        </article>
+
+      </div><!-- /ta-analytics-grid -->
 
     </div><!-- /page-content -->
   </div><!-- /main-content -->
