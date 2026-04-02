@@ -67,7 +67,7 @@
   const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   const effectiveType = String(connection && connection.effectiveType ? connection.effectiveType : "").toLowerCase();
   const isConstrainedNetwork = Boolean(connection && connection.saveData) || /(^|[^a-z])2g|3g([^a-z]|$)/.test(effectiveType);
-  const shouldUseLiteMotion = (isTouchDevice && isPhoneViewport) || (isIOS && isInAppBrowser);
+  const shouldUseLiteMotion = isIOS && isInAppBrowser && isPhoneViewport;
 
   if (prefersReducedMotion || isConstrainedNetwork || shouldUseLiteMotion) {
     document.body.classList.add("mobile-reveal-lite");
@@ -99,11 +99,47 @@
     });
   }
 
-  document.querySelectorAll(".section.reveal, .reveal:not(.pop-card)").forEach((el) => {
-    el.style.opacity = "1";
-    el.style.transform = "none";
-    el.classList.add("show");
+  // Reveal section wrappers + non-pop-card elements with scroll trigger (CSS transition)
+  // Elements already in the viewport on load are shown with a slight delay so GSAP hero can start first
+  gsap.utils.toArray(".reveal:not(.pop-card)").forEach((el) => {
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.96) {
+      gsap.delayedCall(0.04, () => el.classList.add("show"));
+    } else {
+      ScrollTrigger.create({
+        trigger: el,
+        start: "top 92%",
+        once: true,
+        onEnter: () => el.classList.add("show"),
+      });
+    }
   });
+
+  // Section heads: staggered label → h2 → p typography reveals
+  document.querySelectorAll(".section-head").forEach((head) => {
+    const label = head.querySelector(".section-label");
+    const h2 = head.querySelector("h2");
+    const p = head.querySelector("p, .lead");
+    const targets = [label, h2, p].filter(Boolean);
+    if (!targets.length) return;
+
+    gsap.set(targets, { opacity: 0, y: 22 });
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: head, start: "top 84%", once: true },
+    });
+    if (label) tl.to(label, { opacity: 1, y: 0, duration: 0.48, ease: "power2.out" }, 0);
+    if (h2) tl.to(h2, { opacity: 1, y: 0, duration: 0.64, ease: "power3.out" }, 0.1);
+    if (p) tl.to(p, { opacity: 1, y: 0, duration: 0.52, ease: "power2.out" }, 0.24);
+  });
+
+  // About-stat strip: staggered reveal
+  const aboutStats = document.querySelectorAll(".about-stat");
+  if (aboutStats.length) {
+    gsap.set(aboutStats, { opacity: 0, y: 28, scale: 0.96 });
+    gsap.to(aboutStats, {
+      scrollTrigger: { trigger: ".about-stat-strip", start: "top 85%", once: true },
+      opacity: 1, y: 0, scale: 1, stagger: 0.1, duration: 0.68, ease: "expo.out",
+    });
+  }
 
   if (!isTouchDevice) {
     const heroTl = gsap.timeline({ defaults: { duration: 0.74, ease: "power3.out" } });
