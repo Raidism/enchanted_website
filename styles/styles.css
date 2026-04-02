@@ -379,8 +379,8 @@ section p.lead{font-size:1.06rem;line-height:1.8;color:var(--text-2);max-width:6
 .email-info-rows{display:flex;flex-direction:column;margin-top:1rem;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
 .email-info-row{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;padding:0.62rem 0.9rem;border-bottom:1px solid var(--border);}
 .email-info-row:last-child{border-bottom:none;}
-.email-info-key{font-size:0.8rem;font-weight:600;color:var(--text-3);white-space:nowrap;}
-.email-info-val{font-size:0.82rem;font-weight:500;color:var(--text-2);text-align:right;}
+.email-address-block{display:block;width:100%;padding:0;margin:0.7rem 0 0.15rem;border:none;border-radius:0;background:transparent;color:var(--gold-soft);font-size:0.95rem;font-weight:700;font-family:inherit;text-decoration:none;text-align:center;letter-spacing:0.01em;transition:color 0.2s ease,opacity 0.2s ease;}
+.email-address-block:hover{color:var(--gold-hi);opacity:0.96;}
 
 /*  Footer  */
 .site-footer{padding:var(--sp-6) 0;border-top:1px solid var(--border);text-align:center;}
