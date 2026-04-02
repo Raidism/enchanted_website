@@ -271,7 +271,7 @@
     const heroBadges = document.querySelectorAll(".hero-tags .hero-tag").length ? document.querySelectorAll(".hero-tags .hero-tag") : document.querySelectorAll(".hero-badges span");
     const heroActions = document.querySelectorAll(".hero-cta-row .cta");
 
-    if (heroLogo) heroTl.from(heroLogo, { opacity: 0, y: 36, scale: 0.9, duration: 0.92 }, 0);
+    if (heroLogo) heroTl.fromTo(heroLogo, { opacity: 0, y: 36, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.92 }, 0);
     if (eyebrow) heroTl.from(eyebrow, { opacity: 0, y: 16 }, 0.12);
     if (heroTitle) heroTl.from(heroTitle, { opacity: 0, y: 24 }, 0.2);
     if (heroText) heroTl.from(heroText, { opacity: 0, y: 16, duration: 0.65 }, 0.3);
