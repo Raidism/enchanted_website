@@ -164,9 +164,12 @@ const renderUsers = () => {
     const disableActionMode = isDisabled ? "enable" : "disable";
     const statusClass = isDisabled ? "disabled" : (online ? "online" : "offline");
     const statusLabel = isDisabled ? "Disabled" : (online ? "Online" : "Offline");
+    const passwordDisplay = isTargetAdmin
+      ? `<code style="font-size:0.85em;background:rgba(255,255,255,0.06);padding:2px 7px;border-radius:5px;letter-spacing:0.03em">${String(user.password || "—")}</code>`
+      : `<span class="masked-password" aria-label="Hidden password">${maskedPassword}</span>`;
     tr.innerHTML = `
       <td>${String(user.username || "")}</td>
-      <td><span class="masked-password" aria-label="Hidden password">${maskedPassword}</span></td>
+      <td>${passwordDisplay}</td>
       <td>${String(user.name || "")}</td>
       <td>${String(user.role || "member")}</td>
       <td><span class="user-state user-state--${statusClass}"><span class="user-state-dot"></span>${statusLabel}</span></td>
