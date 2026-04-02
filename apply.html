@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -26,129 +26,109 @@
     <img src="assets/background logo.png" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/imperium mun logo.jpg';" />
     <span class="ornament-grid"></span>
   </div>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
   <header class="site-header">
-    <div class="container nav-wrap apply-nav-wrap">
+    <div class="header-inner container">
       <a class="brand" href="/">IMPERIUM MUN</a>
-      <div class="nav-actions">
-        <a class="cta cta-ghost apply-access-link" href="/access">Access</a>
+      <div class="nav-right">
+        <a class="cta cta-ghost" href="/access" style="font-size:0.84rem;padding:0.55rem 1rem;min-height:38px;">Portal Access</a>
       </div>
     </div>
   </header>
 
-  <main class="container apply-main">
-    <section class="section apply-section">
-      <div class="apply-header">
-        <p class="eyebrow">Team Applications</p>
-        <h1 class="apply-title">Join Our Team</h1>
-        <p class="apply-subtitle">
-          Choose the team that matches your strengths. After selection, you'll complete a quick application on Google Forms.
-        </p>
-      </div>
+  <main class="apply-main">
+    <section class="apply-hero container">
+      <span class="section-label">Team Applications</span>
+      <h1>Join Our Team</h1>
+      <p>Choose the team that matches your strengths. You will complete a quick application on Google Forms after selecting your team.</p>
+    </section>
+
+    <section class="container" style="padding-bottom:var(--sp-8);">
+      <p id="applyStatusMessage" class="apply-status-message" aria-live="polite"></p>
 
       <div class="apply-cards-container">
-        <!-- Volunteer Team Card -->
-        <article class="apply-team-card volunteer-card pop-card reveal" data-team="volunteer">
-          <div class="apply-card-header">
-            <span class="apply-card-icon">🤝</span>
-            <h2 class="apply-card-title">Volunteer Team</h2>
-          </div>
-          <p class="apply-card-description">
-            Help run the conference on the ground. Manage registration, support committees, coordinate logistics, and ensure smooth operations across all conference days.
-          </p>
+
+        <article class="apply-team-card pop-card reveal" data-team="volunteer">
+          <div class="apply-card-accent"></div>
+          <div class="apply-card-icon"></div>
+          <p class="apply-card-subtitle">Volunteer Team</p>
+          <h2 class="apply-card-title">On The Ground</h2>
+          <p class="apply-card-desc">Help run the conference on the ground. Manage registration, support committees, coordinate logistics, and ensure smooth operations across all conference days.</p>
           <ul class="apply-card-features">
-            <li>Conference logistics & coordination</li>
-            <li>Delegate registration & support</li>
+            <li>Conference logistics &amp; coordination</li>
+            <li>Delegate registration &amp; support</li>
             <li>Committee room management</li>
             <li>Event day coordination</li>
           </ul>
-          <button type="button" class="apply-card-btn" data-team-cta>Apply as Volunteer</button>
+          <div class="apply-card-footer">
+            <button type="button" class="apply-card-btn" data-team-cta>Apply as Volunteer</button>
+          </div>
         </article>
 
-        <!-- Media Team Card -->
-        <article class="apply-team-card media-card pop-card reveal" data-team="media">
-          <div class="apply-card-header">
-            <span class="apply-card-icon">📸</span>
-            <h2 class="apply-card-title">Media Team</h2>
-          </div>
-          <p class="apply-card-description">
-            Capture Imperium MUN's story through photography, videography, and social media. Create compelling content that showcases the conference to our community.
-          </p>
+        <article class="apply-team-card pop-card reveal stagger-1" data-team="media">
+          <div class="apply-card-accent"></div>
+          <div class="apply-card-icon"></div>
+          <p class="apply-card-subtitle">Media Team</p>
+          <h2 class="apply-card-title">Capture the Story</h2>
+          <p class="apply-card-desc">Capture Imperium MUN through photography, videography, and social media. Create compelling content that showcases the conference to our community.</p>
           <ul class="apply-card-features">
-            <li>Photography & videography</li>
+            <li>Photography &amp; videography</li>
             <li>Social media content creation</li>
-            <li>Event highlights & coverage</li>
+            <li>Event highlights &amp; coverage</li>
             <li>Creative storytelling</li>
           </ul>
-          <button type="button" class="apply-card-btn" data-team-cta>Apply as Media</button>
+          <div class="apply-card-footer">
+            <button type="button" class="apply-card-btn" data-team-cta>Apply as Media</button>
+          </div>
         </article>
 
-        <!-- Security Team Card -->
-        <article class="apply-team-card security-card pop-card reveal" data-team="security">
-          <div class="apply-card-header">
-            <span class="apply-card-icon">🛡️</span>
-            <h2 class="apply-card-title">Security Team</h2>
-          </div>
-          <p class="apply-card-description">
-            Support delegate safety and maintain professional order. Coordinate access control, conduct room checks, manage crowd flow, and ensure venue security protocols.
-          </p>
+        <article class="apply-team-card pop-card reveal stagger-2" data-team="security">
+          <div class="apply-card-accent"></div>
+          <div class="apply-card-icon"></div>
+          <p class="apply-card-subtitle">Security Team</p>
+          <h2 class="apply-card-title">Keep Order</h2>
+          <p class="apply-card-desc">Support delegate safety and maintain professional order. Coordinate access control, conduct room checks, manage crowd flow, and ensure venue security protocols.</p>
           <ul class="apply-card-features">
-            <li>Access control & coordination</li>
+            <li>Access control &amp; coordination</li>
             <li>Venue security protocols</li>
             <li>Delegate safety assurance</li>
             <li>Professional order maintenance</li>
           </ul>
-          <button type="button" class="apply-card-btn" data-team-cta>Apply as Security</button>
+          <div class="apply-card-footer">
+            <button type="button" class="apply-card-btn" data-team-cta>Apply as Security</button>
+          </div>
         </article>
+
       </div>
 
-      <div id="applyClosedRolesPreview" class="apply-roles-preview" hidden>
-        <article class="apply-role-mini-card">
-          <h3 class="apply-role-mini-title">Media Team</h3>
-          <p class="apply-role-mini-description">
-            Capture the conference through photography, videography, and social coverage that tells the Imperium MUN story.
-          </p>
-        </article>
-        <article class="apply-role-mini-card">
-          <h3 class="apply-role-mini-title">Volunteer Team</h3>
-          <p class="apply-role-mini-description">
-            Support core operations including registration, room coordination, and day-to-day logistics across conference activities.
-          </p>
-        </article>
-        <article class="apply-role-mini-card">
-          <h3 class="apply-role-mini-title">Security Team</h3>
-          <p class="apply-role-mini-description">
-            Maintain safe, organized spaces by managing access flow, conducting checks, and reinforcing venue protocols.
-          </p>
-        </article>
+      <div id="applyClosedRolesPreview" class="apply-closed-preview" hidden>
+        <h3>Applications Are Currently Closed</h3>
+        <p>Team applications are not open at this time. Follow us on Instagram to be notified when they open.</p>
+        <a class="cta mt-3" href="https://instagram.com/imperiummun26" target="_blank" rel="noopener noreferrer">Follow @imperiummun26</a>
       </div>
-
-      <p id="applyStatusMessage" class="apply-status-message" aria-live="polite"></p>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-wrap">
-      <p>© <span id="year"></span> Imperium MUN. All rights reserved.</p>
-      <a href="https://instagram.com/imperiummun26" target="_blank" rel="noopener noreferrer" aria-label="Visit Imperium MUN on Instagram" class="insta-link">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-          <path fill="currentColor" d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 1.75A4 4 0 0 0 3.75 7.75v8.5a4 4 0 0 0 4 4h8.5a4 4 0 0 0 4-4v-8.5a4 4 0 0 0-4-4h-8.5ZM17.5 6.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5Z"/>
-        </svg>
-      </a>
+    <div class="container">
+      <span class="brand-footer">IMPERIUM MUN</span>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="#top">Apply</a>
+        <a href="https://instagram.com/imperiummun26" target="_blank" rel="noopener noreferrer">Instagram</a>
+      </div>
+      <p> <span id="year"></span> Imperium MUN. All rights reserved.</p>
     </div>
-    <p class="main-credit">Made with love by the IT Team (<a class="credit-link" href="/contact">Adham</a>) ❤️</p>
   </footer>
 
+  <!-- Redirect overlay  IDs required by apply.js -->
   <div id="applyRedirectOverlay" class="apply-redirect-overlay" aria-hidden="true" hidden>
-    <div class="apply-redirect-card" role="status" aria-live="polite" aria-atomic="true">
-      <p id="applyRedirectTeam" class="apply-redirect-team">Volunteer Team</p>
-      <h3 id="applyRedirectTitle" class="apply-redirect-title">Preparing your application space...</h3>
-      <p id="applyRedirectMessage" class="apply-redirect-message">Redirecting in a moment.</p>
-      <div class="apply-redirect-loader" aria-hidden="true">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+    <div class="apply-redirect-modal" role="status" aria-live="polite" aria-atomic="true">
+      <p id="applyRedirectTeam" class="text-muted" style="font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin:0;">Volunteer Team</p>
+      <h3 id="applyRedirectTitle">Opening application form...</h3>
+      <p id="applyRedirectMessage" class="text-dim" style="font-size:0.9rem;">You will be redirected to Google Forms in a moment.</p>
+      <button class="cta redirect-cancel" id="applyRedirectCancel" type="button">Cancel</button>
     </div>
   </div>
 
@@ -158,4 +138,3 @@
   <script defer src="scripts/animations.js"></script>
 </body>
 </html>
-

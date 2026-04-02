@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Imperium MUN</title>
-  <meta name="description" content="Imperium MUN — Student-led Model United Nations conference in Riyadh." />
+  <meta name="description" content="Imperium MUN  Student-led Model United Nations conference in Riyadh." />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Imperium MUN" />
   <meta property="og:title" content="Imperium MUN" />
@@ -27,420 +27,425 @@
     <img src="assets/background logo.png" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/imperium mun logo.jpg';" />
     <span class="ornament-grid"></span>
   </div>
-  <header class="site-header">
-    <div class="container nav-wrap">
+
+  <div id="siteAnnouncement" class="site-announcement" hidden aria-live="polite"></div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner container">
       <a class="brand" href="#home">IMPERIUM MUN</a>
-      <div class="nav-actions">
-        <nav>
-          <ul class="nav-links">
-            <li><a href="#about">About</a></li>
-            <li id="navApplyItem"><a href="/apply">Apply</a></li>
-            <li><a href="#team">Leadership</a></li>
-            <li><a href="#details">Details</a></li>
-            <li><a href="#faq">FAQ</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li id="navAccessItem" hidden><a href="/access">Access</a></li>
-          </ul>
-        </nav>
+      <nav aria-label="Main navigation">
+        <ul class="nav-links">
+          <li><a href="#about">About</a></li>
+          <li id="navApplyItem"><a href="/apply">Apply</a></li>
+          <li><a href="#team">Leadership</a></li>
+          <li><a href="#details">Details</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li id="navAccessItem" hidden><a href="/access">Access</a></li>
+        </ul>
+      </nav>
+      <div class="nav-right">
         <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false" title="Toggle theme">
           <span class="theme-icon sun" aria-hidden="true">☀</span>
           <span class="theme-icon moon" aria-hidden="true">☾</span>
         </button>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" type="button">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+      <a href="#about">About</a>
+      <a href="/apply">Apply</a>
+      <a href="#team">Leadership</a>
+      <a href="#details">Details</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+    </nav>
   </header>
 
   <main id="home">
+    <!-- HERO -->
     <section class="hero container">
-      <div id="heroLogoCard" class="hero-logo-card reveal" role="button" tabindex="0" aria-label="Speed up logo ring animation">
-        <img src="assets/imperium mun logo.jpg" alt="Imperium MUN Logo" class="hero-logo" loading="eager" decoding="async" onerror="this.onerror=null;this.src='assets/imperium-logo.png';" />
-        <img src="assets/logo frame 2.png" alt="" class="hero-logo-frame" loading="eager" decoding="async" aria-hidden="true" />
-      </div>
       <div class="hero-content reveal">
-        <p class="eyebrow">Student-Led Model United Nations</p>
-        <h1>Imperium MUN</h1>
-        <p class="hero-text">
-          Building diplomacy, leadership, and global dialogue in Riyadh through an unforgettable MUN experience.
+        <span class="section-label">Student-Led Model United Nations</span>
+        <h1>Diplomacy Starts Here</h1>
+        <p class="subheadline" id="conferenceDescription">
+          Imperium MUN is a student-led conference built on collaboration, critical thinking, and real-world debate.
+          Delegates tackle global issues and develop skills that last a lifetime.
         </p>
-        <p id="siteAnnouncement" class="site-announcement" hidden></p>
-        <div class="hero-badges">
-          <span>📍 Riyadh, KSA</span>
-          <span>🗓️ Date: TBA</span>
-          <span>🌍 Student-Led</span>
-          <span id="teamApplicationsLiveBadge">✨ Team Applications Live</span>
-        </div>
         <div class="hero-cta-row" id="heroCtaRow">
-          <a class="cta" href="/apply" id="heroApplyBtn">Apply Now for Teams 📝</a>
-          <a class="cta cta-ghost" href="https://instagram.com/imperiummun26" target="_blank" rel="noopener noreferrer">Follow on Instagram 📸</a>
+          <a class="cta cta-primary" href="/apply" id="heroApplyBtn">Apply for Teams</a>
+          <a class="cta cta-ghost" href="https://instagram.com/imperiummun26" target="_blank" rel="noopener noreferrer">Follow on Instagram</a>
+        </div>
+        <div class="hero-tags">
+          <span class="hero-tag" id="conferenceLocation"> Riyadh, KSA</span>
+          <span class="hero-tag"> Date: TBA</span>
+          <span class="hero-tag"> Student-Led</span>
+          <span class="hero-tag badge-live" id="teamApplicationsLiveBadge">Team Applications Live</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div id="heroLogoCard" class="hero-logo-card reveal" role="button" tabindex="0" aria-label="Speed up logo ring animation">
+          <span class="ring ring-outer"></span>
+          <span class="ring ring-inner"></span>
+          <div class="logo-center">
+            <img src="assets/imperium mun logo.jpg" alt="Imperium MUN Logo" loading="eager" decoding="async"
+              onerror="this.onerror=null;this.src='assets/imperium-logo.png';" />
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- ABOUT -->
     <section id="about" class="section container reveal">
-      <p class="eyebrow">About The Conference</p>
-      <h2>What Is Imperium MUN?</h2>
-      <p id="conferenceDescription" class="section-intro">
-        Imperium MUN is a student-led conference focused on collaboration, critical thinking, and impactful debate.
-        Delegates take on real-world global issues and develop the skills needed to lead with confidence.
-      </p>
-      <p id="conferenceLocation" class="muted">Location: Riyadh, Saudi Arabia</p>
+      <div class="section-head">
+        <span class="section-label">About The Conference</span>
+        <h2>What Is Imperium MUN?</h2>
+        <p class="lead">
+          A student-led conference focused on collaboration, critical thinking, and impactful debate.
+          Delegates represent nations, negotiate treaties, and build the confidence to engage with global challenges.
+        </p>
+      </div>
+      <div class="about-stat-strip">
+        <div class="about-stat reveal"><span class="about-stat-num">3</span><span class="about-stat-label">Committees</span></div>
+        <div class="about-stat reveal stagger-1"><span class="about-stat-num">Riyadh</span><span class="about-stat-label">Location</span></div>
+        <div class="about-stat reveal stagger-2"><span class="about-stat-num">2026</span><span class="about-stat-label">Conference Year</span></div>
+      </div>
     </section>
 
+    <!-- APPLICATIONS / JOIN -->
     <section id="join" class="section container reveal">
-      <p class="eyebrow">Applications</p>
-      <h2 id="joinHeading">Team Recruitment Is Open</h2>
-      <p id="joinIntro" class="section-intro">Choose Volunteer, Media, or Security and submit your application directly. The countdown remains visible for timeline clarity.</p>
+      <div class="section-head">
+        <span class="section-label">Applications</span>
+        <h2 id="joinHeading">Team Recruitment Is Open</h2>
+        <p id="joinIntro">Choose Volunteer, Media, or Security and submit your application. The countdown stays visible for timeline clarity.</p>
+      </div>
 
       <div class="launch-grid">
         <article class="launch-card reveal pop-card" id="countdownCardBlock">
-          <h3 id="launchHeading">Applications Open In ⏳</h3>
+          <h3 id="launchHeading">Applications Open In</h3>
           <div id="countdown" class="countdown" aria-live="polite">
             <div class="count-item"><span id="countDays">00</span><small>Days</small></div>
             <div class="count-item"><span id="countHours">00</span><small>Hours</small></div>
             <div class="count-item"><span id="countMinutes">00</span><small>Minutes</small></div>
             <div class="count-item"><span id="countSeconds">00</span><small>Seconds</small></div>
           </div>
-          <p id="launchHint" class="muted">Launch target can be adjusted anytime by the organizing team.</p>
+          <p id="launchHint" class="text-muted">Launch target can be adjusted anytime by the organizing team.</p>
         </article>
 
-        <div id="closedRolesBlock" class="closed-roles-container" hidden>
-          <article class="launch-card reveal pop-card team-roles-card volunteer-card">
-            <div class="team-role-header">
-              <span class="team-role-icon">🤝</span>
-              <h3 class="team-role-title">Volunteer Team</h3>
-            </div>
-            <p class="team-role-description">Help run the conference on the ground. Manage registration, support committees, coordinate logistics, and ensure smooth operations across all conference days.</p>
-            <ul class="team-role-features">
-              <li>Conference logistics & coordination</li>
-              <li>Delegate registration & support</li>
-              <li>Committee room management</li>
-              <li>Event day coordination</li>
-            </ul>
-          </article>
-
-          <article class="launch-card reveal pop-card team-roles-card media-card">
-            <div class="team-role-header">
-              <span class="team-role-icon">📸</span>
-              <h3 class="team-role-title">Media Team</h3>
-            </div>
-            <p class="team-role-description">Capture Imperium MUN's story through photography, videography, and social media. Create compelling content that showcases the conference to our community.</p>
-            <ul class="team-role-features">
-              <li>Photography & videography</li>
-              <li>Social media content creation</li>
-              <li>Event highlights & coverage</li>
-              <li>Creative storytelling</li>
-            </ul>
-          </article>
-
-          <article class="launch-card reveal pop-card team-roles-card security-card">
-            <div class="team-role-header">
-              <span class="team-role-icon">🛡️</span>
-              <h3 class="team-role-title">Security Team</h3>
-            </div>
-            <p class="team-role-description">Support delegate safety and maintain professional order. Coordinate access control, conduct room checks, manage crowd flow, and ensure venue security protocols.</p>
-            <ul class="team-role-features">
-              <li>Access control & coordination</li>
-              <li>Venue security protocols</li>
-              <li>Delegate safety assurance</li>
-              <li>Professional order maintenance</li>
-            </ul>
-          </article>
-        </div>
-
         <article class="launch-card reveal pop-card" id="applyCardBlock">
-          <h3 id="joinApplyCardTitle">Apply For Teams Only 📝</h3>
-          <p id="joinApplyCardText" class="muted">Volunteer, Media, and Security applications are managed in one dedicated portal.</p>
-          <a id="joinApplyBtn" class="cta" href="/apply">Apply For Teams</a>
+          <h3 id="joinApplyCardTitle">Apply For Teams</h3>
+          <p id="joinApplyCardText" class="text-dim">Volunteer, Media, and Security applications are managed in one dedicated portal.</p>
+          <a id="joinApplyBtn" class="cta mt-3" href="/apply">Apply for Teams</a>
           <div id="earlyAccessWrap" hidden>
-            <p class="muted">Early access signups: <span id="waitlistCount">0</span></p>
+            <p class="text-muted">Early access signups: <span id="waitlistCount">0</span></p>
             <form id="waitlistForm" class="waitlist-form" novalidate>
               <label for="waitlistName">Full Name</label>
               <input id="waitlistName" name="waitlistName" type="text" autocomplete="name" required />
-
               <label for="waitlistEmail">Email</label>
               <input id="waitlistEmail" name="waitlistEmail" type="email" autocomplete="email" required />
-
               <label for="waitlistSchool">School</label>
               <input id="waitlistSchool" name="waitlistSchool" type="text" required />
-
               <label for="waitlistRole">Role Interest</label>
               <select id="waitlistRole" name="waitlistRole" required>
                 <option value="delegate">Delegate</option>
                 <option value="chair">Chair</option>
                 <option value="staff">Staff</option>
               </select>
-
-              <button type="submit">Reserve Early Access 🔔</button>
+              <button type="submit">Reserve Early Access</button>
             </form>
-            <p id="waitlistMessage" class="muted" aria-live="polite"></p>
+            <p id="waitlistMessage" class="text-muted" aria-live="polite"></p>
           </div>
+        </article>
+      </div>
+
+      <div id="closedRolesBlock" class="closed-roles-container" hidden>
+        <article class="team-roles-card reveal pop-card">
+          <div class="team-role-header">
+            <span class="team-role-icon"></span>
+            <h3 class="team-role-title">Volunteer Team</h3>
+          </div>
+          <p class="team-role-description">Help run the conference on the ground  logistics, registration, committee support, and event day coordination.</p>
+          <ul class="team-role-features">
+            <li>Conference logistics &amp; coordination</li>
+            <li>Delegate registration &amp; support</li>
+            <li>Committee room management</li>
+            <li>Event day coordination</li>
+          </ul>
+        </article>
+        <article class="team-roles-card reveal pop-card stagger-1">
+          <div class="team-role-header">
+            <span class="team-role-icon"></span>
+            <h3 class="team-role-title">Media Team</h3>
+          </div>
+          <p class="team-role-description">Capture Imperium MUN through photography, videography, and social media content that showcases the conference.</p>
+          <ul class="team-role-features">
+            <li>Photography &amp; videography</li>
+            <li>Social media content creation</li>
+            <li>Event highlights &amp; coverage</li>
+            <li>Creative storytelling</li>
+          </ul>
+        </article>
+        <article class="team-roles-card reveal pop-card stagger-2">
+          <div class="team-role-header">
+            <span class="team-role-icon"></span>
+            <h3 class="team-role-title">Security Team</h3>
+          </div>
+          <p class="team-role-description">Support delegate safety and maintain professional order  access control, venue protocols, and crowd management.</p>
+          <ul class="team-role-features">
+            <li>Access control &amp; coordination</li>
+            <li>Venue security protocols</li>
+            <li>Delegate safety assurance</li>
+            <li>Professional order maintenance</li>
+          </ul>
         </article>
       </div>
     </section>
 
+    <!-- WHY JOIN -->
     <section class="section container reveal">
-      <p class="eyebrow">Why Join</p>
-      <h2>Why Students Choose Imperium 🎯</h2>
+      <div class="section-head">
+        <span class="section-label">Why Join</span>
+        <h2>Why Students Choose Imperium</h2>
+      </div>
       <div class="value-grid">
         <article class="value-card reveal pop-card">
-          <h3>🎤 Speak With Confidence</h3>
+          <h3> Speak With Confidence</h3>
           <p>Master public speaking, negotiation, and persuasive diplomacy in a real conference environment.</p>
         </article>
-        <article class="value-card reveal pop-card">
-          <h3>⚖️ Lead Real Debates</h3>
+        <article class="value-card reveal pop-card stagger-1">
+          <h3> Lead Real Debates</h3>
           <p>Work on global issues that matter, with fast-paced committee simulations and practical teamwork.</p>
         </article>
-        <article class="value-card reveal pop-card">
-          <h3>🤝 Build Your Network</h3>
+        <article class="value-card reveal pop-card stagger-2">
+          <h3> Build Your Network</h3>
           <p>Connect with ambitious students from across Riyadh and grow long-term academic and leadership relationships.</p>
         </article>
       </div>
     </section>
 
+    <!-- SECRETARIAT -->
     <section id="team" class="section container reveal">
-      <p class="eyebrow">The Team</p>
-      <h2>Secretariat</h2>
-      <p class="section-intro">Meet the student leaders behind Imperium MUN.</p>
+      <div class="section-head">
+        <span class="section-label">The Team</span>
+        <h2>Secretariat</h2>
+        <p>Meet the student leaders behind Imperium MUN.</p>
+      </div>
       <div id="teamGrid" class="team-grid">
         <article class="team-card reveal pop-card">
           <div class="team-photo-wrap">
-            <img src="assets/secretary general.png" alt="Ahmed Pharaon" class="team-photo" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/imperium mun logo.jpg';" />
+            <img src="assets/secretary general.png" alt="Ahmed Pharaon" class="team-photo" loading="lazy" decoding="async"
+              onerror="this.onerror=null;this.src='assets/imperium mun logo.jpg';" />
             <img src="assets/Secretariat frame.png" alt="" class="team-photo-frame" loading="lazy" decoding="async" aria-hidden="true" />
           </div>
           <h3>Ahmed Pharaon</h3>
-          <p class="muted">Secretary-General (SG)</p>
-          <p class="team-intro">Leads the vision and direction of Imperium MUN, overseeing conference quality and delegate experience.</p>
+          <p class="text-muted">Secretary-General</p>
+          <p>Leads the vision and direction of Imperium MUN, overseeing quality and delegate experience.</p>
         </article>
-        <article class="team-card reveal pop-card">
+        <article class="team-card reveal pop-card stagger-1">
           <div class="team-photo-wrap">
-            <img src="assets/deputy secretary general.png" alt="Fahad Albulaihid" class="team-photo" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/imperium mun logo.jpg';" />
+            <img src="assets/deputy secretary general.png" alt="Fahad Albulaihid" class="team-photo" loading="lazy" decoding="async"
+              onerror="this.onerror=null;this.src='assets/imperium mun logo.jpg';" />
             <img src="assets/Secretariat frame.png" alt="" class="team-photo-frame" loading="lazy" decoding="async" aria-hidden="true" />
           </div>
           <h3>Fahad Albulaihid</h3>
-          <p class="muted">Deputy Secretary-General (DSG)</p>
-          <p class="team-intro">Supports conference planning and coordination across committees, operations, and internal communications.</p>
+          <p class="text-muted">Deputy Secretary-General</p>
+          <p>Supports planning and coordination across committees, operations, and internal communications.</p>
         </article>
-        <article class="team-card reveal pop-card">
+        <article class="team-card reveal pop-card stagger-2">
           <div class="team-photo-wrap">
-            <img src="assets/under secretary general.png" alt="Leen Obeidat" class="team-photo" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/imperium mun logo.jpg';" />
+            <img src="assets/under secretary general.png" alt="Leen Obeidat" class="team-photo" loading="lazy" decoding="async"
+              onerror="this.onerror=null;this.src='assets/imperium mun logo.jpg';" />
             <img src="assets/Secretariat frame.png" alt="" class="team-photo-frame" loading="lazy" decoding="async" aria-hidden="true" />
           </div>
           <h3>Leen Obeidat</h3>
-          <p class="muted">Under Secretary-General (USG)</p>
-          <p class="team-intro">Drives logistics and execution details to ensure a smooth, professional conference environment.</p>
+          <p class="text-muted">Under Secretary-General</p>
+          <p>Drives logistics and execution to ensure a smooth, professional conference environment.</p>
         </article>
       </div>
     </section>
 
-    <section id="details" class="section container reveal">
-      <p class="eyebrow">Community</p>
-      <h2>Community Snapshot</h2>
-      <div class="stats-grid">
-        <article class="stat-card reveal pop-card">
-          <h3>Instagram</h3>
-          <p class="stat-main stat-main-handle">@imperiummun26</p>
-          <p class="muted">Official account</p>
-        </article>
-        <article class="stat-card reveal pop-card">
-          <h3>Followers</h3>
-          <p class="stat-main" id="instagramFollowers" data-fallback="487">487</p>
-          <p class="muted">Growing community</p>
-        </article>
-        <article class="stat-card reveal pop-card">
-          <h3>Posts</h3>
-          <p class="stat-main" id="instagramPosts" data-fallback="18">18</p>
-          <p class="muted">Conference updates</p>
-        </article>
-        <article class="stat-card reveal pop-card">
-          <h3>Following</h3>
-          <p class="stat-main" id="instagramFollowing" data-fallback="4">4</p>
-          <p class="muted">Partner accounts</p>
-        </article>
-      </div>
-      <p id="instagramStatsStatus" class="instagram-sync-status" aria-live="polite">Live Instagram stats synced.</p>
+    <!-- COMMUNITY / STATS -->
+    <section id="details" class="section stats-section">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-label">Community</span>
+          <h2>Community Snapshot</h2>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card reveal pop-card">
+            <span class="stat-num">@imperiummun26</span>
+            <span class="stat-label">Official Account</span>
+          </article>
+          <article class="stat-card reveal pop-card stagger-1">
+            <span class="stat-num" id="instagramFollowers" data-fallback="487">487</span>
+            <span class="stat-label">Followers</span>
+            <p class="stat-sub">Growing community</p>
+          </article>
+          <article class="stat-card reveal pop-card stagger-2">
+            <span class="stat-num" id="instagramPosts" data-fallback="18">18</span>
+            <span class="stat-label">Posts</span>
+            <p class="stat-sub">Conference updates</p>
+          </article>
+          <article class="stat-card reveal pop-card stagger-3">
+            <span class="stat-num" id="instagramFollowing" data-fallback="4">4</span>
+            <span class="stat-label">Following</span>
+            <p class="stat-sub">Partner accounts</p>
+          </article>
+        </div>
+        <p id="instagramStatsStatus" class="text-muted mt-2" aria-live="polite" style="text-align:center;font-size:0.78rem;">Live Instagram stats synced.</p>
 
-      <div class="roadmap-card reveal pop-card">
-        <h3>Roadmap 🛣️</h3>
-        <p class="roadmap-subtitle">Our journey from launch to conference day.</p>
-        <div class="roadmap-list">
-          <div class="road-item road-item--active">
-            <div class="road-node">
-              <span class="road-node-dot">1</span>
-              <span class="road-node-line"></span>
+        <div class="roadmap-card reveal pop-card mt-4">
+          <h3>Roadmap</h3>
+          <p class="roadmap-subtitle">Our journey from launch to conference day.</p>
+          <div class="roadmap-list">
+            <div class="road-item road-item--active">
+              <div class="road-node">
+                <span class="road-node-dot">1</span>
+                <span class="road-node-line"></span>
+              </div>
+              <div class="road-body">
+                <span class="road-phase">Now  Live</span>
+                <h4>Early Access &amp; Outreach</h4>
+                <p>Building the early access list and connecting with schools across Riyadh.</p>
+              </div>
             </div>
-            <div class="road-body">
-              <span class="road-phase">Now — Live</span>
-              <h4>Early Access & Outreach</h4>
-              <p>Building the early access list and connecting with schools across Riyadh.</p>
+            <div class="road-item">
+              <div class="road-node">
+                <span class="road-node-dot">2</span>
+                <span class="road-node-line"></span>
+              </div>
+              <div class="road-body">
+                <span class="road-phase">Phase 2  Coming Soon</span>
+                <h4>Committee Reveals</h4>
+                <p>Committee assignments announced and delegate prep resources shared.</p>
+              </div>
             </div>
-          </div>
-          <div class="road-item">
-            <div class="road-node">
-              <span class="road-node-dot">2</span>
-              <span class="road-node-line"></span>
+            <div class="road-item">
+              <div class="road-node">
+                <span class="road-node-dot">3</span>
+                <span class="road-node-line"></span>
+              </div>
+              <div class="road-body">
+                <span class="road-phase">Phase 3  End of March</span>
+                <h4>Applications Open</h4>
+                <p>Official delegate applications go live. Early list members get first access.</p>
+              </div>
             </div>
-            <div class="road-body">
-              <span class="road-phase">Phase 2 — Coming Soon</span>
-              <h4>Committee Reveals</h4>
-              <p>Committee assignments announced and delegate prep resources shared.</p>
-            </div>
-          </div>
-          <div class="road-item">
-            <div class="road-node">
-              <span class="road-node-dot">3</span>
-              <span class="road-node-line"></span>
-            </div>
-            <div class="road-body">
-              <span class="road-phase">Phase 3 — End of March</span>
-              <h4>Applications Open</h4>
-              <p>Official delegate applications go live. Early list members get first access.</p>
-            </div>
-          </div>
-          <div class="road-item road-item--last">
-            <div class="road-node">
-              <span class="road-node-dot">🏛</span>
-            </div>
-            <div class="road-body">
-              <span class="road-phase">Conference — Date TBA</span>
-              <h4>Imperium MUN Conference</h4>
-              <p>High-impact committee sessions, keynotes, awards, and networking.</p>
+            <div class="road-item road-item--last">
+              <div class="road-node">
+                <span class="road-node-dot"></span>
+              </div>
+              <div class="road-body">
+                <span class="road-phase">Conference  Date TBA</span>
+                <h4>Imperium MUN Conference</h4>
+                <p>High-impact committee sessions, keynotes, awards, and networking.</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="share-panel reveal pop-card">
-        <h3>Help Us Grow 📣</h3>
-        <p>Know friends who would love MUN? Share Imperium and bring them in.</p>
-        <button id="shareBtn" class="share-btn" type="button">Share Imperium MUN 🔗</button>
-        <p id="shareMessage" class="muted" aria-live="polite"></p>
+        <div class="share-panel reveal pop-card mt-4">
+          <h3>Help Us Grow</h3>
+          <p>Know friends who would love MUN? Share Imperium and bring them in.</p>
+          <div class="share-link">
+            <span>https://imperiummun.com</span>
+            <button id="shareBtn" type="button">Copy Link</button>
+          </div>
+          <p id="shareMessage" class="text-muted" aria-live="polite"></p>
+        </div>
       </div>
     </section>
 
+    <!-- FAQ -->
     <section id="faq" class="section container reveal">
-      <p class="eyebrow">Questions</p>
-      <h2>Frequently Asked 💬</h2>
-      <p class="section-intro faq-hint">Click any card to flip it and reveal the answer.</p>
+      <div class="section-head">
+        <span class="section-label">Questions</span>
+        <h2>Frequently Asked</h2>
+        <p>Click any card to flip it and reveal the answer.</p>
+      </div>
       <div class="faq-grid">
-
         <div class="faq-card reveal pop-card" tabindex="0" role="button" aria-pressed="false">
           <div class="faq-card-inner">
-            <div class="faq-card-front">
-              <span class="faq-icon">🧠</span>
-              <p>Do I need previous MUN experience?</p>
-            </div>
-            <div class="faq-card-back">
-              <p>No experience needed. Beginners are fully welcome — guidance materials will be shared before conference days.</p>
-            </div>
+            <div class="faq-card-front"><p class="faq-q">Do I need previous MUN experience?</p><p class="faq-hint">Tap to flip</p></div>
+            <div class="faq-card-back"><p>No experience needed. Beginners are fully welcome  guidance materials will be shared before conference days.</p></div>
           </div>
         </div>
-
+        <div class="faq-card reveal pop-card stagger-1" tabindex="0" role="button" aria-pressed="false">
+          <div class="faq-card-inner">
+            <div class="faq-card-front"><p class="faq-q">Who can join Imperium MUN?</p><p class="faq-hint">Tap to flip</p></div>
+            <div class="faq-card-back"><p>Students in Riyadh interested in diplomacy, debate, leadership, and global affairs. All backgrounds welcome.</p></div>
+          </div>
+        </div>
+        <div class="faq-card reveal pop-card stagger-2" tabindex="0" role="button" aria-pressed="false">
+          <div class="faq-card-inner">
+            <div class="faq-card-front"><p class="faq-q">When will applications open?</p><p class="faq-hint">Tap to flip</p></div>
+            <div class="faq-card-back"><p>As soon as committee assignments are finalized. Join the early access list to be the first to know.</p></div>
+          </div>
+        </div>
+        <div class="faq-card reveal pop-card stagger-3" tabindex="0" role="button" aria-pressed="false">
+          <div class="faq-card-inner">
+            <div class="faq-card-front"><p class="faq-q">How fast do you reply to questions?</p><p class="faq-hint">Tap to flip</p></div>
+            <div class="faq-card-back"><p>Usually within 24 hours on email and Instagram DMs. For urgent matters, DM us directly on Instagram.</p></div>
+          </div>
+        </div>
         <div class="faq-card reveal pop-card" tabindex="0" role="button" aria-pressed="false">
           <div class="faq-card-inner">
-            <div class="faq-card-front">
-              <span class="faq-icon">🙌</span>
-              <p>Who can join Imperium MUN?</p>
-            </div>
-            <div class="faq-card-back">
-              <p>Students in Riyadh interested in diplomacy, debate, leadership, and global affairs. All backgrounds welcome.</p>
-            </div>
+            <div class="faq-card-front"><p class="faq-q">Is there a participation fee?</p><p class="faq-hint">Tap to flip</p></div>
+            <div class="faq-card-back"><p>Fee details will be announced when applications open. Sign up for early access to stay in the loop first.</p></div>
           </div>
         </div>
-
-        <div class="faq-card reveal pop-card" tabindex="0" role="button" aria-pressed="false">
+        <div class="faq-card reveal pop-card stagger-1" tabindex="0" role="button" aria-pressed="false">
           <div class="faq-card-inner">
-            <div class="faq-card-front">
-              <span class="faq-icon">📅</span>
-              <p>When will applications open?</p>
-            </div>
-            <div class="faq-card-back">
-              <p>As soon as committee assignments are finalized. Join the early access list to be the first to know.</p>
-            </div>
+            <div class="faq-card-front"><p class="faq-q">Do I need school permission?</p><p class="faq-hint">Tap to flip</p></div>
+            <div class="faq-card-back"><p>We recommend letting your school know. We are happy to provide an official letter if your institution requires one.</p></div>
           </div>
         </div>
-
-        <div class="faq-card reveal pop-card" tabindex="0" role="button" aria-pressed="false">
+        <div class="faq-card reveal pop-card stagger-2" tabindex="0" role="button" aria-pressed="false">
           <div class="faq-card-inner">
-            <div class="faq-card-front">
-              <span class="faq-icon">⚡</span>
-              <p>How fast do you reply to questions?</p>
-            </div>
-            <div class="faq-card-back">
-              <p>Usually within 24 hours on email and Instagram DMs. For urgent matters, DM us directly on Instagram.</p>
-            </div>
+            <div class="faq-card-front"><p class="faq-q">What topics will committees cover?</p><p class="faq-hint">Tap to flip</p></div>
+            <div class="faq-card-back"><p>Committees tackle real-world issues from climate to security to economic policy. Specific topics announced soon.</p></div>
           </div>
         </div>
-
-        <div class="faq-card reveal pop-card" tabindex="0" role="button" aria-pressed="false">
+        <div class="faq-card reveal pop-card stagger-3" tabindex="0" role="button" aria-pressed="false">
           <div class="faq-card-inner">
-            <div class="faq-card-front">
-              <span class="faq-icon">💰</span>
-              <p>Is there a participation fee?</p>
-            </div>
-            <div class="faq-card-back">
-              <p>Fee details will be announced when applications open. Sign up for early access to stay in the loop first.</p>
-            </div>
+            <div class="faq-card-front"><p class="faq-q">Will I receive a certificate?</p><p class="faq-hint">Tap to flip</p></div>
+            <div class="faq-card-back"><p>Yes. All participating delegates receive an official Imperium MUN certificate of participation.</p></div>
           </div>
         </div>
-
-        <div class="faq-card reveal pop-card" tabindex="0" role="button" aria-pressed="false">
-          <div class="faq-card-inner">
-            <div class="faq-card-front">
-              <span class="faq-icon">🏫</span>
-              <p>Do I need school permission to join?</p>
-            </div>
-            <div class="faq-card-back">
-              <p>We recommend letting your school know. We're happy to provide an official letter if your institution requires one.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-card reveal pop-card" tabindex="0" role="button" aria-pressed="false">
-          <div class="faq-card-inner">
-            <div class="faq-card-front">
-              <span class="faq-icon">🌍</span>
-              <p>What topics will committees cover?</p>
-            </div>
-            <div class="faq-card-back">
-              <p>Committees tackle real-world issues — from climate and security to economic policy. Specific topics announced soon.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-card reveal pop-card" tabindex="0" role="button" aria-pressed="false">
-          <div class="faq-card-inner">
-            <div class="faq-card-front">
-              <span class="faq-icon">🎓</span>
-              <p>Will I receive a certificate?</p>
-            </div>
-            <div class="faq-card-back">
-              <p>Yes. All participating delegates receive an official Imperium MUN certificate of participation.</p>
-            </div>
-          </div>
-        </div>
-
       </div>
     </section>
 
+    <!-- CONTACT -->
     <section id="contact" class="section container reveal">
-      <p class="eyebrow">Contact</p>
-      <h2>Get in Touch</h2>
-      <p class="section-intro">Questions, partnerships, or school collaboration — reach us at the address below and we respond within 24 hours.</p>
-      <a class="email-link" href="mailto:imperiummum2026@gmail.com">imperiummum2026@gmail.com</a>
-      <p id="contactCopyMessage" class="muted contact-copy-message" aria-live="polite"></p>
+      <div class="section-head">
+        <span class="section-label">Contact</span>
+        <h2>Get in Touch</h2>
+        <p>Questions, partnerships, or school collaboration  reach us below. We respond within 24 hours.</p>
+      </div>
+      <div class="contact-card" style="max-width:520px;">
+        <h3>Email Us</h3>
+        <p>The fastest way to reach the organizing team directly.</p>
+        <a class="cta mt-3" href="mailto:imperiummum2026@gmail.com">imperiummum2026@gmail.com</a>
+        <p id="contactCopyMessage" class="text-muted mt-2" aria-live="polite"></p>
+      </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-wrap">
-      <p>© <span id="year"></span> Imperium MUN. All rights reserved.</p>
-      <a href="https://instagram.com/imperiummun26" target="_blank" rel="noopener noreferrer" aria-label="Visit Imperium MUN on Instagram" class="insta-link">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-          <path fill="currentColor" d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 1.75A4 4 0 0 0 3.75 7.75v8.5a4 4 0 0 0 4 4h8.5a4 4 0 0 0 4-4v-8.5a4 4 0 0 0-4-4h-8.5ZM17.5 6.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5Z"/>
-        </svg>
-      </a>
+    <div class="container">
+      <span class="brand-footer">IMPERIUM MUN</span>
+      <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="/apply">Apply</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+        <a href="https://instagram.com/imperiummun26" target="_blank" rel="noopener noreferrer">Instagram</a>
+      </div>
+      <p> <span id="year"></span> Imperium MUN. All rights reserved.</p>
+      <p style="font-size:0.75rem;color:var(--text-3);margin-top:0.4rem;">Made with  by the IT Team (<a href="/contact" style="color:var(--gold-soft);">Adham</a>)</p>
     </div>
-    <p class="main-credit">Made with love by the IT Team (<a class="credit-link" href="/contact">Adham</a>) ❤️</p>
   </footer>
 
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>

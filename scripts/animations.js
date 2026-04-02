@@ -108,10 +108,10 @@
   if (!isTouchDevice) {
     const heroTl = gsap.timeline({ defaults: { duration: 0.74, ease: "power3.out" } });
     const heroLogo = document.querySelector(".hero-logo-card");
-    const eyebrow = document.querySelector(".hero .eyebrow");
+    const eyebrow = document.querySelector(".hero .section-label") || document.querySelector(".hero .eyebrow");
     const heroTitle = document.querySelector(".hero-content h1");
-    const heroText = document.querySelector(".hero-text");
-    const heroBadges = document.querySelectorAll(".hero-badges span");
+    const heroText = document.querySelector(".hero .subheadline") || document.querySelector(".hero-text");
+    const heroBadges = document.querySelectorAll(".hero-tags .hero-tag").length ? document.querySelectorAll(".hero-tags .hero-tag") : document.querySelectorAll(".hero-badges span");
     const heroActions = document.querySelectorAll(".hero-cta-row .cta");
 
     if (heroLogo) heroTl.from(heroLogo, { opacity: 0, y: 36, scale: 0.9, duration: 0.92 }, 0);

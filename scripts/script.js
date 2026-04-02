@@ -3,6 +3,34 @@ if (yearSpan) {
   yearSpan.textContent = new Date().getFullYear();
 }
 
+// ── Hamburger / mobile nav ──────────────────────────────────────────────
+(function initHamburger() {
+  const hamburger = document.getElementById("hamburger");
+  const mobileNav = document.getElementById("mobileNav");
+  if (!hamburger || !mobileNav) return;
+
+  const toggle = (force) => {
+    const open = force !== undefined ? force : !hamburger.classList.contains("open");
+    hamburger.classList.toggle("open", open);
+    mobileNav.classList.toggle("open", open);
+    hamburger.setAttribute("aria-expanded", String(open));
+  };
+
+  hamburger.addEventListener("click", () => toggle());
+
+  // Close on nav link click
+  mobileNav.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("click", () => toggle(false));
+  });
+
+  // Close on outside click
+  document.addEventListener("click", (e) => {
+    if (!hamburger.contains(e.target) && !mobileNav.contains(e.target)) {
+      toggle(false);
+    }
+  });
+})();
+
 const SITE_SETTINGS_STORAGE_KEY = "imperium_site_settings";
 const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
 const WAITLIST_API_URL = `${API_BASE}/waitlist`;
