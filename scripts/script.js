@@ -3,6 +3,64 @@ if (yearSpan) {
   yearSpan.textContent = new Date().getFullYear();
 }
 
+if (window.location.pathname === "/contact") {
+  window.addEventListener("load", () => {
+    const target = document.getElementById("contact");
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, { once: true });
+}
+
+const ensureHeroTypewriter = () => {
+  if (window.__imperiumTypewriterReady) return;
+  const el = document.getElementById("heroTypewriter");
+  if (!el) return;
+
+  window.__imperiumTypewriterReady = true;
+  const phrases = [
+    "Diplomacy Starts Here",
+    "Future Leaders Are Built Here",
+    "Where Negotiation Meets Power",
+    "Model United Nations Excellence",
+    "Lead. Debate. Influence.",
+  ];
+
+  let phraseIdx = 0;
+  let charIdx = 0;
+  let deleting = false;
+
+  const loop = () => {
+    const phrase = phrases[phraseIdx];
+    el.textContent = deleting
+      ? phrase.substring(0, Math.max(0, charIdx - 1))
+      : phrase.substring(0, Math.min(phrase.length, charIdx + 1));
+
+    if (deleting) {
+      charIdx -= 1;
+    } else {
+      charIdx += 1;
+    }
+
+    let delay = deleting ? 42 : 78;
+    if (!deleting && charIdx > phrase.length) {
+      deleting = true;
+      delay = 1800;
+    } else if (deleting && charIdx < 0) {
+      deleting = false;
+      charIdx = 0;
+      phraseIdx = (phraseIdx + 1) % phrases.length;
+      delay = 360;
+    }
+
+    setTimeout(loop, delay);
+  };
+
+  el.textContent = "";
+  setTimeout(loop, 260);
+};
+
+setTimeout(ensureHeroTypewriter, 1200);
+
 const CANONICAL_SITE_URL = "https://imperiumun.com/";
 
 // ── Hamburger / mobile nav ──────────────────────────────────────────────

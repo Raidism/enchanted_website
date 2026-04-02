@@ -21,8 +21,8 @@
 .access-ring{position:absolute;inset:0;border-radius:50%;animation:logoRing 8s linear infinite;}
 .access-ring-outer{border:2px solid transparent;background:conic-gradient(from var(--a),transparent,var(--gold) 25%,var(--green-soft) 50%,var(--gold) 75%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;}
 .access-ring-inner{border:1.5px solid transparent;background:conic-gradient(from calc(var(--a) + 60deg),transparent,var(--green) 30%,var(--gold-soft) 60%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;inset:10%;animation-duration:12s!important;animation-direction:reverse;}
-.access-logo-center{position:relative;z-index:1;width:62%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:2px solid var(--border-gold);box-shadow:0 0 24px rgba(0,0,0,0.5),0 0 0 4px rgba(201,168,76,0.07);}
-.access-logo-center img{width:100%;height:100%;object-fit:cover;display:block;}
+.access-logo-center{position:relative;z-index:1;width:62%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:2px solid var(--border-gold);background:radial-gradient(circle at 50% 40%,rgba(255,244,214,0.12),rgba(12,17,24,0.96) 68%);box-shadow:0 0 24px rgba(0,0,0,0.5),0 0 0 4px rgba(201,168,76,0.07);}
+.access-logo-center img{width:92%;height:92%;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 8px 22px rgba(0,0,0,0.32));}
 
 .access-title{font-family:"Cinzel",serif;font-size:clamp(1.3rem,3vw,1.7rem);font-weight:700;color:var(--text);margin:0 0 0.3rem;}
 .access-subtitle{font-size:0.92rem;color:var(--text-2);margin:0;}
@@ -74,8 +74,7 @@
 /*  Adham photo / fire  */
 .adham-photo-wrap{position:relative;width:min(195px,40vw);aspect-ratio:1;display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;}
 .adham-photo-wrap:focus-visible{outline:none;}
-.adham-photo{width:58%;height:72%;object-fit:cover;border-radius:var(--r-md);border:1px solid var(--border-gold);z-index:1;user-select:none;pointer-events:none;box-shadow:var(--shadow-md);}
-.adham-frame{position:absolute;width:110%;height:110%;object-fit:contain;pointer-events:none;z-index:2;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.3));user-select:none;}
+.adham-photo{width:66%;height:78%;object-fit:cover;border-radius:var(--r-md);border:1px solid var(--border-gold);z-index:1;user-select:none;pointer-events:none;box-shadow:var(--shadow-md);}
 .adham-fire-layer{position:absolute;inset:-18%;pointer-events:none;z-index:4;}
 .fire-ring{position:absolute;left:var(--x,50%);top:var(--y,50%);width:var(--size,90px);height:var(--size,90px);border-radius:999px;background:conic-gradient(from 0deg,hsl(var(--h1,42) 95% 62%) 0deg,hsl(var(--h2,128) 92% 58%) 120deg,hsl(var(--h3,330) 96% 64%) 240deg,hsl(var(--h1,42) 95% 62%) 360deg);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px));mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px));transform:translate(-50%,-50%) scale(0.24) rotate(0deg);opacity:0;filter:drop-shadow(0 0 8px hsla(var(--h1,42) 100% 62% / 0.5));animation:fireRingBurst 720ms cubic-bezier(0.22,0.9,0.3,1) forwards;}
 @keyframes fireRingBurst{0%{opacity:0.98;transform:translate(-50%,-50%) scale(0.24) rotate(0deg);}100%{opacity:0;transform:translate(-50%,-50%) scale(1.55) rotate(210deg);}}
@@ -96,8 +95,7 @@ body.cookie-banner-visible{padding-bottom:80px;}
 .special-welcome-overlay.is-exiting{animation:welcomeFadeOut 0.32s ease-in forwards;}
 .special-welcome-card{width:min(400px,90vw);border:1px solid var(--border-gold);border-radius:var(--r-xl);background:var(--surface);padding:var(--sp-4) var(--sp-5) var(--sp-5);text-align:center;box-shadow:var(--shadow-lg),0 0 48px rgba(201,168,76,0.12);transform:translateY(8px) scale(0.97);animation:welcomeCardIn 0.36s cubic-bezier(0.22,0.9,0.3,1) forwards;}
 .special-photo-wrap{position:relative;width:min(150px,40vw);aspect-ratio:1;margin:0 auto var(--sp-3);display:grid;place-items:center;}
-.special-photo{width:58%;height:72%;object-fit:cover;border-radius:var(--r-md);border:1px solid var(--border-gold);z-index:1;box-shadow:var(--shadow-md);}
-.special-frame{position:absolute;width:110%;height:110%;object-fit:contain;z-index:2;pointer-events:none;}
+.special-photo{width:66%;height:78%;object-fit:cover;border-radius:var(--r-md);border:1px solid var(--border-gold);z-index:1;box-shadow:var(--shadow-md);}
 .special-welcome-card h2{font-family:"Cinzel",serif;color:var(--gold-soft);margin:0 0 0.4rem;}
 .special-welcome-card p{color:var(--text-2);font-size:0.92rem;margin:0;}
 

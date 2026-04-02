@@ -37,7 +37,7 @@
     const route = String(window.location.pathname || "/").replace(/\/+$/, "") || "/";
     const routeToLegacyPath = {
       "/": "index.html",
-      "/contact": "contact-adham.html",
+      "/contact": "index.html",
       "/access": "access-gate.html",
       "/portal": "access.html",
       "/dashboard": "dashboard.html",

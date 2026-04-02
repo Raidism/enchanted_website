@@ -4,59 +4,77 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Access Checkpoint | Imperium MUN</title>
-  <meta name="description" content="Password checkpoint before entering the Imperium MUN access portal." />
-  <link rel="icon" type="image/jpeg" href="assets/imperium mun logo.jpg" />
+  <meta name="description" content="Password checkpoint before entering the Imperium MUN portal." />
+  <link rel="icon" type="image/png" href="assets/mini%20logo.png?v=20260402" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles/access-gate.css" />
+  <link rel="stylesheet" href="styles/styles.css?v=20260402" />
+  <link rel="stylesheet" href="styles/access-gate.css?v=20260402" />
 </head>
 <body>
-  <header class="gate-header">
-    <a class="brand" href="/">IMPERIUM MUN</a>
-    <a class="back-home" href="/">Back to Website</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <div class="bg-alt-logo" aria-hidden="true">
+    <span class="ornament-grid"></span>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner container">
+      <a class="brand" href="/">IMPERIUM MUN</a>
+      <div class="nav-right">
+        <span class="section-label" style="margin:0;font-size:0.7rem;">Security Checkpoint</span>
+        <a class="cta cta-ghost gate-back-home" href="/">Back to Website</a>
+      </div>
+    </div>
   </header>
 
   <main class="gate-main">
-    <section class="gate-card" aria-labelledby="gateTitle">
-      <p class="eyebrow">Security Dashboard</p>
-      <h1 id="gateTitle">What is the password?</h1>
-      <p class="subtitle">Enter the security password to continue to the access portal.</p>
-
-      <form id="gateForm" class="gate-form" novalidate>
-        <label for="gatePassword">Password</label>
-        <input id="gatePassword" name="gatePassword" type="password" autocomplete="current-password" required />
-
-        <div id="mobileGateKeypad" class="gate-keypad" hidden>
-          <p class="gate-keypad-label">Tap numbers to enter password</p>
-          <div class="gate-keypad-display" id="gateKeypadDisplay" aria-live="polite">••••</div>
-          <div class="gate-keypad-grid" role="group" aria-label="Numeric keypad">
-            <button type="button" class="gate-key" data-key="1">1</button>
-            <button type="button" class="gate-key" data-key="2">2</button>
-            <button type="button" class="gate-key" data-key="3">3</button>
-            <button type="button" class="gate-key" data-key="4">4</button>
-            <button type="button" class="gate-key" data-key="5">5</button>
-            <button type="button" class="gate-key" data-key="6">6</button>
-            <button type="button" class="gate-key" data-key="7">7</button>
-            <button type="button" class="gate-key" data-key="8">8</button>
-            <button type="button" class="gate-key" data-key="9">9</button>
-            <button type="button" class="gate-key gate-key--muted" data-action="clear">Clear</button>
-            <button type="button" class="gate-key" data-key="0">0</button>
-            <button type="button" class="gate-key gate-key--muted" data-action="back">⌫</button>
+    <div class="container gate-container">
+      <section class="gate-card" aria-labelledby="gateTitle">
+        <div class="gate-card-head">
+          <div class="gate-logo-wrap" aria-hidden="true">
+            <img src="assets/logo%20v2.png?v=20260402" alt="" loading="eager" decoding="async" onerror="this.onerror=null;this.src='assets/imperium%20mun%20logo.jpg';" />
           </div>
-          <button id="keypadSubmitBtn" type="submit" class="gate-keypad-submit">Enter</button>
+          <p class="section-label" style="margin-bottom:0.65rem;">Portal Access</p>
+          <h1 id="gateTitle">What is the password?</h1>
+          <p class="subtitle">Enter the security password to continue to the portal.</p>
         </div>
 
-        <p id="gateMessage" class="gate-message" aria-live="polite"></p>
-        <button id="gateButton" type="submit">Continue to Portal</button>
-      </form>
+        <form id="gateForm" class="gate-form" novalidate>
+          <label for="gatePassword">Password</label>
+          <input id="gatePassword" name="gatePassword" type="password" autocomplete="current-password" required />
 
-      <p id="lockoutHint" class="lockout-hint" hidden></p>
-    </section>
+          <div id="mobileGateKeypad" class="gate-keypad" hidden>
+            <p class="gate-keypad-label">Tap numbers to enter password</p>
+            <div class="gate-keypad-display" id="gateKeypadDisplay" aria-live="polite">....</div>
+            <div class="gate-keypad-grid" role="group" aria-label="Numeric keypad">
+              <button type="button" class="gate-key" data-key="1">1</button>
+              <button type="button" class="gate-key" data-key="2">2</button>
+              <button type="button" class="gate-key" data-key="3">3</button>
+              <button type="button" class="gate-key" data-key="4">4</button>
+              <button type="button" class="gate-key" data-key="5">5</button>
+              <button type="button" class="gate-key" data-key="6">6</button>
+              <button type="button" class="gate-key" data-key="7">7</button>
+              <button type="button" class="gate-key" data-key="8">8</button>
+              <button type="button" class="gate-key" data-key="9">9</button>
+              <button type="button" class="gate-key gate-key--muted" data-action="clear">Clear</button>
+              <button type="button" class="gate-key" data-key="0">0</button>
+              <button type="button" class="gate-key gate-key--muted" data-action="back">Bksp</button>
+            </div>
+            <button id="keypadSubmitBtn" type="submit" class="gate-keypad-submit">Enter</button>
+          </div>
+
+          <p id="gateMessage" class="gate-message" aria-live="polite"></p>
+          <button id="gateButton" type="submit" class="cta cta-primary gate-submit">Continue to Portal</button>
+        </form>
+
+        <p id="lockoutHint" class="lockout-hint" hidden></p>
+      </section>
+    </div>
   </main>
 
-  <script defer src="scripts/tracker.js"></script>
-  <script defer src="scripts/auth.js"></script>
-  <script defer src="scripts/access-gate.js"></script>
+  <script defer src="scripts/tracker.js?v=20260402"></script>
+  <script defer src="scripts/auth.js?v=20260402"></script>
+  <script defer src="scripts/access-gate.js?v=20260402"></script>
 </body>
 </html>

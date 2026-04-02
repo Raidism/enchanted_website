@@ -1,315 +1,153 @@
-:root {
-  --bg: #060907;
-  --bg-soft: #0d1611;
-  --text: #f4f7f4;
-  --muted: #b8c9be;
-  --gold: #d5b465;
-  --green: #4d8b63;
-  --danger: #d96262;
+/* Access gate page styling aligned with the main Imperium design system */
+.gate-back-home{font-size:0.82rem;padding:0.4rem 0.9rem;min-height:34px;}
+
+.gate-main{min-height:calc(100dvh - 68px);display:flex;align-items:center;justify-content:center;padding:var(--sp-6) 0 var(--sp-8);}
+.gate-container{width:100%;}
+
+.gate-card{
+  width:min(620px,96vw);
+  margin:0 auto;
+  border:1px solid var(--border);
+  border-radius:var(--r-xl);
+  background:var(--surface);
+  padding:var(--sp-5);
+  box-shadow:var(--shadow-lg),0 0 0 1px var(--glass-highlight),0 0 60px rgba(201,168,76,0.06);
+  position:relative;
+  overflow:hidden;
 }
 
-* {
-  box-sizing: border-box;
+.gate-card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(180deg,rgba(255,255,255,0.022),rgba(255,255,255,0.022) 1px,transparent 1px,transparent 4px);
+  opacity:0.16;
+  pointer-events:none;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
+.gate-card-head{text-align:center;margin-bottom:var(--sp-3);position:relative;z-index:1;}
+.gate-logo-wrap{
+  width:112px;
+  height:112px;
+  margin:0 auto var(--sp-2);
+  border-radius:50%;
+  border:2px solid var(--border-gold);
+  background:radial-gradient(circle at 50% 40%,rgba(255,244,214,0.12),rgba(12,17,24,0.96) 68%);
+  overflow:hidden;
+  box-shadow:0 0 0 6px rgba(201,168,76,0.07),var(--shadow-md);
+}
+.gate-logo-wrap img{width:92%;height:92%;object-fit:contain;display:block;margin:auto;border-radius:50%;filter:drop-shadow(0 8px 22px rgba(0,0,0,0.32));}
+
+#gateTitle{
+  margin:0;
+  font-size:clamp(1.45rem,3.7vw,2.2rem);
+  background:linear-gradient(135deg,var(--gold-soft),var(--text) 56%,var(--gold-hi));
+  background-clip:text;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 
-body {
-  min-height: 100dvh;
-  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color: var(--text);
-  background:
-    radial-gradient(circle at 12% 8%, rgba(77, 139, 99, 0.2), transparent 34%),
-    radial-gradient(circle at 86% 2%, rgba(213, 180, 101, 0.18), transparent 38%),
-    linear-gradient(165deg, #050706, #0a110d 44%, #050706);
-  overflow-x: hidden;
-  transition: filter 0.3s ease, opacity 0.3s ease;
+.subtitle{margin:0.55rem auto 0;color:var(--text-2);max-width:52ch;}
+
+.gate-form{display:grid;gap:0.72rem;margin-top:1.05rem;position:relative;z-index:1;}
+.gate-form label{font-size:0.82rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-2);font-weight:700;}
+
+.gate-form input{
+  width:100%;
+  border-radius:var(--r-md);
+  border:1px solid var(--border-2);
+  background:var(--field-bg);
+  color:var(--text);
+  padding:0.78rem 0.9rem;
+  font-size:1rem;
+  min-height:48px;
 }
 
-body.is-blackout {
-  filter: saturate(0.92) contrast(1.02);
+.gate-form input:focus{
+  outline:none;
+  border-color:var(--border-gold);
+  box-shadow:0 0 0 3px rgba(201,168,76,0.12);
 }
 
-.gate-header {
-  width: min(1080px, 92vw);
-  margin: 0 auto;
-  padding: 1.15rem 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.gate-keypad{
+  margin-top:0.3rem;
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:0.85rem;
+  background:var(--surface-2);
 }
 
-.brand {
-  text-decoration: none;
-  font-family: "Cinzel", serif;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  background: linear-gradient(120deg, #3f7754 10%, #d5b465 48%, #8ecfa0 84%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+.gate-keypad-label{
+  margin:0 0 0.5rem;
+  font-size:0.76rem;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--text-3);
+  text-align:center;
+  font-weight:700;
 }
 
-.back-home {
-  text-decoration: none;
-  color: var(--muted);
-  font-weight: 600;
+.gate-keypad-display{
+  min-height:2.1rem;
+  border-radius:var(--r-md);
+  border:1px solid var(--border-2);
+  background:var(--surface-3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:0.7rem;
+  font-family:"Cinzel",serif;
+  letter-spacing:0.22em;
+  color:var(--text);
+  font-size:1.25rem;
+  user-select:none;
 }
 
-.gate-main {
-  min-height: calc(100dvh - 74px);
-  display: grid;
-  place-items: center;
-  padding: 1rem 1rem 2.4rem;
+.gate-keypad-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0.6rem;}
+
+.gate-key{
+  border:1px solid var(--border-2);
+  border-radius:var(--r-md);
+  padding:0.95rem 0;
+  background:var(--surface-3);
+  color:var(--text);
+  font-weight:700;
+  font-size:1rem;
+  cursor:pointer;
+  transition:transform 0.14s ease,border-color 0.2s ease,background 0.2s ease;
+  min-width:0;
 }
 
-.gate-card {
-  width: min(580px, 96vw);
-  border: 1px solid rgba(213, 180, 101, 0.28);
-  border-radius: 22px;
-  background: linear-gradient(160deg, rgba(12, 21, 16, 0.82), rgba(10, 17, 14, 0.95));
-  padding: 1.4rem;
-  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.38);
+.gate-key:hover{border-color:var(--border-gold);background:var(--gold-dim);}
+.gate-key:active{transform:scale(0.97);}
+.gate-key--muted{color:var(--text-2);}
+
+.gate-keypad-submit{
+  margin-top:0.72rem;
+  border:none;
+  border-radius:var(--r-md);
+  width:100%;
+  min-height:42px;
+  padding:0.65rem 0.9rem;
+  font-size:0.92rem;
+  font-weight:800;
+  cursor:pointer;
+  color:#0a130d;
+  background:linear-gradient(120deg,var(--green-soft),var(--gold));
 }
 
-.eyebrow {
-  margin: 0;
-  font-family: "Cinzel", serif;
-  letter-spacing: 0.08em;
-  font-size: 0.8rem;
-  color: rgba(213, 180, 101, 0.84);
-}
+.gate-keypad-submit:disabled{opacity:0.7;cursor:not-allowed;}
 
-h1 {
-  margin: 0.45rem 0 0.7rem;
-  font-family: "Cinzel", serif;
-  font-size: clamp(1.7rem, 4.3vw, 2.7rem);
-  background: linear-gradient(110deg, #8ecfa0 5%, #d5b465 52%, #f0daa0 95%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+.gate-message{min-height:1.3rem;margin:0;color:var(--text-2);font-size:0.9rem;}
+.gate-message.error{color:#ffb3b3;}
+.gate-message.success{color:var(--green-text);}
 
-.subtitle {
-  margin: 0;
-  color: var(--muted);
-}
+.gate-submit{width:100%;justify-content:center;margin-top:0.2rem;}
 
-.gate-form {
-  display: grid;
-  gap: 0.72rem;
-  margin-top: 1.05rem;
-}
+.lockout-hint{margin:0.8rem 0 0;color:var(--amber);font-weight:700;position:relative;z-index:1;text-align:center;}
 
-.gate-form label {
-  font-size: 0.88rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(240, 218, 160, 0.9);
-  font-weight: 700;
+@media(max-width:640px){
+  .gate-main{padding:var(--sp-4) 0 var(--sp-6);}
+  .gate-card{padding:var(--sp-4);}
+  .gate-logo-wrap{width:98px;height:98px;}
 }
-
-.gate-form input {
-  width: 100%;
-  border-radius: 12px;
-  border: 1px solid rgba(77, 139, 99, 0.45);
-  background: rgba(8, 13, 10, 0.9);
-  color: var(--text);
-  padding: 0.78rem 0.85rem;
-  font-size: 1rem;
-}
-
-.gate-form input:focus {
-  outline: none;
-  border-color: rgba(213, 180, 101, 0.86);
-  box-shadow: 0 0 0 3px rgba(213, 180, 101, 0.2);
-}
-
-.gate-keypad {
-  margin-top: 0.25rem;
-  border: 1px solid rgba(213, 180, 101, 0.28);
-  border-radius: 14px;
-  padding: 0.7rem;
-  background: linear-gradient(160deg, rgba(10, 16, 13, 0.95), rgba(8, 12, 10, 0.95));
-}
-
-.gate-keypad-label {
-  margin: 0 0 0.45rem;
-  font-size: 0.78rem;
-  color: rgba(240, 218, 160, 0.86);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-.gate-keypad-display {
-  min-height: 2.1rem;
-  border-radius: 10px;
-  border: 1px solid rgba(77, 139, 99, 0.42);
-  background: rgba(6, 10, 8, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.6rem;
-  font-family: "Cinzel", serif;
-  letter-spacing: 0.2em;
-  color: #dfeadf;
-}
-
-.gate-keypad-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.45rem;
-}
-
-.gate-keypad-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.7rem;
-  margin: 1.2rem 0 0.8rem 0;
-  width: 100%;
-  max-width: 340px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.gate-key {
-  border: 1px solid rgba(213, 180, 101, 0.35);
-  border-radius: 10px;
-  padding: 0.58rem 0.45rem;
-  background: linear-gradient(155deg, rgba(18, 30, 22, 0.95), rgba(10, 18, 13, 0.95));
-  color: #eef7f0;
-  font-weight: 700;
-  font-size: 0.96rem;
-  cursor: pointer;
-  transition: transform 0.14s ease, box-shadow 0.2s ease;
-  touch-action: manipulation;
-  user-select: none;
-  min-width: 0;
-  outline: none;
-}
-
-.gate-key:active, .gate-key:focus {
-  background: var(--green, #4d8b63);
-  color: #fff;
-  box-shadow: 0 2px 16px rgba(77,139,99,0.22);
-  outline: 2px solid var(--gold, #d5b465);
-}
-
-.gate-keypad-submit {
-  margin-top: 0.62rem;
-  border: none;
-  border-radius: 10px;
-  width: 100%;
-  padding: 0.68rem 0.9rem;
-  font-size: 0.92rem;
-  font-weight: 800;
-  cursor: pointer;
-  color: #0a130d;
-  background: linear-gradient(120deg, #8ecfa0, #d5b465);
-}
-
-.gate-keypad-submit:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.gate-message {
-  min-height: 1.35rem;
-  margin: 0;
-  color: var(--muted);
-}
-
-.gate-message.error {
-  color: #ffb3b3;
-}
-
-.gate-message.success {
-  color: #b6efc8;
-}
-
-#gateButton {
-  border: none;
-  border-radius: 12px;
-  padding: 0.78rem 1rem;
-  font-size: 0.96rem;
-  font-weight: 700;
-  cursor: pointer;
-  color: #07120b;
-  background: linear-gradient(120deg, #8ecfa0, #d5b465);
-  transition: transform 0.16s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-}
-
-#gateButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(213, 180, 101, 0.26);
-}
-
-#gateButton:disabled {
-  cursor: not-allowed;
-  opacity: 0.75;
-}
-
-.lockout-hint {
-  margin: 0.75rem 0 0;
-  color: var(--danger);
-  font-weight: 700;
-}
-
-/* --- Improved Mobile Keypad Styles --- */
-.gate-keypad-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.7rem;
-  margin: 1.2rem 0 0.8rem 0;
-  width: 100%;
-  max-width: 340px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.gate-key {
-  border: 1px solid rgba(213, 180, 101, 0.35);
-  border-radius: 16px;
-  padding: 1.05rem 0;
-  background: linear-gradient(155deg, rgba(18, 30, 22, 0.95), rgba(10, 18, 13, 0.95));
-  color: #eef7f0;
-  font-weight: 700;
-  font-size: 16px; /* Prevent iOS zoom */
-  cursor: pointer;
-  transition: transform 0.14s ease, box-shadow 0.2s ease;
-  touch-action: manipulation;
-  user-select: none;
-  min-width: 0;
-  outline: none;
-}
-.gate-keypad-label {
-  font-size: 1.08rem;
-  color: var(--muted);
-  margin-bottom: 0.7rem;
-  text-align: center;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-.gate-keypad-display {
-  min-height: 2.1rem;
-  border-radius: 14px;
-  border: 1px solid rgba(77, 139, 99, 0.42);
-  background: rgba(6, 10, 8, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.9rem;
-  font-family: 'Inter', monospace, sans-serif;
-  letter-spacing: 0.22em;
-  color: #dfeadf;
-  font-size: 1.7rem;
-  text-align: center;
-  user-select: none;
-}
-/* --- End Improved Mobile Keypad Styles --- */
-

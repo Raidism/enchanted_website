@@ -314,10 +314,7 @@ const preloadImage = (src, timeoutMs = 420) => new Promise((resolve) => {
 });
 
 const showSpecialWelcomeAndRedirect = async (config) => {
-  await Promise.all([
-    preloadImage(config.photo),
-    preloadImage("assets/Secretariat frame.png", 260),
-  ]);
+  await preloadImage(config.photo);
 
   const overlay = document.createElement("div");
   overlay.className = "special-welcome-overlay";
@@ -325,7 +322,6 @@ const showSpecialWelcomeAndRedirect = async (config) => {
     <div class="special-welcome-card">
       <div class="special-photo-wrap" aria-hidden="true">
         <img src="${config.photo}" alt="" class="special-photo" loading="eager" decoding="async" fetchpriority="high" />
-        <img src="assets/Secretariat frame.png" alt="" class="special-frame" loading="eager" decoding="async" fetchpriority="high" />
       </div>
       <h2>${config.title}</h2>
       <p>${config.message}</p>
@@ -403,9 +399,7 @@ if (passwordInput) {
   });
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  GSAP PREMIUM ENTRANCE ANIMATIONS
-// ═══════════════════════════════════════════════════════════════
+// Keep portal motion subtle and stable.
 (function initAccessGSAP() {
   if (typeof gsap === "undefined") return;
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -413,43 +407,29 @@ if (passwordInput) {
 
   // ── Entrance timeline
   if (!prefersReduced) {
-    const card      = document.querySelector(".login-card");
-    const sidebar   = document.querySelector(".info-panel");
-    const logoWrap  = document.querySelector(".portal-logo-wrap");
-    const h1El      = document.querySelector(".login-title");
-    const subtitleEl = document.querySelector(".login-subtitle");
-    const formRows  = document.querySelectorAll("#loginForm .login-label, #loginForm input, #loginForm .password-wrap, .login-message, #loginForm .login-submit-btn");
+    const card      = document.querySelector(".access-login-card");
+    const sidebar   = document.querySelector(".access-info-panel");
+    const logoWrap  = document.querySelector(".access-logo-ring");
+    const h1El      = document.querySelector(".access-title");
+    const subtitleEl = document.querySelector(".access-subtitle");
+    const formRows  = document.querySelectorAll("#loginForm .access-label, #loginForm input, #loginForm .password-wrap, .access-login-message, #loginForm .access-submit-btn");
     const roleBadges = document.querySelectorAll(".access-role-badge");
 
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    if (card)       tl.from(card,      { y: 36, opacity: 0, scale: 0.96, duration: 0.82, ease: "power4.out" }, 0.15);
-    if (sidebar)    tl.from(sidebar,   { x: 32, opacity: 0, duration: 0.72 }, 0.3);
-    if (logoWrap)   tl.from(logoWrap,  { scale: 0.72, opacity: 0, duration: 0.7, ease: "back.out(1.6)" }, 0.35);
-    if (h1El)       tl.from(h1El,      { y: 18, opacity: 0, duration: 0.58 }, 0.5);
-    if (subtitleEl) tl.from(subtitleEl, { y: 14, opacity: 0, duration: 0.5 }, 0.62);
-    if (formRows.length) tl.from(formRows, { y: 16, opacity: 0, stagger: 0.07, duration: 0.5 }, 0.72);
-    if (roleBadges.length) tl.from(roleBadges, { scale: 0.8, opacity: 0, stagger: 0.08, duration: 0.48, ease: "back.out(1.8)" }, 0.4);
+    if (card)       tl.from(card,      { y: 18, opacity: 0, scale: 0.985, duration: 0.48, ease: "power3.out" }, 0.08);
+    if (sidebar)    tl.from(sidebar,   { y: 14, opacity: 0, duration: 0.42 }, 0.12);
+    if (logoWrap)   tl.from(logoWrap,  { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.out" }, 0.16);
+    if (h1El)       tl.from(h1El,      { y: 10, opacity: 0, duration: 0.34 }, 0.18);
+    if (subtitleEl) tl.from(subtitleEl, { y: 8, opacity: 0, duration: 0.3 }, 0.22);
+    if (formRows.length) tl.from(formRows, { y: 8, opacity: 0, stagger: 0.035, duration: 0.3 }, 0.24);
+    if (roleBadges.length) tl.from(roleBadges, { opacity: 0, y: 8, stagger: 0.04, duration: 0.3, ease: "power2.out" }, 0.2);
   }
 
-  // ── Magnetic login button (desktop only)
-  if (!isTouch) {
-    const loginBtnEl = document.getElementById("loginBtn");
-    if (loginBtnEl) {
-      loginBtnEl.addEventListener("mousemove", (e) => {
-        const rect = loginBtnEl.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width / 2) * 0.12;
-        const y = (e.clientY - rect.top - rect.height / 2) * 0.12;
-        gsap.to(loginBtnEl, { x, y, duration: 0.52, ease: "power2.out", overwrite: "auto" });
-      });
-      loginBtnEl.addEventListener("mouseleave", () => {
-        gsap.to(loginBtnEl, { x: 0, y: 0, duration: 0.8, ease: "power3.out", overwrite: "auto" });
-      });
-    }
-  }
+  // No magnetic button motion; keep interactions predictable.
 
   // ── Page exit: fade before navigating home
-  const backLink = document.querySelector(".login-back-link");
+  const backLink = document.querySelector(".access-back-link");
   if (backLink) {
     backLink.addEventListener("click", (e) => {
       if (e.metaKey || e.ctrlKey) return;

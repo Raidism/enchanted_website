@@ -55,6 +55,8 @@
   const initTypewriter = () => {
     const el = document.getElementById("heroTypewriter");
     if (!el) return;
+    if (window.__imperiumTypewriterReady) return;
+    window.__imperiumTypewriterReady = true;
 
     const phrases = [
       "Diplomacy Starts Here",
@@ -146,7 +148,7 @@
   }
 
   gsap.registerPlugin(ScrollTrigger);
-  gsap.defaults({ ease: "power3.out", duration: 0.72, overwrite: "auto" });
+  gsap.defaults({ ease: "power3.out", duration: 0.52, overwrite: "auto" });
   document.body.classList.add("gsap-enhanced");
 
   const scrollProgressEl = document.getElementById("scrollProgress");
@@ -206,34 +208,26 @@
   if (aboutStats.length) {
     gsap.set(aboutStats, { opacity: 0, y: 28, scale: 0.96 });
     gsap.to(aboutStats, {
-      scrollTrigger: { trigger: ".about-stat-strip", start: "top 85%", once: true },
-      opacity: 1, y: 0, scale: 1, stagger: 0.1, duration: 0.68, ease: "expo.out",
+      scrollTrigger: { trigger: ".about-stat-strip", start: "top 90%", once: true },
+      opacity: 1, y: 0, scale: 1, stagger: 0.08, duration: 0.5, ease: "expo.out",
     });
   }
 
-  const teamPhotos = gsap.utils.toArray(".team-photo-wrap");
-  if (teamPhotos.length) {
-    gsap.set(teamPhotos, { opacity: 0, y: 20, scale: 0.94 });
-    gsap.to(teamPhotos, {
-      scrollTrigger: { trigger: "#team", start: "top 78%", once: true },
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      stagger: 0.12,
-      duration: 0.72,
-      ease: "expo.out",
-    });
-  }
+  // Secretariat section should stay stable with no special motion effects.
+  document.querySelectorAll(".team-card.reveal").forEach((el) => {
+    el.classList.add("show");
+    gsap.set(el, { clearProps: "all" });
+  });
 
   const countdownCells = gsap.utils.toArray(".count-item");
   if (countdownCells.length) {
     gsap.set(countdownCells, { opacity: 0, y: 14 });
     gsap.to(countdownCells, {
-      scrollTrigger: { trigger: "#join", start: "top 84%", once: true },
+      scrollTrigger: { trigger: "#join", start: "top 90%", once: true },
       opacity: 1,
       y: 0,
-      stagger: 0.05,
-      duration: 0.5,
+      stagger: 0.04,
+      duration: 0.42,
       ease: "power2.out",
     });
   }
@@ -248,7 +242,7 @@
         opacity: 1,
         y: 0,
         scale: 1,
-        duration: 0.7,
+        duration: 0.5,
         delay: index * 0.04,
         ease: "expo.out",
       }
@@ -287,7 +281,6 @@
 
   const staggerGroups = [
     ".value-card.reveal.pop-card",
-    ".team-card.reveal.pop-card",
     ".stat-card.reveal.pop-card",
     ".launch-card.reveal.pop-card",
     ".faq-card.reveal.pop-card",
@@ -299,7 +292,7 @@
 
     gsap.set(targets, { opacity: 0, y: 28, scale: 0.97 });
     ScrollTrigger.batch(targets, {
-      start: "top 86%",
+      start: "top 92%",
       once: true,
       interval: 0.06,
       batchMax: 6,
@@ -309,7 +302,7 @@
           y: 0,
           scale: 1,
           stagger: 0.08,
-          duration: 0.78,
+          duration: 0.52,
           ease: "expo.out",
           onComplete: function onBatchComplete() {
             this.targets().forEach((el) => {
@@ -325,11 +318,11 @@
   const roadmapItems = document.querySelectorAll(".road-item");
   if (roadmapItems.length) {
     gsap.from(roadmapItems, {
-      scrollTrigger: { trigger: ".roadmap-card", start: "top 84%", once: true },
+      scrollTrigger: { trigger: ".roadmap-card", start: "top 90%", once: true },
       opacity: 0,
       x: -24,
       stagger: 0.1,
-      duration: 0.65,
+      duration: 0.48,
       ease: "power2.out",
     });
   }
@@ -341,11 +334,11 @@
       y: 24,
       scale: 0.98,
     }, {
-      scrollTrigger: { trigger: el, start: "top 86%", once: true },
+      scrollTrigger: { trigger: el, start: "top 92%", once: true },
       opacity: 1,
       y: 0,
       scale: 1,
-      duration: 0.72,
+      duration: 0.5,
       ease: "expo.out",
       onComplete: () => {
         el.classList.add("show");
