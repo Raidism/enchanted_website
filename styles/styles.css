@@ -336,35 +336,57 @@ section p.lead{font-size:1.06rem;line-height:1.8;color:var(--text-2);max-width:6
 #instagramStatsStatus{font-size:0.8rem;color:var(--text-3);}
 
 /*  Contact Section  */
+/* Contact Grid */
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);align-items:start;}
-.contact-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp-5);}
-.contact-card h3{color:var(--gold-soft);margin-bottom:0.5rem;}
-.contact-card p{color:var(--text-2);font-size:0.92rem;line-height:1.7;margin-bottom:var(--sp-3);}
-.contact-card--support{box-shadow:0 18px 40px rgba(0,0,0,0.18);}
-.contact-question-form{display:flex;flex-direction:column;gap:0.85rem;margin-top:var(--sp-3);}
+.contact-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp-5);position:relative;overflow:hidden;}
+.contact-card h3{color:var(--gold-soft);margin-bottom:0.18rem;}
+.contact-card p{color:var(--text-2);font-size:0.92rem;line-height:1.7;}
+/* Shared card header (icon + title block) */
+.contact-card-header{display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;}
+.contact-card-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.contact-card-icon--green{background:rgba(34,194,102,0.1);border:1px solid rgba(34,194,102,0.22);color:#4ade80;}
+.contact-card-icon--gold{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.22);color:var(--gold-soft);}
+.contact-card-subtitle{font-size:0.81rem;color:var(--text-3);margin:0 !important;line-height:1.4;}
+.contact-card-desc{font-size:0.87rem !important;color:var(--text-3) !important;margin:0.35rem 0 1.1rem !important;line-height:1.75 !important;}
+/* Ask the Team card */
+.contact-card--support{background:linear-gradient(160deg,rgba(14,21,30,0.98) 0%,rgba(9,14,20,0.98) 100%);border-color:rgba(255,255,255,0.07);box-shadow:0 24px 50px rgba(0,0,0,0.22);}
+.contact-card--support::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 8%,rgba(34,194,102,0.58) 36%,rgba(78,222,128,0.38) 65%,transparent 92%);}
+/* Form fields */
+.contact-question-form{display:flex;flex-direction:column;gap:0.82rem;}
 .contact-question-form label{font-size:0.82rem;font-weight:600;color:var(--text-2);margin-bottom:0.2rem;display:block;}
-.contact-form-split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.85rem;}
+.contact-form-split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.82rem;}
 .contact-question-form input,
-.contact-question-form textarea{width:100%;padding:0.8rem 0.95rem;border-radius:var(--r-md);border:1px solid var(--border-2);background:var(--surface-2);color:var(--text);font-size:0.92rem;font-family:inherit;transition:border-color 0.18s ease,box-shadow 0.18s ease;outline:none;}
-.contact-question-form textarea{resize:vertical;min-height:140px;line-height:1.65;}
+.contact-question-form textarea{width:100%;padding:0.82rem 1rem;border-radius:var(--r-md);border:1px solid var(--border-2);background:rgba(255,255,255,0.025);color:var(--text);font-size:0.92rem;font-family:inherit;transition:border-color 0.18s ease,box-shadow 0.18s ease;outline:none;}
+.contact-question-form textarea{resize:vertical;min-height:130px;line-height:1.65;}
 .contact-question-form input:focus,
-.contact-question-form textarea:focus{border-color:var(--border-gold);box-shadow:0 0 0 3px rgba(201,168,76,0.12);}
-.contact-anon-toggle{display:flex !important;align-items:center;gap:0.65rem;padding:0.75rem 0.9rem;border-radius:var(--r-md);border:1px solid var(--border);background:rgba(255,255,255,0.02);cursor:pointer;}
-.contact-anon-toggle input{width:16px;height:16px;accent-color:var(--gold-soft);margin:0;flex-shrink:0;}
+.contact-question-form textarea:focus{border-color:rgba(34,194,102,0.4);box-shadow:0 0 0 3px rgba(34,194,102,0.1);}
+.contact-anon-toggle{display:flex !important;align-items:center;gap:0.65rem;padding:0.72rem 0.9rem;border-radius:var(--r-md);border:1px solid var(--border);background:rgba(34,194,102,0.04);cursor:pointer;}
+.contact-anon-toggle input{width:16px;height:16px;accent-color:#4ade80;margin:0;flex-shrink:0;}
 .contact-honeypot{position:absolute;left:-9999px;opacity:0;pointer-events:none;}
-.contact-form-footer{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:0.25rem;}
-.contact-form-note{margin:0;color:var(--text-3) !important;font-size:0.78rem !important;}
+.contact-form-footer{display:flex;flex-direction:column;gap:0.55rem;margin-top:0.4rem;}
+.contact-submit-btn{width:100%;gap:0.5rem;justify-content:center;}
+.contact-form-note{margin:0;color:var(--text-3) !important;font-size:0.78rem !important;text-align:center;}
 .contact-form-message{min-height:1.2rem;margin:0;color:var(--text-2);font-size:0.84rem;}
 .contact-form-message.is-success{color:var(--green-soft);}
 .contact-form-message.is-error,
 .contact-copy-message--error{color:#f0a3a3 !important;}
-.contact-card--email{display:flex;flex-direction:column;align-items:center;text-align:center;}
-.contact-card--email .email-link{display:inline-flex;justify-content:center;align-self:center;min-width:min(100%,340px);}
-.contact-card--email .contact-meta{width:100%;max-width:420px;}
-.contact-card--email .contact-meta-item{text-align:left;}
-.contact-meta{display:flex;flex-direction:column;gap:0.6rem;margin-top:var(--sp-2);}
-.contact-meta-item{display:flex;align-items:center;gap:0.7rem;font-size:0.85rem;color:var(--text-2);}
-.contact-meta-icon{width:28px;height:28px;border-radius:var(--r-sm);background:var(--gold-dim);border:1px solid var(--border-gold);display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;color:var(--gold-soft);}
+/* Email Us card */
+.contact-card--email{background:linear-gradient(160deg,rgba(16,24,35,0.98) 0%,rgba(9,13,19,0.98) 100%);border-color:rgba(201,168,76,0.18);box-shadow:0 24px 50px rgba(0,0,0,0.22);display:flex;flex-direction:column;align-items:stretch;text-align:left;}
+.contact-card--email::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 8%,rgba(201,168,76,0.7) 40%,rgba(232,201,124,0.45) 65%,transparent 92%);}
+.email-address-hero{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;padding:0.9rem 1rem;border:1px solid rgba(201,168,76,0.2);border-radius:14px;background:rgba(201,168,76,0.05);color:var(--gold-soft);font-size:0.88rem;font-weight:600;font-family:inherit;text-decoration:none;transition:border-color 0.2s ease,background 0.2s ease;word-break:break-all;}
+.email-address-hero:hover{border-color:rgba(201,168,76,0.4);background:rgba(201,168,76,0.1);}
+.email-hero-arrow{flex-shrink:0;opacity:0.5;transition:transform 0.2s ease,opacity 0.2s ease;}
+.email-address-hero:hover .email-hero-arrow{opacity:1;transform:translateX(3px);}
+.contact-copy-status{font-size:0.79rem;min-height:1rem;color:var(--text-3);margin:0.2rem 0 0;line-height:1;}
+.email-stats-strip{display:flex;align-items:stretch;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:1rem;background:rgba(255,255,255,0.015);}
+.email-stat-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.3rem;padding:0.72rem 0.4rem;text-align:center;}
+.email-stat-divider{width:1px;background:var(--border);flex-shrink:0;}
+.email-stat-badge{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 0.3rem;border-radius:6px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.18);color:var(--gold-soft);font-size:0.67rem;font-weight:700;letter-spacing:0.03em;}
+.email-stat-badge svg{color:var(--gold-soft);}
+.email-stat-label{font-size:0.72rem;color:var(--text-3);line-height:1.3;}
+.email-notes-list{display:flex;flex-direction:column;gap:0.46rem;margin-top:0.9rem;padding-top:0.82rem;border-top:1px solid var(--border);}
+.email-note-row{display:flex;align-items:flex-start;gap:0.6rem;font-size:0.82rem;color:var(--text-3);line-height:1.55;}
+.email-note-dot{width:5px;height:5px;min-width:5px;border-radius:50%;background:rgba(201,168,76,0.45);flex-shrink:0;margin-top:0.48em;}
 
 /*  Footer  */
 .site-footer{padding:var(--sp-6) 0;border-top:1px solid var(--border);text-align:center;}
