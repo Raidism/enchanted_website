@@ -116,7 +116,7 @@ body[data-theme="light"]::after{background:radial-gradient(circle,rgba(192,122,3
 .apply-page::after{display:none;}
 .apply-page{background:#07090c;}
 
-.scroll-progress{position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--green),var(--gold-soft),var(--green-soft));z-index:1100;pointer-events:none;box-shadow:0 0 10px rgba(201,168,76,0.5);transform-origin:left;will-change:width;}
+.scroll-progress{position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--green),var(--gold-soft),var(--green-soft));z-index:1100;pointer-events:none;box-shadow:0 0 10px rgba(201,168,76,0.5);transform-origin:left;will-change:width;opacity:0;transition:opacity 0.18s ease;}
 
 /*  CTA Buttons  */
 .cta{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-weight:600;font-size:0.92rem;letter-spacing:0.01em;padding:0.82rem 1.5rem;border-radius:var(--r-md);border:1px solid var(--border-gold);background:var(--gold-dim);color:var(--gold-soft);box-shadow:inset 0 1px 0 var(--glass-highlight),0 4px 16px rgba(0,0,0,0.20);position:relative;overflow:hidden;transition:border-color 0.22s ease,background 0.22s ease,color 0.22s ease,transform 0.20s var(--ease),box-shadow 0.22s ease;min-height:46px;will-change:transform;cursor:pointer;white-space:nowrap;}

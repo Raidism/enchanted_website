@@ -3,11 +3,27 @@ if (yearSpan) {
   yearSpan.textContent = new Date().getFullYear();
 }
 
+const getStickyHeaderOffset = () => {
+  const siteHeader = document.getElementById("siteHeader");
+  const headerHeight = siteHeader ? siteHeader.offsetHeight : 0;
+  return headerHeight + 14;
+};
+
+const smoothScrollToElement = (target) => {
+  if (!(target instanceof HTMLElement)) return;
+
+  const targetTop = window.scrollY + target.getBoundingClientRect().top - getStickyHeaderOffset();
+  window.scrollTo({
+    top: Math.max(0, targetTop),
+    behavior: "smooth",
+  });
+};
+
 if (window.location.pathname === "/contact") {
   window.addEventListener("load", () => {
     const target = document.getElementById("contact");
     if (!target) return;
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    smoothScrollToElement(target);
   }, { once: true });
 }
 
@@ -831,7 +847,7 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
       return;
     }
     event.preventDefault();
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    smoothScrollToElement(target);
   });
 });
 
