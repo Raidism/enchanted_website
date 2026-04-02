@@ -51,6 +51,66 @@
   // FAQ flip must work even when GSAP is unavailable or animations are reduced.
   setupFaqCards();
 
+  // ─── Typewriter hero headline ──────────────────────────────────────────────
+  const initTypewriter = () => {
+    const el = document.getElementById("heroTypewriter");
+    if (!el) return;
+
+    const phrases = [
+      "Diplomacy Starts Here",
+      "Future Leaders Are Built Here",
+      "Where Negotiation Meets Power",
+      "Model United Nations Excellence",
+      "Lead. Debate. Influence.",
+    ];
+
+    let phraseIdx = 0;
+    let charIdx = 0;
+    let deleting = false;
+    let tid = null;
+
+    const tick = () => {
+      const phrase = phrases[phraseIdx];
+      el.textContent = deleting
+        ? phrase.substring(0, charIdx - 1)
+        : phrase.substring(0, charIdx + 1);
+
+      if (deleting) { charIdx--; } else { charIdx++; }
+
+      let delay;
+      if (!deleting && charIdx > phrase.length) {
+        // Finished typing — pause, then delete
+        deleting = true;
+        delay = 2000;
+      } else if (deleting && charIdx < 0) {
+        // Finished deleting — move to next phrase
+        deleting = false;
+        charIdx = 0;
+        phraseIdx = (phraseIdx + 1) % phrases.length;
+        delay = 380;
+      } else {
+        // Natural human-like rhythm
+        delay = deleting ? 38 + Math.random() * 18 : 68 + Math.random() * 28;
+      }
+
+      tid = setTimeout(tick, delay);
+    };
+
+    // Start after entrance animation plays
+    tid = setTimeout(tick, 1100);
+
+    // Pause when tab is hidden to save CPU
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        clearTimeout(tid);
+      } else {
+        tid = setTimeout(tick, 300);
+      }
+    });
+  };
+
+  initTypewriter();
+
   if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") {
     document.querySelectorAll(".reveal").forEach((el) => el.classList.add("show"));
     return;
