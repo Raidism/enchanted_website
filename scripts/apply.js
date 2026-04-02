@@ -7,9 +7,11 @@
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const statusEl = document.getElementById("applyStatusMessage");
-  const setStatus = (text) => {
+  const setStatus = (text, statusClass) => {
     if (!statusEl) return;
     statusEl.textContent = text || "";
+    statusEl.className = "apply-status-message";
+    if (statusClass) statusEl.classList.add(statusClass);
   };
 
   const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
@@ -73,7 +75,7 @@
 
     const teamOpen = Boolean(settings && settings.teamApplicationsOpen);
     if (teamOpen) {
-      setStatus("");
+      setStatus("\u2713 Team applications are open — choose your team and apply now.", "open");
       if (closedRolesPreview) closedRolesPreview.hidden = true;
       applyCards.forEach((card) => {
         card.hidden = false;
@@ -83,7 +85,7 @@
       return;
     }
 
-    setStatus("Team recruitment is currently closed. Explore the team roles below while applications are paused.");
+    setStatus("Applications are currently closed. Follow our Instagram to be notified when they open.", "closed");
     applyCards.forEach((card) => {
       card.hidden = true;
       const cta = card.querySelector("[data-team-cta]");

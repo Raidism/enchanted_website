@@ -85,12 +85,17 @@ const CANONICAL_SITE_URL = "https://imperiumun.com/";
   const mobileNav = document.getElementById("mobileNav");
   if (!hamburger || !mobileNav) return;
 
+  const mobileViewport = window.matchMedia("(max-width: 760px)");
+
   const toggle = (force) => {
     const open = force !== undefined ? force : !hamburger.classList.contains("open");
     hamburger.classList.toggle("open", open);
     mobileNav.classList.toggle("open", open);
     hamburger.setAttribute("aria-expanded", String(open));
+    mobileNav.setAttribute("aria-hidden", String(!open));
   };
+
+  mobileNav.setAttribute("aria-hidden", "true");
 
   hamburger.addEventListener("click", () => toggle());
 
@@ -105,6 +110,24 @@ const CANONICAL_SITE_URL = "https://imperiumun.com/";
       toggle(false);
     }
   });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      toggle(false);
+    }
+  });
+
+  const syncViewportState = (event) => {
+    if (!event.matches) {
+      toggle(false);
+    }
+  };
+
+  if (typeof mobileViewport.addEventListener === "function") {
+    mobileViewport.addEventListener("change", syncViewportState);
+  } else if (typeof mobileViewport.addListener === "function") {
+    mobileViewport.addListener(syncViewportState);
+  }
 })();
 
 const SITE_SETTINGS_STORAGE_KEY = "imperium_site_settings";

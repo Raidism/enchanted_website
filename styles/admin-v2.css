@@ -1204,6 +1204,11 @@ ul.simple-list li strong, ol.simple-list li strong {
 }
 /* JS adds .is-locked to [data-admin-lock] for non-admins only */
 [data-admin-lock].is-locked .lock-glass { display: flex; }
+/* Hide admin-only sections entirely for non-admin users */
+.member-locked-view [data-admin-lock].is-locked { display: none; }
+/* Dim locked sidebar nav links for non-admin users */
+.nav-item.locked-link { opacity: 0.4; cursor: not-allowed; }
+.nav-item.locked-link:hover { background: transparent; color: var(--text-2); border-color: transparent; }
 .lock-glass-inner {
   text-align: center;
   padding: var(--s6);
