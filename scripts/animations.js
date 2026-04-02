@@ -56,11 +56,6 @@
     const el = document.getElementById("heroTypewriter");
     if (!el) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      el.textContent = "Diplomacy Starts Here";
-      return;
-    }
-
     const phrases = [
       "Diplomacy Starts Here",
       "Future Leaders Are Built Here",
@@ -73,7 +68,7 @@
     let charIdx = 0;
     let deleting = false;
     let tid = null;
-    let running = false;
+    let running = true;
 
     const schedule = (delay) => {
       clearTimeout(tid);
@@ -108,9 +103,9 @@
       schedule(delay);
     };
 
-    // Start after entrance animation plays
-    running = true;
-    schedule(1100);
+    // Start shortly after first paint so it feels responsive.
+    el.textContent = "";
+    schedule(280);
 
     // Pause when tab is hidden to save CPU
     document.addEventListener("visibilitychange", () => {
@@ -213,6 +208,63 @@
     gsap.to(aboutStats, {
       scrollTrigger: { trigger: ".about-stat-strip", start: "top 85%", once: true },
       opacity: 1, y: 0, scale: 1, stagger: 0.1, duration: 0.68, ease: "expo.out",
+    });
+  }
+
+  const teamPhotos = gsap.utils.toArray(".team-photo-wrap");
+  if (teamPhotos.length) {
+    gsap.set(teamPhotos, { opacity: 0, y: 20, scale: 0.94 });
+    gsap.to(teamPhotos, {
+      scrollTrigger: { trigger: "#team", start: "top 78%", once: true },
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      stagger: 0.12,
+      duration: 0.72,
+      ease: "expo.out",
+    });
+  }
+
+  const countdownCells = gsap.utils.toArray(".count-item");
+  if (countdownCells.length) {
+    gsap.set(countdownCells, { opacity: 0, y: 14 });
+    gsap.to(countdownCells, {
+      scrollTrigger: { trigger: "#join", start: "top 84%", once: true },
+      opacity: 1,
+      y: 0,
+      stagger: 0.05,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  }
+
+  const detailBlocks = gsap.utils.toArray(".share-panel, #contact .contact-card");
+  detailBlocks.forEach((block, index) => {
+    gsap.fromTo(
+      block,
+      { opacity: 0, y: 24, scale: 0.985 },
+      {
+        scrollTrigger: { trigger: block, start: "top 86%", once: true },
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.7,
+        delay: index * 0.04,
+        ease: "expo.out",
+      }
+    );
+  });
+
+  const footerLinks = gsap.utils.toArray(".site-footer .footer-links a");
+  if (footerLinks.length) {
+    gsap.set(footerLinks, { opacity: 0, y: 12 });
+    gsap.to(footerLinks, {
+      scrollTrigger: { trigger: ".site-footer", start: "top 92%", once: true },
+      opacity: 1,
+      y: 0,
+      stagger: 0.05,
+      duration: 0.4,
+      ease: "power2.out",
     });
   }
 

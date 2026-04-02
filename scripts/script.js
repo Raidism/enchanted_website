@@ -3,6 +3,8 @@ if (yearSpan) {
   yearSpan.textContent = new Date().getFullYear();
 }
 
+const CANONICAL_SITE_URL = "https://imperiumun.com/";
+
 // ── Hamburger / mobile nav ──────────────────────────────────────────────
 (function initHamburger() {
   const hamburger = document.getElementById("hamburger");
@@ -474,7 +476,6 @@ if (teamGrid && secretariatRows.length) {
     card.innerHTML = `
       <div class="team-photo-wrap">
         <img src="${String(member.photo || "assets/imperium mun logo.jpg").replace(/"/g, "&quot;")}" alt="${String(member.name || "Secretariat member").replace(/"/g, "&quot;")}" class="team-photo" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/imperium mun logo.jpg';" />
-        <img src="assets/Secretariat frame.png" alt="" class="team-photo-frame" loading="lazy" decoding="async" aria-hidden="true" />
       </div>
       <h3>${String(member.name || "Unknown").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</h3>
       <p class="muted">${String(member.title || "Role").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
@@ -1597,7 +1598,7 @@ if (shareBtn && shareMessage) {
     const sharePayload = {
       title: "Imperium MUN",
       text: "Join Imperium MUN in Riyadh. Diplomacy, debate, and leadership - applications opening soon.",
-      url: window.location.href,
+      url: CANONICAL_SITE_URL,
     };
 
     try {
