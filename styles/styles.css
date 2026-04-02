@@ -114,7 +114,7 @@ body[data-theme="light"]::after{background:radial-gradient(circle,rgba(192,122,3
 
 .apply-page::before,
 .apply-page::after{display:none;}
-.apply-page{background:linear-gradient(180deg,#07090c 0%,#0a0f14 48%,#07090c 100%);}
+.apply-page{background:#07090c;}
 
 .scroll-progress{position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--green),var(--gold-soft),var(--green-soft));z-index:1100;pointer-events:none;box-shadow:0 0 10px rgba(201,168,76,0.5);transform-origin:left;will-change:width;}
 
@@ -150,7 +150,7 @@ body.gsap-enhanced .team-card:hover,body.gsap-enhanced .stat-card:hover,body.gsa
 .team-roles-card::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(140deg,rgba(201,168,76,0.08),transparent 38%,transparent 100%);opacity:0.8;}
 .team-roles-card:hover{border-color:var(--border-gold);box-shadow:var(--shadow-md),0 0 0 1px rgba(201,168,76,0.12);transform:translateY(-4px);}
 .team-role-header{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.9rem;position:relative;z-index:1;}
-.team-role-icon{width:48px;height:48px;display:inline-flex;align-items:center;justify-content:center;border-radius:16px;background:linear-gradient(180deg,rgba(201,168,76,0.18),rgba(201,168,76,0.08));border:1px solid var(--border-gold);font-size:1.45rem;flex-shrink:0;box-shadow:0 8px 20px rgba(0,0,0,0.18);}
+.team-role-icon{width:48px;height:48px;display:inline-flex;align-items:center;justify-content:center;border-radius:16px;background:linear-gradient(180deg,rgba(201,168,76,0.18),rgba(201,168,76,0.08));border:1px solid var(--border-gold);font-size:1.45rem;flex-shrink:0;box-shadow:0 8px 20px rgba(0,0,0,0.18);font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;line-height:1;}
 .team-role-title{margin:0;font-family:"Cinzel",serif;font-size:1rem;color:var(--text);}
 .team-role-description{margin:0;position:relative;z-index:1;color:var(--text-2);font-size:0.92rem;line-height:1.75;}
 .team-role-features{list-style:none;margin:1rem 0 0;padding:0;display:grid;gap:0.5rem;position:relative;z-index:1;}
@@ -265,8 +265,9 @@ section p.lead{font-size:1.06rem;line-height:1.8;color:var(--text-2);max-width:6
 .hero-logo-card .ring-inner{border:1.5px solid transparent;background:conic-gradient(from calc(var(--a) + 60deg),transparent,var(--green) 30%,var(--gold-soft) 60%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;inset:11%;border-radius:50%;animation-duration:12s!important;animation-direction:reverse;}
 @property --a{syntax:"<angle>";inherits:false;initial-value:0deg;}
 @keyframes logoRing{to{--a:360deg;}}
-.hero-logo-card .logo-center{position:relative;z-index:1;width:72%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 40%,rgba(255,244,214,0.14),rgba(12,17,24,0.96) 68%);border:2px solid var(--border-gold);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 0 48px rgba(0,0,0,0.55),0 0 80px rgba(34,194,102,0.08),0 0 0 6px rgba(201,168,76,0.06);}
-.hero-logo-card .logo-center img{width:92%;height:92%;object-fit:contain;border-radius:50%;filter:drop-shadow(0 8px 24px rgba(0,0,0,0.35));}
+.hero-logo-card .logo-center{position:relative;z-index:1;width:74%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 34%,rgba(255,248,229,0.28),rgba(30,38,47,0.96) 58%,rgba(10,14,19,1) 100%);border:2px solid rgba(232,201,124,0.38);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 0 48px rgba(0,0,0,0.55),0 0 80px rgba(34,194,102,0.08),0 0 0 8px rgba(201,168,76,0.08);}
+.hero-logo-card .logo-center::before{content:"";position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.18),rgba(255,255,255,0.03) 64%,transparent 72%);pointer-events:none;}
+.hero-logo-card .logo-center img{position:relative;z-index:1;width:96%;height:96%;object-fit:contain;border-radius:50%;filter:drop-shadow(0 10px 28px rgba(0,0,0,0.42));opacity:1;}
 
 /* Typewriter cursor */
 .tw-cursor{-webkit-text-fill-color:var(--gold-soft);color:var(--gold-soft);font-weight:300;margin-left:2px;animation:twBlink 0.9s step-end infinite;}
@@ -357,7 +358,10 @@ section p.lead{font-size:1.06rem;line-height:1.8;color:var(--text-2);max-width:6
 .contact-form-message.is-success{color:var(--green-soft);}
 .contact-form-message.is-error,
 .contact-copy-message--error{color:#f0a3a3 !important;}
-.contact-card--email .email-link{display:inline-flex;justify-content:center;}
+.contact-card--email{display:flex;flex-direction:column;align-items:center;text-align:center;}
+.contact-card--email .email-link{display:inline-flex;justify-content:center;align-self:center;min-width:min(100%,340px);}
+.contact-card--email .contact-meta{width:100%;max-width:420px;}
+.contact-card--email .contact-meta-item{text-align:left;}
 .contact-meta{display:flex;flex-direction:column;gap:0.6rem;margin-top:var(--sp-2);}
 .contact-meta-item{display:flex;align-items:center;gap:0.7rem;font-size:0.85rem;color:var(--text-2);}
 .contact-meta-icon{width:28px;height:28px;border-radius:var(--r-sm);background:var(--gold-dim);border:1px solid var(--border-gold);display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;color:var(--gold-soft);}
@@ -391,7 +395,7 @@ section p.lead{font-size:1.06rem;line-height:1.8;color:var(--text-2);max-width:6
 .apply-team-card[data-team="volunteer"] .apply-card-accent{background:linear-gradient(90deg,var(--green),var(--green-soft));}
 .apply-team-card[data-team="media"] .apply-card-accent{background:linear-gradient(90deg,var(--gold),var(--gold-soft));}
 .apply-team-card[data-team="security"] .apply-card-accent{background:linear-gradient(90deg,#7074e0,#9ca0f5);}
-.apply-card-icon{width:64px;height:64px;border-radius:20px;background:linear-gradient(180deg,rgba(201,168,76,0.20),rgba(201,168,76,0.08));border:1px solid var(--border-gold);display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin-bottom:var(--sp-3);flex-shrink:0;box-shadow:0 12px 28px rgba(0,0,0,0.22);position:relative;z-index:1;}
+.apply-card-icon{width:64px;height:64px;border-radius:20px;background:linear-gradient(180deg,rgba(201,168,76,0.20),rgba(201,168,76,0.08));border:1px solid var(--border-gold);display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin-bottom:var(--sp-3);flex-shrink:0;box-shadow:0 12px 28px rgba(0,0,0,0.22);position:relative;z-index:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;line-height:1;}
 .apply-team-card[data-team="volunteer"] .apply-card-icon{background:rgba(34,194,102,0.12);border-color:rgba(34,194,102,0.28);}
 .apply-team-card[data-team="security"] .apply-card-icon{background:rgba(112,116,224,0.12);border-color:rgba(112,116,224,0.28);}
 .apply-card-title{font-family:"Cinzel",serif;font-size:clamp(1.18rem,1.8vw,1.42rem);font-weight:700;color:var(--text);margin-bottom:0.35rem;letter-spacing:-0.02em;position:relative;z-index:1;}
