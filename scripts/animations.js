@@ -148,7 +148,7 @@
   }
 
   gsap.registerPlugin(ScrollTrigger);
-  gsap.defaults({ ease: "power3.out", duration: 0.52, overwrite: "auto" });
+  gsap.defaults({ ease: "power3.out", duration: 0.38, overwrite: "auto" });
   document.body.classList.add("gsap-enhanced");
 
   const scrollProgressEl = document.getElementById("scrollProgress");
@@ -177,11 +177,11 @@
   // Elements already in the viewport on load are shown with a slight delay so GSAP hero can start first
   gsap.utils.toArray(".reveal:not(.pop-card)").forEach((el) => {
     if (el.getBoundingClientRect().top < window.innerHeight * 0.96) {
-      gsap.delayedCall(0.04, () => el.classList.add("show"));
+      gsap.delayedCall(0.02, () => el.classList.add("show"));
     } else {
       ScrollTrigger.create({
         trigger: el,
-        start: "top 92%",
+        start: "top 95%",
         once: true,
         onEnter: () => el.classList.add("show"),
       });
@@ -198,11 +198,11 @@
 
     gsap.set(targets, { opacity: 0, y: 22 });
     const tl = gsap.timeline({
-      scrollTrigger: { trigger: head, start: "top 84%", once: true },
+      scrollTrigger: { trigger: head, start: "top 90%", once: true },
     });
-    if (label) tl.to(label, { opacity: 1, y: 0, duration: 0.48, ease: "power2.out" }, 0);
-    if (h2) tl.to(h2, { opacity: 1, y: 0, duration: 0.64, ease: "power3.out" }, 0.1);
-    if (p) tl.to(p, { opacity: 1, y: 0, duration: 0.52, ease: "power2.out" }, 0.24);
+    if (label) tl.to(label, { opacity: 1, y: 0, duration: 0.32, ease: "power2.out" }, 0);
+    if (h2) tl.to(h2, { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" }, 0.06);
+    if (p) tl.to(p, { opacity: 1, y: 0, duration: 0.34, ease: "power2.out" }, 0.14);
   });
 
   // About-stat strip: staggered reveal
@@ -210,8 +210,8 @@
   if (aboutStats.length) {
     gsap.set(aboutStats, { opacity: 0, y: 28, scale: 0.96 });
     gsap.to(aboutStats, {
-      scrollTrigger: { trigger: ".about-stat-strip", start: "top 90%", once: true },
-      opacity: 1, y: 0, scale: 1, stagger: 0.08, duration: 0.5, ease: "expo.out",
+      scrollTrigger: { trigger: ".about-stat-strip", start: "top 94%", once: true },
+      opacity: 1, y: 0, scale: 1, stagger: 0.05, duration: 0.36, ease: "expo.out",
     });
   }
 
@@ -225,11 +225,11 @@
   if (countdownCells.length) {
     gsap.set(countdownCells, { opacity: 0, y: 14 });
     gsap.to(countdownCells, {
-      scrollTrigger: { trigger: "#join", start: "top 90%", once: true },
+      scrollTrigger: { trigger: "#join", start: "top 94%", once: true },
       opacity: 1,
       y: 0,
-      stagger: 0.04,
-      duration: 0.42,
+      stagger: 0.025,
+      duration: 0.3,
       ease: "power2.out",
     });
   }
@@ -240,12 +240,12 @@
       block,
       { opacity: 0, y: 24, scale: 0.985 },
       {
-        scrollTrigger: { trigger: block, start: "top 86%", once: true },
+        scrollTrigger: { trigger: block, start: "top 92%", once: true },
         opacity: 1,
         y: 0,
         scale: 1,
-        duration: 0.5,
-        delay: index * 0.04,
+        duration: 0.34,
+        delay: index * 0.02,
         ease: "expo.out",
       }
     );
@@ -255,11 +255,11 @@
   if (footerLinks.length) {
     gsap.set(footerLinks, { opacity: 0, y: 12 });
     gsap.to(footerLinks, {
-      scrollTrigger: { trigger: ".site-footer", start: "top 92%", once: true },
+      scrollTrigger: { trigger: ".site-footer", start: "top 96%", once: true },
       opacity: 1,
       y: 0,
-      stagger: 0.05,
-      duration: 0.4,
+      stagger: 0.03,
+      duration: 0.28,
       ease: "power2.out",
     });
   }
@@ -295,17 +295,17 @@
 
     gsap.set(targets, { opacity: 0, y: 28, scale: 0.97 });
     ScrollTrigger.batch(targets, {
-      start: "top 92%",
+      start: "top 95%",
       once: true,
-      interval: 0.06,
+      interval: 0.03,
       batchMax: 6,
       onEnter: (batch) => {
         gsap.to(batch, {
           opacity: 1,
           y: 0,
           scale: 1,
-          stagger: 0.08,
-          duration: 0.52,
+          stagger: 0.045,
+          duration: 0.34,
           ease: "expo.out",
           onComplete: function onBatchComplete() {
             this.targets().forEach((el) => {
@@ -321,11 +321,11 @@
   const roadmapItems = document.querySelectorAll(".road-item");
   if (roadmapItems.length) {
     gsap.from(roadmapItems, {
-      scrollTrigger: { trigger: ".roadmap-card", start: "top 90%", once: true },
+      scrollTrigger: { trigger: ".roadmap-card", start: "top 94%", once: true },
       opacity: 0,
       x: -24,
-      stagger: 0.1,
-      duration: 0.48,
+      stagger: 0.05,
+      duration: 0.34,
       ease: "power2.out",
     });
   }
@@ -337,11 +337,11 @@
       y: 24,
       scale: 0.98,
     }, {
-      scrollTrigger: { trigger: el, start: "top 92%", once: true },
+      scrollTrigger: { trigger: el, start: "top 95%", once: true },
       opacity: 1,
       y: 0,
       scale: 1,
-      duration: 0.5,
+      duration: 0.34,
       ease: "expo.out",
       onComplete: () => {
         el.classList.add("show");
@@ -363,9 +363,9 @@
     const counter = { val: 0 };
     gsap.to(counter, {
       val: numeric,
-      duration: 1.3,
+      duration: 0.9,
       ease: "power2.out",
-      scrollTrigger: { trigger: el, start: "top 88%", once: true },
+      scrollTrigger: { trigger: el, start: "top 92%", once: true },
       onUpdate: () => {
         el.textContent = Math.round(counter.val).toLocaleString();
       },
