@@ -173,7 +173,7 @@ exit /b 0
 :END
 echo.
 echo =====================================================
-echo  Press ENTER to close this window.
+echo  Closing automatically in 5 seconds...
 echo =====================================================
-set /p __DUMMY__=
+timeout /t 5 /nobreak >nul
 exit /b %EXITCODE%
