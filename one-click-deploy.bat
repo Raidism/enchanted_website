@@ -3,7 +3,7 @@ setlocal EnableExtensions
 title Imperium One-Click Deploy
 
 if /I not "%~1"=="__CONSOLE__" (
-  cmd /k ""%~f0" __CONSOLE__"
+  cmd /c ""%~f0" __CONSOLE__"
   exit /b
 )
 
