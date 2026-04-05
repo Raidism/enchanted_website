@@ -132,6 +132,25 @@
             </p>
             <p id="appsTeamMessage" class="form-message" aria-live="polite" style="margin-top:var(--s3)"></p>
           </article>
+
+          <article class="table-card">
+            <h3>Maintenance Mode</h3>
+            <p class="sub">Temporarily lock visitors out of the website. Logged-in admins are not affected.</p>
+            <div class="team-app-controls" role="group" aria-label="Maintenance mode controls" style="margin-top:var(--s4)">
+              <div class="team-app-status-wrap" style="margin-bottom:var(--s4)">
+                <p class="sub" style="margin-bottom:var(--s2)">Current Status</p>
+                <p id="maintenanceStatusDisplay" class="team-app-status is-closed">🟢 Live</p>
+              </div>
+              <div class="team-app-actions">
+                <button id="maintenanceEnableBtn" type="button" class="team-app-btn team-app-btn--close">Enable Maintenance</button>
+                <button id="maintenanceDisableBtn" type="button" class="team-app-btn team-app-btn--open">Disable Maintenance</button>
+              </div>
+            </div>
+            <p class="sub" style="margin-top:var(--s4)">
+              While active, all public pages redirect to the maintenance screen. Access portal and admin pages remain reachable.
+            </p>
+            <p id="maintenanceMessage" class="form-message" aria-live="polite" style="margin-top:var(--s3)"></p>
+          </article>
         </div>
       </div>
 

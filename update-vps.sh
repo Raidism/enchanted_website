@@ -11,7 +11,7 @@ set -euo pipefail
 
 # Default to the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-APP_DIR="${APP_DIR:-$SCRIPT_DIR}"
+APP_DIR="${APP_DIR:-/var/www/vps_files/imperium_website}"
 BRANCH="${BRANCH:-main}"
 REMOTE="${REMOTE:-origin}"
 PM2_APP="${PM2_APP:-imperium_website}"
@@ -146,21 +146,51 @@ git reset --hard "$REMOTE/$BRANCH"
 set_deploy_status "true" "syncing" "45" "Applying repository update..." "" "" "" ""
 
 echo "==> Restoring data files (ensuring persistence against git resets)"
-# Restore only files that are missing after reset.
-# This avoids overwriting fresh GitHub updates (for example users.json/account changes).
+# Live-data files are ALWAYS restored from the pre-deploy backup so that:
+#   - Community stats (instagramFollowers / instagramPosts / instagramFollowing)
+#     set via the admin UI survive every deploy.
+#   - site_settings.json (maintenance mode, app controls, etc.) reflects the
+#     last state saved through the dashboard, not the repo snapshot.
+#   - Team applications (waitlist_entries.json / waitlist_deleted.json) submitted
+#     by real users on the live site are never wiped by a code push.
+# All other data files (users.json, sessions.json, etc.) are only restored
+# when missing so that git-committed account changes take effect normally.
+ALWAYS_RESTORE_FILES=(
+  "site_settings.json"
+  "waitlist_entries.json"
+  "waitlist_deleted.json"
+)
+
 if [[ -d "$BACKUP_DIR" ]]; then
   mkdir -p "$APP_DIR/server/data"
   shopt -s nullglob
+
+  # Step 1: always restore live-data files.
+  for file_name in "${ALWAYS_RESTORE_FILES[@]}"; do
+    source_file="$BACKUP_DIR/$file_name"
+    target_file="$APP_DIR/server/data/$file_name"
+    if [[ -e "$source_file" ]]; then
+      cp -a "$source_file" "$target_file"
+      echo "Restored (always): $file_name"
+    fi
+  done
+
+  # Step 2: restore any other files only when missing after git reset.
+  always_set=" ${ALWAYS_RESTORE_FILES[*]} "
   for source_file in "$BACKUP_DIR"/*; do
     file_name="$(basename "$source_file")"
     target_file="$APP_DIR/server/data/$file_name"
+    if [[ "$always_set" == *" $file_name "* ]]; then
+      continue  # already handled above
+    fi
     if [[ ! -e "$target_file" ]]; then
       cp -a "$source_file" "$target_file"
-      echo "Restored missing data file: $file_name"
+      echo "Restored missing: $file_name"
     fi
   done
+
   shopt -u nullglob
-  echo "Data restore complete (missing files only)."
+  echo "Data restore complete."
 fi
 
 echo "==> Installing dependencies"
@@ -177,11 +207,7 @@ fi
 if [[ "$NEEDS_INSTALL" == "true" ]]; then
   echo "==> Dependency update needed (this can take 1-3 minutes)"
   set_deploy_status "true" "installing" "70" "Installing dependencies (npm)..." "" "" "" ""
-  if [[ -f package-lock.json ]]; then
-    npm ci --no-audit --no-fund --prefer-offline
-  else
-    npm install --no-audit --no-fund --prefer-offline
-  fi
+  npm install --no-audit --no-fund --prefer-offline
   echo "==> Dependency install complete"
 else
   echo "==> Dependencies unchanged and node_modules exists; skipping npm install"

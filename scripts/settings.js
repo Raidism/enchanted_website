@@ -297,6 +297,58 @@ const renderTeamAppsButtons = () => {
 
 renderTeamAppsButtons();
 
+const renderMaintenanceModeButtons = () => {
+  const enableBtn = document.getElementById("maintenanceEnableBtn");
+  const disableBtn = document.getElementById("maintenanceDisableBtn");
+  const statusDisplay = document.getElementById("maintenanceStatusDisplay");
+  const msgEl = document.getElementById("maintenanceMessage");
+  if (!enableBtn || !disableBtn) return;
+
+  const updateDisplay = () => {
+    const current = window.ImperiumAuth.getSiteSettings();
+    const isOn = Boolean(current.maintenanceMode);
+    if (statusDisplay) {
+      statusDisplay.textContent = isOn ? "🔴 Maintenance Active" : "🟢 Live";
+      statusDisplay.classList.toggle("is-open", isOn);
+      statusDisplay.classList.toggle("is-closed", !isOn);
+    }
+    enableBtn.classList.toggle("is-active", isOn);
+    disableBtn.classList.toggle("is-active", !isOn);
+    enableBtn.setAttribute("aria-pressed", String(isOn));
+    disableBtn.setAttribute("aria-pressed", String(!isOn));
+  };
+
+  updateDisplay();
+
+  const handleChange = (newState) => () => {
+    enableBtn.disabled = true;
+    disableBtn.disabled = true;
+    if (msgEl) { msgEl.textContent = "Updating…"; msgEl.className = "form-message"; }
+
+    const { success, message: msg } = window.ImperiumAuth.updateSiteSettings(currentUser, {
+      maintenanceMode: newState,
+    });
+
+    updateDisplay();
+    enableBtn.disabled = false;
+    disableBtn.disabled = false;
+
+    if (msgEl) {
+      msgEl.textContent = success
+        ? (newState ? "Maintenance mode enabled. Visitors are now locked out." : "Maintenance mode disabled. Site is live.")
+        : (msg || "Failed to update.");
+      msgEl.classList.toggle("success", success);
+      msgEl.classList.toggle("error", !success);
+      setTimeout(() => { msgEl.textContent = ""; msgEl.className = "form-message"; }, 4000);
+    }
+  };
+
+  enableBtn.addEventListener("click", handleChange(true));
+  disableBtn.addEventListener("click", handleChange(false));
+};
+
+renderMaintenanceModeButtons();
+
 const renderHistory = () => {
   if (!historyList) return;
   const rows = window.ImperiumAuth.getLoginHistory();
