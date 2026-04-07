@@ -67,6 +67,40 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ─── Light theme overrides ──────────────────────────────────────── */
+body[data-theme="light"] {
+  --bg:        #faf8f5;
+  --surface:   #ffffff;
+  --surface-2: #f5f1ec;
+  --surface-3: #eeeae4;
+  --border:    rgba(180,150,80,0.22);
+  --border-2:  rgba(180,150,80,0.38);
+  --text:      #1a1a1a;
+  --text-2:    #4a5568;
+  --text-3:    #6b7280;
+  --gold-hi:   #c96a8a;
+}
+body[data-theme="light"] .ct-nav {
+  background: rgba(250,248,245,0.90);
+  border-bottom-color: rgba(180,150,80,0.18);
+}
+body[data-theme="light"] .ct-photo-card {
+  background: linear-gradient(160deg, rgba(255,255,255,0.97), rgba(250,245,240,0.99));
+  box-shadow: 0 28px 60px rgba(0,0,0,0.08), 0 0 0 1px rgba(180,150,80,0.14);
+}
+body[data-theme="light"] .ct-glow-orb {
+  background: radial-gradient(circle, rgba(46,189,110,0.15) 0%, transparent 68%);
+}
+body[data-theme="light"] .ct-orb--green {
+  background: radial-gradient(circle, rgba(46,189,110,0.10), transparent 68%);
+}
+body[data-theme="light"] .ct-orb--gold {
+  background: radial-gradient(circle, rgba(213,180,101,0.10), transparent 68%);
+}
+body[data-theme="light"] .ct-chan:hover {
+  box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+}
+
 /* ─── Ambient background orbs ────────────────────────────────────── */
 .ct-orb {
   position: fixed;
