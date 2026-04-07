@@ -138,7 +138,7 @@ set_maintenance_state "true" "Maintenance mode: update in progress. Please wait 
 set_deploy_status "true" "starting" "5" "Preparing deployment..." "" "" "" ""
 
 echo "==> Fetching latest from $REMOTE/$BRANCH"
-git fetch "$REMOTE"
+GIT_TERMINAL_PROMPT=0 git fetch "$REMOTE"
 set_deploy_status "true" "fetching" "20" "Fetching latest code from GitHub..." "" "" "" ""
 
 echo "==> Resetting working tree to $REMOTE/$BRANCH"

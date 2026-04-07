@@ -1,4 +1,18 @@
-(function initEnchanted SummitAnimations() {
+// Safety net: if GSAP or the IIFE below fails for any reason, show all hidden elements after 1.5s
+(function revealFallback() {
+  var timer = setTimeout(function () {
+    var hidden = document.querySelectorAll(".reveal:not(.show)");
+    for (var i = 0; i < hidden.length; i++) {
+      hidden[i].classList.add("show");
+    }
+  }, 1500);
+  // Cancel the fallback once the IIFE runs its own reveal logic
+  window.__cancelRevealFallback = function () { clearTimeout(timer); };
+})();
+
+(function initEnchantedSummitAnimations() {
+  if (typeof window.__cancelRevealFallback === "function") window.__cancelRevealFallback();
+
   const setupFaqCards = () => {
     const cards = Array.from(document.querySelectorAll(".faq-card"));
     if (!cards.length) return;
