@@ -11,7 +11,7 @@ const app = express();
 app.use(useragent.express());
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
-const PORT = Number(process.env.PORT || 8080);
+const PORT = Number(process.env.PORT || 3001);
 const SESSION_COOKIE = "enchanted_sid";
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 const ACCESS_GATE_COOKIE = "enchanted_access_gate";
