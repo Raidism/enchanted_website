@@ -129,9 +129,9 @@ if (reopenOnboardingBtn) {
         reopenOnboardingMessage.textContent = "Onboarding will display on next login. You can also open it now if you'd like to test it.";
         reopenOnboardingMessage.classList.add("success");
       }
-      if (window.Enchanted SummitOnboarding && typeof window.Enchanted SummitOnboarding.open === "function") {
+      if (window.EnchantedSummitOnboarding && typeof window.EnchantedSummitOnboarding.open === "function") {
         setTimeout(() => {
-          window.Enchanted SummitOnboarding.open(currentUser, { force: true });
+          window.EnchantedSummitOnboarding.open(currentUser, { force: true });
         }, 500);
       }
     } else {

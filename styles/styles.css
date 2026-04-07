@@ -848,6 +848,7 @@ body[data-theme="light"] .share-panel:hover {
 .eb-dept-text{display:flex;flex-direction:column;gap:0.1rem;min-width:0;}
 .eb-dept-label{font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-3);}
 .eb-dept-names{font-size:0.92rem;font-weight:600;color:var(--text);line-height:1.35;}
+.eb-dept-names--sub{font-size:0.78rem;font-weight:500;color:var(--text-3);margin-top:0.12rem;}
 
 /* Responsiveness */
 @media(max-width:760px){.eb-leadership{grid-template-columns:1fr;gap:0.85rem;}.eb-departments{grid-template-columns:1fr 1fr;}}

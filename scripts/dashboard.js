@@ -219,12 +219,12 @@ const resolvedDashboardProfile = (() => {
 })();
 
 const maybeShowOnboarding = () => {
-  if (!window.Enchanted SummitOnboarding || typeof window.Enchanted SummitOnboarding.maybeShow !== "function") {
+  if (!window.EnchantedSummitOnboarding || typeof window.EnchantedSummitOnboarding.maybeShow !== "function") {
     return;
   }
 
   setTimeout(() => {
-    window.Enchanted SummitOnboarding.maybeShow(currentUser);
+    window.EnchantedSummitOnboarding.maybeShow(currentUser);
   }, 380);
 };
 

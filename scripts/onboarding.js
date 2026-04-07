@@ -269,7 +269,7 @@
     open(user, options);
   };
 
-  window.Enchanted SummitOnboarding = {
+  window.EnchantedSummitOnboarding = {
     open,
     maybeShow,
     hasCompleted,
