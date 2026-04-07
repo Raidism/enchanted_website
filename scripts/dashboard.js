@@ -139,7 +139,7 @@ const ADMIN_PROFILE_PRESETS = {
     alt: "Yassin profile",
   },
   jow: {
-    photo: "assets/jow pic.jpg",
+    photo: "assets/jow-pic.jpg",
     caption: "Welcome back, Jowanna Khalifah (Founder).",
     alt: "Jowanna profile",
   },
@@ -189,7 +189,7 @@ const USER_SPOTLIGHT_PRESETS = {
   jow: {
     name: "Jowanna Khalifah",
     role: "Founder",
-    photo: "assets/jow pic.jpg",
+    photo: "assets/jow-pic.jpg",
   },
 };
 

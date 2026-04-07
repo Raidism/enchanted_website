@@ -36,7 +36,7 @@ const PROFILE_FALLBACKS = {
   },
   jow: {
     name: "Jowanna Khalifah",
-    photo: "assets/jow pic.jpg",
+    photo: "assets/jow-pic.jpg",
   },
 };
 const profileFallback = PROFILE_FALLBACKS[profileKey] || {};

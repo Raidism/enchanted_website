@@ -126,7 +126,7 @@
     } catch {}
   };
 
-  window.Enchanted SummitTracker = {
+  window.EnchantedSummitTracker = {
     track: scheduleTrack,
     trackEvent,
   };

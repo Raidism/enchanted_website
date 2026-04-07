@@ -14,7 +14,7 @@
     "password": "jowenchanted123",
     "role": "admin",
     "name": "Jowanna Khalifah",
-    "photo": "assets/jow pic.jpg",
+    "photo": "assets/jow-pic.jpg",
     "passwordHash": "$2a$10$Kc0TXiWWxGfNRAgIcegCj.QmSr2X4Frp5ePctfrqBHojQVdTDTfye",
     "disabled": false,
     "onboardingCompleted": true

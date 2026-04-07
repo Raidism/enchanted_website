@@ -47,7 +47,7 @@ const _APP_PROFILE_FALLBACKS = {
   },
   jow: {
     name: "Jowanna Khalifah",
-    photo: "/assets/jow pic.jpg",
+    photo: "/assets/jow-pic.jpg",
   },
 };
 const _appProfileFallback = _APP_PROFILE_FALLBACKS[_appProfileKey] || {};

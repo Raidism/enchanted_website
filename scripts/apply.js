@@ -194,8 +194,8 @@
 
       setStatus(`Logging click and preparing ${TEAM_TITLES[team] || "team"} form...`);
 
-      if (window.Enchanted SummitTracker && typeof window.Enchanted SummitTracker.trackEvent === "function") {
-        window.Enchanted SummitTracker.trackEvent("team_application_click", team);
+      if (window.EnchantedSummitTracker && typeof window.EnchantedSummitTracker.trackEvent === "function") {
+        window.EnchantedSummitTracker.trackEvent("team_application_click", team);
       }
 
       card.classList.add("is-selected");

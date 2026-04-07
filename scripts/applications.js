@@ -42,7 +42,7 @@ const _APP_PROFILE_FALLBACKS = {
   },
   jow: {
     name: "Jowanna Khalifah",
-    photo: "assets/jow pic.jpg",
+    photo: "assets/jow-pic.jpg",
   },
 };
 const _appProfileFallback = _APP_PROFILE_FALLBACKS[_appProfileKey] || {};
@@ -217,8 +217,8 @@ applyTeamStatus(siteSettings);
 
 if (teamAppsBtn) {
   teamAppsBtn.addEventListener("click", () => {
-    if (window.Enchanted SummitTracker && typeof window.Enchanted SummitTracker.trackEvent === "function") {
-      window.Enchanted SummitTracker.trackEvent("applications_workspace_open", "team");
+    if (window.EnchantedSummitTracker && typeof window.EnchantedSummitTracker.trackEvent === "function") {
+      window.EnchantedSummitTracker.trackEvent("applications_workspace_open", "team");
     }
   });
 }
