@@ -38,11 +38,11 @@ const _APP_PROFILE_FALLBACKS = {
   },
   joumohd08: {
     name: "Joumana Mohamed",
-    photo: "/assets/Joumana Mohamed .png",
+    photo: "/assets/enchanted logo.jpg",
   },
   y72n_e: {
     name: "Yassin elnaggar",
-    photo: "/assets/Yassin elnaggar.jpg",
+    photo: "/assets/enchanted logo.jpg",
   },
 };
 const _appProfileFallback = _APP_PROFILE_FALLBACKS[_appProfileKey] || {};

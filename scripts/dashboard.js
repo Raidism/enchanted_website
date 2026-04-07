@@ -98,42 +98,42 @@ const WELCOME_NAMES = {
 
 const ADMIN_PROFILE_PRESETS = {
   admin: {
-    photo: "assets/adham pic.jpg",
+    photo: "assets/enchanted logo.jpg",
     caption: "Welcome back, Adham Mohamed (Head of IT).",
     alt: "Adham profile",
   },
   "ln-obidat": {
-    photo: "assets/under secretary general.png",
+    photo: "assets/enchanted logo.jpg",
     caption: "Welcome back, Leen Obeidat (USG).",
     alt: "Leen profile",
   },
   ahmadph: {
-    photo: "assets/secretary general.png",
+    photo: "assets/enchanted logo.jpg",
     caption: "Welcome back, Ahmed Pharaon (SG).",
     alt: "Ahmed profile",
   },
   toleenkmedia: {
-    photo: "assets/head of media.png",
+    photo: "assets/enchanted logo.jpg",
     caption: "Welcome back, Toleen Kurdi (Head of Media).",
     alt: "Toleen profile",
   },
   omaralhomran: {
-    photo: "assets/Head of DA.png",
+    photo: "assets/enchanted logo.jpg",
     caption: "Welcome back, Omar Alhomran (Head of DA).",
     alt: "Omar profile",
   },
   yamendalegend: {
-    photo: "assets/HEAD OF CA.png",
+    photo: "assets/enchanted logo.jpg",
     caption: "Welcome back, YAMEN ELATTAL (Head of CA).",
     alt: "Yamen profile",
   },
   joumohd08: {
-    photo: "assets/Joumana Mohamed .png",
+    photo: "assets/enchanted logo.jpg",
     caption: "Welcome back, Joumana Mohamed (Head of HR).",
     alt: "Joumana profile",
   },
   y72n_e: {
-    photo: "assets/Yassin elnaggar.jpg",
+    photo: "assets/enchanted logo.jpg",
     caption: "Welcome back, Yassin elnaggar (Head of HR).",
     alt: "Yassin profile",
   },
@@ -143,54 +143,54 @@ const USER_SPOTLIGHT_PRESETS = {
   admin: {
     name: "Adham Mohamed",
     role: "Head of IT",
-    photo: "assets/adham pic.jpg",
+    photo: "assets/enchanted logo.jpg",
   },
   "ln-obidat": {
     name: "Leen Obeidat",
     role: "Under Secretary General",
-    photo: "assets/under secretary general.png",
+    photo: "assets/enchanted logo.jpg",
   },
   ahmadph: {
     name: "Ahmed Pharaon",
     role: "Secretary General",
-    photo: "assets/secretary general.png",
+    photo: "assets/enchanted logo.jpg",
   },
   toleenkmedia: {
     name: "Toleen Kurdi",
     role: "Head of Media",
-    photo: "assets/head of media.png",
+    photo: "assets/enchanted logo.jpg",
   },
   omaralhomran: {
     name: "Omar Alhomran",
     role: "Head of DA",
-    photo: "assets/Head of DA.png",
+    photo: "assets/enchanted logo.jpg",
   },
   yamendalegend: {
     name: "YAMEN ELATTAL",
     role: "Head of CA",
-    photo: "assets/HEAD OF CA.png",
+    photo: "assets/enchanted logo.jpg",
   },
   joumohd08: {
     name: "Joumana Mohamed",
     role: "Head of HR",
-    photo: "assets/Joumana Mohamed .png",
+    photo: "assets/enchanted logo.jpg",
   },
   y72n_e: {
     name: "Yassin elnaggar",
     role: "Head of HR",
-    photo: "assets/Yassin elnaggar.jpg",
+    photo: "assets/enchanted logo.jpg",
   },
 };
 
 const DASHBOARD_PROFILE_FALLBACKS = {
   joumohd08: {
     name: "Joumana Mohamed",
-    photo: "assets/Joumana Mohamed .png",
+    photo: "assets/enchanted logo.jpg",
     role: "Head of HR",
   },
   y72n_e: {
     name: "Yassin elnaggar",
-    photo: "assets/Yassin elnaggar.jpg",
+    photo: "assets/enchanted logo.jpg",
     role: "Head of HR",
   },
 };

@@ -26,37 +26,37 @@ const resetLoginBtn = () => {
 const MAIN_ADMIN_USERNAME = "admin";
 const SPECIAL_WELCOME_USERS = {
   "ln-obidat": {
-    photo: "assets/under secretary general.png",
+    photo: "assets/enchanted logo.jpg",
     title: "Welcome, Leen Obeidat",
     message: "USG access granted. Loading your dashboard...",
   },
   ahmadph: {
-    photo: "assets/secretary general.png",
+    photo: "assets/enchanted logo.jpg",
     title: "Welcome, Ahmed Pharaon",
     message: "SG access granted. Loading your dashboard...",
   },
   toleenkmedia: {
-    photo: "assets/head of media.png",
+    photo: "assets/enchanted logo.jpg",
     title: "Welcome, Toleen Kurdi",
     message: "Media access granted. Loading your dashboard...",
   },
   omaralhomran: {
-    photo: "assets/Head of DA.png",
+    photo: "assets/enchanted logo.jpg",
     title: "Welcome, Omar Alhomran",
     message: "Head of DA access granted. Loading your workspace...",
   },
   yamendalegend: {
-    photo: "assets/HEAD OF CA.png",
+    photo: "assets/enchanted logo.jpg",
     title: "Welcome, YAMEN ELATTAL",
     message: "Head of CA access granted. Loading your workspace...",
   },
   joumohd08: {
-    photo: "assets/Joumana Mohamed .png",
+    photo: "assets/enchanted logo.jpg",
     title: "Welcome, Joumana Mohamed",
     message: "Head of HR access granted. Loading your dashboard...",
   },
   y72n_e: {
-    photo: "assets/Yassin elnaggar.jpg",
+    photo: "assets/enchanted logo.jpg",
     title: "Welcome, Yassin elnaggar",
     message: "Head of HR access granted. Loading your dashboard...",
   },
@@ -343,7 +343,7 @@ const redirectAfterLogin = (user) => {
   const username = String(user && user.username ? user.username : "").trim().toLowerCase();
   if (username === MAIN_ADMIN_USERNAME) {
     showSpecialWelcomeAndRedirect({
-      photo: "assets/adham pic.jpg",
+      photo: "assets/enchanted logo.jpg",
       title: "Welcome, Adham",
       message: "Main admin access granted. Loading your dashboard...",
       redirectUrl: "/dashboard",

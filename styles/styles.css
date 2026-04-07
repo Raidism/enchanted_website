@@ -161,6 +161,8 @@ body.gsap-enhanced .team-card:hover,body.gsap-enhanced .stat-card:hover,body.gsa
 .team-role-features{list-style:none;margin:1rem 0 0;padding:0;display:grid;gap:0.5rem;position:relative;z-index:1;}
 .team-role-features li{font-size:0.84rem;color:#bcc7c0;padding-left:1rem;position:relative;line-height:1.5;}
 .team-role-features li::before{content:"›";position:absolute;left:0;color:var(--gold-soft);font-weight:700;}
+.team-role-footer{margin-top:auto;padding-top:1.2rem;position:relative;z-index:1;}
+.team-apply-btn{display:inline-block;text-align:center;width:100%;font-size:0.9rem;padding:0.65rem 1rem;border-radius:var(--r-pill);letter-spacing:0.03em;}
 
 /*  Value Grid  */
 .value-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-3);}

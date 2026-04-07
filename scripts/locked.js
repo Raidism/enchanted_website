@@ -71,11 +71,11 @@ const pmhHero = document.getElementById("pageMiniHero");
 const PROFILE_FALLBACKS = {
   joumohd08: {
     name: "Joumana Mohamed",
-    photo: "assets/Joumana Mohamed .png",
+    photo: "assets/enchanted logo.jpg",
   },
   y72n_e: {
     name: "Yassin elnaggar",
-    photo: "assets/Yassin elnaggar.jpg",
+    photo: "assets/enchanted logo.jpg",
   },
 };
 const profileFallback = PROFILE_FALLBACKS[String(currentUser.username || "").trim().toLowerCase()] || {};
