@@ -1,8 +1,8 @@
 {
-  "name": "imperium-mun-site",
+  "name": "enchanted-summit-site",
   "private": true,
   "version": "1.0.0",
-  "description": "Imperium MUN website with VPS-hosted API and server-side persistence",
+  "description": "The Enchanted Summit website with VPS-hosted API and server-side persistence",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js"

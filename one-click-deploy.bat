@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions
-title Imperium One-Click Deploy
+title Enchanted One-Click Deploy
 
 if /I not "%~1"=="__CONSOLE__" (
   cmd /c ""%~f0" __CONSOLE__"
@@ -8,7 +8,7 @@ if /I not "%~1"=="__CONSOLE__" (
 )
 
 set "SCRIPT_DIR=%~dp0"
-set "LOG_FILE=%TEMP%\imperium-one-click-deploy.log"
+set "LOG_FILE=%TEMP%\enchanted-one-click-deploy.log"
 set "EXITCODE=0"
 set "REPO_DIR="
 set "SSH_KEY=%USERPROFILE%\.ssh\id_ed25519"
@@ -16,29 +16,29 @@ set "REMOTE=origin"
 set "BRANCH=main"
 set "VPS_HOST=192.168.1.79"
 set "VPS_USER=root"
-set "VPS_APP_DIR=/var/www/vps_files/imperium_website"
-set "PM2_APP=imperium_website"
+set "VPS_APP_DIR=/var/www/vps_files/enchanted_website"
+set "PM2_APP=enchanted_website"
 
 > "%LOG_FILE%" echo ==================================================
->> "%LOG_FILE%" echo Imperium One-Click Deploy - %DATE% %TIME%
+>> "%LOG_FILE%" echo Enchanted One-Click Deploy - %DATE% %TIME%
 >> "%LOG_FILE%" echo ==================================================
 
 echo.
 echo ==================================================
-echo  Imperium One-Click Deploy   %DATE%  %TIME%
+echo  Enchanted One-Click Deploy   %DATE%  %TIME%
 echo ==================================================
 echo.
 
-if exist "%SCRIPT_DIR%imperium_website\.git" set "REPO_DIR=%SCRIPT_DIR%imperium_website"
+if exist "%SCRIPT_DIR%enchanted_website\.git" set "REPO_DIR=%SCRIPT_DIR%enchanted_website"
 if exist "%SCRIPT_DIR%.git" set "REPO_DIR=%SCRIPT_DIR%"
 if not defined REPO_DIR goto :ERR_REPO_NOT_FOUND
 
 cd /d "%REPO_DIR%"
 if errorlevel 1 goto :ERR_REPO_ENTER
 
-powershell -NoProfile -Command "if (-not ((Get-Content 'index.html' -Raw) -match '(?i)<title>[^<]*Imperium')) { exit 1 }"
+powershell -NoProfile -Command "if (-not ((Get-Content 'index.html' -Raw) -match '(?i)<title>[^<]*Enchanted')) { exit 1 }"
 if errorlevel 1 goto :ERR_WRONG_SITE
-call :LOG Safety check passed: "Imperium" confirmed in index.html title.
+call :LOG Safety check passed: "Enchanted" confirmed in index.html title.
 
 where git >nul 2>nul
 if errorlevel 1 goto :ERR_GIT_MISSING
@@ -72,7 +72,7 @@ for %%F in (
 git diff --cached --quiet
 set "DIFF_EXIT=%ERRORLEVEL%"
 if "%DIFF_EXIT%"=="2" goto :ERR_STAGE
-if defined IMPERIUM_DEPLOY_DRY_RUN (
+if defined ENCHANTED_DEPLOY_DRY_RUN (
   call :LOG Dry run enabled. Skipping commit, git push, and VPS update.
   goto :SUCCESS_DRY_RUN
 )
@@ -128,7 +128,7 @@ goto :END
 
 :ERR_WRONG_SITE
 call :FAIL ERROR: Wrong website detected, aborting!
-call :FAIL index.html does not contain "Imperium" in its title tag.
+call :FAIL index.html does not contain "Enchanted" in its title tag.
 goto :END
 
 :ERR_GIT_MISSING

@@ -10,9 +10,9 @@ const cookieBanner = document.getElementById("cookieBanner");
 const cookieAcceptBtn = document.getElementById("cookieAcceptBtn");
 const cookieRejectBtn = document.getElementById("cookieRejectBtn");
 
-const FAILED_ATTEMPTS_KEY = "imperium_failed_attempts";
-const LOCKOUT_UNTIL_KEY = "imperium_lockout_until";
-const COOKIE_CONSENT_KEY = "imperium_cookie_consent";
+const FAILED_ATTEMPTS_KEY = "Enchanted Summit_failed_attempts";
+const LOCKOUT_UNTIL_KEY = "Enchanted Summit_lockout_until";
+const COOKIE_CONSENT_KEY = "Enchanted Summit_cookie_consent";
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 10 * 60 * 1000;
 // Capture original button HTML once so we can restore SVG after loading state
@@ -62,7 +62,7 @@ const SPECIAL_WELCOME_USERS = {
   },
 };
 
-const currentUser = window.ImperiumAuth.getCurrentUser();
+const currentUser = window.EnchantedAuth.getCurrentUser();
 if (currentUser) {
   window.location.href = "/dashboard";
 }
@@ -451,7 +451,7 @@ loginForm.addEventListener("submit", (event) => {
   const password = String(formData.get("password") || "");
 
   if (isLockedOut()) {
-    const lockoutBypass = window.ImperiumAuth.login(username, password);
+    const lockoutBypass = window.EnchantedAuth.login(username, password);
     if (lockoutBypass.success) {
       clearLockout();
       resetLoginBtn();
@@ -479,7 +479,7 @@ loginForm.addEventListener("submit", (event) => {
       return;
     }
 
-    const result = window.ImperiumAuth.login(username, password);
+    const result = window.EnchantedAuth.login(username, password);
 
     if (!result.success) {
       const failedAttempts = getFailedAttempts() + 1;

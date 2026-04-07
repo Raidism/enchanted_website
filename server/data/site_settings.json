@@ -1,15 +1,15 @@
 {
   "maintenanceMode": false,
-  "maintenanceMessage": "Imperium MUN is temporarily under maintenance. Please check back soon.",
+  "maintenanceMessage": "The Enchanted Summit is temporarily under maintenance. Please check back soon.",
   "launchDate": "2026-03-28T00:00:00+03:00",
   "announcement": "",
   "applicationsOpen": false,
-  "conferenceDate": "2026-05-15T09:00:00+03:00",
-  "locationText": "Riyadh, Saudi Arabia",
-  "conferenceDescription": "Imperium MUN is a student-led conference focused on collaboration, critical thinking, and impactful debate.",
-  "countdownEnabled": true,
+  "conferenceDate": "",
+  "locationText": "Riyadh, KSA",
+  "conferenceDescription": "The Enchanted Summit is a debate summit rooted in fictional and otherworldly topics, designed to bring out the passion of participants in the debate community.",
+  "countdownEnabled": false,
   "instagramStatsSource": "live",
-  "instagramFollowers": 487,
-  "instagramPosts": 18,
-  "instagramFollowing": 4
+  "instagramFollowers": 135,
+  "instagramPosts": 3,
+  "instagramFollowing": 5
 }

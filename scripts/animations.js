@@ -1,4 +1,4 @@
-(function initImperiumAnimations() {
+(function initEnchanted SummitAnimations() {
   const setupFaqCards = () => {
     const cards = Array.from(document.querySelectorAll(".faq-card"));
     if (!cards.length) return;
@@ -55,14 +55,14 @@
   const initTypewriter = () => {
     const el = document.getElementById("heroTypewriter");
     if (!el) return;
-    if (window.__imperiumTypewriterReady) return;
-    window.__imperiumTypewriterReady = true;
+    if (window.__enchantedTypewriterReady) return;
+    window.__enchantedTypewriterReady = true;
 
     const phrases = [
       "Diplomacy Starts Here",
       "Future Leaders Are Built Here",
       "Where Negotiation Meets Power",
-      "Model United Nations Excellence",
+      "Debate Summit Excellence",
       "Lead. Debate. Influence.",
     ];
 

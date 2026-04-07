@@ -1,14 +1,15 @@
 /* Fallback: always show body if JS/GSAP fails */
 body { opacity: 1 !important; }
 :root {
-  --bg: #070b08;
-  --panel: #101813;
-  --panel-2: #152019;
+  --bg: #080a06;
+  --panel: #111410;
+  --panel-2: #161a14;
   --text: #eff4ef;
   --muted: #9eb0a3;
-  --green: #4d8b63;
+  --green: #2ebd6e;
   --gold: #d5b465;
-  --border: rgba(213, 180, 101, 0.28);
+  --pink: #e87da0;
+  --border: rgba(232, 125, 160, 0.22);
   
   /* Enhanced spacing system */
   --sp-xs: 0.25rem;
@@ -38,7 +39,7 @@ body { opacity: 1 !important; }
 html {
   scroll-behavior: smooth;
   scrollbar-width: thin;
-  scrollbar-color: rgba(213, 180, 101, 0.35) transparent;
+  scrollbar-color: rgba(232, 125, 160, 0.35) transparent;
 }
 
 /* ── Custom Scrollbar ──────────────────────────────── */
@@ -52,7 +53,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(213, 180, 101, 0.35);
+  background: rgba(232, 125, 160, 0.35);
   border-radius: 10px;
   border: 2px solid transparent;
   background-clip: padding-box;
@@ -60,12 +61,12 @@ html {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(213, 180, 101, 0.6);
+  background: rgba(232, 125, 160, 0.6);
   background-clip: padding-box;
 }
 
 :focus-visible {
-  outline: 2px solid #f0daa0;
+  outline: 2px solid #e87da0;
   outline-offset: 2px;
 }
 
@@ -80,8 +81,8 @@ body {
   min-height: 100vh;
   color: var(--text);
   background:
-    radial-gradient(circle at 12% 10%, rgba(77, 139, 99, 0.22), transparent 35%),
-    radial-gradient(circle at 88% 8%, rgba(213, 180, 101, 0.15), transparent 36%),
+    radial-gradient(circle at 12% 10%, rgba(46, 189, 110, 0.18), transparent 35%),
+    radial-gradient(circle at 88% 8%, rgba(232, 125, 160, 0.12), transparent 36%),
     var(--bg);
   position: relative;
   overflow-x: hidden;
@@ -129,16 +130,16 @@ body::after {
 
 body::before {
   background-image:
-    repeating-linear-gradient(90deg, rgba(213, 180, 101, 0.05) 0, rgba(213, 180, 101, 0.05) 1px, transparent 1px, transparent 48px),
-    repeating-linear-gradient(0deg, rgba(77, 139, 99, 0.045) 0, rgba(77, 139, 99, 0.045) 1px, transparent 1px, transparent 48px);
+    repeating-linear-gradient(90deg, rgba(232, 125, 160, 0.05) 0, rgba(232, 125, 160, 0.05) 1px, transparent 1px, transparent 48px),
+    repeating-linear-gradient(0deg, rgba(46, 189, 110, 0.045) 0, rgba(46, 189, 110, 0.045) 1px, transparent 1px, transparent 48px);
   -webkit-mask-image: radial-gradient(circle at 50% 35%, black 30%, transparent 75%);
   mask-image: radial-gradient(circle at 50% 35%, black 30%, transparent 75%);
 }
 
 body::after {
   background:
-    radial-gradient(circle at 18% 86%, rgba(77, 139, 99, 0.15), transparent 24%),
-    radial-gradient(circle at 82% 20%, rgba(213, 180, 101, 0.14), transparent 26%);
+    radial-gradient(circle at 18% 86%, rgba(46, 189, 110, 0.15), transparent 24%),
+    radial-gradient(circle at 82% 20%, rgba(232, 125, 160, 0.12), transparent 26%);
   animation: dashDrift 12s ease-in-out infinite alternate;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;

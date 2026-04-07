@@ -1,17 +1,17 @@
-const currentUser = window.ImperiumAuth.getCurrentUser();
+const currentUser = window.EnchantedAuth.getCurrentUser();
 if (!currentUser) {
   window.location.href = "/access";
   throw new Error("No active session");
 }
 
-const siteSettings = window.ImperiumAuth.getSiteSettings();
+const siteSettings = window.EnchantedAuth.getSiteSettings();
 if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
   window.location.href = "/maintenance";
   throw new Error("Maintenance mode is active for non-admin users");
 }
 
-window.ImperiumAuth.heartbeat();
-setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
+window.EnchantedAuth.heartbeat();
+setInterval(() => window.EnchantedAuth.heartbeat(), 30000);
 
 const welcomeText = document.getElementById("welcomeText");
 const accessNotice = document.getElementById("accessNotice");
@@ -24,7 +24,7 @@ const deletedWaitlistBody = document.getElementById("deletedWaitlistBody");
 const waitlistTrendChart = document.getElementById("waitlistTrendChart");
 const waitlistTrendEmpty = document.getElementById("waitlistTrendEmpty");
 
-const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+const API_BASE = String((window.EnchantedRuntime && window.EnchantedRuntime.apiBase) || "/api").replace(/\/+$/, "");
 const WAITLIST_API_URL = `${API_BASE}/waitlist`;
 const STATUS_LABELS = {
   pending: "Pending ⏳",
@@ -58,7 +58,7 @@ const _PROFILE_FALLBACKS = {
 };
 const _profileFallback = _PROFILE_FALLBACKS[_profileKey] || {};
 const _displayName = String(_profileFallback.name || currentUser.name || currentUser.username || "User");
-const _profilePhoto = String(_profileFallback.photo || currentUser.photo || "assets/imperium mun logo.jpg");
+const _profilePhoto = String(_profileFallback.photo || currentUser.photo || "assets/enchanted logo.jpg");
 const _roleLabel = _ROLE_LABELS[_profileKey] || (isAdmin ? "Admin" : "Member");
 
 // Populate mini hero
@@ -96,7 +96,7 @@ logoutBtn.addEventListener("click", () => {
   logoutBtn.classList.add("is-loading");
   logoutBtn.disabled = true;
 
-  const photoSrc = currentUser.photo || "assets/imperium mun logo.jpg";
+  const photoSrc = currentUser.photo || "assets/enchanted logo.jpg";
   const overlay  = document.createElement("div");
   overlay.className = "logout-overlay";
   overlay.innerHTML = `
@@ -118,9 +118,9 @@ logoutBtn.addEventListener("click", () => {
     gsap.to(ring, { scale: 1.18, opacity: 0, duration: 0.65, ease: "power2.in", delay: 0.95 });
     gsap.to(card, { y: -24, opacity: 0, duration: 0.48, ease: "power2.in", delay: 1.1 });
     gsap.to(overlay, { opacity: 0, duration: 0.4, ease: "power2.in", delay: 1.45,
-      onComplete: () => { window.ImperiumAuth.logout(); window.location.href = "/"; } });
+      onComplete: () => { window.EnchantedAuth.logout(); window.location.href = "/"; } });
   } else {
-    setTimeout(() => { window.ImperiumAuth.logout(); window.location.href = "/"; }, 1600);
+    setTimeout(() => { window.EnchantedAuth.logout(); window.location.href = "/"; }, 1600);
   }
 });
 

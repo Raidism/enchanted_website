@@ -1,11 +1,11 @@
-const currentUser = window.ImperiumAuth.getCurrentUser();
+const currentUser = window.EnchantedAuth.getCurrentUser();
 if (!currentUser) {
   window.location.href = "/access";
   throw new Error("No active session");
 }
 
-window.ImperiumAuth.heartbeat();
-setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
+window.EnchantedAuth.heartbeat();
+setInterval(() => window.EnchantedAuth.heartbeat(), 30000);
 
 const params = new URLSearchParams(window.location.search);
 const feature = String(params.get("feature") || "restricted").trim().toLowerCase();
@@ -80,7 +80,7 @@ const PROFILE_FALLBACKS = {
 };
 const profileFallback = PROFILE_FALLBACKS[String(currentUser.username || "").trim().toLowerCase()] || {};
 const displayName = profileFallback.name || currentUser.name || currentUser.username;
-const displayPhoto = profileFallback.photo || currentUser.photo || "assets/imperium mun logo.jpg";
+const displayPhoto = profileFallback.photo || currentUser.photo || "assets/enchanted logo.jpg";
 
 if (pmhPhoto) {
   pmhPhoto.src = displayPhoto;
@@ -99,7 +99,7 @@ if (logoutBtn) {
     logoutBtn.classList.add("is-loading");
     logoutBtn.disabled = true;
 
-    const photoSrc = currentUser.photo || "assets/imperium mun logo.jpg";
+    const photoSrc = currentUser.photo || "assets/enchanted logo.jpg";
     const overlay = document.createElement("div");
     overlay.className = "logout-overlay";
     overlay.innerHTML = `
@@ -126,13 +126,13 @@ if (logoutBtn) {
         ease: "power2.in",
         delay: 1.45,
         onComplete: () => {
-          window.ImperiumAuth.logout();
+          window.EnchantedAuth.logout();
           window.location.href = "/";
         },
       });
     } else {
       setTimeout(() => {
-        window.ImperiumAuth.logout();
+        window.EnchantedAuth.logout();
         window.location.href = "/";
       }, 1600);
     }

@@ -1,4 +1,4 @@
-const currentUser = window.ImperiumAuth.getCurrentUser();
+const currentUser = window.EnchantedAuth.getCurrentUser();
 if (!currentUser) {
   window.location.href = "/access";
   throw new Error("No active session");
@@ -12,14 +12,14 @@ if (prefersReducedMotion || constrainedNetwork) {
   document.body.classList.add("lite-motion");
 }
 
-const siteSettings = window.ImperiumAuth.getSiteSettings();
+const siteSettings = window.EnchantedAuth.getSiteSettings();
 if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
   window.location.href = "/maintenance";
   throw new Error("Maintenance mode is active for non-admin users");
 }
 
-window.ImperiumAuth.heartbeat();
-setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
+window.EnchantedAuth.heartbeat();
+setInterval(() => window.EnchantedAuth.heartbeat(), 30000);
 
 const _appProfileKey = String(currentUser.username || "").trim().toLowerCase();
 const _appRoleLabels = {
@@ -42,7 +42,7 @@ const _APP_PROFILE_FALLBACKS = {
 };
 const _appProfileFallback = _APP_PROFILE_FALLBACKS[_appProfileKey] || {};
 const _appDisplayName = String(_appProfileFallback.name || currentUser.name || currentUser.username || "User");
-const _appProfilePhoto = String(_appProfileFallback.photo || currentUser.photo || "assets/imperium mun logo.jpg");
+const _appProfilePhoto = String(_appProfileFallback.photo || currentUser.photo || "assets/enchanted logo.jpg");
 const _appRoleLabel   = _appRoleLabels[_appProfileKey] || (currentUser.role === "admin" ? "Admin" : "Member");
 
 // Populate mini hero
@@ -65,7 +65,7 @@ const appsTrendEmpty = document.getElementById("appsTrendEmpty");
 const appsTrendChart = document.getElementById("appsTrendChart");
 
 const logoutBtn   = document.getElementById("logoutBtn");
-const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+const API_BASE = String((window.EnchantedRuntime && window.EnchantedRuntime.apiBase) || "/api").replace(/\/+$/, "");
 
 if (currentUser.role !== "admin") {
   const adminLinks = document.querySelectorAll("[data-admin-link]");
@@ -212,8 +212,8 @@ applyTeamStatus(siteSettings);
 
 if (teamAppsBtn) {
   teamAppsBtn.addEventListener("click", () => {
-    if (window.ImperiumTracker && typeof window.ImperiumTracker.trackEvent === "function") {
-      window.ImperiumTracker.trackEvent("applications_workspace_open", "team");
+    if (window.Enchanted SummitTracker && typeof window.Enchanted SummitTracker.trackEvent === "function") {
+      window.Enchanted SummitTracker.trackEvent("applications_workspace_open", "team");
     }
   });
 }
@@ -232,12 +232,12 @@ const refreshTeamStatus = async () => {
 };
 
 window.addEventListener("storage", (event) => {
-  if (event.key === "imperium_site_settings") {
+  if (event.key === "enchanted_site_settings") {
     refreshTeamStatus();
   }
 });
 
-window.addEventListener("imperium:site-settings-updated", (event) => {
+window.addEventListener("enchanted:site-settings-updated", (event) => {
   const settings = event && event.detail ? event.detail.settings : null;
   if (settings) {
     applyTeamStatus(settings);
@@ -251,7 +251,7 @@ logoutBtn.addEventListener("click", () => {
   logoutBtn.classList.add("is-loading");
   logoutBtn.disabled = true;
 
-  const photoSrc = currentUser.photo || "assets/imperium mun logo.jpg";
+  const photoSrc = currentUser.photo || "assets/enchanted logo.jpg";
   const overlay  = document.createElement("div");
   overlay.className = "logout-overlay";
   overlay.innerHTML = `
@@ -273,9 +273,9 @@ logoutBtn.addEventListener("click", () => {
     gsap.to(ring, { scale: 1.18, opacity: 0, duration: 0.65, ease: "power2.in", delay: 0.95 });
     gsap.to(card, { y: -24, opacity: 0, duration: 0.48, ease: "power2.in", delay: 1.1 });
     gsap.to(overlay, { opacity: 0, duration: 0.4, ease: "power2.in", delay: 1.45,
-      onComplete: () => { window.ImperiumAuth.logout(); window.location.href = "/"; } });
+      onComplete: () => { window.EnchantedAuth.logout(); window.location.href = "/"; } });
   } else {
-    setTimeout(() => { window.ImperiumAuth.logout(); window.location.href = "/"; }, 1600);
+    setTimeout(() => { window.EnchantedAuth.logout(); window.location.href = "/"; }, 1600);
   }
 });
 

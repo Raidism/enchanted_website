@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Analytics Portal | Imperium MUN</title>
-  <meta name="description" content="Imperium MUN analytics portal." />
+  <title>Analytics Portal | The Enchanted Summit</title>
+  <meta name="description" content="The Enchanted Summit analytics portal." />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Imperium MUN" />
-  <meta property="og:title" content="Analytics Portal | Imperium MUN" />
-  <meta property="og:description" content="Website analytics portal for Imperium MUN." />
-  <meta property="og:image" content="assets/imperium mun logo.jpg" />
-  <meta property="og:image:alt" content="Imperium MUN official logo" />
+  <meta property="og:site_name" content="The Enchanted Summit" />
+  <meta property="og:title" content="Analytics Portal | The Enchanted Summit" />
+  <meta property="og:description" content="Website analytics portal for The Enchanted Summit." />
+  <meta property="og:image" content="assets/enchanted logo.jpg" />
+  <meta property="og:image:alt" content="The Enchanted Summit official logo" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Analytics Portal | Imperium MUN" />
-  <meta name="twitter:description" content="Website analytics portal for Imperium MUN." />
-  <meta name="twitter:image" content="assets/imperium mun logo.jpg" />
-  <link rel="icon" type="image/jpeg" href="assets/imperium mun logo.jpg" />
+  <meta name="twitter:title" content="Analytics Portal | The Enchanted Summit" />
+  <meta name="twitter:description" content="Website analytics portal for The Enchanted Summit." />
+  <meta name="twitter:image" content="assets/enchanted logo.jpg" />
+  <link rel="icon" type="image/jpeg" href="assets/enchanted logo.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -29,9 +29,9 @@
   <!-- ── Sidebar ──────────────────────────────────────────────── -->
   <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
     <a class="sidebar-brand" href="/">
-      <img src="assets/imperium mun logo.jpg" alt="Imperium MUN" class="sidebar-brand-logo" />
+      <img src="assets/enchanted logo.jpg" alt="The Enchanted Summit" class="sidebar-brand-logo" />
       <div>
-        <div class="sidebar-brand-text">Imperium MUN</div>
+        <div class="sidebar-brand-text">The Enchanted Summit</div>
         <div class="sidebar-brand-sub">Admin Portal</div>
       </div>
     </a>
@@ -61,7 +61,7 @@
 
     <div class="sidebar-footer">
       <div class="sidebar-user">
-        <img id="sidebarUserPhoto" src="assets/imperium mun logo.jpg" alt="User" class="sidebar-user-avatar" loading="eager" />
+        <img id="sidebarUserPhoto" src="assets/enchanted logo.jpg" alt="User" class="sidebar-user-avatar" loading="eager" />
         <div class="sidebar-user-info">
           <div class="sidebar-user-name" id="sidebarUserName">Loading…</div>
           <div class="sidebar-user-role" id="sidebarUserRole">Member</div>
@@ -83,7 +83,7 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
         <div class="topbar-title">
-          <span>Imperium MUN</span>
+          <span>The Enchanted Summit</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="breadcrumb-sep"><polyline points="9 18 15 12 9 6"/></svg>
           <span class="breadcrumb-current">Analytics</span>
         </div>
@@ -102,11 +102,11 @@
       <div class="dash-welcome-hero" id="dashWelcomeHero" aria-label="Welcome briefing">
         <div class="dwh-photo-col" aria-hidden="true">
           <div class="dwh-photo-ring">
-            <img id="dwhPhoto" src="assets/imperium mun logo.jpg" alt="" class="dwh-photo" loading="eager" decoding="async" />
+            <img id="dwhPhoto" src="assets/enchanted logo.jpg" alt="" class="dwh-photo" loading="eager" decoding="async" />
           </div>
         </div>
         <div class="dwh-text-col">
-          <p class="dwh-eyebrow">IMPERIUM&nbsp;MUN &mdash; SECURE&nbsp;PORTAL</p>
+          <p class="dwh-eyebrow">The Enchanted Summit &mdash; SECURE&nbsp;PORTAL</p>
           <h2 class="dwh-welcome-line" aria-live="polite">Welcome,&nbsp;<span class="dwh-name" id="dwhName"></span><span class="dwh-cursor" aria-hidden="true">█</span></h2>
           <p class="dwh-role" id="dwhRole"></p>
           <div class="dwh-briefing" id="dwhBriefing" aria-live="polite"></div>
@@ -283,7 +283,7 @@
         var sp = document.getElementById('sidebarUserPhoto');
         var sn = document.getElementById('sidebarUserName');
         var sr = document.getElementById('sidebarUserRole');
-        if (photo && sp && photo.src && !photo.src.endsWith('imperium%20mun%20logo.jpg')) sp.src = photo.src;
+        if (photo && sp && photo.src && !photo.src.endsWith('enchanted%20logo.jpg')) sp.src = photo.src;
         if (name  && sn && name.textContent)  sn.textContent = name.textContent;
         if (role  && sr && role.textContent)  sr.textContent = role.textContent;
       }

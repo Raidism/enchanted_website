@@ -1,4 +1,4 @@
-﻿const currentUser = window.ImperiumAuth.getCurrentUser();
+const currentUser = window.EnchantedAuth.getCurrentUser();
 if (!currentUser) {
   window.location.href = "/access";
   throw new Error("No active session");
@@ -20,14 +20,14 @@ if (prefersReducedMotion || constrainedNetwork) {
   document.body.classList.add("lite-motion");
 }
 
-const siteSettings = window.ImperiumAuth.getSiteSettings();
+const siteSettings = window.EnchantedAuth.getSiteSettings();
 if (siteSettings.maintenanceMode && currentUser.role !== "admin") {
   window.location.href = "/maintenance";
   throw new Error("Maintenance mode is active for non-admin users");
 }
 
-window.ImperiumAuth.heartbeat();
-setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
+window.EnchantedAuth.heartbeat();
+setInterval(() => window.EnchantedAuth.heartbeat(), 30000);
 
 const welcomeText = null; // legacy – replaced by dwh-* elements
 const logoutBtn = document.getElementById("logoutBtn");
@@ -73,7 +73,7 @@ let isUserAccessHandlerBound = false;
 let isInstagramStatsHandlerBound = false;
 const VISITS_PER_PAGE = 10;
 const PAGE_WINDOW = 9;
-const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+const API_BASE = String((window.EnchantedRuntime && window.EnchantedRuntime.apiBase) || "/api").replace(/\/+$/, "");
 const ANALYTICS_API_URL = `${API_BASE}/analytics`;
 let currentVisitPage = 1;
 const isAdmin = currentUser.role === "admin";
@@ -202,18 +202,18 @@ const resolvedDashboardProfile = (() => {
 
   return {
     name: String(mappedName || mappedSpotlight.name || mappedFallback.name || currentUser.name || currentUser.username || "User"),
-    photo: String(mappedSpotlight.photo || mappedFallback.photo || currentUser.photo || "assets/imperium mun logo.jpg"),
+    photo: String(mappedSpotlight.photo || mappedFallback.photo || currentUser.photo || "assets/enchanted logo.jpg"),
     role: String(mappedSpotlight.role || mappedFallback.role || (isAdmin ? "Admin" : "Member")),
   };
 })();
 
 const maybeShowOnboarding = () => {
-  if (!window.ImperiumOnboarding || typeof window.ImperiumOnboarding.maybeShow !== "function") {
+  if (!window.Enchanted SummitOnboarding || typeof window.Enchanted SummitOnboarding.maybeShow !== "function") {
     return;
   }
 
   setTimeout(() => {
-    window.ImperiumOnboarding.maybeShow(currentUser);
+    window.Enchanted SummitOnboarding.maybeShow(currentUser);
   }, 380);
 };
 
@@ -256,7 +256,7 @@ const renderInstagramStatsPanel = () => {
     return;
   }
 
-  const settings = window.ImperiumAuth.getSiteSettings();
+  const settings = window.EnchantedAuth.getSiteSettings();
   const normalizeCount = (value, fallback) => {
     const numeric = Number(value);
     return Number.isFinite(numeric) && numeric >= 0 ? Math.floor(numeric) : fallback;
@@ -298,7 +298,7 @@ const renderInstagramStatsPanel = () => {
         instagramStatsMessage.textContent = "Saving Instagram snapshot...";
       }
 
-      let result = window.ImperiumAuth.updateSiteSettings(currentUser, payload);
+      let result = window.EnchantedAuth.updateSiteSettings(currentUser, payload);
 
       // Fallback path for environments where the auth helper request can fail silently.
       if (!result.success) {
@@ -322,8 +322,8 @@ const renderInstagramStatsPanel = () => {
 
           if (result.success && result.settings) {
             try {
-              localStorage.setItem("imperium_site_settings", JSON.stringify(result.settings));
-              window.dispatchEvent(new CustomEvent("imperium:site-settings-updated", { detail: { settings: result.settings } }));
+              localStorage.setItem("enchanted_site_settings", JSON.stringify(result.settings));
+              window.dispatchEvent(new CustomEvent("enchanted:site-settings-updated", { detail: { settings: result.settings } }));
             } catch {
               // Ignore local broadcast failures.
             }
@@ -366,7 +366,7 @@ const renderInstagramStatsPanel = () => {
 // ═══════════════════════════════════════════════════════════════
 //  NOTES SYSTEM
 // ═══════════════════════════════════════════════════════════════
-const NOTES_KEY = "imperium_staff_notes";
+const NOTES_KEY = "Enchanted Summit_staff_notes";
 
 const readNotes = () => {
   try {
@@ -556,7 +556,7 @@ const runWelcomeSequence = async () => {
   const pendingCount = readNotes().filter((n) => !n.resolved).length;
   const lastLoginStr = (() => {
     try {
-      const sessions = JSON.parse(localStorage.getItem("imperium_active_users") || "{}");
+      const sessions = JSON.parse(localStorage.getItem("Enchanted Summit_active_users") || "{}");
       const s = sessions[profileKey];
       if (s && s.lastSeenAt) {
         return new Date(s.lastSeenAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
@@ -567,7 +567,7 @@ const runWelcomeSequence = async () => {
 
   const briefLines = [
     "Portal online. All systems nominal.",
-    lastLoginStr ? `Last active session: ${lastLoginStr}.` : "Welcome back to the Imperium MUN portal.",
+    lastLoginStr ? `Last active session: ${lastLoginStr}.` : "Welcome back to the The Enchanted Summit portal.",
     pendingCount > 0
       ? `${pendingCount} staff note${pendingCount === 1 ? "" : "s"} pending — check the IT board below.`
       : "No pending staff notes. All clear.",
@@ -588,7 +588,7 @@ renderUserSpotlight();
 const showLogoutTransition = () => {
   const preset = USER_SPOTLIGHT_PRESETS[profileKey] || {
     name: currentUser.username,
-    photo: "assets/imperium mun logo.jpg",
+    photo: "assets/enchanted logo.jpg",
   };
 
   const overlay = document.createElement("div");
@@ -614,13 +614,13 @@ const showLogoutTransition = () => {
     gsap.to(overlay, {
       opacity: 0, duration: 0.4, ease: "power2.in", delay: 1.45,
       onComplete: () => {
-        window.ImperiumAuth.logout();
+        window.EnchantedAuth.logout();
         window.location.href = "/";
       },
     });
   } else {
     setTimeout(() => {
-      window.ImperiumAuth.logout();
+      window.EnchantedAuth.logout();
       window.location.href = "/";
     }, 1600);
   }
@@ -682,7 +682,7 @@ const renderAdminProfile = () => {
   }
 
   const preset = ADMIN_PROFILE_PRESETS[profileKey] || {
-    photo: "assets/imperium mun logo.jpg",
+    photo: "assets/enchanted logo.jpg",
     caption: `Welcome ${currentUser.username}.`,
     alt: `${currentUser.username} profile`,
   };
@@ -854,7 +854,7 @@ const renderAdminPanel = () => {
   }
 
   if (activeUsersList) {
-    const activeUsers = window.ImperiumAuth.getActiveUsers();
+    const activeUsers = window.EnchantedAuth.getActiveUsers();
     const entries = Object.values(activeUsers);
 
     activeUsersList.innerHTML = "";
@@ -881,7 +881,7 @@ const renderAdminPanel = () => {
       const password = String(formData.get("newPassword") || "").trim();
       const role = String(formData.get("newRole") || "member").trim();
 
-      const result = window.ImperiumAuth.addUser(currentUser, username, password, role);
+      const result = window.EnchantedAuth.addUser(currentUser, username, password, role);
 
       addUserMessage.classList.toggle("success", result.success);
       addUserMessage.textContent = result.message;
@@ -898,7 +898,7 @@ const renderAdminPanel = () => {
     // so the interval doesn't reset inputs while the user is typing.
     const formHasFocus = siteSettingsForm.contains(document.activeElement);
     if (!formHasFocus) {
-      const settings = window.ImperiumAuth.getSiteSettings();
+      const settings = window.EnchantedAuth.getSiteSettings();
       maintenanceModeInput.value = settings.maintenanceMode ? "on" : "off";
       maintenanceMessageInput.value = String(settings.maintenanceMessage || "");
       launchDateInput.value = toDateTimeLocalValue(settings.launchDate);
@@ -907,7 +907,7 @@ const renderAdminPanel = () => {
 
     if (!isSiteSettingsHandlerBound) {
       const doSave = () => {
-        const updateResult = window.ImperiumAuth.updateSiteSettings(currentUser, {
+        const updateResult = window.EnchantedAuth.updateSiteSettings(currentUser, {
           maintenanceMode: maintenanceModeInput.value === "on",
           maintenanceMessage: String(maintenanceMessageInput.value || "").trim(),
           launchDate: fromDateTimeLocalValue(String(launchDateInput.value || "").trim()),
@@ -942,17 +942,17 @@ const renderAdminPanel = () => {
       return;
     }
 
-    const users = window.ImperiumAuth.getUsers();
+    const users = window.EnchantedAuth.getUsers();
     userAccessList.innerHTML = "";
 
     users.sort((a, b) => String(a.username || "").localeCompare(String(b.username || "")));
 
-    const activeUsers = window.ImperiumAuth.getActiveUsers();
+    const activeUsers = window.EnchantedAuth.getActiveUsers();
 
     users.forEach((user) => {
       const li = document.createElement("li");
       const status = user.disabled ? "Disabled" : "Active";
-      const photoSrc = user.photo || "assets/imperium mun logo.jpg";
+      const photoSrc = user.photo || "assets/enchanted logo.jpg";
       const photoHtml = `<img src="${escapeHtml(photoSrc)}" alt="${escapeHtml(user.name || user.username)}" class="uac-photo" loading="lazy" decoding="async" />`;
       const isActiveSelf = String(user.username || "").toLowerCase() === String(currentUser.username || "").toLowerCase();
       const isOnline = Object.keys(activeUsers).some((k) => k.toLowerCase() === String(user.username || "").toLowerCase());
@@ -992,10 +992,10 @@ const renderAdminPanel = () => {
         let result;
 
         if (action === "force-logout") {
-          result = window.ImperiumAuth.forceLogoutUser(currentUser, username);
+          result = window.EnchantedAuth.forceLogoutUser(currentUser, username);
         } else {
           const disabledFlag = target.getAttribute("data-disabled") === "1";
-          result = window.ImperiumAuth.setUserDisabled(currentUser, username, !disabledFlag);
+          result = window.EnchantedAuth.setUserDisabled(currentUser, username, !disabledFlag);
         }
 
         if (siteSettingsMessage) {
@@ -1062,7 +1062,7 @@ const syncRefreshState = () => {
 
 document.addEventListener("visibilitychange", syncRefreshState);
 window.addEventListener("storage", (event) => {
-  if (["imperium_view_logs", "imperium_active_users", "imperium_users", "imperium_site_settings"].includes(event.key || "")) {
+  if (["Enchanted Summit_view_logs", "Enchanted Summit_active_users", "Enchanted Summit_users", "enchanted_site_settings"].includes(event.key || "")) {
     renderAnalytics();
     renderAdminPanel();
     renderInstagramStatsPanel();

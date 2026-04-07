@@ -1,6 +1,6 @@
 (function () {
-  const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
-  const SITE_SETTINGS_STORAGE_KEY = "imperium_site_settings";
+  const API_BASE = String((window.EnchantedRuntime && window.EnchantedRuntime.apiBase) || "/api").replace(/\/+$/, "");
+  const SITE_SETTINGS_STORAGE_KEY = "enchanted_site_settings";
   let cachedUser = null;
   let cachedSettings = null;
 
@@ -12,7 +12,7 @@
     }
 
     try {
-      window.dispatchEvent(new CustomEvent("imperium:site-settings-updated", { detail: { settings: settings || {} } }));
+      window.dispatchEvent(new CustomEvent("enchanted:site-settings-updated", { detail: { settings: settings || {} } }));
     } catch {
       // Ignore event dispatch errors.
     }
@@ -27,16 +27,7 @@
   };
 
   const normalizeProfileKey = (value) => String(value || "").trim().toLowerCase().replace(/[^a-z0-9_-]/g, "");
-  const PROFILE_FALLBACKS = {
-    joumohd08: {
-      name: "Joumana Mohamed",
-      photo: "assets/Joumana Mohamed .png",
-    },
-    y72n_e: {
-      name: "Yassin elnaggar",
-      photo: "assets/Yassin elnaggar.jpg",
-    },
-  };
+  const PROFILE_FALLBACKS = {};
 
   const applyUserFallbackProfile = (user) => {
     if (!user || typeof user !== "object") return user;
@@ -123,19 +114,19 @@
 
     cachedSettings = {
       maintenanceMode: false,
-      maintenanceMessage: "Imperium MUN is temporarily under maintenance. Please check back soon.",
+      maintenanceMessage: "The Enchanted Summit is temporarily under maintenance. Please check back soon.",
       launchDate: "2026-03-28T00:00:00+03:00",
       announcement: "",
       teamApplicationsOpen: false,
       applicationsOpen: false,
-      conferenceDate: "2026-05-15T09:00:00+03:00",
-      locationText: "Riyadh, Saudi Arabia",
-      conferenceDescription: "Imperium MUN is a student-led conference focused on collaboration, critical thinking, and impactful debate.",
-      countdownEnabled: true,
+      conferenceDate: "",
+      locationText: "Riyadh, KSA",
+      conferenceDescription: "The Enchanted Summit is a debate summit rooted in fictional and otherworldly topics, designed to bring out the passion of participants in the debate community.",
+      countdownEnabled: false,
       instagramStatsSource: "live",
-      instagramFollowers: 487,
-      instagramPosts: 18,
-      instagramFollowing: 4,
+      instagramFollowers: 135,
+      instagramPosts: 3,
+      instagramFollowing: 5,
     };
 
     return cachedSettings;
@@ -341,7 +332,7 @@
 
   init();
 
-  window.ImperiumAuth = {
+  window.EnchantedAuth = {
     init,
     login,
     logout,

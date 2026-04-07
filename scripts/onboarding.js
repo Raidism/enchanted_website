@@ -1,11 +1,11 @@
 (function () {
-  const STORAGE_PREFIX = "imperium_onboarding_done_v1";
-  const STORAGE_LAST_USER = "imperium_last_login_user";
+  const STORAGE_PREFIX = "Enchanted Summit_onboarding_done_v1";
+  const STORAGE_LAST_USER = "Enchanted Summit_last_login_user";
   const MAIN_ADMIN_USERNAME = "admin";
 
   const COMMON_STEPS = [
     {
-      title: "Welcome to Imperium Portal",
+      title: "Welcome to Enchanted Summit Portal",
       description: "This is your command center for analytics, applications, and team operations.",
       tip: "Tip: Use the top navigation to jump quickly between modules.",
     },
@@ -54,8 +54,8 @@
   const completionKeyForUser = (user) => `${STORAGE_PREFIX}:${normalizeUsername(user)}`;
 
   const hasCompleted = (user) => {
-    if (window.ImperiumAuth && typeof window.ImperiumAuth.getOnboardingStatus === "function") {
-      const result = window.ImperiumAuth.getOnboardingStatus();
+    if (window.EnchantedAuth && typeof window.EnchantedAuth.getOnboardingStatus === "function") {
+      const result = window.EnchantedAuth.getOnboardingStatus();
       if (result && result.success) {
         return Boolean(result.onboardingCompleted);
       }
@@ -71,8 +71,8 @@
   };
 
   const setCompleted = (user) => {
-    if (window.ImperiumAuth && typeof window.ImperiumAuth.completeOnboarding === "function") {
-      window.ImperiumAuth.completeOnboarding();
+    if (window.EnchantedAuth && typeof window.EnchantedAuth.completeOnboarding === "function") {
+      window.EnchantedAuth.completeOnboarding();
     }
 
     const username = normalizeUsername(user);
@@ -269,7 +269,7 @@
     open(user, options);
   };
 
-  window.ImperiumOnboarding = {
+  window.Enchanted SummitOnboarding = {
     open,
     maybeShow,
     hasCompleted,

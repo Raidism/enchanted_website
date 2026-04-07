@@ -28,17 +28,17 @@ if (window.location.pathname === "/contact") {
 }
 
 const ensureHeroTypewriter = () => {
-  if (window.__imperiumTypewriterReady) return;
+  if (window.__enchantedTypewriterReady) return;
   const el = document.getElementById("heroTypewriter");
   if (!el) return;
 
-  window.__imperiumTypewriterReady = true;
+  window.__enchantedTypewriterReady = true;
   const phrases = [
-    "Diplomacy Starts Here",
-    "Future Leaders Are Built Here",
-    "Where Negotiation Meets Power",
-    "Model United Nations Excellence",
-    "Lead. Debate. Influence.",
+    "Enchanting You Back Into Our World",
+    "Where Passion Meets Debate",
+    "One Conference at a Time",
+    "The Journey Matters Most",
+    "Unite. Debate. Enchant.",
   ];
 
   let phraseIdx = 0;
@@ -77,7 +77,7 @@ const ensureHeroTypewriter = () => {
 
 setTimeout(ensureHeroTypewriter, 1200);
 
-const CANONICAL_SITE_URL = "https://imperiumun.com/";
+const CANONICAL_SITE_URL = "https://theenchantedsummit.com/";
 
 // ── Hamburger / mobile nav ──────────────────────────────────────────────
 (function initHamburger() {
@@ -130,40 +130,40 @@ const CANONICAL_SITE_URL = "https://imperiumun.com/";
   }
 })();
 
-const SITE_SETTINGS_STORAGE_KEY = "imperium_site_settings";
-const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+const SITE_SETTINGS_STORAGE_KEY = "enchanted_site_settings";
+const API_BASE = String((window.EnchantedRuntime && window.EnchantedRuntime.apiBase) || "/api").replace(/\/+$/, "");
 const WAITLIST_API_URL = `${API_BASE}/waitlist`;
 const QUESTIONS_API_URL = `${API_BASE}/questions`;
 const INSTAGRAM_API_URL = `${API_BASE}/instagram`;
-const INSTAGRAM_USERNAME = "imperiummun26";
+const INSTAGRAM_USERNAME = "theenchantedsummit";
 const _connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 const _effectiveType = String(_connection && _connection.effectiveType ? _connection.effectiveType : "").toLowerCase();
 const _isConstrainedNetwork = Boolean(_connection && _connection.saveData) || /(^|[^a-z])2g|3g([^a-z]|$)/.test(_effectiveType);
 const newWaitlistId = () => `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
-const WAITLIST_LOCAL_BACKUP_KEY = "imperium_waitlist_local_backup";
+const WAITLIST_LOCAL_BACKUP_KEY = "enchanted_waitlist_local_backup";
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const fallbackSiteSettings = {
   maintenanceMode: false,
   teamApplicationsOpen: false, // Default closed
-  maintenanceMessage: "Imperium MUN is temporarily under maintenance. Please check back soon.",
+  maintenanceMessage: "The Enchanted Summit is temporarily under maintenance. Please check back soon.",
   launchDate: "2026-03-28T00:00:00+03:00",
   announcement: "",
   applicationsOpen: false,
-  conferenceDate: "2026-05-15T09:00:00+03:00",
-  locationText: "Riyadh, Saudi Arabia",
-  conferenceDescription: "Imperium MUN is a student-led conference focused on collaboration, critical thinking, and impactful debate.",
-  countdownEnabled: true,
+  conferenceDate: "",
+  locationText: "Riyadh, KSA",
+  conferenceDescription: "The Enchanted Summit is a debate summit rooted in fictional and otherworldly topics, designed to bring out the passion of participants in the debate community.",
+  countdownEnabled: false,
   instagramStatsSource: "live",
-  instagramFollowers: 487,
-  instagramPosts: 18,
-  instagramFollowing: 4,
+  instagramFollowers: 135,
+  instagramPosts: 3,
+  instagramFollowing: 5,
 };
 
 const getSiteSettings = () => {
-  if (window.ImperiumAuth && typeof window.ImperiumAuth.getSiteSettings === "function") {
+  if (window.EnchantedAuth && typeof window.EnchantedAuth.getSiteSettings === "function") {
     return {
       ...fallbackSiteSettings,
-      ...window.ImperiumAuth.getSiteSettings(),
+      ...window.EnchantedAuth.getSiteSettings(),
     };
   }
   return fallbackSiteSettings;
@@ -416,7 +416,7 @@ window.addEventListener("storage", (event) => {
   }
 });
 
-window.addEventListener("imperium:site-settings-updated", (event) => {
+window.addEventListener("enchanted:site-settings-updated", (event) => {
   const detailSettings = event && event.detail && event.detail.settings ? event.detail.settings : getSiteSettings();
   scheduleInstagramSync();
   hydrateDynamicSettings(detailSettings);
@@ -512,7 +512,7 @@ hydrateDynamicSettings(siteSettings);
 refreshSiteSettingsFromServer();
 setInterval(refreshSiteSettingsFromServer, 20000);
 
-const SECRETARIAT_KEY = "imperium_secretariat";
+const SECRETARIAT_KEY = "Enchanted Summit_secretariat";
 const readSecretariat = () => {
   try {
     const raw = localStorage.getItem(SECRETARIAT_KEY);
@@ -533,7 +533,7 @@ if (teamGrid && secretariatRows.length) {
     card.className = "team-card reveal pop-card";
     card.innerHTML = `
       <div class="team-photo-wrap">
-        <img src="${String(member.photo || "assets/imperium mun logo.jpg").replace(/"/g, "&quot;")}" alt="${String(member.name || "Secretariat member").replace(/"/g, "&quot;")}" class="team-photo" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/imperium mun logo.jpg';" />
+        <img src="${String(member.photo || "assets/enchanted logo.jpg").replace(/"/g, "&quot;")}" alt="${String(member.name || "Secretariat member").replace(/"/g, "&quot;")}" class="team-photo" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/enchanted logo.jpg';" />
       </div>
       <h3>${String(member.name || "Unknown").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</h3>
       <p class="muted">${String(member.title || "Role").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
@@ -544,8 +544,8 @@ if (teamGrid && secretariatRows.length) {
 }
 
 if (siteSettings.maintenanceMode) {
-  const _currentUser = window.ImperiumAuth && typeof window.ImperiumAuth.getCurrentUser === "function"
-    ? window.ImperiumAuth.getCurrentUser()
+  const _currentUser = window.EnchantedAuth && typeof window.EnchantedAuth.getCurrentUser === "function"
+    ? window.EnchantedAuth.getCurrentUser()
     : null;
   const _isAdmin = _currentUser && _currentUser.role === "admin";
 
@@ -579,7 +579,7 @@ if (siteSettings.maintenanceMode) {
     card.className = "maintenance-card";
 
     const title = document.createElement("h1");
-    title.textContent = "Imperium MUN";
+    title.textContent = "The Enchanted Summit";
 
     const message = document.createElement("p");
     message.textContent = siteSettings.maintenanceMessage || fallbackSiteSettings.maintenanceMessage;
@@ -625,7 +625,7 @@ if (siteSettings.maintenanceMode) {
 }
 
 const themeToggle = document.getElementById("themeToggle");
-const themeStorageKey = "imperium-theme";
+const themeStorageKey = "Enchanted Summit-theme";
 let isThemeAnimating = false;
 
 const setTheme = (theme, withAnimation = false) => {
@@ -1047,8 +1047,8 @@ if (brandLink) {
       clickCount = 0;
       document.body.classList.toggle("sigil-boost");
       showEasterToast(document.body.classList.contains("sigil-boost")
-        ? "Imperium sigil awakened"
-        : "Imperium sigil normalized");
+        ? "Enchanted Summit sigil awakened"
+        : "Enchanted Summit sigil normalized");
     }
   });
 }
@@ -1079,7 +1079,7 @@ if (creditLine) {
       const lines = [
         "Secretariat protocol: elegance under pressure.",
         "Diplomacy is a superpower. Keep leveling up.",
-        "Imperium mode engaged: debate with purpose.",
+        "Enchanted Summit mode engaged: debate with purpose.",
       ];
       const pick = lines[Math.floor(Math.random() * lines.length)];
       showEasterToast(pick);
@@ -1753,15 +1753,15 @@ if (contactEmailLink) {
 if (shareBtn && shareMessage) {
   shareBtn.addEventListener("click", async () => {
     const sharePayload = {
-      title: "Imperium MUN",
-      text: "Join Imperium MUN in Riyadh. Diplomacy, debate, and leadership - applications opening soon.",
+      title: "The Enchanted Summit",
+      text: "Join The Enchanted Summit in Riyadh. Diplomacy, debate, and leadership - applications opening soon.",
       url: CANONICAL_SITE_URL,
     };
 
     try {
       if (navigator.share) {
         await navigator.share(sharePayload);
-        shareMessage.textContent = "Thanks for sharing Imperium MUN.";
+        shareMessage.textContent = "Thanks for sharing The Enchanted Summit.";
         return;
       }
 
@@ -1784,7 +1784,7 @@ function initTicTacToe() {
   const lossesEl = document.getElementById("tttLosses");
   if (!board || !status || !resetBtn) return;
 
-  const TTT_SCORE_KEY = "imperium_ttt_score";
+  const TTT_SCORE_KEY = "Enchanted Summit_ttt_score";
   let scores = (() => {
     try { return JSON.parse(localStorage.getItem(TTT_SCORE_KEY) || "{}"); } catch { return {}; }
   })();

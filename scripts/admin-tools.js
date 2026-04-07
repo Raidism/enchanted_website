@@ -1,7 +1,7 @@
 (function () {
-  if (!window.ImperiumAuth) return;
+  if (!window.EnchantedAuth) return;
 
-  const currentUser = window.ImperiumAuth.getCurrentUser();
+  const currentUser = window.EnchantedAuth.getCurrentUser();
   if (!currentUser) {
     window.location.href = "/access";
     return;
@@ -21,10 +21,10 @@
   };
   const profileFallback = PROFILE_FALLBACKS[profileKey] || {};
   const profileDisplayName = String(profileFallback.name || currentUser.name || currentUser.username || "User");
-  const profilePhotoSrc = String(profileFallback.photo || currentUser.photo || "assets/imperium mun logo.jpg");
+  const profilePhotoSrc = String(profileFallback.photo || currentUser.photo || "assets/enchanted logo.jpg");
 
-  window.ImperiumAuth.heartbeat();
-  setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
+  window.EnchantedAuth.heartbeat();
+  setInterval(() => window.EnchantedAuth.heartbeat(), 30000);
 
   const pmhPhoto = document.getElementById("pmhPhoto");
   const pmhName = document.getElementById("pmhName");
@@ -78,21 +78,21 @@
         gsap.to(ring, { scale: 1.18, opacity: 0, duration: 0.65, ease: "power2.in", delay: 0.95 });
         gsap.to(card, { y: -24, opacity: 0, duration: 0.48, ease: "power2.in", delay: 1.1 });
         gsap.to(overlay, { opacity: 0, duration: 0.4, ease: "power2.in", delay: 1.45,
-          onComplete: () => { window.ImperiumAuth.logout(); window.location.href = "/"; } });
+          onComplete: () => { window.EnchantedAuth.logout(); window.location.href = "/"; } });
       } else {
-        setTimeout(() => { window.ImperiumAuth.logout(); window.location.href = "/"; }, 1600);
+        setTimeout(() => { window.EnchantedAuth.logout(); window.location.href = "/"; }, 1600);
       }
     });
   }
 
-  const WAITLIST_KEY = "imperium_waitlist";
-  const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+  const WAITLIST_KEY = "Enchanted Summit_waitlist";
+  const API_BASE = String((window.EnchantedRuntime && window.EnchantedRuntime.apiBase) || "/api").replace(/\/+$/, "");
   const WAITLIST_API_URL = `${API_BASE}/waitlist`;
   const QUESTIONS_API_URL = `${API_BASE}/questions`;
-  const QUESTIONS_KEY = "imperium_questions";
-  const ANNOUNCEMENTS_KEY = "imperium_announcements";
-  const SECRETARIAT_KEY = "imperium_secretariat";
-  const ACTIVITY_KEY = "imperium_admin_activity";
+  const QUESTIONS_KEY = "Enchanted Summit_questions";
+  const ANNOUNCEMENTS_KEY = "Enchanted Summit_announcements";
+  const SECRETARIAT_KEY = "Enchanted Summit_secretariat";
+  const ACTIVITY_KEY = "Enchanted Summit_admin_activity";
 
   const eaSearchInput = document.getElementById("eaSearchInput");
   const eaSchoolFilter = document.getElementById("eaSchoolFilter");
@@ -662,7 +662,7 @@
   const syncWebsiteAnnouncement = (rows) => {
     const items = Array.isArray(rows) ? rows : getAnnouncements();
     const latest = items.length ? (items[0].title ? `${items[0].title}: ${items[0].body}` : items[0].body).trim() : "";
-    const result = window.ImperiumAuth.updateSiteSettings(currentUser, { announcement: latest });
+    const result = window.EnchantedAuth.updateSiteSettings(currentUser, { announcement: latest });
     return result;
   };
 
@@ -711,7 +711,7 @@
       id: "sg",
       name: "Ahmed Pharaon",
       title: "Secretary-General (SG)",
-      description: "Leads the vision and direction of Imperium MUN.",
+      description: "Leads the vision and direction of The Enchanted Summit.",
       photo: "assets/secretary general.png",
     },
     {
@@ -829,9 +829,9 @@
   const saveLaunchSettings = async (isManualSave) => {
     if (!launchOpsForm) return;
 
-    const previous = window.ImperiumAuth.getSiteSettings();
+    const previous = window.EnchantedAuth.getSiteSettings();
     const payload = getLaunchSettingsPayload();
-    const result = window.ImperiumAuth.updateSiteSettings(currentUser, payload);
+    const result = window.EnchantedAuth.updateSiteSettings(currentUser, payload);
 
     if (launchOpsMessage) {
       launchOpsMessage.classList.toggle("success", result.success);
@@ -864,7 +864,7 @@
 
   const hydrateLaunchForm = () => {
     if (!launchOpsForm) return;
-    const settings = window.ImperiumAuth.getSiteSettings();
+    const settings = window.EnchantedAuth.getSiteSettings();
     if (applicationsOpenToggle) applicationsOpenToggle.value = settings.applicationsOpen ? "open" : "closed";
     if (launchDateOpsInput) launchDateOpsInput.value = toDateTimeLocalValue(settings.launchDate);
     if (conferenceDateInput) conferenceDateInput.value = toDateTimeLocalValue(settings.conferenceDate);
@@ -886,7 +886,7 @@
 
   const hydrateMaintenanceForm = () => {
     if (!maintenanceOpsForm) return;
-    const settings = window.ImperiumAuth.getSiteSettings();
+    const settings = window.EnchantedAuth.getSiteSettings();
     const enabled = Boolean(settings.maintenanceMode);
     if (maintenanceModeToggle) maintenanceModeToggle.checked = enabled;
     if (maintenanceMessageInput) {
@@ -901,7 +901,7 @@
     const maintenanceMode = Boolean(maintenanceModeToggle && maintenanceModeToggle.checked);
     const maintenanceMessage = String(maintenanceMessageInput && maintenanceMessageInput.value || "").trim();
 
-    const result = window.ImperiumAuth.updateSiteSettings(currentUser, {
+    const result = window.EnchantedAuth.updateSiteSettings(currentUser, {
       maintenanceMode,
       maintenanceMessage,
     });

@@ -14,7 +14,7 @@
     if (statusClass) statusEl.classList.add(statusClass);
   };
 
-  const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+  const API_BASE = String((window.EnchantedRuntime && window.EnchantedRuntime.apiBase) || "/api").replace(/\/+$/, "");
   const SETTINGS_REQUEST_TIMEOUT_MS = 5000;
 
   const overlay = document.getElementById("applyRedirectOverlay");
@@ -26,14 +26,14 @@
 
   const TEAM_TITLES = {
     volunteer: "Volunteer Team",
-    media: "Media Team",
+    media: "Media & Press Team",
     security: "Security Team",
   };
 
   const LINKS = {
-    volunteer: "https://forms.gle/WRPNc177MNwcm8899",
-    media: "https://forms.gle/AyDvjdU37rn2L98GA",
-    security: "https://forms.gle/bZL3meH9Mfaj2Zz66",
+    volunteer: "https://docs.google.com/forms/d/e/1FAIpQLScPnumk5ODdvUkEbqRRyko1MvsyPiHTmjcTaIIRvaC0cG1hnQ/viewform",
+    media: "https://docs.google.com/forms/d/e/1FAIpQLSdbqe0iyVbLSdayH8g6Rh2KLq65vKehZSVMtorVBgt66VBlmQ/viewform",
+    security: "https://docs.google.com/forms/d/e/1FAIpQLSc9FI420bulwJn0aA9IIHPJxJ9vJ6wV_5upcTLjP-pTo4UKvw/viewform",
   };
 
   const applyCards = document.querySelectorAll(".apply-team-card");
@@ -48,8 +48,8 @@
   const applyOpenState = async () => {
     let settings = null;
     try {
-      if (window.ImperiumAuth && typeof window.ImperiumAuth.getSiteSettings === "function") {
-        settings = window.ImperiumAuth.getSiteSettings();
+      if (window.EnchantedAuth && typeof window.EnchantedAuth.getSiteSettings === "function") {
+        settings = window.EnchantedAuth.getSiteSettings();
       }
     } catch {
       settings = null;
@@ -162,12 +162,12 @@
   applyOpenState();
 
   window.addEventListener("storage", (event) => {
-    if (event.key === "imperium_site_settings") {
+    if (event.key === "enchanted_site_settings") {
       applyOpenState();
     }
   });
 
-  window.addEventListener("imperium:site-settings-updated", () => {
+  window.addEventListener("enchanted:site-settings-updated", () => {
     applyOpenState();
   });
 
@@ -194,8 +194,8 @@
 
       setStatus(`Logging click and preparing ${TEAM_TITLES[team] || "team"} form...`);
 
-      if (window.ImperiumTracker && typeof window.ImperiumTracker.trackEvent === "function") {
-        window.ImperiumTracker.trackEvent("team_application_click", team);
+      if (window.Enchanted SummitTracker && typeof window.Enchanted SummitTracker.trackEvent === "function") {
+        window.Enchanted SummitTracker.trackEvent("team_application_click", team);
       }
 
       card.classList.add("is-selected");

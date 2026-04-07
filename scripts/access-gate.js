@@ -7,15 +7,15 @@ const mobileGateKeypad = document.getElementById("mobileGateKeypad");
 const gateKeypadDisplay = document.getElementById("gateKeypadDisplay");
 const keypadSubmitBtn = document.getElementById("keypadSubmitBtn");
 
-if (window.ImperiumAuth && typeof window.ImperiumAuth.getCurrentUser === "function") {
-  const signedInUser = window.ImperiumAuth.getCurrentUser();
+if (window.EnchantedAuth && typeof window.EnchantedAuth.getCurrentUser === "function") {
+  const signedInUser = window.EnchantedAuth.getCurrentUser();
   if (signedInUser) {
     window.location.replace("/dashboard");
   }
 }
 
-const FAILED_ATTEMPTS_KEY = "imperium_gate_failed_attempts";
-const LOCKOUT_UNTIL_KEY = "imperium_gate_lockout_until";
+const FAILED_ATTEMPTS_KEY = "Enchanted Summit_gate_failed_attempts";
+const LOCKOUT_UNTIL_KEY = "Enchanted Summit_gate_lockout_until";
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 10 * 60 * 1000;
 

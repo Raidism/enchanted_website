@@ -1,4 +1,4 @@
-const currentUser = window.ImperiumAuth.getCurrentUser();
+const currentUser = window.EnchantedAuth.getCurrentUser();
 if (!currentUser) {
   window.location.href = "/access";
   throw new Error("No active session");
@@ -17,10 +17,10 @@ if (prefersReducedMotion || constrainedNetwork) {
   document.body.classList.add("lite-motion");
 }
 
-const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+const API_BASE = String((window.EnchantedRuntime && window.EnchantedRuntime.apiBase) || "/api").replace(/\/+$/, "");
 
-window.ImperiumAuth.heartbeat();
-setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
+window.EnchantedAuth.heartbeat();
+setInterval(() => window.EnchantedAuth.heartbeat(), 30000);
 
 const _appProfileKey = String(currentUser.username || "").trim().toLowerCase();
 const _appRoleLabels = {
@@ -34,7 +34,7 @@ const _appRoleLabels = {
 const _APP_PROFILE_FALLBACKS = {
   admin: {
     name: "Adham / Head of IT",
-    photo: "/assets/imperium mun logo.jpg",
+    photo: "/assets/enchanted logo.jpg",
   },
   joumohd08: {
     name: "Joumana Mohamed",
@@ -58,7 +58,7 @@ const normalizeAssetPath = (value, fallback) => {
 
 const _appProfilePhoto = normalizeAssetPath(
   _appProfileFallback.photo || currentUser.photo,
-  "/assets/imperium mun logo.jpg",
+  "/assets/enchanted logo.jpg",
 );
 const _appRoleLabel = _appRoleLabels[_appProfileKey] || (currentUser.role === "admin" ? "Admin" : "Member");
 
@@ -256,7 +256,7 @@ const renderDashboard = async () => {
   try {
     settings = await fetchSiteSettings();
   } catch {
-    settings = window.ImperiumAuth.getSiteSettings() || {};
+    settings = window.EnchantedAuth.getSiteSettings() || {};
   }
 
   const isOpen = Boolean(settings.teamApplicationsOpen);
@@ -380,7 +380,7 @@ if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
     logoutBtn.classList.add("is-loading");
     logoutBtn.disabled = true;
-    window.ImperiumAuth.logout();
+    window.EnchantedAuth.logout();
     window.location.href = "/";
   });
 }

@@ -1,5 +1,5 @@
-﻿/*
-  IMPERIUM MUN  Access / Sign-In Page
+/*
+  THE ENCHANTED SUMMIT  Access / Sign-In Page
   Extends styles.css  shares all design tokens and base styles.
 */
 
@@ -12,7 +12,7 @@
 .access-grid{display:grid;grid-template-columns:minmax(320px,460px) minmax(200px,320px);gap:var(--sp-4);align-items:center;justify-content:center;}
 
 /*  Login Card  */
-.access-login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp-5);box-shadow:var(--shadow-lg),0 0 0 1px var(--glass-highlight),0 0 60px rgba(201,168,76,0.06);position:relative;overflow:hidden;}
+.access-login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp-5);box-shadow:var(--shadow-lg),0 0 0 1px var(--glass-highlight),0 0 60px rgba(232,125,160,0.06);position:relative;overflow:hidden;}
 .access-login-card::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0.025) 1px,transparent 1px,transparent 4px);opacity:0.18;pointer-events:none;}
 
 /*  Logo ring (mini version of hero ring)  */
@@ -21,7 +21,7 @@
 .access-ring{position:absolute;inset:0;border-radius:50%;animation:logoRing 8s linear infinite;}
 .access-ring-outer{border:2px solid transparent;background:conic-gradient(from var(--a),transparent,var(--gold) 25%,var(--green-soft) 50%,var(--gold) 75%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;}
 .access-ring-inner{border:1.5px solid transparent;background:conic-gradient(from calc(var(--a) + 60deg),transparent,var(--green) 30%,var(--gold-soft) 60%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;inset:10%;animation-duration:12s!important;animation-direction:reverse;}
-.access-logo-center{position:relative;z-index:1;width:62%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:2px solid var(--border-gold);background:radial-gradient(circle at 50% 40%,rgba(255,244,214,0.12),rgba(12,17,24,0.96) 68%);box-shadow:0 0 24px rgba(0,0,0,0.5),0 0 0 4px rgba(201,168,76,0.07);}
+.access-logo-center{position:relative;z-index:1;width:62%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:2px solid var(--border-gold);background:radial-gradient(circle at 50% 40%,rgba(255,244,214,0.12),rgba(12,17,24,0.96) 68%);box-shadow:0 0 24px rgba(0,0,0,0.5),0 0 0 4px rgba(232,125,160,0.07);}
 .access-logo-center img{width:92%;height:92%;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 8px 22px rgba(0,0,0,0.32));}
 
 .access-title{font-family:"Cinzel",serif;font-size:clamp(1.3rem,3vw,1.7rem);font-weight:700;color:var(--text);margin:0 0 0.3rem;}
@@ -34,7 +34,7 @@
 .access-input-icon{position:absolute;left:0.85rem;width:16px;height:16px;color:var(--text-3);pointer-events:none;flex-shrink:0;}
 .access-input-wrap input{width:100%;padding:0.78rem 0.9rem 0.78rem 2.6rem;border-radius:var(--r-md);border:1px solid var(--border-2);background:var(--field-bg);color:var(--text);font:inherit;font-size:0.93rem;transition:border-color 0.2s ease,box-shadow 0.2s ease;min-height:48px;}
 .access-input-wrap input::placeholder{color:var(--text-3);}
-.access-input-wrap input:focus{outline:none;border-color:var(--border-gold);box-shadow:0 0 0 3px rgba(201,168,76,0.12);}
+.access-input-wrap input:focus{outline:none;border-color:var(--border-gold);box-shadow:0 0 0 3px rgba(232,125,160,0.12);}
 .password-wrap input{padding-right:3rem;}
 .hold-view{position:absolute;right:0.45rem;top:50%;transform:translateY(-50%);width:2rem;height:2rem;padding:0;display:grid;place-items:center;border-radius:var(--r-sm);border:1px solid var(--border-2);background:var(--surface-3);color:var(--text-2);cursor:pointer;transition:border-color 0.18s ease,color 0.18s ease;}
 .hold-view:hover{border-color:var(--border-gold);color:var(--gold-soft);}
@@ -93,7 +93,7 @@ body.cookie-banner-visible{padding-bottom:80px;}
 /*  Special welcome overlay (created by JS on login)  */
 .special-welcome-overlay{position:fixed;inset:0;display:grid;place-items:center;background:rgba(7,9,12,0.80);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:1300;animation:welcomeFadeIn 0.25s ease-out;}
 .special-welcome-overlay.is-exiting{animation:welcomeFadeOut 0.32s ease-in forwards;}
-.special-welcome-card{width:min(400px,90vw);border:1px solid var(--border-gold);border-radius:var(--r-xl);background:var(--surface);padding:var(--sp-4) var(--sp-5) var(--sp-5);text-align:center;box-shadow:var(--shadow-lg),0 0 48px rgba(201,168,76,0.12);transform:translateY(8px) scale(0.97);animation:welcomeCardIn 0.36s cubic-bezier(0.22,0.9,0.3,1) forwards;}
+.special-welcome-card{width:min(400px,90vw);border:1px solid var(--border-gold);border-radius:var(--r-xl);background:var(--surface);padding:var(--sp-4) var(--sp-5) var(--sp-5);text-align:center;box-shadow:var(--shadow-lg),0 0 48px rgba(232,125,160,0.12);transform:translateY(8px) scale(0.97);animation:welcomeCardIn 0.36s cubic-bezier(0.22,0.9,0.3,1) forwards;}
 .special-photo-wrap{position:relative;width:min(150px,40vw);aspect-ratio:1;margin:0 auto var(--sp-3);display:grid;place-items:center;}
 .special-photo{width:66%;height:78%;object-fit:cover;border-radius:var(--r-md);border:1px solid var(--border-gold);z-index:1;box-shadow:var(--shadow-md);}
 .special-welcome-card h2{font-family:"Cinzel",serif;color:var(--gold-soft);margin:0 0 0.4rem;}

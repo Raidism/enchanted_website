@@ -12,14 +12,14 @@ app.use(useragent.express());
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
 const PORT = Number(process.env.PORT || 8080);
-const SESSION_COOKIE = "imperium_sid";
+const SESSION_COOKIE = "enchanted_sid";
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
-const ACCESS_GATE_COOKIE = "imperium_access_gate";
+const ACCESS_GATE_COOKIE = "enchanted_access_gate";
 const ACCESS_GATE_TTL_MS = 2 * 60 * 60 * 1000;
 const ACCESS_GATE_MAX_ATTEMPTS = 5;
 const ACCESS_GATE_LOCKOUT_MS = 10 * 60 * 1000;
 const ACCESS_GATE_PASSWORD = "1001";
-const ACCESS_GATE_SECRET = String(process.env.ACCESS_GATE_SECRET || process.env.SESSION_SECRET || "imperium-access-secret");
+const ACCESS_GATE_SECRET = String(process.env.ACCESS_GATE_SECRET || process.env.SESSION_SECRET || "enchanted-access-secret");
 const ACCESS_GATE_PASSWORD_HASH = crypto.createHash("sha256").update(ACCESS_GATE_PASSWORD).digest("hex");
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const RATE_LIMIT_MAX_PUBLIC_WRITES = 80;
@@ -81,19 +81,19 @@ let cachedInstagramPayload = null;
 
 const defaultSiteSettings = {
   maintenanceMode: false,
-  maintenanceMessage: "Imperium MUN is temporarily under maintenance. Please check back soon.",
+  maintenanceMessage: "The Enchanted Summit is temporarily under maintenance. Please check back soon.",
   launchDate: "2026-03-28T00:00:00+03:00",
   announcement: "",
   teamApplicationsOpen: false,
   applicationsOpen: false,
-  conferenceDate: "2026-05-15T09:00:00+03:00",
-  locationText: "Riyadh, Saudi Arabia",
-  conferenceDescription: "Imperium MUN is a student-led conference focused on collaboration, critical thinking, and impactful debate.",
-  countdownEnabled: true,
+  conferenceDate: "",
+  locationText: "Riyadh, KSA",
+  conferenceDescription: "The Enchanted Summit is a debate summit rooted in fictional and otherworldly topics, designed to bring out the passion of participants in the debate community.",
+  countdownEnabled: false,
   instagramStatsSource: "live",
-  instagramFollowers: 487,
-  instagramPosts: 18,
-  instagramFollowing: 4,
+  instagramFollowers: 135,
+  instagramPosts: 3,
+  instagramFollowing: 5,
 };
 
 const defaultDeployStatus = {
@@ -112,15 +112,6 @@ const defaultDeployStatus = {
 
 const DEFAULT_USERS = [
   { username: "admin", password: "Soliman123@", role: "admin", name: "Adham Soliman", photo: "assets/adham pic.jpg" },
-  { username: "everyone", password: "123", role: "member", name: "", photo: "" },
-  { username: "ln-obidat", password: "3004", role: "admin", name: "Leen Obeidat", photo: "assets/under secretary general.png" },
-  { username: "AhmadPh", password: "Ahmadggg", role: "admin", name: "Ahmed Pharaon", photo: "assets/secretary general.png" },
-  { username: "Toleenkmedia", password: "Totakordi10", role: "member", name: "Toleen Kurdi", photo: "assets/head of media.png" },
-  { username: "OmarAlhomran", password: "0987654321", role: "member", name: "Omar Alhomran", photo: "assets/Head of DA.png" },
-  { username: "Yamendalegend", password: "YamenloveAdham", role: "member", name: "YAMEN ELATTAL", photo: "assets/HEAD OF CA.png" },
-  { username: "joumohd08", password: "jojonana1811", role: "admin", name: "Joumana Mohamed", photo: "assets/Joumana Mohamed .png" },
-  { username: "Lilo", password: "Eepyweepy", role: "member", name: "Lamar El Btaddini", photo: "assets/Lilo.jpg" },
-  { username: "y72n_e", password: "TeData12@345", role: "admin", name: "Yassin elnaggar", photo: "assets/Yassin elnaggar.jpg" },
 ];
 
 const nowIso = () => new Date().toISOString();
@@ -1393,7 +1384,7 @@ app.post("/api/analytics", publicWriteRateLimit, (req, res) => {
 });
 
 app.get("/api/instagram", async (req, res) => {
-  const username = String(req.query && req.query.username ? req.query.username : "imperiummun26").trim().replace(/^@+/, "").toLowerCase();
+  const username = String(req.query && req.query.username ? req.query.username : "theenchantedsummit").trim().replace(/^@+/, "").toLowerCase();
   const settings = readSettings();
   const now = Date.now();
 
@@ -1532,5 +1523,5 @@ app.get("*", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Imperium server running on http://localhost:${PORT}`);
+  console.log(`Enchanted Summit server running on http://localhost:${PORT}`);
 });

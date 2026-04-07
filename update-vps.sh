@@ -7,14 +7,14 @@ set -euo pipefail
 #   ./update-vps.sh --restart
 #
 # Optional environment variables:
-#   APP_DIR=/var/www/imperium_website BRANCH=main REMOTE=origin PM2_APP=imperium_website BACKUP_RETENTION_DAYS=7 ./update-vps.sh --restart
+#   APP_DIR=/var/www/enchanted_website BRANCH=main REMOTE=origin PM2_APP=enchanted_website BACKUP_RETENTION_DAYS=7 ./update-vps.sh --restart
 
 # Default to the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-APP_DIR="${APP_DIR:-/var/www/vps_files/imperium_website}"
+APP_DIR="${APP_DIR:-/var/www/vps_files/enchanted_website}"
 BRANCH="${BRANCH:-main}"
 REMOTE="${REMOTE:-origin}"
-PM2_APP="${PM2_APP:-imperium_website}"
+PM2_APP="${PM2_APP:-enchanted_website}"
 BACKUP_RETENTION_DAYS="${BACKUP_RETENTION_DAYS:-7}"
 
 DO_RESTART="false"
@@ -238,7 +238,7 @@ LATEST_COMMIT="$(git rev-parse --short HEAD)"
 LATEST_SUBJECT="$(git log -1 --pretty=%s)"
 RELEASE_TAG="$LATEST_COMMIT - $LATEST_SUBJECT"
 set_deploy_status "false" "completed" "100" "Deployment completed successfully." "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" "" "$LATEST_COMMIT" "$RELEASE_TAG"
-set_maintenance_state "false" "Imperium MUN is temporarily under maintenance. Please check back soon."
+set_maintenance_state "false" "The Enchanted Summit is temporarily under maintenance. Please check back soon."
 
 echo "==> Cleaning old backups (older than ${BACKUP_RETENTION_DAYS} days)"
 find "$BACKUP_ROOT" -maxdepth 1 -type d -name 'data_backup_*' -mtime "+${BACKUP_RETENTION_DAYS}" -exec rm -rf {} + 2>/dev/null || true

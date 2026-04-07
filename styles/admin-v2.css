@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   IMPERIUM MUN — Admin Portal v2
+   THE ENCHANTED SUMMIT — Admin Portal v2
    Design System · Inspired by Thor TradeCopier & modern SaaS dashboards
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -10,21 +10,21 @@
 html {
   scroll-behavior: smooth;
   scrollbar-width: thin;
-  scrollbar-color: rgba(201,168,76,0.3) transparent;
+  scrollbar-color: rgba(232,125,160,0.3) transparent;
 }
 ::-webkit-scrollbar         { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track   { background: transparent; }
-::-webkit-scrollbar-thumb   { background: rgba(201,168,76,0.3); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.55); }
-:focus-visible { outline: 2px solid rgba(201,168,76,0.7); outline-offset: 2px; border-radius: 4px; }
+::-webkit-scrollbar-thumb   { background: rgba(232,125,160,0.3); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(232,125,160,0.55); }
+:focus-visible { outline: 2px solid rgba(232,125,160,0.7); outline-offset: 2px; border-radius: 4px; }
 
 /* ─── Design tokens ─────────────────────────────────────────────── */
 :root {
   /* Backgrounds */
-  --bg:        #07090c;
-  --surface:   #0c1118;
-  --surface-2: #111820;
-  --surface-3: #172030;
+  --bg:        #080a06;
+  --surface:   #0e120c;
+  --surface-2: #141a12;
+  --surface-3: #1a2218;
   --hover:     rgba(255,255,255,0.04);
 
   /* Brand gold */
@@ -34,9 +34,15 @@ html {
   --gold-glow: rgba(201,168,76,0.22);
   --gold-border: rgba(201,168,76,0.22);
 
+  /* Pink accent */
+  --pink:      #e87da0;
+  --pink-soft: #f5a0c0;
+  --pink-dim:  rgba(232,125,160,0.10);
+  --pink-glow: rgba(232,125,160,0.22);
+
   /* Semantic */
-  --green:      #22c266;
-  --green-dim:  rgba(34,194,102,0.12);
+  --green:      #2ebd6e;
+  --green-dim:  rgba(46,189,110,0.12);
   --green-text: #4ade80;
   --red:        #ef4444;
   --red-dim:    rgba(239,68,68,0.12);
@@ -98,8 +104,8 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(ellipse 60% 50% at 70% -10%, rgba(201,168,76,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at -5% 80%, rgba(34,194,102,0.05) 0%, transparent 55%);
+    radial-gradient(ellipse 60% 50% at 70% -10%, rgba(232,125,160,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at -5% 80%, rgba(46,189,110,0.05) 0%, transparent 55%);
 }
 
 /* ═══════════════════════════════════════════════════════════════════

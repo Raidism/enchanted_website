@@ -1,4 +1,4 @@
-const currentUser = window.ImperiumAuth.getCurrentUser();
+const currentUser = window.EnchantedAuth.getCurrentUser();
 if (!currentUser) {
   window.location.href = "/access";
   throw new Error("No active session");
@@ -9,8 +9,8 @@ if (currentUser.role !== "admin") {
   throw new Error("Settings is admin-only");
 }
 
-window.ImperiumAuth.heartbeat();
-setInterval(() => window.ImperiumAuth.heartbeat(), 30000);
+window.EnchantedAuth.heartbeat();
+setInterval(() => window.EnchantedAuth.heartbeat(), 30000);
 
 const logoutBtn = document.getElementById("logoutBtn");
 const usersBody = document.getElementById("settingsUsersBody");
@@ -37,7 +37,7 @@ const PROFILE_FALLBACKS = {
 };
 const profileFallback = PROFILE_FALLBACKS[profileKey] || {};
 const profileDisplayName = String(profileFallback.name || currentUser.name || currentUser.username || "User");
-const profilePhotoSrc = String(profileFallback.photo || currentUser.photo || "assets/imperium mun logo.jpg");
+const profilePhotoSrc = String(profileFallback.photo || currentUser.photo || "assets/enchanted logo.jpg");
 
 const pmhPhoto = document.getElementById("pmhPhoto");
 const pmhName = document.getElementById("pmhName");
@@ -89,13 +89,13 @@ const showLogoutTransition = () => {
       ease: "power2.in",
       delay: 1.45,
       onComplete: () => {
-        window.ImperiumAuth.logout();
+        window.EnchantedAuth.logout();
         window.location.href = "/";
       },
     });
   } else {
     setTimeout(() => {
-      window.ImperiumAuth.logout();
+      window.EnchantedAuth.logout();
       window.location.href = "/";
     }, 1600);
   }
@@ -116,7 +116,7 @@ if (reopenOnboardingBtn) {
       reopenOnboardingMessage.textContent = "Updating onboarding...";
     }
 
-    const { success, message: msg } = window.ImperiumAuth.updateSiteSettings(currentUser, {
+    const { success, message: msg } = window.EnchantedAuth.updateSiteSettings(currentUser, {
       onboardingReplayTriggered: true,
     });
 
@@ -125,9 +125,9 @@ if (reopenOnboardingBtn) {
         reopenOnboardingMessage.textContent = "Onboarding will display on next login. You can also open it now if you'd like to test it.";
         reopenOnboardingMessage.classList.add("success");
       }
-      if (window.ImperiumOnboarding && typeof window.ImperiumOnboarding.open === "function") {
+      if (window.Enchanted SummitOnboarding && typeof window.Enchanted SummitOnboarding.open === "function") {
         setTimeout(() => {
-          window.ImperiumOnboarding.open(currentUser, { force: true });
+          window.Enchanted SummitOnboarding.open(currentUser, { force: true });
         }, 500);
       }
     } else {
@@ -149,8 +149,8 @@ if (reopenOnboardingBtn) {
 
 const renderUsers = () => {
   if (!usersBody) return;
-  const users = window.ImperiumAuth.getUsersForAdmin(currentUser);
-  const active = window.ImperiumAuth.getActiveUsers();
+  const users = window.EnchantedAuth.getUsersForAdmin(currentUser);
+  const active = window.EnchantedAuth.getActiveUsers();
   const activeNames = new Set(Object.keys(active).map((k) => k.toLowerCase()));
 
   usersBody.innerHTML = "";
@@ -201,11 +201,11 @@ if (usersBody) {
     let result = { success: false, message: "Unknown action." };
 
     if (action === "disable") {
-      result = window.ImperiumAuth.setUserDisabled(currentUser, username, true);
+      result = window.EnchantedAuth.setUserDisabled(currentUser, username, true);
     } else if (action === "enable") {
-      result = window.ImperiumAuth.setUserDisabled(currentUser, username, false);
+      result = window.EnchantedAuth.setUserDisabled(currentUser, username, false);
     } else if (action === "force-lockout") {
-      result = window.ImperiumAuth.forceLogoutUser(currentUser, username);
+      result = window.EnchantedAuth.forceLogoutUser(currentUser, username);
     }
 
     if (usersMessage) {
@@ -221,7 +221,7 @@ if (usersBody) {
 
 const renderOnline = () => {
   if (!onlineList) return;
-  const active = window.ImperiumAuth.getActiveUsers();
+  const active = window.EnchantedAuth.getActiveUsers();
   const rows = Object.values(active);
   onlineList.innerHTML = "";
 
@@ -249,7 +249,7 @@ const renderTeamAppsButtons = () => {
   if (!openBtn || !closeBtn) return;
 
   const updateDisplay = () => {
-    const current = window.ImperiumAuth.getSiteSettings();
+    const current = window.EnchantedAuth.getSiteSettings();
     const isOpen = Boolean(current.teamApplicationsOpen);
     if (statusDisplay) {
       statusDisplay.textContent = isOpen ? "🟢 Open for Recruiting" : "🔴 Closed";
@@ -274,7 +274,7 @@ const renderTeamAppsButtons = () => {
         message.className = "form-message";
       }
 
-      const { success, message: msg } = window.ImperiumAuth.updateSiteSettings(currentUser, {
+      const { success, message: msg } = window.EnchantedAuth.updateSiteSettings(currentUser, {
         teamApplicationsOpen: newState,
       });
 
@@ -305,7 +305,7 @@ const renderMaintenanceModeButtons = () => {
   if (!enableBtn || !disableBtn) return;
 
   const updateDisplay = () => {
-    const current = window.ImperiumAuth.getSiteSettings();
+    const current = window.EnchantedAuth.getSiteSettings();
     const isOn = Boolean(current.maintenanceMode);
     if (statusDisplay) {
       statusDisplay.textContent = isOn ? "🔴 Maintenance Active" : "🟢 Live";
@@ -325,7 +325,7 @@ const renderMaintenanceModeButtons = () => {
     disableBtn.disabled = true;
     if (msgEl) { msgEl.textContent = "Updating…"; msgEl.className = "form-message"; }
 
-    const { success, message: msg } = window.ImperiumAuth.updateSiteSettings(currentUser, {
+    const { success, message: msg } = window.EnchantedAuth.updateSiteSettings(currentUser, {
       maintenanceMode: newState,
     });
 
@@ -351,7 +351,7 @@ renderMaintenanceModeButtons();
 
 const renderHistory = () => {
   if (!historyList) return;
-  const rows = window.ImperiumAuth.getLoginHistory();
+  const rows = window.EnchantedAuth.getLoginHistory();
   historyList.innerHTML = "";
 
   const boundedRows = rows.slice(0, 120);

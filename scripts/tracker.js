@@ -1,5 +1,5 @@
 (function () {
-  const API_BASE = String((window.ImperiumRuntime && window.ImperiumRuntime.apiBase) || "/api").replace(/\/+$/, "");
+  const API_BASE = String((window.EnchantedRuntime && window.EnchantedRuntime.apiBase) || "/api").replace(/\/+$/, "");
   const ANALYTICS_API_URL = `${API_BASE}/analytics`;
   const TRACK_API_URL = `${API_BASE}/analytics/track`;
   const DEDUPE_WINDOW_MS = 2000;
@@ -126,7 +126,7 @@
     } catch {}
   };
 
-  window.ImperiumTracker = {
+  window.Enchanted SummitTracker = {
     track: scheduleTrack,
     trackEvent,
   };

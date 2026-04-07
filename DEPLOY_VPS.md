@@ -1,54 +1,48 @@
-# Imperium MUN VPS Deployment (Namecheap + Cloudflare)
+# The Enchanted Summit — VPS Deployment
 
-## 1) Move DNS to Cloudflare
-1. Create a Cloudflare account and add your domain.
-2. In Namecheap, change nameservers to the two Cloudflare nameservers shown in your Cloudflare dashboard.
-3. Wait for Cloudflare to show the domain as active.
+## 1) DNS Setup
+Point your domain (`theenchantedsummit.com`) to your VPS IP via your DNS provider (Cloudflare, Namecheap, etc.):
+- `A` record: `@` → VPS public IP
+- `A` record: `www` → VPS public IP
 
-## 2) DNS records in Cloudflare
-- Add `A` record:
-  - Name: `@`
-  - IPv4 address: your VPS public IP
-  - Proxy status: Proxied (orange cloud)
-- Add `A` record:
-  - Name: `www`
-  - IPv4 address: your VPS public IP
-  - Proxy status: Proxied
-
-## 3) Server setup (Ubuntu example)
+## 2) Server setup (Ubuntu)
 ```bash
 sudo apt update && sudo apt upgrade -y
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs nginx
 ```
 
-## 4) Upload project to VPS
-- Copy this project to `/var/www/imperium_website`.
-
-## 5) Install dependencies and run server
+## 3) Clone project to VPS
 ```bash
-cd /var/www/imperium_website
+mkdir -p /var/www/vps_files
+cd /var/www/vps_files
+git clone https://github.com/Raidism/enchanted_website.git
+```
+
+## 4) Install dependencies and run server
+```bash
+cd /var/www/vps_files/enchanted_website
 npm install
 npm start
 ```
 
 The app serves both frontend and API on port `8080` by default.
 
-## 6) Run with PM2 (recommended)
+## 5) Run with PM2 (recommended)
 ```bash
 sudo npm install -g pm2
-cd /var/www/imperium_website
-pm2 start server/index.js --name imperium-web
+cd /var/www/vps_files/enchanted_website
+pm2 start server/index.js --name enchanted_website
 pm2 save
 pm2 startup
 ```
 
-## 7) Nginx reverse proxy
-Create `/etc/nginx/sites-available/imperium`:
+## 6) Nginx reverse proxy
+Create `/etc/nginx/sites-available/enchanted`:
 ```nginx
 server {
     listen 80;
-    server_name yourdomain.com www.yourdomain.com;
+    server_name theenchantedsummit.com www.theenchantedsummit.com;
 
     location / {
         proxy_pass http://127.0.0.1:8080;
@@ -63,60 +57,41 @@ server {
 
 Enable and reload:
 ```bash
-sudo ln -s /etc/nginx/sites-available/imperium /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/enchanted /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-## 8) HTTPS
-In Cloudflare, set SSL/TLS mode to **Full (strict)** after installing an origin certificate on Nginx, or use Cloudflare Tunnel if preferred.
-
-## 9) Data persistence
-Server-side data is stored in:
-- `server/data/users.json`
-- `server/data/sessions.json`
-- `server/data/site_settings.json`
-- `server/data/waitlist_entries.json`
-- `server/data/waitlist_deleted.json`
-- `server/data/analytics_logs.json`
-- `server/data/login_history.json`
-
-Back up `server/data/` regularly.
-
-## 10) Quick VPS update script
-Use the included script to pull latest code from GitHub and reinstall dependencies:
-
+## 7) HTTPS
+Use Cloudflare SSL/TLS **Full (strict)** with an origin certificate, or use Certbot:
 ```bash
-cd /var/www/imperium_website
-chmod +x update-vps.sh
-./update-vps.sh
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d theenchantedsummit.com -d www.theenchantedsummit.com
 ```
 
-If you want it to restart PM2 automatically after update:
+## 8) Data persistence
+Server-side data is stored in `server/data/`. Back up regularly.
 
+## 9) Quick VPS update script
 ```bash
+cd /var/www/vps_files/enchanted_website
+chmod +x update-vps.sh
 ./update-vps.sh --restart
 ```
 
-During `update-vps.sh`, the script now automatically:
-- Turns `maintenanceMode` on
+During updates, the script automatically:
+- Turns maintenance mode on
 - Writes live deployment progress to `server/data/deploy_status.json`
-- Restarts PM2 (when `--restart` is used)
+- Restarts PM2
 - Turns maintenance off when complete
 
-What visitors see:
-- The `/maintenance` page shows a live progress bar + deployment phase
-- When deployment completes, the page auto-redirects to `/` with an "update applied" confirmation
-- If deployment fails, maintenance stays on and the maintenance message indicates a failed update
-
 Defaults used by the script:
-- `APP_DIR=/var/www/imperium_website`
+- `APP_DIR=/var/www/vps_files/enchanted_website`
 - `REMOTE=origin`
 - `BRANCH=main`
-- `PM2_APP=imperium-web`
+- `PM2_APP=enchanted_website`
 
 Example overriding defaults:
-
 ```bash
-APP_DIR=~/imperium_website BRANCH=main PM2_APP=imperium-web ./update-vps.sh --restart
+APP_DIR=~/enchanted_website BRANCH=main PM2_APP=enchanted_website ./update-vps.sh --restart
 ```
