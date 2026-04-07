@@ -41,14 +41,6 @@
     pmhHero.classList.add("profile-ready");
   }
 
-  const opsCenter = document.getElementById("opsCenter");
-  if (!opsCenter) return;
-  opsCenter.hidden = !isAdmin;
-  if (!isAdmin) {
-    window.location.href = "/locked?feature=ops&from=dashboard";
-    return;
-  }
-
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
@@ -83,6 +75,14 @@
         setTimeout(() => { window.EnchantedAuth.logout(); window.location.href = "/"; }, 1600);
       }
     });
+  }
+
+  const opsCenter = document.getElementById("opsCenter");
+  if (!opsCenter) return;
+  opsCenter.hidden = !isAdmin;
+  if (!isAdmin) {
+    window.location.href = "/locked?feature=ops&from=dashboard";
+    return;
   }
 
   const WAITLIST_KEY = "Enchanted Summit_waitlist";

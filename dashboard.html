@@ -287,6 +287,20 @@
         if (name  && sn && name.textContent)  sn.textContent = name.textContent;
         if (role  && sr && role.textContent)  sr.textContent = role.textContent;
       }
+      // Direct sidebar init from auth — doesn't depend on typewriter timing
+      function initSidebarFromAuth() {
+        try {
+          var user = window.EnchantedAuth && window.EnchantedAuth.getCurrentUser && window.EnchantedAuth.getCurrentUser();
+          if (!user) return;
+          var sp = document.getElementById('sidebarUserPhoto');
+          var sn = document.getElementById('sidebarUserName');
+          var sr = document.getElementById('sidebarUserRole');
+          if (sp && user.photo) sp.src = user.photo;
+          if (sn && user.name)  sn.textContent = user.name;
+          if (sr) sr.textContent = user.role === 'admin' ? 'Admin' : 'Member';
+        } catch(e) {}
+      }
+      initSidebarFromAuth();
       setTimeout(syncSidebar, 800);
       setTimeout(syncSidebar, 2000);
     })();

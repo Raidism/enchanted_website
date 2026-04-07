@@ -264,15 +264,15 @@ section p.lead{font-size:1.06rem;line-height:1.8;color:var(--text-2);max-width:6
 .hero-cta-row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;}
 .hero-tags{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:var(--sp-3);}
 .hero-tag{font-size:0.76rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-3);border:1px solid var(--border);background:var(--surface);padding:0.28rem 0.7rem;border-radius:20px;transition:border-color 0.2s ease,color 0.2s ease;}
-.hero-tag:hover{border-color:var(--border-gold);color:var(--gold-soft);}
+.hero-tag:hover{border-color:rgba(232,125,160,0.55);color:var(--pink-soft);}
 .hero-visual{display:flex;align-items:center;justify-content:center;}
 .hero-logo-card{position:relative;width:min(520px,86vw);aspect-ratio:1;display:flex;align-items:center;justify-content:center;}
 .hero-logo-card .ring{position:absolute;inset:0;border-radius:50%;animation:logoRing 8s linear infinite;}
-.hero-logo-card .ring-outer{border:2px solid transparent;background:conic-gradient(from var(--a),transparent,var(--gold) 25%,var(--green-soft) 50%,var(--gold) 75%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;inset:calc(0% + 0px);}
-.hero-logo-card .ring-inner{border:1.5px solid transparent;background:conic-gradient(from calc(var(--a) + 60deg),transparent,var(--green) 30%,var(--gold-soft) 60%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;inset:11%;border-radius:50%;animation-duration:12s!important;animation-direction:reverse;}
+.hero-logo-card .ring-outer{border:2px solid transparent;background:conic-gradient(from var(--a),transparent,var(--pink) 20%,#c084fc 45%,var(--pink-soft) 65%,#c084fc 82%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;inset:calc(0% + 0px);}
+.hero-logo-card .ring-inner{border:1.5px solid transparent;background:conic-gradient(from calc(var(--a) + 60deg),transparent,#c084fc 25%,var(--pink) 55%,var(--pink-soft) 72%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;inset:11%;border-radius:50%;animation-duration:12s!important;animation-direction:reverse;}
 @property --a{syntax:"<angle>";inherits:false;initial-value:0deg;}
 @keyframes logoRing{to{--a:360deg;}}
-.hero-logo-card .logo-center{position:relative;z-index:1;width:74%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 34%,rgba(255,248,229,0.28),rgba(30,38,47,0.96) 58%,rgba(10,14,19,1) 100%);border:2px solid rgba(232,201,124,0.38);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 0 48px rgba(0,0,0,0.55),0 0 80px rgba(34,194,102,0.08),0 0 0 8px rgba(201,168,76,0.08);}
+.hero-logo-card .logo-center{position:relative;z-index:1;width:74%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 34%,rgba(232,125,160,0.18),rgba(30,38,47,0.96) 58%,rgba(10,14,19,1) 100%);border:2px solid rgba(192,132,252,0.42);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 0 48px rgba(0,0,0,0.55),0 0 80px rgba(232,125,160,0.12),0 0 0 8px rgba(192,132,252,0.10);}
 .hero-logo-card .logo-center::before{content:"";position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.18),rgba(255,255,255,0.03) 64%,transparent 72%);pointer-events:none;}
 .hero-logo-card .logo-center img{position:relative;z-index:1;width:96%;height:96%;object-fit:contain;border-radius:50%;filter:drop-shadow(0 10px 28px rgba(0,0,0,0.42));opacity:1;}
 
@@ -581,7 +581,7 @@ body[data-theme="light"] .team-role-description{color:var(--text-2);}
 body[data-theme="light"] .team-role-features li{color:var(--text-3);}
 
 /* ─── Hero logo circle ───────────────────────────────────────────────── */
-body[data-theme="light"] .hero-logo-card .logo-center{background:radial-gradient(circle at 50% 34%,rgba(255,252,240,0.98),rgba(240,244,241,0.97) 60%,rgba(235,242,237,1) 100%);border-color:rgba(192,122,32,0.28);box-shadow:0 0 40px rgba(15,45,25,0.10),0 0 0 8px rgba(192,122,32,0.05);}
+body[data-theme="light"] .hero-logo-card .logo-center{background:radial-gradient(circle at 50% 34%,rgba(255,240,248,0.98),rgba(248,240,252,0.97) 60%,rgba(242,238,252,1) 100%);border-color:rgba(192,132,252,0.32);box-shadow:0 0 40px rgba(232,125,160,0.14),0 0 0 8px rgba(192,132,252,0.08);}
 
 /* ─── Card shadows (light mode feels lighter) ────────────────────────── */
 body[data-theme="light"] .launch-card{box-shadow:0 2px 14px rgba(15,45,25,0.08);}
@@ -727,18 +727,18 @@ body[data-theme="light"] .hero-visual::after {
 
 /* ─── Hero logo ring — warm golden-cream glow ───────────────────────── */
 body[data-theme="light"] .hero-logo-card .logo-center {
-  background: radial-gradient(circle at 50% 38%, #fffbf0 0%, #f8f3e8 68%, #f0ece0 100%);
-  border-color: rgba(184,120,14,0.42);
+  background: radial-gradient(circle at 50% 38%, #fff0f8 0%, #f8eef8 68%, #f0e8f8 100%);
+  border-color: rgba(192,132,252,0.46);
   box-shadow:
-    0 0 56px rgba(20,60,30,0.13),
-    0 0 100px rgba(25,168,84,0.09),
-    0 0 0 8px rgba(184,120,14,0.09),
-    0 0 0 18px rgba(25,168,84,0.04);
+    0 0 56px rgba(232,125,160,0.18),
+    0 0 100px rgba(192,132,252,0.12),
+    0 0 0 8px rgba(232,125,160,0.10),
+    0 0 0 18px rgba(192,132,252,0.05);
 }
 
 /* ─── Hero tags ──────────────────────────────────────────────────────── */
 body[data-theme="light"] .hero-tag { background: #ffffff; border-color: rgba(0,0,0,0.10); }
-body[data-theme="light"] .hero-tag:hover { border-color: rgba(25,168,84,0.42); color: #0e5e30; }
+body[data-theme="light"] .hero-tag:hover { border-color: rgba(196,50,92,0.38); color: var(--pink); }
 
 /* ─── Cards — bright white with warm botanical hover ─────────────────── */
 body[data-theme="light"] .value-card,
@@ -821,6 +821,7 @@ body[data-theme="light"] .share-panel:hover {
 
 /* Leadership trio */
 .eb-leadership{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-bottom:1.6rem;}
+.eb-leadership--duo{grid-template-columns:repeat(2,minmax(0,320px));justify-content:center;}
 
 .eb-leader-card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--border-gold);border-radius:var(--r-xl);padding:2.4rem 1.6rem 2rem;text-align:center;box-shadow:var(--shadow-md),0 0 0 1px var(--gold-dim);transition:transform 0.32s var(--ease),box-shadow 0.32s var(--ease),border-color 0.25s ease;will-change:transform;}
 .eb-leader-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent 5%,var(--gold) 38%,var(--gold-soft) 65%,transparent 95%);border-radius:var(--r-xl) var(--r-xl) 0 0;pointer-events:none;}
@@ -887,20 +888,20 @@ body::after{background:radial-gradient(circle,rgba(232,125,160,0.18) 0%,rgba(140
 .brand-logo{width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid rgba(201,168,76,0.38);flex-shrink:0;filter:drop-shadow(0 0 6px rgba(46,189,110,0.32));}
 
 /* ─── Section label — enchanted sparkle pill ───────────────────────── */
-.section-label{background:linear-gradient(135deg,rgba(46,189,110,0.12),rgba(232,125,160,0.09));border-color:rgba(46,189,110,0.30);color:var(--green-text);}
+.section-label{background:linear-gradient(135deg,rgba(232,125,160,0.13),rgba(192,132,252,0.08));border-color:rgba(232,125,160,0.35);color:var(--pink-soft);}
 .section-label::before{content:"✦";font-size:0.58rem;color:var(--pink-soft);filter:drop-shadow(0 0 5px rgba(232,125,160,0.7));margin-right:-0.05rem;}
 
 /* ─── Section headings — subtle enchanted glow ─────────────────────── */
 .section-head h2{text-shadow:0 0 48px rgba(46,189,110,0.14),0 0 90px rgba(201,168,76,0.07);}
 
-/* ─── Hero heading — gold → frost → green enchanted gradient ───────── */
-.hero-content h1{background:linear-gradient(135deg,var(--gold-soft) 0%,#fce9b4 22%,var(--text) 46%,var(--green-soft) 72%,var(--gold-hi) 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+/* ─── Hero heading — gold → frost → pink enchanted gradient ────────── */
+.hero-content h1{background:linear-gradient(135deg,var(--gold-soft) 0%,#fce9b4 20%,var(--text) 44%,var(--pink-soft) 70%,#c084fc 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 
 /* ─── Ornament grid — slightly more vivid ──────────────────────────── */
 .bg-alt-logo .ornament-grid{opacity:0.11;background-image:repeating-linear-gradient(90deg,rgba(232,125,160,0.13) 0,rgba(232,125,160,0.13) 1px,transparent 1px,transparent 64px),repeating-linear-gradient(0deg,rgba(46,189,110,0.09) 0,rgba(46,189,110,0.09) 1px,transparent 1px,transparent 64px);}
 
 /* ─── Hero logo — richer glow aura ─────────────────────────────────── */
-.hero-logo-card .logo-center{box-shadow:0 0 64px rgba(0,0,0,0.62),0 0 110px rgba(46,189,110,0.14),0 0 0 8px rgba(201,168,76,0.12),inset 0 0 34px rgba(46,189,110,0.06);}
+.hero-logo-card .logo-center{box-shadow:0 0 64px rgba(0,0,0,0.62),0 0 110px rgba(232,125,160,0.18),0 0 0 8px rgba(192,132,252,0.14),inset 0 0 34px rgba(232,125,160,0.08);}
 
 /* ─── Cards — enchanted colour-interplay hover glow ─────────────────── */
 .value-card:hover{border-color:rgba(46,189,110,0.32);box-shadow:0 14px 44px rgba(0,0,0,0.40),0 0 28px rgba(46,189,110,0.11),0 0 54px rgba(232,125,160,0.06);}
@@ -920,5 +921,5 @@ body::after{background:radial-gradient(circle,rgba(232,125,160,0.18) 0%,rgba(140
 
 /* ─── Light theme: keep logo round border visible ──────────────────── */
 body[data-theme="light"] .brand-logo{border-color:rgba(192,122,32,0.45);filter:none;}
-body[data-theme="light"] .section-label{background:linear-gradient(135deg,rgba(30,168,88,0.10),rgba(200,90,128,0.07));border-color:rgba(30,168,88,0.28);color:var(--green-text);}
+body[data-theme="light"] .section-label{background:linear-gradient(135deg,rgba(196,50,92,0.09),rgba(192,132,252,0.07));border-color:rgba(196,50,92,0.28);color:var(--pink);}
 body[data-theme="light"] .section-head h2{text-shadow:none;}
