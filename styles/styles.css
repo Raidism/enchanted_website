@@ -617,3 +617,53 @@ body[data-theme="light"] .apply-redirect-modal{background:var(--surface);border-
 /* ─── Header & announcement bar ─────────────────────────────────────── */
 body[data-theme="light"] .site-announcement{background:rgba(192,122,32,0.08);border-color:rgba(192,122,32,0.22);color:var(--gold-soft);}
 body[data-theme="light"] .site-header.scrolled{box-shadow:0 4px 20px rgba(15,45,25,0.10);}
+
+/* ═══════════════════════════════════════════════════════════════════
+   THE ENCHANTED SUMMIT — Magical Identity Layer
+   Transforms the base dark theme into a unique enchanted atmosphere.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Deeper, more vivid atmospheric blobs ─────────────────────────── */
+body::before{background:radial-gradient(circle,rgba(46,189,110,0.20) 0%,rgba(20,90,55,0.09) 42%,transparent 70%);width:56vw;height:56vw;}
+body::after{background:radial-gradient(circle,rgba(232,125,160,0.18) 0%,rgba(140,50,90,0.07) 46%,transparent 70%);width:50vw;height:50vw;}
+
+/* ─── Navbar brand logo ─────────────────────────────────────────────── */
+.brand{display:inline-flex;align-items:center;gap:0.52rem;}
+.brand-logo{width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid rgba(201,168,76,0.38);flex-shrink:0;filter:drop-shadow(0 0 6px rgba(46,189,110,0.32));}
+
+/* ─── Section label — enchanted sparkle pill ───────────────────────── */
+.section-label{background:linear-gradient(135deg,rgba(46,189,110,0.12),rgba(232,125,160,0.09));border-color:rgba(46,189,110,0.30);color:var(--green-text);}
+.section-label::before{content:"✦";font-size:0.58rem;color:var(--pink-soft);filter:drop-shadow(0 0 5px rgba(232,125,160,0.7));margin-right:-0.05rem;}
+
+/* ─── Section headings — subtle enchanted glow ─────────────────────── */
+.section-head h2{text-shadow:0 0 48px rgba(46,189,110,0.14),0 0 90px rgba(201,168,76,0.07);}
+
+/* ─── Hero heading — gold → frost → green enchanted gradient ───────── */
+.hero-content h1{background:linear-gradient(135deg,var(--gold-soft) 0%,#fce9b4 22%,var(--text) 46%,var(--green-soft) 72%,var(--gold-hi) 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+/* ─── Ornament grid — slightly more vivid ──────────────────────────── */
+.bg-alt-logo .ornament-grid{opacity:0.11;background-image:repeating-linear-gradient(90deg,rgba(232,125,160,0.13) 0,rgba(232,125,160,0.13) 1px,transparent 1px,transparent 64px),repeating-linear-gradient(0deg,rgba(46,189,110,0.09) 0,rgba(46,189,110,0.09) 1px,transparent 1px,transparent 64px);}
+
+/* ─── Hero logo — richer glow aura ─────────────────────────────────── */
+.hero-logo-card .logo-center{box-shadow:0 0 64px rgba(0,0,0,0.62),0 0 110px rgba(46,189,110,0.14),0 0 0 8px rgba(201,168,76,0.12),inset 0 0 34px rgba(46,189,110,0.06);}
+
+/* ─── Cards — enchanted colour-interplay hover glow ─────────────────── */
+.value-card:hover{border-color:rgba(46,189,110,0.32);box-shadow:0 14px 44px rgba(0,0,0,0.40),0 0 28px rgba(46,189,110,0.11),0 0 54px rgba(232,125,160,0.06);}
+.launch-card:hover{border-color:rgba(201,168,76,0.44);box-shadow:0 12px 38px rgba(0,0,0,0.38),0 0 32px rgba(201,168,76,0.13),0 0 64px rgba(46,189,110,0.05);}
+.faq-card-front:hover,.faq-card-back:hover{border-color:rgba(232,125,160,0.30);box-shadow:0 8px 30px rgba(0,0,0,0.34),0 0 22px rgba(232,125,160,0.09);}
+.stat-card:hover{border-color:rgba(201,168,76,0.24);background:linear-gradient(180deg,rgba(46,189,110,0.05),rgba(232,125,160,0.025));}
+.about-stat:hover{background:linear-gradient(180deg,rgba(46,189,110,0.07),rgba(232,125,160,0.03));border-color:rgba(46,189,110,0.30);}
+
+/* ─── Roadmap node — enchanted pulse ───────────────────────────────── */
+.road-item--active .road-node-dot{box-shadow:0 0 0 5px rgba(201,168,76,0.20),0 0 26px rgba(201,168,76,0.32);}
+
+/* ─── Scroll progress bar — full enchanted gradient ────────────────── */
+.scroll-progress{background:linear-gradient(90deg,var(--green),var(--gold),var(--pink-soft),var(--green-soft));box-shadow:0 0 14px rgba(232,125,160,0.55),0 0 5px rgba(46,189,110,0.45);}
+
+/* ─── Share panel — green hover glow ───────────────────────────────── */
+.share-panel:hover{border-color:rgba(46,189,110,0.26);box-shadow:0 10px 32px rgba(0,0,0,0.32),0 0 22px rgba(46,189,110,0.08);}
+
+/* ─── Light theme: keep logo round border visible ──────────────────── */
+body[data-theme="light"] .brand-logo{border-color:rgba(192,122,32,0.45);filter:none;}
+body[data-theme="light"] .section-label{background:linear-gradient(135deg,rgba(30,168,88,0.10),rgba(200,90,128,0.07));border-color:rgba(30,168,88,0.28);color:var(--green-text);}
+body[data-theme="light"] .section-head h2{text-shadow:none;}
