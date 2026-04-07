@@ -77,7 +77,7 @@ const ensureHeroTypewriter = () => {
 
 setTimeout(ensureHeroTypewriter, 1200);
 
-const CANONICAL_SITE_URL = "https://theenchantedsummit.com/";
+const CANONICAL_SITE_URL = "https://enchantedsummit.org/";
 
 // ── Hamburger / mobile nav ──────────────────────────────────────────────
 (function initHamburger() {

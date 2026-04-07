@@ -1,7 +1,7 @@
 # The Enchanted Summit — VPS Deployment
 
 ## 1) DNS Setup
-Point your domain (`theenchantedsummit.com`) to your VPS IP via your DNS provider (Cloudflare, Namecheap, etc.):
+Point your domain (`enchantedsummit.org`) to your VPS IP via your DNS provider (Cloudflare, Namecheap, etc.):
 - `A` record: `@` → VPS public IP
 - `A` record: `www` → VPS public IP
 
@@ -42,7 +42,7 @@ Create `/etc/nginx/sites-available/enchanted`:
 ```nginx
 server {
     listen 80;
-    server_name theenchantedsummit.com www.theenchantedsummit.com;
+    server_name enchantedsummit.org www.enchantedsummit.org;
 
     location / {
         proxy_pass http://127.0.0.1:8080;
@@ -66,7 +66,7 @@ sudo systemctl reload nginx
 Use Cloudflare SSL/TLS **Full (strict)** with an origin certificate, or use Certbot:
 ```bash
 sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d theenchantedsummit.com -d www.theenchantedsummit.com
+sudo certbot --nginx -d enchantedsummit.org -d www.enchantedsummit.org
 ```
 
 ## 8) Data persistence
