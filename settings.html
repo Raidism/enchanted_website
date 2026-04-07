@@ -232,6 +232,19 @@
         });
       });
     })();
+
+    // Sidebar fallback: populates user info if the deferred scripts failed
+    window.addEventListener('load', function() {
+      try {
+        var n = document.getElementById('pmhName');
+        if (!n || n.textContent !== 'Loading…') return;
+        var user = window.EnchantedAuth && typeof window.EnchantedAuth.getCurrentUser === 'function' && window.EnchantedAuth.getCurrentUser();
+        if (!user) return;
+        if (n) n.textContent = user.name || user.username || '';
+        var p = document.getElementById('pmhPhoto');
+        if (p && user.photo) p.src = user.photo;
+      } catch(e) {}
+    });
   </script>
 </body>
 </html>
