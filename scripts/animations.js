@@ -73,11 +73,11 @@
     window.__enchantedTypewriterReady = true;
 
     const phrases = [
-      "Diplomacy Starts Here",
-      "Future Leaders Are Built Here",
-      "Where Negotiation Meets Power",
-      "Debate Summit Excellence",
-      "Lead. Debate. Influence.",
+      "The Enchanted Summit",
+      "Where Passion Meets Debate",
+      "Unite. Dream. Enchant.",
+      "Fantasy MUN · Riyadh 2026",
+      "Enchanting You Back Into Our World",
     ];
 
     let phraseIdx = 0;

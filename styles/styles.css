@@ -74,20 +74,20 @@
 }
 
 body[data-theme="light"] {
-  --bg:#f2f8f0; --surface:#ffffff; --surface-2:#f6fbf4; --surface-3:#ecf5e8; --hover-bg:rgba(0,0,0,0.04);
+  --bg:#faf6ef; --surface:#ffffff; --surface-2:#f5efe6; --surface-3:#ede5d5; --hover-bg:rgba(0,0,0,0.04);
   --gold:#c07a20; --gold-soft:#a56010; --gold-hi:#d4880a; --gold-dim:rgba(192,122,32,0.10); --gold-glow:rgba(192,122,32,0.20); --gold-border:rgba(192,122,32,0.28);
   --green:#1ea858; --green-soft:#166e3c; --green-dim:rgba(30,168,88,0.12); --green-text:#145c34;
-  --pink:#c85a80; --pink-soft:#a04468; --pink-dim:rgba(200,90,128,0.12);
+  --pink:#c4325c; --pink-soft:#dc4472; --pink-dim:rgba(196,50,92,0.12); --pink-glow:rgba(196,50,92,0.18);
   --text:#0f1f16; --text-2:#3d5548; --text-3:#6b8274; --muted:var(--text-2); --muted-soft:#5a7060;
   --border:rgba(0,0,0,0.08); --border-2:rgba(0,0,0,0.13); --border-3:rgba(0,0,0,0.20); --border-gold:rgba(192,122,32,0.30);
-  --panel:#ffffff; --panel-2:#f6fbf4;
+  --panel:#ffffff; --panel-2:#f5efe6;
   --glass-bg:rgba(255,255,255,0.65); --glass-bg-strong:rgba(255,255,255,0.88); --glass-highlight:rgba(255,255,255,0.72); --glass-stroke:rgba(255,255,255,0.60);
   --field-bg:rgba(255,255,255,0.92); --field-border:rgba(30,168,88,0.30); --field-text:#0f1f16; --label-text:#2a5040;
-  --card-tint-a:rgba(255,255,255,0.80); --card-tint-b:rgba(245,255,248,0.60);
+  --card-tint-a:rgba(255,255,255,0.80); --card-tint-b:rgba(250,246,239,0.70);
   --footer-border:rgba(0,0,0,0.10); --footer-text:var(--text-2);
-  --header-bg:rgba(242,248,240,0.88); --header-border:rgba(0,0,0,0.10);
-  --badge-bg:rgba(232,125,160,0.10); --badge-border:rgba(232,125,160,0.30); --badge-text:#a04468;
-  --card-shadow:0 8px 24px rgba(15,45,25,0.12); --cta-text:#ffffff;
+  --header-bg:rgba(250,246,239,0.90); --header-border:rgba(0,0,0,0.10);
+  --badge-bg:rgba(196,50,92,0.10); --badge-border:rgba(196,50,92,0.28); --badge-text:#b02c52;
+  --card-shadow:0 4px 20px rgba(15,45,25,0.09); --cta-text:#ffffff;
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -617,6 +617,226 @@ body[data-theme="light"] .apply-redirect-modal{background:var(--surface);border-
 /* ─── Header & announcement bar ─────────────────────────────────────── */
 body[data-theme="light"] .site-announcement{background:rgba(192,122,32,0.08);border-color:rgba(192,122,32,0.22);color:var(--gold-soft);}
 body[data-theme="light"] .site-header.scrolled{box-shadow:0 4px 20px rgba(15,45,25,0.10);}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ENCHANTED BOTANICAL LIGHT THEME v2
+   Warm cream · flowers · vines · stickers — unique identity layer
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Vivid warm atmospheric blobs ─────────────────────────────────── */
+body[data-theme="light"]::before {
+  background: radial-gradient(circle, rgba(25,168,84,0.22) 0%, rgba(16,105,55,0.07) 44%, transparent 70%);
+  width: 62vw; height: 62vw; top: -14vw; left: -12vw;
+}
+body[data-theme="light"]::after {
+  background: radial-gradient(circle, rgba(196,50,92,0.18) 0%, rgba(140,30,70,0.06) 46%, transparent 70%);
+  width: 54vw; height: 54vw; bottom: -12vw; right: -12vw;
+}
+
+/* ─── Botanical grid lines — warm pink + forest green ───────────────── */
+body[data-theme="light"] .bg-alt-logo .ornament-grid {
+  opacity: 0.16;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(196,50,92,0.20) 0, rgba(196,50,92,0.20) 1px, transparent 1px, transparent 56px),
+    repeating-linear-gradient(0deg, rgba(25,168,84,0.15) 0, rgba(25,168,84,0.15) 1px, transparent 1px, transparent 56px);
+  -webkit-mask-image: radial-gradient(circle at 50% 36%, black 24%, transparent 64%);
+  mask-image: radial-gradient(circle at 50% 36%, black 24%, transparent 64%);
+}
+
+/* ─── Section label — vivid green botanical pill with ✿ flower ──────── */
+body[data-theme="light"] .section-label {
+  background: linear-gradient(135deg, rgba(25,168,84,0.14) 0%, rgba(196,50,92,0.08) 100%);
+  border-color: rgba(25,168,84,0.36);
+  color: #0e5e30;
+  box-shadow: 0 2px 14px rgba(25,168,84,0.10);
+}
+body[data-theme="light"] .section-label::before {
+  content: "✿";
+  font-size: 0.78rem;
+  color: #c4325c;
+  filter: none;
+  text-shadow: 0 0 7px rgba(196,50,92,0.45);
+  margin-right: 0.05rem;
+}
+
+/* ─── Section head — ❀ ✦ ❀ ornament under every heading ────────────── */
+body[data-theme="light"] .section-head { position: relative; }
+body[data-theme="light"] .section-head::after {
+  content: "❀ \2756 ❀";
+  display: block;
+  font-size: 0.74rem;
+  letter-spacing: 0.44em;
+  color: #c4325c;
+  opacity: 0.38;
+  margin-top: 1.4rem;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── Vine separator ornament between page sections ─────────────────── */
+body[data-theme="light"] main > .section:not(:first-child) { position: relative; }
+body[data-theme="light"] main > .section:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 8%; right: 8%; height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(196,50,92,0.20) 18%,
+    rgba(192,122,30,0.28) 44%,
+    rgba(25,168,84,0.22) 68%,
+    rgba(196,50,92,0.16) 84%,
+    transparent 100%);
+  pointer-events: none;
+}
+
+/* ─── Hero heading — botanical gold-to-forest-green gradient ────────── */
+body[data-theme="light"] .hero-content h1 {
+  background: linear-gradient(135deg, #8a5c0c 0%, #1a351e 36%, #19a050 68%, #b8780e 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+body[data-theme="light"] .hero .subheadline { color: #3a4e40; }
+
+/* ─── Hero visual — decorative flower sticker ornaments ─────────────── */
+body[data-theme="light"] .hero-visual { position: relative; }
+body[data-theme="light"] .hero-visual::before {
+  content: "\2740";
+  position: absolute;
+  top: 2%; right: -1%;
+  font-size: 4.5rem;
+  color: #c4325c;
+  opacity: 0.10;
+  transform: rotate(22deg);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+body[data-theme="light"] .hero-visual::after {
+  content: "\273F";
+  position: absolute;
+  bottom: 4%; left: 0%;
+  font-size: 3.4rem;
+  color: #19a050;
+  opacity: 0.12;
+  transform: rotate(-18deg);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* ─── Hero logo ring — warm golden-cream glow ───────────────────────── */
+body[data-theme="light"] .hero-logo-card .logo-center {
+  background: radial-gradient(circle at 50% 38%, #fffbf0 0%, #f8f3e8 68%, #f0ece0 100%);
+  border-color: rgba(184,120,14,0.42);
+  box-shadow:
+    0 0 56px rgba(20,60,30,0.13),
+    0 0 100px rgba(25,168,84,0.09),
+    0 0 0 8px rgba(184,120,14,0.09),
+    0 0 0 18px rgba(25,168,84,0.04);
+}
+
+/* ─── Hero tags ──────────────────────────────────────────────────────── */
+body[data-theme="light"] .hero-tag { background: #ffffff; border-color: rgba(0,0,0,0.10); }
+body[data-theme="light"] .hero-tag:hover { border-color: rgba(25,168,84,0.42); color: #0e5e30; }
+
+/* ─── Cards — bright white with warm botanical hover ─────────────────── */
+body[data-theme="light"] .value-card,
+body[data-theme="light"] .launch-card {
+  background: #ffffff;
+  box-shadow: 0 2px 18px rgba(20,50,25,0.07), 0 1px 4px rgba(20,50,25,0.04);
+}
+body[data-theme="light"] .value-card:hover {
+  border-color: rgba(25,168,84,0.34);
+  box-shadow: 0 14px 44px rgba(20,50,25,0.12), 0 0 28px rgba(25,168,84,0.10);
+  transform: translateY(-6px);
+}
+body[data-theme="light"] .launch-card:hover {
+  border-color: rgba(184,120,14,0.44);
+  box-shadow: 0 14px 42px rgba(20,50,25,0.12), 0 0 30px rgba(184,120,14,0.12);
+  transform: translateY(-5px);
+}
+/* Tricolor pink-gold-green botanical bar reveals on hover */
+body[data-theme="light"] .value-card::after,
+body[data-theme="light"] .launch-card::after {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  background: linear-gradient(90deg, #c4325c, #c98816, #19a050);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  pointer-events: none;
+}
+body[data-theme="light"] .value-card:hover::after,
+body[data-theme="light"] .launch-card:hover::after { opacity: 1; }
+
+/* ─── Team cards ─────────────────────────────────────────────────────── */
+body[data-theme="light"] .team-card {
+  background: #ffffff;
+  box-shadow: 0 2px 16px rgba(20,50,25,0.07);
+}
+body[data-theme="light"] .team-card:hover {
+  border-color: rgba(196,50,92,0.28);
+  box-shadow: 0 8px 28px rgba(20,50,25,0.10), 0 0 20px rgba(196,50,92,0.08);
+}
+
+/* ─── Stats section — botanical warm background ──────────────────────── */
+body[data-theme="light"] .stats-section {
+  background: linear-gradient(180deg, rgba(237,248,241,0.96), rgba(250,246,239,0.96));
+  border-top-color: rgba(25,168,84,0.14);
+  border-bottom-color: rgba(25,168,84,0.14);
+}
+body[data-theme="light"] .stat-card:hover {
+  background: linear-gradient(180deg, rgba(25,168,84,0.07), rgba(196,50,92,0.03));
+  border-color: rgba(25,168,84,0.22);
+}
+
+/* ─── About stats ────────────────────────────────────────────────────── */
+body[data-theme="light"] .about-stat { background: #ffffff; }
+body[data-theme="light"] .about-stat:hover {
+  background: linear-gradient(180deg, rgba(25,168,84,0.07), rgba(196,50,92,0.03));
+  border-color: rgba(25,168,84,0.28);
+}
+
+/* ─── Roadmap card ───────────────────────────────────────────────────── */
+body[data-theme="light"] .roadmap-card { background: #ffffff; }
+body[data-theme="light"] .road-item--active .road-node-dot {
+  box-shadow: 0 0 0 5px rgba(192,122,30,0.22), 0 0 22px rgba(192,122,30,0.30);
+}
+
+/* ─── FAQ cards ──────────────────────────────────────────────────────── */
+body[data-theme="light"] .faq-card-front:hover,
+body[data-theme="light"] .faq-card-back:hover {
+  border-color: rgba(196,50,92,0.28);
+  box-shadow: 0 8px 28px rgba(20,50,25,0.10), 0 0 20px rgba(196,50,92,0.08);
+}
+
+/* ─── Share panel ────────────────────────────────────────────────────── */
+body[data-theme="light"] .share-panel:hover {
+  border-color: rgba(25,168,84,0.28);
+  box-shadow: 0 10px 32px rgba(20,50,25,0.10), 0 0 22px rgba(25,168,84,0.09);
+}
+
+/* ─── Footer — warm botanical parchment ─────────────────────────────── */
+body[data-theme="light"] .site-footer {
+  background: linear-gradient(180deg, #f5eedf, #faf6ef);
+}
+
+/* ─── Scroll progress — botanical tricolor rainbow ──────────────────── */
+body[data-theme="light"] .scroll-progress {
+  background: linear-gradient(90deg, #19a050, #c98816, #c4325c, #5ee89c);
+  box-shadow: 0 0 12px rgba(196,50,92,0.45), 0 0 5px rgba(25,168,84,0.40);
+}
+
+/* ─── Navbar brand logo ──────────────────────────────────────────────── */
+body[data-theme="light"] .brand-logo {
+  border-color: rgba(184,120,14,0.52);
+  box-shadow: 0 0 8px rgba(25,168,84,0.18);
+  filter: none;
+}
+
+/* ─── Section head h2 — no glow on light ────────────────────────────── */
+body[data-theme="light"] .section-head h2 { text-shadow: none; }
 
 /* ═══════════════════════════════════════════════════════════════════
    THE ENCHANTED SUMMIT — Magical Identity Layer

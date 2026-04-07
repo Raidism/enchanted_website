@@ -650,7 +650,7 @@ const setTheme = (theme, withAnimation = false) => {
 const storedTheme = localStorage.getItem(themeStorageKey);
 const initialTheme = storedTheme === "light" || storedTheme === "dark"
   ? storedTheme
-  : "dark";
+  : "light";
 
 setTheme(initialTheme);
 
