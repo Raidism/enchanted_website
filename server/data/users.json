@@ -7,7 +7,7 @@
     "photo": "assets/adham pic.jpg",
     "passwordHash": "$2a$10$iyn8XjUXTBBsuvmYfRftheC0HN/e/ps5pBkBcMg3y1oWQ0NX6yf8u",
     "disabled": false,
-    "onboardingCompleted": false
+    "onboardingCompleted": true
   },
   {
     "username": "jow",
@@ -17,6 +17,6 @@
     "photo": "assets/jow pic.jpg",
     "passwordHash": "$2a$10$Kc0TXiWWxGfNRAgIcegCj.QmSr2X4Frp5ePctfrqBHojQVdTDTfye",
     "disabled": false,
-    "onboardingCompleted": false
+    "onboardingCompleted": true
   }
 ]
