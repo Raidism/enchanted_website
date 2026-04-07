@@ -94,6 +94,7 @@ const WELCOME_NAMES = {
   yamendalegend: "YAMEN ELATTAL",
   joumohd08: "Joumana Mohamed",
   y72n_e: "Yassin elnaggar",
+  jow: "Jowanna Khalifah",
 };
 
 const ADMIN_PROFILE_PRESETS = {
@@ -137,6 +138,11 @@ const ADMIN_PROFILE_PRESETS = {
     caption: "Welcome back, Yassin elnaggar (Head of HR).",
     alt: "Yassin profile",
   },
+  jow: {
+    photo: "assets/jow pic.jpg",
+    caption: "Welcome back, Jowanna Khalifah (Secretary-General).",
+    alt: "Jowanna profile",
+  },
 };
 
 const USER_SPOTLIGHT_PRESETS = {
@@ -179,6 +185,11 @@ const USER_SPOTLIGHT_PRESETS = {
     name: "Yassin elnaggar",
     role: "Head of HR",
     photo: "assets/enchanted logo.jpg",
+  },
+  jow: {
+    name: "Jowanna Khalifah",
+    role: "Secretary-General",
+    photo: "assets/jow pic.jpg",
   },
 };
 
