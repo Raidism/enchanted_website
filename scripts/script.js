@@ -216,8 +216,8 @@ const applyJoinStateFromSettings = (settings) => {
 
 const applyTeamRecruitmentCtaFromSettings = (settings) => {
   const isOpen = Boolean(settings && settings.teamApplicationsOpen);
-  const heroLabel = isOpen ? "Apply Now →" : "Find out when applications open\u00A0⏳";
-  const heroHref = isOpen ? "/apply" : "#join";
+  const heroLabel = isOpen ? "Apply Now →" : "Apply Now →";
+  const heroHref = isOpen ? "/apply" : "/apply";
 
   if (heroApplyBtn) {
     heroApplyBtn.hidden = false;

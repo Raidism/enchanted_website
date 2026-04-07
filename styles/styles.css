@@ -268,11 +268,11 @@ section p.lead{font-size:1.06rem;line-height:1.8;color:var(--text-2);max-width:6
 .hero-visual{display:flex;align-items:center;justify-content:center;}
 .hero-logo-card{position:relative;width:min(520px,86vw);aspect-ratio:1;display:flex;align-items:center;justify-content:center;}
 .hero-logo-card .ring{position:absolute;inset:0;border-radius:50%;animation:logoRing 8s linear infinite;}
-.hero-logo-card .ring-outer{border:2px solid transparent;background:conic-gradient(from var(--a),transparent,var(--pink) 20%,#c084fc 45%,var(--pink-soft) 65%,#c084fc 82%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;inset:calc(0% + 0px);}
-.hero-logo-card .ring-inner{border:1.5px solid transparent;background:conic-gradient(from calc(var(--a) + 60deg),transparent,#c084fc 25%,var(--pink) 55%,var(--pink-soft) 72%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;inset:11%;border-radius:50%;animation-duration:12s!important;animation-direction:reverse;}
+.hero-logo-card .ring-outer{border:2px solid transparent;background:conic-gradient(from var(--a),transparent,var(--pink-soft) 18%,#f472b6 38%,var(--pink) 55%,#f472b6 72%,var(--pink-soft) 85%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;inset:calc(0% + 0px);}
+.hero-logo-card .ring-inner{border:1.5px solid transparent;background:conic-gradient(from calc(var(--a) + 50deg),transparent,var(--pink) 22%,#fbb6ce 50%,var(--pink-soft) 70%,transparent 100%) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;inset:11%;border-radius:50%;animation-duration:12s!important;animation-direction:reverse;}
 @property --a{syntax:"<angle>";inherits:false;initial-value:0deg;}
 @keyframes logoRing{to{--a:360deg;}}
-.hero-logo-card .logo-center{position:relative;z-index:1;width:74%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 34%,rgba(232,125,160,0.18),rgba(30,38,47,0.96) 58%,rgba(10,14,19,1) 100%);border:2px solid rgba(192,132,252,0.42);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 0 48px rgba(0,0,0,0.55),0 0 80px rgba(232,125,160,0.12),0 0 0 8px rgba(192,132,252,0.10);}
+.hero-logo-card .logo-center{position:relative;z-index:1;width:74%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 34%,rgba(232,125,160,0.18),rgba(30,38,47,0.96) 58%,rgba(10,14,19,1) 100%);border:2px solid rgba(244,114,182,0.42);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 0 48px rgba(0,0,0,0.55),0 0 80px rgba(232,125,160,0.18),0 0 0 8px rgba(244,114,182,0.10);}
 .hero-logo-card .logo-center::before{content:"";position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.18),rgba(255,255,255,0.03) 64%,transparent 72%);pointer-events:none;}
 .hero-logo-card .logo-center img{position:relative;z-index:1;width:96%;height:96%;object-fit:contain;border-radius:50%;filter:drop-shadow(0 10px 28px rgba(0,0,0,0.42));opacity:1;}
 
@@ -581,7 +581,7 @@ body[data-theme="light"] .team-role-description{color:var(--text-2);}
 body[data-theme="light"] .team-role-features li{color:var(--text-3);}
 
 /* ─── Hero logo circle ───────────────────────────────────────────────── */
-body[data-theme="light"] .hero-logo-card .logo-center{background:radial-gradient(circle at 50% 34%,rgba(255,240,248,0.98),rgba(248,240,252,0.97) 60%,rgba(242,238,252,1) 100%);border-color:rgba(192,132,252,0.32);box-shadow:0 0 40px rgba(232,125,160,0.14),0 0 0 8px rgba(192,132,252,0.08);}
+body[data-theme="light"] .hero-logo-card .logo-center{background:radial-gradient(circle at 50% 34%,rgba(255,240,248,0.98),rgba(252,240,248,0.97) 60%,rgba(250,236,245,1) 100%);border-color:rgba(244,114,182,0.36);box-shadow:0 0 40px rgba(232,125,160,0.18),0 0 0 8px rgba(244,114,182,0.09);}
 
 /* ─── Card shadows (light mode feels lighter) ────────────────────────── */
 body[data-theme="light"] .launch-card{box-shadow:0 2px 14px rgba(15,45,25,0.08);}
@@ -727,13 +727,13 @@ body[data-theme="light"] .hero-visual::after {
 
 /* ─── Hero logo ring — warm golden-cream glow ───────────────────────── */
 body[data-theme="light"] .hero-logo-card .logo-center {
-  background: radial-gradient(circle at 50% 38%, #fff0f8 0%, #f8eef8 68%, #f0e8f8 100%);
-  border-color: rgba(192,132,252,0.46);
+  background: radial-gradient(circle at 50% 38%, #fff0f7 0%, #fde8f2 68%, #fce0ee 100%);
+  border-color: rgba(244,114,182,0.46);
   box-shadow:
-    0 0 56px rgba(232,125,160,0.18),
-    0 0 100px rgba(192,132,252,0.12),
-    0 0 0 8px rgba(232,125,160,0.10),
-    0 0 0 18px rgba(192,132,252,0.05);
+    0 0 56px rgba(232,125,160,0.22),
+    0 0 100px rgba(244,114,182,0.14),
+    0 0 0 8px rgba(232,125,160,0.12),
+    0 0 0 18px rgba(244,114,182,0.05);
 }
 
 /* ─── Hero tags ──────────────────────────────────────────────────────── */
@@ -901,7 +901,7 @@ body::after{background:radial-gradient(circle,rgba(232,125,160,0.18) 0%,rgba(140
 .bg-alt-logo .ornament-grid{opacity:0.11;background-image:repeating-linear-gradient(90deg,rgba(232,125,160,0.13) 0,rgba(232,125,160,0.13) 1px,transparent 1px,transparent 64px),repeating-linear-gradient(0deg,rgba(46,189,110,0.09) 0,rgba(46,189,110,0.09) 1px,transparent 1px,transparent 64px);}
 
 /* ─── Hero logo — richer glow aura ─────────────────────────────────── */
-.hero-logo-card .logo-center{box-shadow:0 0 64px rgba(0,0,0,0.62),0 0 110px rgba(232,125,160,0.18),0 0 0 8px rgba(192,132,252,0.14),inset 0 0 34px rgba(232,125,160,0.08);}
+.hero-logo-card .logo-center{box-shadow:0 0 64px rgba(0,0,0,0.62),0 0 110px rgba(232,125,160,0.22),0 0 0 8px rgba(244,114,182,0.16),inset 0 0 34px rgba(244,114,182,0.09);}
 
 /* ─── Cards — enchanted colour-interplay hover glow ─────────────────── */
 .value-card:hover{border-color:rgba(46,189,110,0.32);box-shadow:0 14px 44px rgba(0,0,0,0.40),0 0 28px rgba(46,189,110,0.11),0 0 54px rgba(232,125,160,0.06);}

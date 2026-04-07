@@ -30,6 +30,7 @@ const _appRoleLabels = {
   toleenkmedia: "Head of Media",
   joumohd08: "Head of HR",
   y72n_e: "Head of HR",
+  jow: "Founder",
 };
 const _APP_PROFILE_FALLBACKS = {
   admin: {
@@ -43,6 +44,10 @@ const _APP_PROFILE_FALLBACKS = {
   y72n_e: {
     name: "Yassin elnaggar",
     photo: "/assets/enchanted logo.jpg",
+  },
+  jow: {
+    name: "Jowanna Khalifah",
+    photo: "/assets/jow pic.jpg",
   },
 };
 const _appProfileFallback = _APP_PROFILE_FALLBACKS[_appProfileKey] || {};

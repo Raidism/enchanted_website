@@ -18,6 +18,10 @@
       name: "Yassin elnaggar",
       photo: "assets/enchanted logo.jpg",
     },
+    jow: {
+      name: "Jowanna Khalifah",
+      photo: "assets/jow pic.jpg",
+    },
   };
   const profileFallback = PROFILE_FALLBACKS[profileKey] || {};
   const profileDisplayName = String(profileFallback.name || currentUser.name || currentUser.username || "User");

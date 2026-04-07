@@ -86,7 +86,7 @@ const DEFAULT_INSTAGRAM_STATS = {
   following: 4,
 };
 const WELCOME_NAMES = {
-  admin: "Adham Mohamed",
+  admin: "Adham Soliman",
   "ln-obidat": "Leen Obeidat",
   ahmadph: "Ahmed Pharaon",
   toleenkmedia: "Toleen Kurdi",
@@ -99,8 +99,8 @@ const WELCOME_NAMES = {
 
 const ADMIN_PROFILE_PRESETS = {
   admin: {
-    photo: "assets/enchanted logo.jpg",
-    caption: "Welcome back, Adham Mohamed (Head of IT).",
+    photo: "assets/adham pic.jpg",
+    caption: "Welcome back, Adham Soliman (Head of IT).",
     alt: "Adham profile",
   },
   "ln-obidat": {
@@ -140,16 +140,16 @@ const ADMIN_PROFILE_PRESETS = {
   },
   jow: {
     photo: "assets/jow pic.jpg",
-    caption: "Welcome back, Jowanna Khalifah (Secretary-General).",
+    caption: "Welcome back, Jowanna Khalifah (Founder).",
     alt: "Jowanna profile",
   },
 };
 
 const USER_SPOTLIGHT_PRESETS = {
   admin: {
-    name: "Adham Mohamed",
+    name: "Adham Soliman",
     role: "Head of IT",
-    photo: "assets/enchanted logo.jpg",
+    photo: "assets/adham pic.jpg",
   },
   "ln-obidat": {
     name: "Leen Obeidat",
@@ -188,7 +188,7 @@ const USER_SPOTLIGHT_PRESETS = {
   },
   jow: {
     name: "Jowanna Khalifah",
-    role: "Secretary-General",
+    role: "Founder",
     photo: "assets/jow pic.jpg",
   },
 };
