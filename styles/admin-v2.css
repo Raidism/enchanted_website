@@ -83,6 +83,65 @@ html {
   --content-max: 1200px;
 }
 
+/* ─── Light theme token overrides ──────────────────────────────── */
+body[data-theme="light"] {
+  --bg:        #f8f7f4;
+  --surface:   #ffffff;
+  --surface-2: #f3f1ec;
+  --surface-3: #e8e4da;
+  --hover:     rgba(0,0,0,0.04);
+  --gold:      #b8930a;
+  --gold-hi:   #d4880a;
+  --gold-dim:  rgba(184,147,10,0.10);
+  --gold-glow: rgba(184,147,10,0.20);
+  --gold-border: rgba(184,147,10,0.28);
+  --pink:      #c4325c;
+  --pink-soft: #dc4472;
+  --pink-dim:  rgba(196,50,92,0.10);
+  --pink-glow: rgba(196,50,92,0.18);
+  --green:      #1a9650;
+  --green-dim:  rgba(26,150,80,0.12);
+  --green-text: #145c34;
+  --red:        #dc2626;
+  --red-dim:    rgba(220,38,38,0.10);
+  --red-text:   #b91c1c;
+  --amber:      #d97706;
+  --amber-dim:  rgba(217,119,6,0.10);
+  --amber-text: #92400e;
+  --blue:       #2563eb;
+  --blue-dim:   rgba(37,99,235,0.10);
+  --text:       #111814;
+  --text-2:     #3d5548;
+  --text-3:     #6b8274;
+  --text-muted: var(--text-2);
+  --border:     rgba(0,0,0,0.07);
+  --border-2:   rgba(0,0,0,0.12);
+  --border-3:   rgba(0,0,0,0.20);
+}
+
+/* Hardcoded-dark overrides in light mode */
+body[data-theme="light"] .topbar {
+  background: rgba(250,248,244,0.92) !important;
+  border-bottom-color: rgba(0,0,0,0.09);
+}
+body[data-theme="light"] .sidebar-backdrop {
+  background: rgba(240,237,230,0.72);
+}
+body[data-theme="light"] .lock-glass {
+  background: rgba(248,247,244,0.78);
+}
+body[data-theme="light"] .logout-overlay {
+  background: rgba(250,248,244,0.97);
+}
+body[data-theme="light"] .onboarding-overlay {
+  background: rgba(250,248,244,0.96);
+}
+body[data-theme="light"] body::before {
+  background:
+    radial-gradient(ellipse 60% 50% at 70% -10%, rgba(184,147,10,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at -5% 80%, rgba(26,150,80,0.04) 0%, transparent 55%);
+}
+
 /* ─── Body ──────────────────────────────────────────────────────── */
 body {
   font-family: "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
