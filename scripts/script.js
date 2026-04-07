@@ -626,122 +626,14 @@ if (siteSettings.maintenanceMode) {
 
 const themeToggle = document.getElementById("themeToggle");
 const themeStorageKey = "Enchanted Summit-theme";
-let isThemeAnimating = false;
 
-const setTheme = (theme, withAnimation = false) => {
-  document.body.setAttribute("data-theme", theme);
-  localStorage.setItem(themeStorageKey, theme);
+// Theme is always light — clear any stored preference and lock it.
+document.body.setAttribute("data-theme", "light");
+localStorage.setItem(themeStorageKey, "light");
 
-  if (!themeToggle) {
-    return;
-  }
+// Stub so any remaining references don't throw.
+const setTheme = (_theme) => {};
 
-  const nextTheme = theme === "dark" ? "light" : "dark";
-  themeToggle.setAttribute("aria-label", `Switch to ${nextTheme} theme`);
-  themeToggle.setAttribute("aria-pressed", String(theme === "light"));
-
-  if (withAnimation) {
-    themeToggle.classList.remove("is-animating");
-    void themeToggle.offsetWidth;
-    themeToggle.classList.add("is-animating");
-  }
-};
-
-const storedTheme = localStorage.getItem(themeStorageKey);
-const initialTheme = storedTheme === "light" || storedTheme === "dark"
-  ? storedTheme
-  : "light";
-
-setTheme(initialTheme);
-
-const animateThemeWipe = ({ layerTheme, fromRadius, toRadius, originX, originY }) => {
-  const layer = document.createElement("div");
-  layer.className = "theme-wipe-layer";
-  layer.setAttribute("data-theme", layerTheme);
-  document.body.appendChild(layer);
-
-  return new Promise((resolve) => {
-    const animation = layer.animate(
-      [
-        { clipPath: `circle(${fromRadius}px at ${originX}px ${originY}px)` },
-        { clipPath: `circle(${toRadius}px at ${originX}px ${originY}px)` },
-      ],
-      {
-        duration: 620,
-        easing: "cubic-bezier(0.22, 0.9, 0.28, 1)",
-        fill: "forwards",
-      }
-    );
-
-    animation.onfinish = () => {
-      layer.remove();
-      resolve();
-    };
-
-    animation.oncancel = () => {
-      layer.remove();
-      resolve();
-    };
-  });
-};
-
-if (themeToggle) {
-  themeToggle.addEventListener("click", async (event) => {
-    if (isThemeAnimating) {
-      return;
-    }
-
-    const currentTheme = document.body.getAttribute("data-theme") || "dark";
-    const nextTheme = currentTheme === "dark" ? "light" : "dark";
-
-    if (prefersReducedMotion) {
-      setTheme(nextTheme, true);
-      return;
-    }
-
-    const rect = themeToggle.getBoundingClientRect();
-    const originX = typeof event.clientX === "number" && event.clientX > 0
-      ? event.clientX
-      : rect.left + rect.width / 2;
-    const originY = typeof event.clientY === "number" && event.clientY > 0
-      ? event.clientY
-      : rect.top + rect.height / 2;
-
-    const farX = Math.max(originX, window.innerWidth - originX);
-    const farY = Math.max(originY, window.innerHeight - originY);
-    const maxRadius = Math.hypot(farX, farY);
-
-    isThemeAnimating = true;
-    themeToggle.disabled = true;
-
-    try {
-      if (nextTheme === "light") {
-        // Dark → Light: white spreads outward from the toggle.
-        setTheme("light", true);
-        await animateThemeWipe({
-          layerTheme: "light",
-          fromRadius: 0,
-          toRadius: maxRadius,
-          originX,
-          originY,
-        });
-      } else {
-        // Light → Dark: white collapses back into the toggle.
-        setTheme("dark", true);
-        await animateThemeWipe({
-          layerTheme: "light",
-          fromRadius: maxRadius,
-          toRadius: 0,
-          originX,
-          originY,
-        });
-      }
-    } finally {
-      themeToggle.disabled = false;
-      isThemeAnimating = false;
-    }
-  });
-}
 
 const revealItems = document.querySelectorAll(".reveal");
 const heroLogoCard = document.getElementById("heroLogoCard");

@@ -817,6 +817,19 @@ body[data-theme="light"] .share-panel:hover {
   box-shadow: 0 10px 32px rgba(20,50,25,0.10), 0 0 22px rgba(25,168,84,0.09);
 }
 
+/* ─── EB Team Section ────────────────────────────────────────────────── */
+.eb-leadership{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.8rem;}
+@media(max-width:640px){.eb-leadership{grid-template-columns:1fr;}}
+.eb-leader-card{background:var(--surface);border:1px solid var(--border-gold);border-radius:var(--r-xl);padding:1.4rem 1.2rem;text-align:center;transition:transform 0.25s var(--ease),box-shadow 0.25s var(--ease);}
+.eb-leader-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-gold);}
+.eb-role-badge{display:inline-block;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:999px;padding:0.2rem 0.7rem;margin-bottom:0.55rem;}
+.eb-name{font-family:"Cinzel",serif;font-size:1.02rem;font-weight:700;color:var(--text);margin:0;}
+.eb-departments{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0.6rem;}
+.eb-dept{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:0.7rem 0.95rem;display:flex;flex-direction:column;gap:0.15rem;transition:border-color 0.2s ease;}
+.eb-dept:hover{border-color:var(--gold-border);}
+.eb-dept-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-3);}
+.eb-dept-names{font-size:0.9rem;font-weight:600;color:var(--text);}
+
 /* ─── Footer — warm botanical parchment ─────────────────────────────── */
 body[data-theme="light"] .site-footer {
   background: linear-gradient(180deg, #f5eedf, #faf6ef);
