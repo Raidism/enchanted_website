@@ -301,6 +301,8 @@
     ".stat-card.reveal.pop-card",
     ".launch-card.reveal.pop-card",
     ".faq-card.reveal.pop-card",
+    ".eb-leader-card.reveal.pop-card",
+    ".eb-dept.reveal.pop-card",
   ];
 
   staggerGroups.forEach((selector) => {
